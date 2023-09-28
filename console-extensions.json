@@ -3,18 +3,56 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": "/example",
+      "path": ["/pipelines-overview/ns/:ns", "/pipelines-overview/all-namespaces"],
       "component": { "$codeRef": "ExamplePage" }
     }
   },
   {
     "type": "console.navigation/href",
     "properties": {
-      "id": "example",
-      "name": "%plugin__console-plugin-template~Plugin Example%",
-      "href": "/example",
+      "id": "pipeline-overview",
       "perspective": "admin",
-      "section": "home"
+      "section": "pipelines",
+      "insertBefore": "pipelines",
+      "name": "%Overview%",
+      "href": "/pipelines-overview",
+      "namespaced": true
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
+      "page": {
+        "name": "%Metrics%",
+        "href": "metrics"
+      },
+      "component": { "$codeRef": "ExamplePage" }
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "Pipeline"
+      },
+      "page": {
+        "name": "%Metrics%",
+        "href": "metrics"
+      },
+      "component": { "$codeRef": "ExamplePage" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "hookProvider.useFlagHookProvider" }
     }
   }
 ]

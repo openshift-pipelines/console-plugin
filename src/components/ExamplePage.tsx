@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import {
   Page,
   PageSection,
@@ -7,11 +8,11 @@ import {
   TextContent,
   Title,
 } from '@patternfly/react-core';
+
 import './example.css';
-import { useTranslation } from 'react-i18next';
 
 export default function ExamplePage() {
-  const { t } = useTranslation('plugin__console-plugin-template');
+  const { t } = useTranslation('plugin__pipeline-console-plugin');
 
   return (
     <>
@@ -23,6 +24,7 @@ export default function ExamplePage() {
           <Title headingLevel="h1">{t('Hello, Plugin!')}</Title>
         </PageSection>
         <PageSection variant="light">
+          <h3>Here goes Pipeline overview page</h3>
           <TextContent>
             <Text component="p">
               <span className="console-plugin-template__nice">

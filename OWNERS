@@ -1,6 +1,16 @@
 approvers:
-  - christianvogt
-  - florkbr
-  - spadgett
-  - vojtechszocs
-component: Management Console
+- jerolimov
+- vdemeester
+- vikram-raj
+- pratap0007
+- Lucifergene
+- lokanandaprabhu
+options: {}
+reviewers:
+- jerolimov
+- vdemeester
+- vikram-raj
+- pratap0007
+- Lucifergene
+- lokanandaprabhu
+component: OpenShift Pipelines Console Plugin

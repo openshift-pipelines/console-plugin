@@ -23,13 +23,18 @@
     "@cypress/webpack-preprocessor": "^5.15.5",
     "@openshift-console/dynamic-plugin-sdk": "0.0.12",
     "@openshift-console/dynamic-plugin-sdk-webpack": "0.0.7",
+    "@patternfly/react-charts": "6.94.19",
     "@patternfly/react-core": "4.221.3",
+    "@patternfly/react-tokens": "4.94.6",
+    "@patternfly/react-table": "4.113.0",
+    "@types/lodash-es": "4.17.x",
     "@types/node": "^18.0.0",
     "@types/react": "^17.0.37",
     "@types/react-helmet": "^6.1.4",
     "@types/react-router-dom": "^5.3.2",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "@typescript-eslint/parser": "^5.14.0",
+    "cache-loader": "^4.1.0",
     "copy-webpack-plugin": "^6.4.1",
     "css-loader": "^6.7.1",
     "cypress": "^11.0.1",
@@ -52,15 +57,19 @@
     "react-i18next": "^13.0.0",
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
+    "resolve-url-loader": "2.x",
+    "sass": "^1.42.1",
+    "sass-loader": "^10.1.1",
     "style-loader": "^3.3.1",
     "stylelint": "^15.3.0",
     "stylelint-config-standard": "^31.0.0",
+    "thread-loader": "^3.0.4",
     "ts-loader": "^9.3.1",
     "ts-node": "^10.8.1",
     "typescript": "^4.7.4",
     "webpack": "^5.68.0",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.7.4"
+    "webpack-dev-server": "^4.7.4"  
   },
   "consolePlugin": {
     "name": "pipeline-console-plugin",
@@ -69,10 +78,15 @@
     "description": "Plugin for Openshift console.",
     "exposedModules": {
       "ExamplePage": "./components/ExamplePage",
-      "hookProvider": "./components/hooks"
+      "hookProvider": "./components/hooks",
+      "pipelinesComponent": "./components/pipelines-overview"
     },
     "dependencies": {
       "@console/pluginAPI": "*"
     }
+  },
+  "dependencies": {
+    "victory-core": "^36.6.11",
+    "lodash-es": "^4.17.21"
   }
 }

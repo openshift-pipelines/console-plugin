@@ -39,6 +39,28 @@ const config: Configuration = {
         ],
       },
       {
+        test: /\.scss$/,
+        exclude: /node_modules\/(?!(@patternfly|@openshift-console\/plugin-shared)\/).*/,
+        use: [
+          { loader: 'style-loader' },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+              sassOptions: {
+                outputStyle: 'compressed',
+              },
+            },
+          },
+        ],
+      },
+      {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],
       },

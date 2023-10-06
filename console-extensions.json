@@ -1,16 +1,18 @@
 [
-  {
+    {
     "type": "console.page/route",
     "properties": {
       "exact": true,
       "path": ["/pipelines-overview/ns/:ns", "/pipelines-overview/all-namespaces"],
-      "component": { "$codeRef": "ExamplePage" }
+      "component": {
+        "$codeRef": "pipelinesComponent.PipelinesOverviewPage"
+      }
     }
   },
   {
     "type": "console.navigation/href",
     "properties": {
-      "id": "pipeline-overview",
+      "id": "pipelines-overview",
       "perspective": "admin",
       "section": "pipelines",
       "insertBefore": "pipelines",

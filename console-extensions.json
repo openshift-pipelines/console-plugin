@@ -1,5 +1,19 @@
 [
-    {
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "operator.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "TektonResult"
+      },
+      "color": "#38812f",
+      "label": "%TektonResult%",
+      "labelPlural": "%TektonResults%",
+      "abbr": "TR"
+    }
+  },
+  {
     "type": "console.page/route",
     "properties": {
       "exact": true,
@@ -19,6 +33,9 @@
       "name": "%Overview%",
       "href": "/pipelines-overview",
       "namespaced": true
+    },
+    "flags": {
+      "required": ["PIPELINE_TEKTON_RESULT_INSTALLED"]
     }
   },
   {
@@ -34,6 +51,9 @@
         "href": "metrics"
       },
       "component": { "$codeRef": "ExamplePage" }
+    },
+    "flags": {
+      "required": ["PIPELINE_TEKTON_RESULT_INSTALLED"]
     }
   },
   {
@@ -49,12 +69,21 @@
         "href": "metrics"
       },
       "component": { "$codeRef": "ExamplePage" }
+    },
+    "flags": {
+      "required": ["PIPELINE_TEKTON_RESULT_INSTALLED"]
     }
   },
   {
     "type": "console.flag/hookProvider",
     "properties": {
       "handler": { "$codeRef": "hookProvider.useFlagHookProvider" }
+    }
+  },
+  {
+    "type": "console.flag/hookProvider",
+    "properties": {
+      "handler": { "$codeRef": "hookProvider.useTektonResultInstallProvider" }
     }
   }
 ]

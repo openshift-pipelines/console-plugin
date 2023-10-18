@@ -1,15 +1,23 @@
-import { components } from "./api";
+import { components } from './api';
 
-export type Result = components["schemas"]["Result"]
+export type Result = components['schemas']['Result'];
 
-export type Record = components["schemas"]["Record"]
+export type Record = components['schemas']['Record'];
 
-export type RecordSummary = components["schemas"]["RecordSummary"]
+export type RecordSummary = components['schemas']['RecordSummary'];
 
-export type Log = components["schemas"]["Log"]
+export type Log = components['schemas']['Log'];
 
-export type LogSummary = components["schemas"]["LogSummary"]
+export type LogSummary = components['schemas']['LogSummary'];
 
-export type Status = components["schemas"]["Status"]
+export type Status = components['schemas']['Status'];
 
-export type RecordType = components["schemas"]["RecordType"]
+export type RecordType = components['schemas']['RecordType'];
+
+export * from './coreTekton';
+export * from './pipeline';
+export * from './pipelineRun';
+export * from './pipelineResource';
+export * from './task';
+export * from './taskRun';
+export * from './computedStatus';

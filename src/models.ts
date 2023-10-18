@@ -55,3 +55,19 @@ export const TektonResultModel: K8sKind = {
   crd: true,
   color: '#38812f',
 };
+
+export const RouteModel: K8sKind = {
+  label: 'Route',
+  // t('public~Route')
+  labelKey: 'public~Route',
+  labelPlural: 'Routes',
+  // t('public~Routes')
+  labelPluralKey: 'public~Routes',
+  apiGroup: 'route.openshift.io',
+  apiVersion: 'v1',
+  plural: 'routes',
+  abbr: 'RT',
+  namespaced: true,
+  kind: 'Route',
+  id: 'route',
+};

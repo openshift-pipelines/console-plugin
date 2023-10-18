@@ -28,6 +28,7 @@
     "@patternfly/react-core": "4.276.8",
     "@patternfly/react-tokens": "4.94.6",
     "@patternfly/react-table": "4.113.0",
+    "@patternfly/react-topology": "5.0.0",
     "@types/lodash-es": "4.17.x",
     "@types/node": "^18.0.0",
     "@types/react": "^17.0.37",

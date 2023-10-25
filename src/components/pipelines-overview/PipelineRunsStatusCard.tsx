@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { DomainPropType, DomainTuple } from 'victory-core';
 import {
@@ -11,21 +12,34 @@ import {
   ChartThemeColor,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
-import { Card, CardBody, CardTitle, Flex, FlexItem } from '@patternfly/react-core';
+import {
+  Card,
+  CardBody,
+  CardTitle,
+  Flex,
+  FlexItem,
+  Popover,
+} from '@patternfly/react-core';
 import { chart_color_black_500 as cancelledColor } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { chart_color_blue_100 as pendingColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
 import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
 import { global_danger_color_100 as failureColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
-import { formatDate, getXaxisValues, parsePrometheusDuration } from './dateTime';
+import {
+  formatDate,
+  getXaxisValues,
+  parsePrometheusDuration,
+} from './dateTime';
 import { SummaryProps } from './utils';
 
 import './PipelinesOverview.scss';
+import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 
 interface PipelinesRunsStatusCardProps {
   timespan?: number;
   domain?: DomainPropType;
   summaryData: SummaryProps;
+  bordered?: boolean;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
@@ -33,6 +47,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   timespan,
   domain,
   summaryData,
+  bordered,
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const startTimespan = timespan - parsePrometheusDuration('1d');
@@ -117,12 +132,35 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   });
   return (
     <>
-      <Card className="pipeline-overview__pipelinerun-status-card">
+      <Card
+        className={classNames('pipeline-overview__pipelinerun-status-card', {
+          'card-border': bordered,
+        })}
+      >
         <CardTitle className="pipeline-overview__pipelinerun-status-card__title">
-          <span>{t('PipelineRun status')}</span>
+          <span>
+            {t('PipelineRun status')}{' '}
+            <Popover
+              bodyContent={
+                <>
+                  {t(
+                    'Success Rate measures the rate at which PipelineRuns succeed compared to failed runs. The trending shown is based on the time range selected. This metric does not show runs that are running or pending.',
+                  )}
+                </>
+              }
+            >
+              <span
+                role="button"
+                aria-label={t('console-shared~More info')}
+                className="ocs-getting-started-grid__tooltip-icon"
+              >
+                <OutlinedQuestionCircleIcon />
+              </span>
+            </Popover>
+          </span>
         </CardTitle>
         <CardBody className="pipeline-overview__pipelinerun-status-card__title">
-          <Flex>
+          <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
             <FlexItem>
               <div className="pipeline-overview__pipelinerun-status-card__donut-chart-div">
                 <ChartDonut
@@ -165,7 +203,11 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                   width={600}
                   themeColor={ChartThemeColor.blue}
                 >
-                  <ChartAxis tickValues={tickValues} style={xAxisStyle} tickFormat={xTickFormat} />
+                  <ChartAxis
+                    tickValues={tickValues}
+                    style={xAxisStyle}
+                    tickFormat={xTickFormat}
+                  />
                   <ChartAxis dependentAxis tickFormat={(v) => `${v}%`} />
                   <ChartGroup>
                     <ChartBar data={chartData} />

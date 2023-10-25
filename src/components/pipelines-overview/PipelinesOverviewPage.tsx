@@ -16,10 +16,14 @@ interface PipelinesOverviewPageProps {
   match: Rmatch<any>;
 }
 
-const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = ({ match }) => {
+const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = ({
+  match,
+}) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1w'));
-  const [interval, setInterval] = React.useState(parsePrometheusDuration('30s'));
+  const [interval, setInterval] = React.useState(
+    parsePrometheusDuration('30s'),
+  );
 
   const sampleData = {
     summary: {
@@ -85,7 +89,7 @@ const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = ({ match }) 
           <span>{t('Overview')}</span>
         </h1>
       </div>
-      <Flex className='project-dropdown-label__flex'>
+      <Flex className="project-dropdown-label__flex">
         <FlexItem>
           <NameSpaceDropdown />
         </FlexItem>
@@ -96,31 +100,38 @@ const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = ({ match }) 
           <RefreshDropdown interval={interval} setInterval={setInterval} />
         </FlexItem>
       </Flex>
-      <Grid hasGutter>
-        <GridItem span={12}>
-          <PipelineRunsStatusCard
-            timespan={timespan}
-            domain={{ y: [0, 100] }}
-            summaryData={sampleData.summary}
-          />
-        </GridItem>
-      </Grid>
-      <Grid className='pipeline-overview__duration-total-plr-grid'>
-        <GridItem span={3}>
-          <PipelinesRunsDurationCard summaryData={sampleData.summary} />
-        </GridItem>
-        <GridItem span={3}>
-          <PipelinesRunsTotalCard summaryData={sampleData.summary} />
-        </GridItem>
-        <GridItem span={6}>
-          <PipelinesRunsNumbersChart timespan={timespan} domain={{ y: [0, 500] }} />
-        </GridItem>
-      </Grid>
-      <Grid hasGutter>
-        <GridItem span={12}>
-          <PipelineRunsListPage mainData={mainData} />
-        </GridItem>
-      </Grid>
+      <div className="pipeline-overview__duration-total-plr-grid">
+        <Grid hasGutter>
+          <GridItem span={12}>
+            <PipelineRunsStatusCard
+              timespan={timespan}
+              domain={{ y: [0, 100] }}
+              summaryData={sampleData.summary}
+              bordered={true}
+            />
+          </GridItem>
+
+          <GridItem span={3}>
+            <PipelinesRunsDurationCard
+              summaryData={sampleData.summary}
+              bordered={true}
+            />
+          </GridItem>
+          <GridItem span={3}>
+            <PipelinesRunsTotalCard summaryData={sampleData.summary} />
+          </GridItem>
+          <GridItem span={6}>
+            <PipelinesRunsNumbersChart
+              timespan={timespan}
+              domain={{ y: [0, 500] }}
+              bordered={true}
+            />
+          </GridItem>
+        </Grid>
+      </div>
+      <div className="pipelines-metrics__background">
+        <PipelineRunsListPage mainData={mainData} />
+      </div>
     </>
   );
 };

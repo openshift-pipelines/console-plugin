@@ -16,16 +16,16 @@ import {
   formatDate,
   getXaxisValues,
   parsePrometheusDuration,
-} from './dateTime';
+} from '../pipelines-overview/dateTime';
 
-interface PipelinesRunsNumbersChartProps {
+interface PipelinesAverageDurationProps {
   timespan?: number;
   domain?: DomainPropType;
   bordered?: boolean;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
-const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
+const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
   timespan,
   domain,
   bordered,
@@ -83,7 +83,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
         })}
       >
         <CardTitle className="pipeline-overview__number-of-plr-card__title">
-          <span>{t('Number of PipelineRuns')}</span>
+          <span>{t('Average Duration')}</span>
         </CardTitle>
         <CardBody className="pipeline-overview__number-of-plr-card__body">
           <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
@@ -98,6 +98,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
               domain={domainValue}
               domainPadding={{ x: [30, 25] }}
               height={150}
+              width={400}
               padding={{
                 top: 20,
                 bottom: 40,
@@ -122,4 +123,4 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   );
 };
 
-export default PipelinesRunsNumbersChart;
+export default PipelinesAverageDuration;

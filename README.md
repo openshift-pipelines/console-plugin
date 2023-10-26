@@ -1,63 +1,64 @@
-# OpenShift Console Plugin Template
+# OpenShift Console Plugin for Tekton CD / OpenShift Pipelines
 
-This project is a minimal template for writing a new OpenShift Console dynamic
-plugin.
+:construction: This is a WIP [dynamic plugin](https://github.com/openshift/console/tree/master/frontend/packages/console-dynamic-plugin-sdk) that extends the [OpenShift Console](https://github.com/openshift/console) by adding **Tekton CD / OpenShift Pipelines** specific features.
 
-[Dynamic plugins](https://github.com/openshift/console/tree/master/frontend/packages/console-dynamic-plugin-sdk)
-allow you to extend the
-[OpenShift UI](https://github.com/openshift/console)
-at runtime, adding custom pages and other extensions. They are based on
-[webpack module federation](https://webpack.js.org/concepts/module-federation/).
-Plugins are registered with console using the `ConsolePlugin` custom resource
-and enabled in the console operator config by a cluster administrator.
+It will be shipped and enabled automatically by the [Tekton CD / OpenShift Pipelines operator](https://github.com/tektoncd/operator).
 
-Using the latest `v1` API version of `ConsolePlugin` CRD, requires OpenShift 4.12
-and higher. For using old `v1alpha1` API version us OpenShift version 4.10 or 4.11.
+## Rough roadmap
 
-For an example of a plugin that works with OpenShift 4.11, see the `release-4.11` branch.
-For a plugin that works with OpenShift 4.10, see the `release-4.10` branch.
+* 2023 / v1: Adds a new **Dashboard** and **Metrics** tab to the Pipeline pages that shows aggregated PipelineRun stats from the [Tekton Results API](https://github.com/tektoncd/results)
+* 2024 / v2: Additional pages, like the Pipeline list and details pages are moved from the "static" [pipelines-plugin](https://github.com/openshift/console/tree/master/frontend/packages/pipelines-plugin) from the OpenShift Console into this project.
 
-[Node.js](https://nodejs.org/en/) and [yarn](https://yarnpkg.com) are required
-to build and run the example. To run OpenShift console in a container, either
+## Compatiblity
+
+This initial version of this plugin will be shipped with OpenShift Pipelines operator 1.1x and requires at least OpenShift 4.12.
+
+See also the OpenShift Pipelines [Compatibility and support matrix](https://docs.openshift.com/pipelines/latest/about/op-release-notes.html#compatibility-support-matrix_op-release-notes)
+
+## Development
+
+### Getting started
+
+Required tools:
+
+* [Node.js](https://nodejs.org/en/) v16 or newer and [yarn](https://yarnpkg.com) are required
+to build and run the example.
+* To run OpenShift console in a container, either
 [Docker](https://www.docker.com) or [podman 3.2.0+](https://podman.io) and
 [oc](https://console.redhat.com/openshift/downloads) are required.
-
-## Getting started
-
-After cloning this repo, you should update the plugin metadata such as the
-plugin name in the `consolePlugin` declaration of [package.json](package.json).
-
-```json
-"consolePlugin": {
-  "name": "console-plugin-template",
-  "version": "0.0.1",
-  "displayName": "My Plugin",
-  "description": "Enjoy this shiny, new console plugin!",
-  "exposedModules": {
-    "ExamplePage": "./components/ExamplePage"
-  },
-  "dependencies": {
-    "@console/pluginAPI": "*"
-  }
-}
-```
-
-The template adds a single example page in the Home navigation section. The
-extension is declared in the [console-extensions.json](console-extensions.json)
-file and the React component is declared in
-[src/components/ExamplePage.tsx](src/components/ExamplePage.tsx).
 
 You can run the plugin using a local development environment or build an image
 to deploy it to a cluster.
 
-## Development
 
-### Option 1: Local
+### Option 1: Local development, with a local (cloned) console
+
+This option is a good candidate if you build and run the OpenShift Console already on your machine.
+
+In one terminal window, run:
+
+```
+cd console-plugin
+yarn install
+yarn start # or yarn dev
+```
+
+In another terminal window, run:
+
+```
+cd console
+# the first time you need to build the backend and frontend with ./build.sh
+# oc login...
+# source ./contrib/oc-environment.sh
+./bin/bridge -plugins "pipeline-console-plugin=http://localhost:9001"
+```
+
+### Option 2: Local development, running a console as container
 
 In one terminal window, run:
 
 1. `yarn install`
-2. `yarn run start`
+2. `yarn start`
 
 In another terminal window, run:
 
@@ -82,7 +83,7 @@ rpm-ostree install qemu-user-static
 systemctl reboot
 ```
 
-### Option 2: Docker + VSCode Remote Container
+### Option 3: Docker + VSCode Remote Container
 
 Make sure the
 [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
@@ -94,17 +95,17 @@ cached containers will help you start developing in seconds.
 1. Create a `dev.env` file inside the `.devcontainer` folder with the correct values for your cluster:
 
 ```bash
-OC_PLUGIN_NAME=console-plugin-template
+OC_PLUGIN_NAME=pipeline-console-plugin
 OC_URL=https://api.example.com:6443
 OC_USER=kubeadmin
 OC_PASS=<password>
 ```
 
 2. `(Ctrl+Shift+P) => Remote Containers: Open Folder in Container...`
-3. `yarn run start`
+3. `yarn start`
 4. Navigate to <http://localhost:9000/example>
 
-## Docker image
+## Container image
 
 Before you can deploy your plugin on a cluster, you must build an image and
 push it to an image registry.
@@ -155,37 +156,38 @@ NOTE: When defining i18n namespace, adhere `plugin__<name-of-the-plugin>` format
 
 ## i18n
 
-The plugin template demonstrates how you can translate messages in with [react-i18next](https://react.i18next.com/). The i18n namespace must match
-the name of the `ConsolePlugin` resource with the `plugin__` prefix to avoid
-naming conflicts. For example, the plugin template uses the
-`plugin__console-plugin-template` namespace. You can use the `useTranslation` hook
-with this namespace as follows:
+The plugin use [react-i18next](https://react.i18next.com/) to translate messages.
+The i18n namespace must match the name of the `ConsolePlugin` resource with the `plugin__` prefix to avoid
+naming conflicts. For this plugin this means `plugin__pipeline-console-plugin`.
+
+All translation calls like the `useTranslation` hook must use this namespace as follows:
 
 ```tsx
 conster Header: React.FC = () => {
-  const { t } = useTranslation('plugin__console-plugin-template');
+  const { t } = useTranslation('plugin__pipeline-console-plugin');
   return <h1>{t('Hello, World!')}</h1>;
 };
 ```
 
 For labels in `console-extensions.json`, you can use the format
-`%plugin__console-plugin-template~My Label%`. Console will replace the value with
-the message for the current language from the `plugin__console-plugin-template`
+`%plugin__pipeline-console-plugin~My Label%`. Console will replace the value with
+the message for the current language from the `plugin__pipeline-console-plugin`
 namespace. For example:
 
 ```json
   {
-    "type": "console.navigation/section",
+    "type": "console.navigation/href",
     "properties": {
-      "id": "admin-demo-section",
+      "id": "pipelines-overview",
       "perspective": "admin",
-      "name": "%plugin__console-plugin-template~Plugin Template%"
+      "section": "pipelines",
+      "name": "%plugin__pipeline-console-plugin~Overview%"
     }
   }
 ```
 
 Running `yarn i18n` updates the JSON files in the `locales` folder of the
-plugin template when adding or changing messages.
+plugin when adding or changing messages.
 
 ## Linting
 

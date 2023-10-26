@@ -63,10 +63,13 @@ export const getXaxisValues = (timespan: number): number[] => {
   return xValues.slice(0, numDays);
 };
 
-export const dateFormatterNoYear = new Intl.DateTimeFormat(getLastLanguage() || undefined, {
-  month: 'short',
-  day: 'numeric',
-});
+export const dateFormatterNoYear = new Intl.DateTimeFormat(
+  getLastLanguage() || undefined,
+  {
+    month: 'short',
+    day: 'numeric',
+  },
+);
 
 export const formatDate = (date: Date) => {
   return dateFormatterNoYear.format(date);

@@ -37,7 +37,7 @@ export type TaskRunWorkspace = {
   volumeClaimTemplate?: PersistentVolumeClaimKind;
   persistentVolumeClaim?: VolumeTypePVC;
   configMap?: VolumeTypeConfigMaps;
-  emptyDir?: any;
+  emptyDir?: never;
   secret?: VolumeTypeSecret;
   subPath?: string;
 };

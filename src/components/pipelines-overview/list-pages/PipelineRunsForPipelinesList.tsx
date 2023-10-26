@@ -2,7 +2,10 @@ import * as React from 'react';
 import { EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
-import { TableColumn, VirtualizedTable } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  TableColumn,
+  VirtualizedTable,
+} from '@openshift-console/dynamic-plugin-sdk';
 import { mainDataType } from '../utils';
 import PipelineRunsForPipelinesRow from './PipelineRunsForPipelinesRow';
 
@@ -10,9 +13,9 @@ type PipelineRunsForPipelinesListProps = {
   mainData?: mainDataType[];
 };
 
-const PipelineRunsForPipelinesList: React.FC<PipelineRunsForPipelinesListProps> = ({
-  mainData,
-}) => {
+const PipelineRunsForPipelinesList: React.FC<
+  PipelineRunsForPipelinesListProps
+> = ({ mainData }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const EmptyMsg = () => (
     <EmptyState variant={EmptyStateVariant.large}>

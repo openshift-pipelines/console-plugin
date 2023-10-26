@@ -10,13 +10,17 @@ interface TimeRangeDropdownProps {
   setTimespan: (t: number) => void;
 }
 
-const TimeRangeDropdown: React.FC<TimeRangeDropdownProps> = ({ timespan, setTimespan }) => {
+const TimeRangeDropdown: React.FC<TimeRangeDropdownProps> = ({
+  timespan,
+  setTimespan,
+}) => {
   const [isOpen, setValue] = React.useState(false);
   const toggleIsOpen = React.useCallback(() => setValue((v) => !v), []);
   const setClosed = React.useCallback(() => setValue(false), []);
-  const onChange = React.useCallback((v: string) => setTimespan(parsePrometheusDuration(v)), [
-    setTimespan,
-  ]);
+  const onChange = React.useCallback(
+    (v: string) => setTimespan(parsePrometheusDuration(v)),
+    [setTimespan],
+  );
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const timeRangeOptions = TimeRangeOptions();
   return (

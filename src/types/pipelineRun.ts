@@ -113,12 +113,12 @@ export type PipelineRunResource =
 
 export type PipelineRunWorkspace = {
   name: string;
+} & {
   [volumeType: string]:
     | VolumeTypeSecret
     | VolumeTypeConfigMaps
     | VolumeTypePVC
-    | VolumeTypeClaim
-    | {};
+    | VolumeTypeClaim;
 };
 
 export type PipelineRunParam = {

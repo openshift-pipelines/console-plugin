@@ -20,7 +20,8 @@ const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
 
   const onChange = React.useCallback(
-    (v: string) => setInterval(v === OFF_KEY ? null : parsePrometheusDuration(v)),
+    (v: string) =>
+      setInterval(v === OFF_KEY ? null : parsePrometheusDuration(v)),
     [setInterval],
   );
 
@@ -37,12 +38,17 @@ const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
     '1d': t('{{count}} day', { count: 1 }),
   };
 
-  const selectedKey = interval === null ? OFF_KEY : formatPrometheusDuration(interval);
+  const selectedKey =
+    interval === null ? OFF_KEY : formatPrometheusDuration(interval);
 
   return (
     <Dropdown
       dropdownItems={_.map(intervalOptions, (name, key) => (
-        <DropdownItem component="button" key={key} onClick={() => onChange(key)}>
+        <DropdownItem
+          component="button"
+          key={key}
+          onClick={() => onChange(key)}
+        >
           {name}
         </DropdownItem>
       ))}

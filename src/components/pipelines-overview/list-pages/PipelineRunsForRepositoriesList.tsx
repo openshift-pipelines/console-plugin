@@ -4,15 +4,18 @@ import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
 import PipelineRunsForRepositoriesRow from './PipelineRunsForRepositoriesRow';
 import { mainDataType } from '../utils';
-import { TableColumn, VirtualizedTable } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  TableColumn,
+  VirtualizedTable,
+} from '@openshift-console/dynamic-plugin-sdk';
 
 type PipelineRunsForRepositoriesListProps = {
   mainData?: mainDataType[];
 };
 
-const PipelineRunsForRepositoriesList: React.FC<PipelineRunsForRepositoriesListProps> = ({
-  mainData,
-}) => {
+const PipelineRunsForRepositoriesList: React.FC<
+  PipelineRunsForRepositoriesListProps
+> = ({ mainData }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const EmptyMsg = () => (
     <EmptyState variant={EmptyStateVariant.large}>

@@ -16,8 +16,8 @@ import {
   Card,
   CardBody,
   CardTitle,
-  Flex,
-  FlexItem,
+  Grid,
+  GridItem,
   Popover,
 } from '@patternfly/react-core';
 import { chart_color_black_500 as cancelledColor } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
@@ -160,8 +160,8 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
           </span>
         </CardTitle>
         <CardBody className="pipeline-overview__pipelinerun-status-card__title">
-          <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
-            <FlexItem>
+          <Grid>
+            <GridItem xl2={6} xl={12} lg={12} md={12} sm={12}>
               <div className="pipeline-overview__pipelinerun-status-card__donut-chart-div">
                 <ChartDonut
                   constrainToVisibleArea={true}
@@ -181,8 +181,8 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                   width={350}
                 />
               </div>
-            </FlexItem>
-            <FlexItem>
+            </GridItem>
+            <GridItem xl2={5} xl={12} lg={12} md={12} sm={12}>
               <div className="pipeline-overview__pipelinerun-status-card__bar-chart-div">
                 <Chart
                   containerComponent={
@@ -214,8 +214,8 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                   </ChartGroup>
                 </Chart>
               </div>
-            </FlexItem>
-          </Flex>
+            </GridItem>
+          </Grid>
         </CardBody>
       </Card>
     </>

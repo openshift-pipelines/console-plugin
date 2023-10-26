@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
 import PipelineRunsStatusCard from './PipelineRunsStatusCard';
-import { Flex, FlexItem, Grid, GridItem } from '@patternfly/react-core';
+import { Flex, FlexItem } from '@patternfly/react-core';
 import PipelinesRunsDurationCard from './PipelineRunsDurationCard';
 import PipelinesRunsTotalCard from './PipelineRunsTotalCard';
 import PipelinesRunsNumbersChart from './PipelineRunsNumbersChart';
@@ -101,33 +101,43 @@ const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = ({
         </FlexItem>
       </Flex>
       <div className="pipeline-overview__duration-total-plr-grid">
-        <Grid hasGutter>
-          <GridItem span={12}>
-            <PipelineRunsStatusCard
-              timespan={timespan}
-              domain={{ y: [0, 100] }}
-              summaryData={sampleData.summary}
-              bordered={true}
-            />
-          </GridItem>
+        <PipelineRunsStatusCard
+          timespan={timespan}
+          domain={{ y: [0, 100] }}
+          summaryData={sampleData.summary}
+          bordered={true}
+        />
 
-          <GridItem span={3}>
+        <Flex>
+          <FlexItem
+            grow={{ default: 'grow' }}
+            className="pipelines-overview__cards"
+          >
             <PipelinesRunsDurationCard
               summaryData={sampleData.summary}
               bordered={true}
             />
-          </GridItem>
-          <GridItem span={3}>
-            <PipelinesRunsTotalCard summaryData={sampleData.summary} />
-          </GridItem>
-          <GridItem span={6}>
+          </FlexItem>
+          <FlexItem
+            grow={{ default: 'grow' }}
+            className="pipelines-overview__cards"
+          >
+            <PipelinesRunsTotalCard
+              summaryData={sampleData.summary}
+              bordered={true}
+            />
+          </FlexItem>
+          <FlexItem
+            grow={{ default: 'grow' }}
+            className="pipelines-overview__cards"
+          >
             <PipelinesRunsNumbersChart
               timespan={timespan}
               domain={{ y: [0, 500] }}
               bordered={true}
             />
-          </GridItem>
-        </Grid>
+          </FlexItem>
+        </Flex>
       </div>
       <div className="pipelines-metrics__background">
         <PipelineRunsListPage mainData={mainData} />

@@ -8,7 +8,12 @@
 
 .card-border {
   border: var(--pf-global--BorderWidth--sm) solid
-    var(--pf-global--BorderColor--light-100);
+    var(--pf-global--Color--light-300);
+}
+
+.pipelines-overview__cards {
+  margin-top: var(--pf-global--gutter);
+  margin-bottom: var(--pf-global--gutter);
 }
 
 .pipeline-overview__pipelinerun-status-card {
@@ -17,14 +22,16 @@
     padding-right: 5rem !important;
   }
 
+  &__list-page {
+    padding-bottom: 0 !important;
+  }
+
   &__donut-chart-div {
     height: 200px;
-    width: 400px;
   }
 
   &__bar-chart-div {
     height: 200px;
-    width: 600px;
   }
 }
 
@@ -58,8 +65,6 @@
 .pipeline-overview__totals-card {
   margin-left: var(--pf-global--spacer--md);
   margin-right: var(--pf-global--spacer--md);
-  border: var(--pf-global--BorderWidth--sm) solid
-    var(--pf-global--BorderColor--light-100);
 
   &__grid {
     margin-bottom: var(--pf-global--spacer--sm);
@@ -97,7 +102,6 @@
 
   &__bar-chart-div {
     height: 145px;
-    width: 450px;
   }
 }
 

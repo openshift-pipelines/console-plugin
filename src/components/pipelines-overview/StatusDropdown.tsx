@@ -24,7 +24,11 @@ const StatusDropdown = () => {
             </DropdownItem>
           ))}
           isOpen={isOpen}
-          toggle={<DropdownToggle onToggle={toggleIsOpen}>{'All statuses'}</DropdownToggle>}
+          toggle={
+            <DropdownToggle onToggle={toggleIsOpen}>
+              {'All statuses'}
+            </DropdownToggle>
+          }
         />
       </div>
     </div>

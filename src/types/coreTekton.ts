@@ -1,4 +1,7 @@
-import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  K8sResourceCommon,
+  ObjectMetadata,
+} from '@openshift-console/dynamic-plugin-sdk';
 
 export type ResourceTarget = 'inputs' | 'outputs';
 
@@ -15,7 +18,7 @@ export type TektonTaskSteps = {
   args?: string[];
   command?: string[];
   image?: string;
-  resources?: {}[] | {};
+  resources?: never[] | never;
   env?: { name: string; value: string }[];
   script?: string[];
 };
@@ -26,7 +29,7 @@ export type TaskResult = {
 };
 
 export type TektonTaskSpec = {
-  metadata?: {};
+  metadata?: ObjectMetadata;
   description?: string;
   steps: TektonTaskSteps[];
   params?: TektonParam[];
@@ -124,9 +127,9 @@ export interface Trigger {
 
 export interface Spec {
   addon: Addon;
-  config: {};
+  config: never;
   dashboard: Dashboard;
-  hub: {};
+  hub: never;
   params: Param[];
   pipeline: Pipeline;
   profile: string;

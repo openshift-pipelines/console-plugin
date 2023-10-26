@@ -188,6 +188,7 @@ export const selectorToFilter = (selector) => {
 // Devs should be careful to not cache a response that may not be complete.
 // In most situtations, caching is unnecessary.
 // Only cache a response that returns a single complete record as lists can change over time.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let CACHE: { [key: string]: [any[], RecordsList] } = {};
 export const clearCache = () => {
   CACHE = {};

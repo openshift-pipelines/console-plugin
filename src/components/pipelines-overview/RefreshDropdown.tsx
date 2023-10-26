@@ -7,7 +7,10 @@ interface RefreshDropdownProps {
   setInterval: (v: number) => void;
 }
 
-const RefreshDropdown: React.FC<RefreshDropdownProps> = ({ interval, setInterval }) => {
+const RefreshDropdown: React.FC<RefreshDropdownProps> = ({
+  interval,
+  setInterval,
+}) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   return (
     <div className="form-group">

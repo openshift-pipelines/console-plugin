@@ -1,5 +1,5 @@
-import * as express from "express";
-import { Result } from "../types";
+import * as express from 'express';
+import { Result } from '../types';
 
 const list_results: Result[] = [];
 
@@ -7,32 +7,28 @@ const app = express();
 app.use(express.json());
 
 // get all results
-app.get("/v1alpha2/parents/:parent/results", (req, res) => {
-
-  const parent = req.params.parent
-  console.log("parent", parent);
+app.get('/v1alpha2/parents/:parent/results', (req, res) => {
+  const parent = req.params.parent;
+  console.log('parent', parent);
   console.log(list_results);
   res.json(list_results);
 });
 
-  app.post("/v1alpha2/parents/:parent/results/:result_uid", (req, res) => {
+app.post('/v1alpha2/parents/:parent/results/:result_uid', (req, res) => {
+  const result_uid = req.params.result_uid;
+  console.log('result_id', result_uid);
+  const parent = req.params.parent;
+  console.log('parent', parent);
+  const res_Input: Result = req.body;
 
-    const result_uid = req.params.result_uid
-    console.log("result_id", result_uid);
-    const parent = req.params.parent
-    console.log("parent", parent);
-    const res_Input: Result = req.body;    
-  
-    list_results.push(res_Input);
-    res.status(201).json(res_Input);
-  });
-
+  list_results.push(res_Input);
+  res.status(201).json(res_Input);
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
 
 /* 
 SAMPLE POST REQUEST

@@ -13,12 +13,10 @@ import TimeRangeDropdown from './TimeRangeDropdown';
 import RefreshDropdown from './RefreshDropdown';
 
 interface PipelinesOverviewPageProps {
-  match: Rmatch<any>;
+  match: Rmatch<never>;
 }
 
-const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = ({
-  match,
-}) => {
+const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = () => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1w'));
   const [interval, setInterval] = React.useState(

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import './PipelinesOverview.scss';
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
+import { Project } from '../../types/openshift';
 
 const NameSpaceDropdown = () => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
@@ -14,26 +15,23 @@ const NameSpaceDropdown = () => {
   const setClosed = React.useCallback(() => setValue(false), []);
   const [selected, setSelected] = React.useState('All');
 
-  const [options, optionsLoaded] = useK8sWatchResource<any[]>({
+  const [projects, projectsLoaded] = useK8sWatchResource<Project[]>({
     isList: true,
     kind: 'Project',
     optional: true,
   });
 
   const optionItems = React.useMemo(() => {
-    if (!optionsLoaded) {
+    if (!projectsLoaded) {
       return [];
     }
-    const items = options.map((item) => {
-      const { name } = item.metadata;
-      return name;
-    });
+    const items = projects.map((item) => item.metadata.name);
 
     items.sort((a, b) => alphanumericCompare(a, b));
 
     items.unshift('All');
     return items;
-  }, [options, optionsLoaded]);
+  }, [projects, projectsLoaded]);
 
   return (
     <>
@@ -53,7 +51,9 @@ const NameSpaceDropdown = () => {
         ))}
         isOpen={isOpen}
         onSelect={setClosed}
-        toggle={<DropdownToggle onToggle={toggleIsOpen}>{selected}</DropdownToggle>}
+        toggle={
+          <DropdownToggle onToggle={toggleIsOpen}>{selected}</DropdownToggle>
+        }
         isFullHeight={false}
         className="pipeline-overview__variable-dropdown"
       />

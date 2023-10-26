@@ -33,24 +33,26 @@ export type mainDataType = {
 
 export const TimeRangeOptions = () => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
-  return ({
-  '1d': t('1 day'),
-  '3d': t('3 days'),
-  '1w': t('1 week'),
-  '2w': t('2 weeks'),
-  '3w': t('3 weeks'),
-  '4w': t('4 weeks'),
-})};
+  return {
+    '1d': t('1 day'),
+    '3d': t('3 days'),
+    '1w': t('1 week'),
+    '2w': t('2 weeks'),
+    '3w': t('3 weeks'),
+    '4w': t('4 weeks'),
+  };
+};
 
 export const StatusOptions = () => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
-  return ({
+  return {
     Succeeded: t('Succeeded'),
-  Failed: t('Failed'),
-  Running: t('Running'),
-  Pending: t('Pending'),
-  Cancelled: t('Cancelled'),
-})};
+    Failed: t('Failed'),
+    Running: t('Running'),
+    Pending: t('Pending'),
+    Cancelled: t('Cancelled'),
+  };
+};
 
 export const useBoolean = (
   initialValue: boolean,
@@ -64,4 +66,5 @@ export const useBoolean = (
 
 export const LAST_LANGUAGE_LOCAL_STORAGE_KEY = 'bridge/last-language';
 
-export const getLastLanguage = (): string => localStorage.getItem(LAST_LANGUAGE_LOCAL_STORAGE_KEY);
+export const getLastLanguage = (): string =>
+  localStorage.getItem(LAST_LANGUAGE_LOCAL_STORAGE_KEY);

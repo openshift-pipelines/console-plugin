@@ -6,6 +6,7 @@ import { DomainPropType, DomainTuple } from 'victory-core';
 import {
   Chart,
   ChartAxis,
+  ChartAxisProps,
   ChartBar,
   ChartGroup,
   ChartThemeColor,
@@ -60,7 +61,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   }
 
   const xTickFormat = (d) => formatDate(d);
-  let xAxisStyle: any = {
+  let xAxisStyle: ChartAxisProps['style'] = {
     tickLabels: { fill: 'var(--pf-global--Color--100)' },
   };
   if (tickValues.length > 7) {

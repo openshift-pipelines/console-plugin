@@ -3,129 +3,128 @@
  * Do not make direct changes to the file.
  */
 
-
 export interface paths {
-  "/v1alpha2/parents/{parent}/results": {
+  '/v1alpha2/parents/{parent}/results': {
     /**
      * Get the list of the Results
      * @description Results can be read across parents by specifying `-` as the `parent`. This is useful for listing all results stored in the system without prior knowledge about the available parents.
      */
-    get: operations["list_results_by_parent_name"];
+    get: operations['list_results_by_parent_name'];
     parameters: {
       query?: {
-        filter?: components["parameters"]["filter"];
-        page_token?: components["parameters"]["page_token"];
-        page_size?: components["parameters"]["page_size"];
-        order_by?: components["parameters"]["order_by"];
+        filter?: components['parameters']['filter'];
+        page_token?: components['parameters']['page_token'];
+        page_size?: components['parameters']['page_size'];
+        order_by?: components['parameters']['order_by'];
       };
       path: {
-        parent: components["parameters"]["parent"];
+        parent: components['parameters']['parent'];
       };
     };
   };
-  "/v1alpha2/parents/{parent}/results/{result_uid}/records/{record_uid}": {
+  '/v1alpha2/parents/{parent}/results/{result_uid}/records/{record_uid}': {
     /** Get a record given uid */
-    get: operations["get_record_by_uid"];
+    get: operations['get_record_by_uid'];
     /** Create record with given uid */
-    post: operations["create_record_by_uid"];
+    post: operations['create_record_by_uid'];
     /** Delete record given the uid */
-    delete: operations["delete_record_by_uid"];
+    delete: operations['delete_record_by_uid'];
     /** Update a record given the uid */
     patch: {
       parameters: {
         path: {
-          parent: components["parameters"]["parent"];
-          result_uid: components["parameters"]["result_uid"];
-          record_uid: components["parameters"]["record_uid"];
+          parent: components['parameters']['parent'];
+          result_uid: components['parameters']['result_uid'];
+          record_uid: components['parameters']['record_uid'];
         };
       };
       /** @description The record to be updated. */
       requestBody: {
         content: {
-          "application/json": components["schemas"]["Record"];
+          'application/json': components['schemas']['Record'];
         };
       };
       responses: {
         /** @description Default response */
         200: {
           content: {
-            "application/json": components["schemas"]["Record"];
+            'application/json': components['schemas']['Record'];
           };
         };
       };
     };
     parameters: {
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
-        record_uid: components["parameters"]["record_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
+        record_uid: components['parameters']['record_uid'];
       };
     };
   };
-  "/v1alpha2/parents/{parent}/results/{result_uid}": {
+  '/v1alpha2/parents/{parent}/results/{result_uid}': {
     /** Get a single result given the UID */
-    get: operations["get_result_by_uid"];
+    get: operations['get_result_by_uid'];
     /** Create a Result given data and UID */
-    post: operations["create_result_by_uid"];
+    post: operations['create_result_by_uid'];
     /** Delete a particular result using UID */
-    delete: operations["delete_result_by_uid"];
+    delete: operations['delete_result_by_uid'];
     /** Update result given the UID */
-    patch: operations["update_result_by_uid"];
+    patch: operations['update_result_by_uid'];
     parameters: {
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
       };
     };
   };
-  "/v1alpha2/parents/{parent}/results/{result_uid}/logs": {
+  '/v1alpha2/parents/{parent}/results/{result_uid}/logs': {
     /**
      * List Logs given the Result UID
      * @description Logs can be read across Results by specifying `-` as the `result_uid` or across parents by specifying `-` as the `parent`. (e.g., **default/results/-** or **-/results/-**). This can be used to read and filter matching Logs without knowing the exact Result name.
      */
-    get: operations["list_logs_by_result_uid"];
+    get: operations['list_logs_by_result_uid'];
     parameters: {
       query?: {
-        filter?: components["parameters"]["filter"];
-        page_size?: components["parameters"]["page_size"];
-        page_token?: components["parameters"]["page_token"];
-        order_by?: components["parameters"]["order_by"];
+        filter?: components['parameters']['filter'];
+        page_size?: components['parameters']['page_size'];
+        page_token?: components['parameters']['page_token'];
+        order_by?: components['parameters']['order_by'];
       };
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
       };
     };
   };
-  "/v1alpha2/parents/{parent}/results/{result_uid}/logs/{log_uid}": {
+  '/v1alpha2/parents/{parent}/results/{result_uid}/logs/{log_uid}': {
     /** Get a Log given UID */
-    get: operations["get_log_by_uid"];
+    get: operations['get_log_by_uid'];
     /** Delete a log given the UID */
-    delete: operations["delete_log_by_uid"];
+    delete: operations['delete_log_by_uid'];
     parameters: {
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
-        log_uid: components["parameters"]["log_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
+        log_uid: components['parameters']['log_uid'];
       };
     };
   };
-  "/v1alpha2/parents/{parent}/results/{result_uid}/records": {
+  '/v1alpha2/parents/{parent}/results/{result_uid}/records': {
     /**
      * Get list of records
      * @description Records can be read across Results by specifying `-` as the `result_uid` or across parents by specifying `-` as the `parent` . (e.g., **default/results/-** or **-/results/-**). This can be used to read and filter matching Records without knowing the exact Result name.
      */
-    get: operations["get_records_by_results_uid"];
+    get: operations['get_records_by_results_uid'];
     parameters: {
       query?: {
-        filter?: components["parameters"]["filter"];
-        order_by?: components["parameters"]["order_by"];
-        page_size?: components["parameters"]["page_size"];
-        page_token?: components["parameters"]["page_token"];
+        filter?: components['parameters']['filter'];
+        order_by?: components['parameters']['order_by'];
+        page_size?: components['parameters']['page_size'];
+        page_token?: components['parameters']['page_token'];
       };
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
       };
     };
   };
@@ -142,12 +141,15 @@ export interface components {
      * * Log Record: `results.tekton.dev/v1alpha2.Log`
      * @enum {string}
      */
-    RecordType: "tekton.dev/v1beta1.PipelineRun" | "tekton.dev/v1beta1.TaskRun" | "results.tekton.dev/v1alpha2.Log";
+    RecordType:
+      | 'tekton.dev/v1beta1.PipelineRun'
+      | 'tekton.dev/v1beta1.TaskRun'
+      | 'results.tekton.dev/v1alpha2.Log';
     /**
      * @description Completion status of the Record.
      * @enum {string}
      */
-    Status: "UNKNOWN" | "SUCCESS" | "FAILURE" | "TIMEOUT" | "CANCELLED";
+    Status: 'UNKNOWN' | 'SUCCESS' | 'FAILURE' | 'TIMEOUT' | 'CANCELLED';
     /** @description Summary of the log properties. */
     LogSummary: {
       /** @description the name of the Record this summary represents. */
@@ -180,7 +182,7 @@ export interface components {
        * @example pipelines.tekton.dev/PipelineRun
        */
       type: string;
-      status: components["schemas"]["Status"];
+      status: components['schemas']['Status'];
       /** Format: date-time */
       startTime: string;
       /** Format: date-time */
@@ -196,7 +198,7 @@ export interface components {
        * @example VGhpcyBpcyBhbiBleG1hcGxlIG9mIHJlY29yZCBkYXRhCg==
        */
       value: string;
-      type: components["schemas"]["RecordType"];
+      type: components['schemas']['RecordType'];
     };
     /** @description Record belonging to a Result. Typically will be Tekton TaskRun/PipelineRun, but may also include other execution information e.g alternative configs, DSLs, input payloads, post-execution actions etc. */
     Record: {
@@ -242,7 +244,7 @@ export interface components {
        * @description Server assigned timestamp for when the record was updated.
        */
       updateTime?: string;
-      data: components["schemas"]["Any"];
+      data: components['schemas']['Any'];
     };
     /** @description Results are aggregators of Records, allowing users to refer to groups of Records as a single entity. */
     Result: {
@@ -259,7 +261,7 @@ export interface components {
        */
       name: string;
       /** @description High level overview of the root record for the Result. This is provided as a convinence for clients to query Record state without needing to make multiple calls to fetch the underlying Records. */
-      summary?: components["schemas"]["RecordSummary"];
+      summary?: components['schemas']['RecordSummary'];
       /**
        * Format: date-time
        * @deprecated
@@ -299,8 +301,8 @@ export interface components {
     /** @description List of Results with nextPageToken */
     ResultsList: {
       content: {
-        "application/json": {
-          results: components["schemas"]["Result"][];
+        'application/json': {
+          results: components['schemas']['Result'][];
           nextPageToken: string;
         };
       };
@@ -308,8 +310,8 @@ export interface components {
     /** @description List of Records with nextPageToken. */
     RecordsList: {
       content: {
-        "application/json": {
-          records: components["schemas"]["Record"][];
+        'application/json': {
+          records: components['schemas']['Record'][];
           nextPageToken: string;
         };
       };
@@ -334,8 +336,7 @@ export interface components {
     order_by?: string;
   };
   requestBodies: never;
-  headers: {
-  };
+  headers: never;
   pathItems: never;
 }
 
@@ -344,7 +345,6 @@ export type $defs = Record<string, never>;
 export type external = Record<string, never>;
 
 export interface operations {
-
   /**
    * Get the list of the Results
    * @description Results can be read across parents by specifying `-` as the `parent`. This is useful for listing all results stored in the system without prior knowledge about the available parents.
@@ -352,33 +352,33 @@ export interface operations {
   list_results_by_parent_name: {
     parameters: {
       query?: {
-        filter?: components["parameters"]["filter"];
-        page_token?: components["parameters"]["page_token"];
-        page_size?: components["parameters"]["page_size"];
-        order_by?: components["parameters"]["order_by"];
+        filter?: components['parameters']['filter'];
+        page_token?: components['parameters']['page_token'];
+        page_size?: components['parameters']['page_size'];
+        order_by?: components['parameters']['order_by'];
       };
       path: {
-        parent: components["parameters"]["parent"];
+        parent: components['parameters']['parent'];
       };
     };
     responses: {
-      200: components["responses"]["ResultsList"];
+      200: components['responses']['ResultsList'];
     };
   };
   /** Get a record given uid */
   get_record_by_uid: {
     parameters: {
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
-        record_uid: components["parameters"]["record_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
+        record_uid: components['parameters']['record_uid'];
       };
     };
     responses: {
       /** @description Default response */
       200: {
         content: {
-          "application/json": components["schemas"]["Record"];
+          'application/json': components['schemas']['Record'];
         };
       };
     };
@@ -387,22 +387,22 @@ export interface operations {
   create_record_by_uid: {
     parameters: {
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
-        record_uid: components["parameters"]["record_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
+        record_uid: components['parameters']['record_uid'];
       };
     };
     /** @description The record to be created. */
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Record"];
+        'application/json': components['schemas']['Record'];
       };
     };
     responses: {
       /** @description Default response */
       200: {
         content: {
-          "application/json": components["schemas"]["Record"];
+          'application/json': components['schemas']['Record'];
         };
       };
     };
@@ -411,15 +411,15 @@ export interface operations {
   delete_record_by_uid: {
     parameters: {
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
-        record_uid: components["parameters"]["record_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
+        record_uid: components['parameters']['record_uid'];
       };
     };
     responses: {
       200: {
         content: {
-          "application/json": Record<string, never>;
+          'application/json': Record<string, never>;
         };
       };
     };
@@ -428,15 +428,15 @@ export interface operations {
   get_result_by_uid: {
     parameters: {
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
       };
     };
     responses: {
       /** @description Default response */
       200: {
         content: {
-          "application/json": components["schemas"]["Result"];
+          'application/json': components['schemas']['Result'];
         };
       };
     };
@@ -445,21 +445,21 @@ export interface operations {
   create_result_by_uid: {
     parameters: {
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
       };
     };
     /** @description The result to be created */
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Result"];
+        'application/json': components['schemas']['Result'];
       };
     };
     responses: {
       /** @description Default response */
       200: {
         content: {
-          "application/json": components["schemas"]["Result"];
+          'application/json': components['schemas']['Result'];
         };
       };
     };
@@ -468,15 +468,15 @@ export interface operations {
   delete_result_by_uid: {
     parameters: {
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
       };
     };
     responses: {
       /** @description Default response */
       200: {
         content: {
-          "application/json": components["schemas"]["Result"];
+          'application/json': components['schemas']['Result'];
         };
       };
     };
@@ -485,21 +485,21 @@ export interface operations {
   update_result_by_uid: {
     parameters: {
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
       };
     };
     /** @description The result to be updated. */
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Result"];
+        'application/json': components['schemas']['Result'];
       };
     };
     responses: {
       /** @description Default response */
       200: {
         content: {
-          "application/json": components["schemas"]["Result"];
+          'application/json': components['schemas']['Result'];
         };
       };
     };
@@ -511,33 +511,33 @@ export interface operations {
   list_logs_by_result_uid: {
     parameters: {
       query?: {
-        filter?: components["parameters"]["filter"];
-        page_size?: components["parameters"]["page_size"];
-        page_token?: components["parameters"]["page_token"];
-        order_by?: components["parameters"]["order_by"];
+        filter?: components['parameters']['filter'];
+        page_size?: components['parameters']['page_size'];
+        page_token?: components['parameters']['page_token'];
+        order_by?: components['parameters']['order_by'];
       };
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
       };
     };
     responses: {
-      200: components["responses"]["RecordsList"];
+      200: components['responses']['RecordsList'];
     };
   };
   /** Get a Log given UID */
   get_log_by_uid: {
     parameters: {
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
-        log_uid: components["parameters"]["log_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
+        log_uid: components['parameters']['log_uid'];
       };
     };
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["Log"];
+          'application/json': components['schemas']['Log'];
         };
       };
     };
@@ -546,15 +546,15 @@ export interface operations {
   delete_log_by_uid: {
     parameters: {
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
-        log_uid: components["parameters"]["log_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
+        log_uid: components['parameters']['log_uid'];
       };
     };
     responses: {
       200: {
         content: {
-          "application/json": Record<string, never>;
+          'application/json': Record<string, never>;
         };
       };
     };
@@ -566,18 +566,18 @@ export interface operations {
   get_records_by_results_uid: {
     parameters: {
       query?: {
-        filter?: components["parameters"]["filter"];
-        order_by?: components["parameters"]["order_by"];
-        page_size?: components["parameters"]["page_size"];
-        page_token?: components["parameters"]["page_token"];
+        filter?: components['parameters']['filter'];
+        order_by?: components['parameters']['order_by'];
+        page_size?: components['parameters']['page_size'];
+        page_token?: components['parameters']['page_token'];
       };
       path: {
-        parent: components["parameters"]["parent"];
-        result_uid: components["parameters"]["result_uid"];
+        parent: components['parameters']['parent'];
+        result_uid: components['parameters']['result_uid'];
       };
     };
     responses: {
-      200: components["responses"]["RecordsList"];
+      200: components['responses']['RecordsList'];
     };
   };
 }

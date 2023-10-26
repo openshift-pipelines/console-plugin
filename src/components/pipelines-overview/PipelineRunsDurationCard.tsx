@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import {
   HistoryIcon,
   InfoCircleIcon,

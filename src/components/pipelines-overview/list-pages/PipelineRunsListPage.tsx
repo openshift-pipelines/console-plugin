@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardBody,
@@ -35,7 +35,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
         'card-border': bordered,
       })}
     >
-      <CardBody className="pipeline-overview__pipelinerun-status-card__title">
+      <CardBody className="pipeline-overview__pipelinerun-status-card__list-page">
         <Grid hasGutter className="pipeline-overview__listpage__grid">
           <GridItem span={9} className="pipeline-overview__listpage__griditem">
             <StatusDropdown />

@@ -18,6 +18,7 @@ interface PipelinesOverviewPageProps {
 
 const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = () => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const [namespace, setNamespace] = React.useState('All');
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1w'));
   const [interval, setInterval] = React.useState(
     parsePrometheusDuration('30s'),
@@ -89,7 +90,7 @@ const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = () => {
       </div>
       <Flex className="project-dropdown-label__flex">
         <FlexItem>
-          <NameSpaceDropdown />
+          <NameSpaceDropdown selected={namespace} setSelected={setNamespace} />
         </FlexItem>
         <FlexItem>
           <TimeRangeDropdown timespan={timespan} setTimespan={setTimespan} />
@@ -130,7 +131,9 @@ const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = () => {
             className="pipelines-overview__cards"
           >
             <PipelinesRunsNumbersChart
+              namespace={namespace}
               timespan={timespan}
+              interval={interval}
               domain={{ y: [0, 500] }}
               bordered={true}
             />

@@ -8,12 +8,20 @@ import './PipelinesOverview.scss';
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { Project } from '../../types/openshift';
 
-const NameSpaceDropdown = () => {
+interface NameSpaceDropdownProps {
+  selected: string;
+  setSelected: (n: string) => void;
+}
+
+const NameSpaceDropdown: React.FC<NameSpaceDropdownProps> = ({
+  selected,
+  setSelected,
+}) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [isOpen, setValue] = React.useState(false);
   const toggleIsOpen = React.useCallback(() => setValue((v) => !v), []);
   const setClosed = React.useCallback(() => setValue(false), []);
-  const [selected, setSelected] = React.useState('All');
+  //const [selected, setSelected] = React.useState('All');
 
   const [projects, projectsLoaded] = useK8sWatchResource<Project[]>({
     isList: true,

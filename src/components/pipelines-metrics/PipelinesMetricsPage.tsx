@@ -9,14 +9,22 @@ import TimeRangeDropdown from '../pipelines-overview/TimeRangeDropdown';
 import RefreshDropdown from '../pipelines-overview/RefreshDropdown';
 import PipelinesAverageDuration from './PipelinesAverageDuration';
 import './PipelinesMetrics.scss';
+import { RouteComponentProps } from 'react-router-dom';
 
-const PipelinesMetricsPage: React.FC = () => {
+export type PipelinesMetricsPageProps = RouteComponentProps<{
+  ns: string;
+  name: string;
+}>;
+
+const PipelinesMetricsPage: React.FC<PipelinesMetricsPageProps> = ({
+  match,
+}) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1w'));
   const [interval, setInterval] = React.useState(
     parsePrometheusDuration('30s'),
   );
-
+  const { ns: namespace } = match.params;
   const sampleData = {
     summary: {
       total: 120,
@@ -74,6 +82,7 @@ const PipelinesMetricsPage: React.FC = () => {
             grow={{ default: 'grow' }}
           >
             <PipelinesRunsNumbersChart
+              namespace={namespace}
               timespan={timespan}
               domain={{ y: [0, 500] }}
             />

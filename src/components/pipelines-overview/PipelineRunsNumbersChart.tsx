@@ -18,16 +18,38 @@ import {
   getXaxisValues,
   parsePrometheusDuration,
 } from './dateTime';
+import { useTRPipelineRuns } from '../hooks/useTektonResults';
 
 interface PipelinesRunsNumbersChartProps {
+  namespace?: string;
   timespan?: number;
+  interval?: number;
   domain?: DomainPropType;
   bordered?: boolean;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
+const getChartData = (namespace: string, days: number[]) => {
+  const data = useTRPipelineRuns(namespace);
+
+  const chartData = days.map((value) => {
+    return {
+      x: value,
+      y: data[0].filter((d) => {
+        return (
+          new Date(d.status.startTime).toDateString() ==
+          new Date(value).toDateString()
+        );
+      }).length,
+    };
+  });
+  return chartData;
+};
+
 const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
+  namespace,
   timespan,
+  interval,
   domain,
   bordered,
 }) => {
@@ -42,9 +64,10 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   };
   const tickValues = getXaxisValues(timespan);
 
-  const chartData = tickValues.map((value) => {
-    return { x: value, y: 100 };
-  });
+  const chartData = getChartData(namespace, tickValues);
+
+  //TO DO add interval for useInterval hook
+  console.log(interval);
 
   if (!domainY) {
     let minY: number = _.minBy(chartData, 'y')?.y ?? 0;

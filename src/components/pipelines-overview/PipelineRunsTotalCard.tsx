@@ -11,7 +11,7 @@ import {
   GridItem,
   Label,
 } from '@patternfly/react-core';
-import { SummaryProps } from './utils';
+import { SummaryProps, useInterval } from './utils';
 import { PipelineModel, RepositoryModel } from '../../models';
 import { getResultsSummary } from '../utils/summary-api';
 import { DataType } from '../utils/tekton-results';
@@ -44,51 +44,44 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
   }
 
   const date = getDropDownDate(timespan).toISOString();
-  const filter = `data.metadata.labels.contains("pipelinesascode.tekton.dev/repository")&&data.status.startTime>timestamp("${date}")`;
 
-  React.useEffect(() => {
+  const getSummaryData = (filter, setData) => {
     getResultsSummary(namespace, {
       summary: 'total',
       data_type: DataType.PipelineRun,
       filter,
     })
       .then((response) => {
-        setRepoRun(response.summary[0].total);
+        setData(response.summary[0].total);
       })
       .catch((e) => {
         console.error('Error in getSummary', e);
       });
-  }, [namespace, timespan]);
+  };
+
+  const filter = `data.metadata.labels.contains("pipelinesascode.tekton.dev/repository")&&data.status.startTime>timestamp("${date}")`;
+  useInterval(
+    () => getSummaryData(filter, setRepoRun),
+    interval,
+    namespace,
+    date,
+  );
 
   const filter2 = `!data.metadata.labels.contains("pipelinesascode.tekton.dev/repository")&&data.status.startTime>timestamp("${date}")`;
-  React.useEffect(() => {
-    getResultsSummary(namespace, {
-      summary: 'total',
-      data_type: DataType.PipelineRun,
-      filter: filter2,
-    })
-      .then((response) => {
-        setPlrRun(response.summary[0].total);
-      })
-      .catch((e) => {
-        console.error('Error in getSummary', e);
-      });
-  }, [namespace, timespan]);
+  useInterval(
+    () => getSummaryData(filter2, setPlrRun),
+    interval,
+    namespace,
+    date,
+  );
 
   const filter3 = `data.status.startTime>timestamp("${date}")`;
-  React.useEffect(() => {
-    getResultsSummary(namespace, {
-      summary: 'total',
-      data_type: DataType.PipelineRun,
-      filter: filter3,
-    })
-      .then((response) => {
-        setTotalRun(response.summary[0].total);
-      })
-      .catch((e) => {
-        console.error('Error in getSummary', e);
-      });
-  }, [namespace, timespan]);
+  useInterval(
+    () => getSummaryData(filter3, setTotalRun),
+    interval,
+    namespace,
+    date,
+  );
 
   return (
     <>

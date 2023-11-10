@@ -70,6 +70,7 @@ const PipelinesMetricsPage: React.FC = () => {
           summaryData={sampleData.summary}
           bordered={false}
           namespace={namespace}
+          interval={interval}
         />
 
         <Flex>

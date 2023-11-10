@@ -40,6 +40,7 @@ const TimeRangeDropdown: React.FC<TimeRangeDropdownProps> = ({
               {name}
             </DropdownItem>
           ))}
+          className="pipeline-overview__variable-dropdown"
           isOpen={isOpen}
           toggle={
             <DropdownToggle onToggle={toggleIsOpen}>

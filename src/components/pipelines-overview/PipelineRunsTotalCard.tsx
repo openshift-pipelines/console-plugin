@@ -13,17 +13,81 @@ import {
 } from '@patternfly/react-core';
 import { SummaryProps } from './utils';
 import { PipelineModel, RepositoryModel } from '../../models';
+import { getResultsSummary } from '../utils/summary-api';
+import { DataType } from '../utils/tekton-results';
+import { ALL_NAMESPACES_KEY } from '../../consts';
+import { getDropDownDate } from './dateTime';
 
 interface PipelinesRunsDurationProps {
-  summaryData: SummaryProps;
+  namespace: string;
+  timespan: number;
+  interval: number;
+  summaryData?: SummaryProps;
   bordered?: boolean;
 }
 
 const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
-  summaryData,
+  namespace,
+  timespan,
+  interval,
   bordered,
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
+
+  const [totalRun, setTotalRun] = React.useState(0);
+  const [plrRun, setPlrRun] = React.useState(0);
+  const [repoRun, setRepoRun] = React.useState(0);
+
+  if (namespace == ALL_NAMESPACES_KEY) {
+    namespace = '-';
+  }
+
+  const date = getDropDownDate(timespan).toISOString();
+  const filter = `data.metadata.labels.contains("pipelinesascode.tekton.dev/repository")&&data.status.startTime>timestamp("${date}")`;
+
+  React.useEffect(() => {
+    getResultsSummary(namespace, {
+      summary: 'total',
+      data_type: DataType.PipelineRun,
+      filter,
+    })
+      .then((response) => {
+        setRepoRun(response.summary[0].total);
+      })
+      .catch((e) => {
+        console.error('Error in getSummary', e);
+      });
+  }, [namespace, timespan]);
+
+  const filter2 = `!data.metadata.labels.contains("pipelinesascode.tekton.dev/repository")&&data.status.startTime>timestamp("${date}")`;
+  React.useEffect(() => {
+    getResultsSummary(namespace, {
+      summary: 'total',
+      data_type: DataType.PipelineRun,
+      filter: filter2,
+    })
+      .then((response) => {
+        setPlrRun(response.summary[0].total);
+      })
+      .catch((e) => {
+        console.error('Error in getSummary', e);
+      });
+  }, [namespace, timespan]);
+
+  const filter3 = `data.status.startTime>timestamp("${date}")`;
+  React.useEffect(() => {
+    getResultsSummary(namespace, {
+      summary: 'total',
+      data_type: DataType.PipelineRun,
+      filter: filter3,
+    })
+      .then((response) => {
+        setTotalRun(response.summary[0].total);
+      })
+      .catch((e) => {
+        console.error('Error in getSummary', e);
+      });
+  }, [namespace, timespan]);
 
   return (
     <>
@@ -51,7 +115,7 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
             </GridItem>
             <GridItem span={3}>
               <span className="pipeline-overview__totals-card__value">
-                {summaryData['runs-in-pipelines']}
+                {plrRun}
               </span>
             </GridItem>
           </Grid>
@@ -69,7 +133,7 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
             </GridItem>
             <GridItem span={3}>
               <span className="pipeline-overview__totals-card__value">
-                {summaryData['runs-in-repositories']}
+                {repoRun}
               </span>
             </GridItem>
           </Grid>
@@ -82,8 +146,7 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
             </GridItem>
             <GridItem span={3}>
               <span className="pipeline-overview__totals-card__value">
-                {summaryData['runs-in-pipelines'] +
-                  summaryData['runs-in-repositories']}
+                {totalRun}
               </span>
             </GridItem>
           </Grid>

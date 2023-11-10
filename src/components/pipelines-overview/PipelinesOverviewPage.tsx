@@ -11,6 +11,7 @@ import NameSpaceDropdown from './NamespaceDropdown';
 import PipelineRunsListPage from './list-pages/PipelineRunsListPage';
 import TimeRangeDropdown from './TimeRangeDropdown';
 import RefreshDropdown from './RefreshDropdown';
+import { useActiveNamespace } from '@openshift-console/dynamic-plugin-sdk';
 
 interface PipelinesOverviewPageProps {
   match: Rmatch<never>;
@@ -18,19 +19,27 @@ interface PipelinesOverviewPageProps {
 
 const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = () => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const [activeNamespace, setActiveNamespace] = useActiveNamespace();
+
+  const [namespace, setNamespace] = React.useState(activeNamespace);
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1w'));
   const [interval, setInterval] = React.useState(
     parsePrometheusDuration('30s'),
   );
 
+  React.useEffect(() => {
+    setActiveNamespace(namespace);
+  }, [namespace]);
+
+  // TO-DO delete the sample data
   const sampleData = {
     summary: {
       total: 120,
       'avg-duration': '54m',
-      success: 76,
+      succeeded: 76,
       failed: 24,
-      pending: 3,
-      running: 3,
+      completed: 3,
+      unkwown: 3,
       cancelled: 14,
       'max-duration': '2m 8s',
       'total-duration': '1h 23m',
@@ -89,7 +98,7 @@ const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = () => {
       </div>
       <Flex className="project-dropdown-label__flex">
         <FlexItem>
-          <NameSpaceDropdown />
+          <NameSpaceDropdown selected={namespace} setSelected={setNamespace} />
         </FlexItem>
         <FlexItem>
           <TimeRangeDropdown timespan={timespan} setTimespan={setTimespan} />
@@ -112,7 +121,9 @@ const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = () => {
             className="pipelines-overview__cards"
           >
             <PipelinesRunsDurationCard
-              summaryData={sampleData.summary}
+              namespace={namespace}
+              timespan={timespan}
+              interval={interval}
               bordered={true}
             />
           </FlexItem>
@@ -121,6 +132,9 @@ const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = () => {
             className="pipelines-overview__cards"
           >
             <PipelinesRunsTotalCard
+              namespace={namespace}
+              timespan={timespan}
+              interval={interval}
               summaryData={sampleData.summary}
               bordered={true}
             />
@@ -130,7 +144,9 @@ const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = () => {
             className="pipelines-overview__cards"
           >
             <PipelinesRunsNumbersChart
+              namespace={namespace}
               timespan={timespan}
+              interval={interval}
               domain={{ y: [0, 500] }}
               bordered={true}
             />

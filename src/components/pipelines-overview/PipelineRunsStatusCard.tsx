@@ -106,19 +106,19 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   const donutData = [
     {
       x: t('Succeeded'),
-      y: Math.round((100 * summaryData.success) / summaryData.total),
+      y: Math.round((100 * summaryData.succeeded) / summaryData.total),
     },
     {
       x: t('Failed'),
       y: Math.round((100 * summaryData.failed) / summaryData.total),
     },
     {
-      x: t('Running'),
-      y: Math.round((100 * summaryData.running) / summaryData.total),
+      x: t('Unkwown'),
+      y: Math.round((100 * summaryData.unknown) / summaryData.total),
     },
     {
-      x: t('Pending'),
-      y: Math.round((100 * summaryData.pending) / summaryData.total),
+      x: t('Completed'),
+      y: Math.round((100 * summaryData.completed) / summaryData.total),
     },
     {
       x: t('Cancelled'),
@@ -178,7 +178,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                     top: 20,
                   }}
                   subTitle={t('Succeeded')}
-                  title={`${summaryData.success}/${summaryData.total}`}
+                  title={`${summaryData.succeeded}/${summaryData.total}`}
                   width={350}
                 />
               </div>

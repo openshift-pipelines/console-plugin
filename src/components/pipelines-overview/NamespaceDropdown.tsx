@@ -7,13 +7,21 @@ import { useTranslation } from 'react-i18next';
 import './PipelinesOverview.scss';
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { Project } from '../../types/openshift';
+import { ALL_NAMESPACES_KEY } from '../../consts';
 
-const NameSpaceDropdown = () => {
+interface NameSpaceDropdownProps {
+  selected: string;
+  setSelected: (n: string) => void;
+}
+
+const NameSpaceDropdown: React.FC<NameSpaceDropdownProps> = ({
+  selected,
+  setSelected,
+}) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [isOpen, setValue] = React.useState(false);
   const toggleIsOpen = React.useCallback(() => setValue((v) => !v), []);
   const setClosed = React.useCallback(() => setValue(false), []);
-  const [selected, setSelected] = React.useState('All');
 
   const [projects, projectsLoaded] = useK8sWatchResource<Project[]>({
     isList: true,
@@ -21,15 +29,26 @@ const NameSpaceDropdown = () => {
     optional: true,
   });
 
+  const allNamespacesTitle = t('All');
+
   const optionItems = React.useMemo(() => {
     if (!projectsLoaded) {
       return [];
     }
-    const items = projects.map((item) => item.metadata.name);
+    const items = projects.map((item) => {
+      const { name } = item.metadata;
+      return { title: name, key: name };
+    });
 
-    items.sort((a, b) => alphanumericCompare(a, b));
+    if (
+      !items.some((option) => option.title === selected) &&
+      selected !== ALL_NAMESPACES_KEY
+    ) {
+      items.push({ title: selected, key: selected }); // Add current namespace if it isn't included
+    }
+    items.sort((a, b) => alphanumericCompare(a.title, b.title));
 
-    items.unshift('All');
+    items.unshift({ title: allNamespacesTitle, key: ALL_NAMESPACES_KEY });
     return items;
   }, [projects, projectsLoaded]);
 
@@ -42,17 +61,19 @@ const NameSpaceDropdown = () => {
           <DropdownItem
             component="button"
             key={key}
-            onClick={() => setSelected(name)}
+            onClick={() => setSelected(name.key)}
             listItemClassName={'max-height-menu'}
             className={'max-height-menu'}
           >
-            {name}
+            {name.title}
           </DropdownItem>
         ))}
         isOpen={isOpen}
         onSelect={setClosed}
         toggle={
-          <DropdownToggle onToggle={toggleIsOpen}>{selected}</DropdownToggle>
+          <DropdownToggle onToggle={toggleIsOpen}>
+            {selected !== ALL_NAMESPACES_KEY ? selected : allNamespacesTitle}
+          </DropdownToggle>
         }
         isFullHeight={false}
         className="pipeline-overview__variable-dropdown"

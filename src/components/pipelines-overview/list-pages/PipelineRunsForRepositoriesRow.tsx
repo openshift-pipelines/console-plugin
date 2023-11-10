@@ -1,23 +1,36 @@
 import * as React from 'react';
-import { mainDataType } from '../utils';
-import { RowProps } from '@openshift-console/dynamic-plugin-sdk';
+import { ResourceLink, RowProps, useActiveNamespace } from '@openshift-console/dynamic-plugin-sdk';
+import { SummaryProps, getReferenceForModel, listPageTableColumnClasses as tableColumnClasses } from '../utils';
+import { formatTime, formatTimeLastRunTime } from '../dateTime';
+import { ALL_NAMESPACES_KEY } from '../../../consts';
+import { RepositoryModel } from '../../../models';
 
-const tableColumnClasses = ['', '', '', '', '', '', ''];
+const repositoryReference = getReferenceForModel(RepositoryModel);
 
-const PipelineRunsForRepositoriesRow: React.FC<RowProps<mainDataType>> = ({
+const PipelineRunsForRepositoriesRow: React.FC<RowProps<SummaryProps>> = ({
   obj,
 }) => {
+  const [activeNamespace] = useActiveNamespace();
+  
   return (
     <>
-      <td className={tableColumnClasses[0]}>{obj.repoName}</td>
-      <td className={tableColumnClasses[1]}>{obj.projectName}</td>
+      <td className={tableColumnClasses[0]}>
+        <ResourceLink
+      kind={repositoryReference}
+      name={obj?.group_value.split('/')[1]}
+      namespace={obj?.group_value.split('/')[0]}
+      /></td>
+      {activeNamespace === ALL_NAMESPACES_KEY && 
+      <td className={tableColumnClasses[1]}>
+        <ResourceLink kind="Namespace" name={obj?.group_value.split('/')[0]} />
+      </td>}
       <td className={tableColumnClasses[2]}>
-        {obj.summary['runs-in-repositories']}
+        {obj.total}
       </td>
-      <td className={tableColumnClasses[3]}>{obj.summary['total-duration']}</td>
-      <td className={tableColumnClasses[4]}>{obj.summary['avg-duration']}</td>
-      <td className={tableColumnClasses[5]}>{obj.summary['success-rate']}</td>
-      <td className={tableColumnClasses[6]}>{obj.summary['last-runtime']}</td>
+      <td className={tableColumnClasses[3]}>{formatTime(obj.total_duration)}</td>
+      <td className={tableColumnClasses[4]}>{formatTime(obj.avg_duration)}</td>
+      <td className={tableColumnClasses[5]}>{`${Math.round((100 * obj.succeeded) / obj.total)}%`}</td>
+      <td className={tableColumnClasses[6]}>{`${formatTimeLastRunTime(obj.last_runtime)}`}</td>
     </>
   );
 };

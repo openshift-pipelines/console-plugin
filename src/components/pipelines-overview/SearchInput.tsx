@@ -2,7 +2,12 @@ import { SearchInput } from '@patternfly/react-core';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const SearchInputField: React.FC<{ pageFlag: number }> = ({ pageFlag }) => {
+type SearchInputProps = { 
+  pageFlag: number,   
+  handleNameChange: (searchKeyword: string) => void;
+}
+
+const SearchInputField: React.FC<SearchInputProps> = ({ pageFlag, handleNameChange }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   return (
     <SearchInput
@@ -12,6 +17,8 @@ const SearchInputField: React.FC<{ pageFlag: number }> = ({ pageFlag }) => {
           ? t('Search by pipeline name')
           : t('Search by repository name')
       }
+      onChange={(event, text) => handleNameChange(text)}
+      onClear={() => handleNameChange('')}
     />
   );
 };

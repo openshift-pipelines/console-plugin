@@ -9,37 +9,85 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from '@patternfly/react-core';
-import { mainDataType } from '../utils';
 import PipelineRunsForRepositoriesList from './PipelineRunsForRepositoriesList';
 import PipelineRunsForPipelinesList from './PipelineRunsForPipelinesList';
 import StatusDropdown from '../StatusDropdown';
 import SearchInputField from '../SearchInput';
+import { SummaryProps, useInterval } from '../utils';
+import { getResultsSummary } from '../../../components/utils/summary-api';
+import { DataType } from '../../../components/utils/tekton-results';
+import { getDropDownDate } from '../dateTime';
+import { ALL_NAMESPACES_KEY } from '../../../consts';
 
 type PipelineRunsForPipelinesListProps = {
-  mainData?: mainDataType[];
   bordered?: boolean;
+  namespace: string;
+  timespan: number;
+  interval: number;
 };
 
 const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
-  mainData,
   bordered,
+  namespace,
+  timespan,
+  interval
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [pageFlag, setPageFlag] = React.useState(1);
+  const [summaryData, setSummaryData] = React.useState<SummaryProps[]>([]);
+  const [summaryDataFiltered, setSummaryDataFiltered] = React.useState<SummaryProps[]>([]);
+
+  const date = getDropDownDate(timespan).toISOString();
+  if (namespace == ALL_NAMESPACES_KEY) {
+    namespace = '-';
+  }
+  const getSummaryData = () => {
+    getResultsSummary(
+      namespace,
+      pageFlag === 1 ? {
+        summary: 'total_duration,avg_duration,total,succeeded,last_runtime',
+        data_type: DataType.PipelineRun,
+        groupBy: 'pipeline',
+        filter: `data.status.startTime>timestamp("${date}")&&!data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')`,
+      } : 
+      {
+        summary: 'total_duration,avg_duration,total,succeeded,last_runtime',
+        data_type: DataType.PipelineRun,
+        groupBy: 'repository',
+        filter: `data.status.startTime>timestamp("${date}")&&data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')`,
+      },
+    )
+      .then((response) => {
+        setSummaryData(response.summary);
+        setSummaryDataFiltered(response.summary);
+      })
+      .catch((e) => {
+        throw e;
+      });
+  };
+
+  useInterval(getSummaryData, interval, namespace, date, pageFlag);
+
   const handlePageChange = (pageNumber: number) => {
+    setSummaryData([]);
+    setSummaryDataFiltered([]);
     setPageFlag(pageNumber);
   };
+  const handleNameChange = (value: string) => {
+    const filteredData = summaryData.filter((summary) =>  summary.group_value.split('/')[1].toLowerCase().includes(value.toLowerCase()))
+    setSummaryDataFiltered(filteredData);
+  }
   return (
     <Card
       className={classNames('pipeline-overview__pipelinerun-status-card', {
         'card-border': bordered,
       })}
     >
-      <CardBody className="pipeline-overview__pipelinerun-status-card__list-page">
+      <CardBody>
         <Grid hasGutter className="pipeline-overview__listpage__grid">
           <GridItem span={9} className="pipeline-overview__listpage__griditem">
             <StatusDropdown />
-            <SearchInputField pageFlag={pageFlag} />
+            <SearchInputField pageFlag={pageFlag} handleNameChange={handleNameChange}/>
           </GridItem>
           <GridItem span={3}>
             <ToggleGroup className="pipeline-overview__listpage__button">
@@ -61,9 +109,9 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
         <Grid hasGutter>
           <GridItem span={12}>
             {pageFlag === 1 ? (
-              <PipelineRunsForPipelinesList mainData={mainData} />
+              <PipelineRunsForPipelinesList summaryData={summaryData} summaryDataFiltered={summaryDataFiltered}/>
             ) : (
-              <PipelineRunsForRepositoriesList mainData={mainData} />
+              <PipelineRunsForRepositoriesList summaryData={summaryData} summaryDataFiltered={summaryDataFiltered}/>
             )}
           </GridItem>
         </Grid>

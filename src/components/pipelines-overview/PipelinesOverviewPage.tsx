@@ -26,63 +26,6 @@ const PipelinesOverviewPage: React.FC = () => {
     setActiveNamespace(namespace);
   }, [namespace]);
 
-  // TO-DO delete the sample data
-  const sampleData = {
-    summary: {
-      total: 120,
-      'avg-duration': '54m',
-      succeeded: 76,
-      failed: 24,
-      completed: 3,
-      unkwown: 3,
-      cancelled: 14,
-      'max-duration': '2m 8s',
-      'total-duration': '1h 23m',
-      'runs-in-pipelines': 4535,
-      'runs-in-repositories': 2342,
-      'last-runtime': '7 min ago',
-      'success-rate': 100,
-    },
-  };
-
-  const mainData = [
-    {
-      repoName: 'repo-1',
-      pipelineName: 'pipeline-1',
-      projectName: 'project-1',
-      summary: sampleData.summary,
-    },
-    {
-      repoName: 'repo-2',
-      pipelineName: 'pipeline-2',
-      projectName: 'project-2',
-      summary: sampleData.summary,
-    },
-    {
-      repoName: 'repo-3',
-      pipelineName: 'pipeline-3',
-      projectName: 'project-3',
-      summary: sampleData.summary,
-    },
-    {
-      repoName: 'repo-4',
-      pipelineName: 'pipeline-4',
-      projectName: 'project-4',
-      summary: sampleData.summary,
-    },
-    {
-      repoName: 'repo-5',
-      pipelineName: 'pipeline-5',
-      projectName: 'project-5',
-      summary: sampleData.summary,
-    },
-    {
-      repoName: 'repo-6',
-      pipelineName: 'pipeline-6',
-      projectName: 'project-6',
-      summary: sampleData.summary,
-    },
-  ];
 
   return (
     <>
@@ -106,7 +49,6 @@ const PipelinesOverviewPage: React.FC = () => {
         <PipelineRunsStatusCard
           timespan={timespan}
           domain={{ y: [0, 100] }}
-          summaryData={sampleData.summary}
           bordered={true}
           namespace={namespace}
           interval={interval}
@@ -132,7 +74,6 @@ const PipelinesOverviewPage: React.FC = () => {
               namespace={namespace}
               timespan={timespan}
               interval={interval}
-              summaryData={sampleData.summary}
               bordered={true}
             />
           </FlexItem>
@@ -151,7 +92,7 @@ const PipelinesOverviewPage: React.FC = () => {
         </Flex>
       </div>
       <div className="pipelines-metrics__background">
-        <PipelineRunsListPage mainData={mainData} />
+        <PipelineRunsListPage namespace={namespace} timespan={timespan} interval={interval}/>
       </div>
     </>
   );

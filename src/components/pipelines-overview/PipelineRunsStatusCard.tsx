@@ -35,7 +35,7 @@ import {
   getXaxisValues,
   parsePrometheusDuration,
 } from './dateTime';
-import { SummaryProps, useInterval } from './utils';
+import { useInterval } from './utils';
 import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
 import { DataType } from '../utils/tekton-results';
 import './PipelinesOverview.scss';
@@ -45,7 +45,6 @@ import { ALL_NAMESPACES_KEY } from '../../consts';
 interface PipelinesRunsStatusCardProps {
   timespan?: number;
   domain?: DomainPropType;
-  summaryData: SummaryProps;
   bordered?: boolean;
   namespace: string;
   interval: number;

@@ -20,24 +20,6 @@ const PipelinesMetricsPage: React.FC = () => {
     parsePrometheusDuration('30s'),
   );
 
-  const sampleData = {
-    summary: {
-      total: 120,
-      'avg-duration': '544m',
-      success: 76,
-      failed: 24,
-      pending: 3,
-      running: 3,
-      cancelled: 14,
-      'max-duration': '2m 8s',
-      'total-duration': '1h 23m',
-      'runs-in-pipelines': 4535,
-      'runs-in-repositories': 2342,
-      'last-runtime': '7 min ago',
-      'success-rate': 100,
-    },
-  };
-
   return (
     <>
       <Alert
@@ -67,7 +49,6 @@ const PipelinesMetricsPage: React.FC = () => {
         <PipelineRunsStatusCard
           timespan={timespan}
           domain={{ y: [0, 100] }}
-          summaryData={sampleData.summary}
           bordered={false}
           namespace={namespace}
           interval={interval}

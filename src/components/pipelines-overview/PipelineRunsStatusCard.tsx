@@ -152,7 +152,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
             >
               <span
                 role="button"
-                aria-label={t('console-shared~More info')}
+                aria-label={t('More info')}
                 className="ocs-getting-started-grid__tooltip-icon"
               >
                 <OutlinedQuestionCircleIcon />

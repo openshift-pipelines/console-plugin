@@ -58,11 +58,11 @@ export const TektonResultModel: K8sKind = {
 
 export const RouteModel: K8sKind = {
   label: 'Route',
-  // t('public~Route')
-  labelKey: 'public~Route',
+  // t('Route')
+  labelKey: 'Route',
   labelPlural: 'Routes',
-  // t('public~Routes')
-  labelPluralKey: 'public~Routes',
+  // t('Routes')
+  labelPluralKey: 'Routes',
   apiGroup: 'route.openshift.io',
   apiVersion: 'v1',
   plural: 'routes',

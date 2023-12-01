@@ -2,9 +2,11 @@
 
 set -euo pipefail
 
-CONSOLE_PLUGIN_IMAGE=${CONSOLE_PLUGIN_IMAGE:="quay.io/openshift-pipeline/console-plugin:latest"}
+CONSOLE_PLUGIN_IMAGE_REPO=${CONSOLE_PLUGIN_IMAGE_REPO:="ghcr.io/openshift-pipeline/console-plugin"}
+CONSOLE_PLUGIN_IMAGE_TAG=${CONSOLE_PLUGIN_IMAGE_TAG:="latest"}
+CONSOLE_PLUGIN_IMAGE=${CONSOLE_PLUGIN_IMAGE_REPO}:${CONSOLE_PLUGIN_IMAGE_TAG}
 
-echo "Building the Console Plugin Image ..."
+echo "Building the Console Plugin Image: ${CONSOLE_PLUGIN_IMAGE}"
 
 # Prefer podman if installed. Otherwise, fall back to docker 
 if [ -x "$(command -v podman)" ]; then 

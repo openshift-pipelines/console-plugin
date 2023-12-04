@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: say-something
+spec:
+  params:
+    - name: say-what
+      description: What should I say
+      default: hello
+      type: string
+    - name: pause-duration
+      description: How long to wait before saying something
+      default: "0"
+      type: string
+  steps:
+    - name: say-it
+      image: registry.access.redhat.com/ubi8/ubi
+      command:
+        - /bin/bash
+      args: ['-c', 'sleep $(params.pause-duration) && echo $(params.say-what)']

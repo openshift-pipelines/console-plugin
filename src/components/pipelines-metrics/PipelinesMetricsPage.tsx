@@ -13,14 +13,12 @@ import './PipelinesMetrics.scss';
 
 const PipelinesMetricsPage: React.FC = () => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const params = useParams();
+  const { ns: namespace, name: parentName } = params;
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1w'));
   const [interval, setInterval] = React.useState(
     parsePrometheusDuration('30s'),
   );
-
-  const params = useParams();
-
-  const { ns: namespace, name: parentName } = params;
 
   const sampleData = {
     summary: {
@@ -71,6 +69,7 @@ const PipelinesMetricsPage: React.FC = () => {
           domain={{ y: [0, 100] }}
           summaryData={sampleData.summary}
           bordered={false}
+          namespace={namespace}
         />
 
         <Flex>

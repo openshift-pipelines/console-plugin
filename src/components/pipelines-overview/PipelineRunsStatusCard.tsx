@@ -38,9 +38,10 @@ import {
 import { SummaryProps } from './utils';
 import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
 import { DataType } from '../utils/tekton-results';
+import { LoadingInline } from '../Loading';
+import { ALL_NAMESPACES_KEY } from '../../consts';
 
 import './PipelinesOverview.scss';
-import { LoadingInline } from '../Loading';
 
 interface PipelinesRunsStatusCardProps {
   timespan?: number;
@@ -70,6 +71,10 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
     y: domainY || undefined,
   };
   const date = getDropDownDate(timespan).toISOString();
+
+  if (namespace == ALL_NAMESPACES_KEY) {
+    namespace = '-';
+  }
 
   React.useEffect(() => {
     const summaryOpt = {

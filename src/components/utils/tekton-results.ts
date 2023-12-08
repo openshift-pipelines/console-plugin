@@ -395,7 +395,7 @@ export const createTektonResultsSummaryUrl = async (
       )}`,
       ...(nextPageToken ? { page_token: nextPageToken } : {}),
       filter: AND(
-        EQ('data_type', options.data_type.toString()),
+        EQ('data_type', options.data_type?.toString()),
         options.filter,
         selectorToFilter(options?.selector),
       ),

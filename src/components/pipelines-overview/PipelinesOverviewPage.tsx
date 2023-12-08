@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { match as Rmatch } from 'react-router-dom';
 import PipelineRunsStatusCard from './PipelineRunsStatusCard';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import PipelinesRunsDurationCard from './PipelineRunsDurationCard';
@@ -13,11 +12,7 @@ import TimeRangeDropdown from './TimeRangeDropdown';
 import RefreshDropdown from './RefreshDropdown';
 import { useActiveNamespace } from '@openshift-console/dynamic-plugin-sdk';
 
-interface PipelinesOverviewPageProps {
-  match: Rmatch<never>;
-}
-
-const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = () => {
+const PipelinesOverviewPage: React.FC = () => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();
 
@@ -113,6 +108,7 @@ const PipelinesOverviewPage: React.FC<PipelinesOverviewPageProps> = () => {
           domain={{ y: [0, 100] }}
           summaryData={sampleData.summary}
           bordered={true}
+          namespace={namespace}
         />
 
         <Flex>

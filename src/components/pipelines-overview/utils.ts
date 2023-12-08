@@ -13,12 +13,13 @@ export type SummaryProps = {
   avg_duration?: string;
   succeeded?: number;
   failed?: number;
-  completed?: number;
+  running?: number;
   unknown?: number;
   cancelled?: number;
   max_duration?: string;
   min_duration?: string;
   total_duration?: string;
+  others?: number;
   group_value?: number;
 };
 

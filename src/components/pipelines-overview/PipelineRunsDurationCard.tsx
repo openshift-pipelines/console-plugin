@@ -15,17 +15,52 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 import { SummaryProps } from './utils';
+import { getResultsSummary } from '../utils/summary-api';
+import { DataType } from '../utils/tekton-results';
+import { ALL_NAMESPACES_KEY } from '../../consts';
+import { formatTime, getDropDownDate } from './dateTime';
 
 interface PipelinesRunsDurationProps {
-  summaryData: SummaryProps;
+  namespace: string;
+  timespan: number;
+  interval: number;
+  parentName?: string;
+  summaryData?: SummaryProps;
   bordered?: boolean;
 }
 
 const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
-  summaryData,
+  namespace,
+  timespan,
+  parentName,
+  interval,
   bordered,
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const [summaryData, setSummaryData] = React.useState<SummaryProps>({});
+  if (namespace == ALL_NAMESPACES_KEY) {
+    namespace = '-';
+  }
+
+  const date = getDropDownDate(timespan).toISOString();
+  let filter = '';
+  parentName
+    ? (filter = `data.status.startTime>timestamp("${date}")&&data.metadata.labels['tekton.dev/pipeline']=="${parentName}"`)
+    : (filter = `data.status.startTime>timestamp("${date}")`);
+
+  React.useEffect(() => {
+    getResultsSummary(namespace, {
+      summary: 'total_duration,avg_duration,max_duration',
+      data_type: DataType.PipelineRun,
+      filter,
+    })
+      .then((response) => {
+        setSummaryData(response.summary[0]);
+      })
+      .catch((e) => {
+        console.error('unable to post', e);
+      });
+  }, [namespace, timespan]);
 
   return (
     <>
@@ -40,41 +75,47 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
         <Divider />
         <CardBody>
           <Grid hasGutter className="pipeline-overview__duration-card__grid">
-            <GridItem span={8}>
+            <GridItem span={6}>
               <span>
                 <MonitoringIcon className="pipeline-overview__duration-card__icon" />
                 {t('Average Duration')}
               </span>
             </GridItem>
-            <GridItem span={4}>
+            <GridItem span={6}>
               <span className="pipeline-overview__duration-card__value">
-                {summaryData['avg-duration']}
+                {summaryData['avg_duration']
+                  ? formatTime(summaryData['avg_duration'])
+                  : '-'}
               </span>
             </GridItem>
           </Grid>
           <Grid hasGutter className="pipeline-overview__duration-card__grid">
-            <GridItem span={8}>
+            <GridItem span={6}>
               <span>
                 <InfoCircleIcon className="pipeline-overview__duration-card__info-icon" />
                 {t('Maximun')}
               </span>
             </GridItem>
-            <GridItem span={4}>
+            <GridItem span={6}>
               <span className="pipeline-overview__duration-card__value">
-                {summaryData['max-duration']}
+                {summaryData['max_duration']
+                  ? formatTime(summaryData['max_duration'])
+                  : '-'}
               </span>
             </GridItem>
           </Grid>
           <Grid hasGutter>
-            <GridItem span={8}>
+            <GridItem span={6}>
               <span>
                 <HistoryIcon className="pipeline-overview__duration-card__icon" />
                 {t('Total Duration')}
               </span>
             </GridItem>
-            <GridItem span={4}>
+            <GridItem span={6}>
               <span className="pipeline-overview__duration-card__value">
-                {summaryData['total-duration']}
+                {summaryData['total_duration']
+                  ? formatTime(summaryData['total_duration'])
+                  : '-'}
               </span>
             </GridItem>
           </Grid>

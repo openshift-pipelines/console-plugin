@@ -49,6 +49,9 @@ export type TektonResultsOptions = {
   // limit cannot be used in conjuction with pageSize and takes precedence
   limit?: number;
   filter?: string;
+  summary?: string;
+  data_type?: DataType;
+  groupBy?: string;
 };
 
 // const throw404 = () => {
@@ -357,6 +360,49 @@ export const getTaskRuns = (
   // supply a cacheKey only if the TaskRun is complete and response will never change in the future
   cacheKey?: string,
 ) => getFilteredTaskRuns(namespace, '', options, nextPageToken, cacheKey);
+
+export const createTektonResultsSummaryUrl = async (
+  namespace: string,
+  options?: TektonResultsOptions,
+  nextPageToken?: string,
+): Promise<string> => {
+  const tektonResult: K8sResourceKind = await k8sGet({
+    model: TektonResultModel,
+    name: 'result',
+  });
+  const targetNamespace = tektonResult?.spec?.targetNamespace;
+  const route: K8sResourceKind = await k8sGet({
+    model: RouteModel,
+    name: 'tekton-results-api-service',
+    ns: targetNamespace,
+  });
+  const tektonResultUrl = route?.spec.host;
+  if (!tektonResultUrl) {
+    throw new Error('route.spec.host is undefined');
+  }
+  const URL = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${namespace}/results/-/records/summary?${new URLSearchParams(
+    {
+      summary: `${options?.summary}`,
+      ...(options.groupBy ? { group_by: `${options.groupBy}` } : {}),
+      // default sort should always be by `create_time desc`
+      // order_by: 'create_time desc', not supported yet
+      page_size: `${Math.max(
+        MINIMUM_PAGE_SIZE,
+        Math.min(
+          MAXIMUM_PAGE_SIZE,
+          options?.limit >= 0 ? options.limit : options?.pageSize ?? 30,
+        ),
+      )}`,
+      ...(nextPageToken ? { page_token: nextPageToken } : {}),
+      filter: AND(
+        EQ('data_type', options.data_type.toString()),
+        options.filter,
+        selectorToFilter(options?.selector),
+      ),
+    },
+  ).toString()}`;
+  return URL;
+};
 
 // const getLog = (taskRunPath: string) =>
 //   consoleProxyFetchJSON({

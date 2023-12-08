@@ -15,20 +15,30 @@ import {
 import { Card, CardBody, CardTitle } from '@patternfly/react-core';
 import {
   formatDate,
+  getDropDownDate,
   getXaxisValues,
   parsePrometheusDuration,
 } from './dateTime';
+import { DataType } from '../utils/tekton-results';
+import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
+import { ALL_NAMESPACES_KEY } from '../../consts';
 
 interface PipelinesRunsNumbersChartProps {
+  namespace?: string;
   timespan?: number;
+  interval?: number;
   domain?: DomainPropType;
+  parentName?: string;
   bordered?: boolean;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
 const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
+  namespace,
   timespan,
+  interval,
   domain,
+  parentName,
   bordered,
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
@@ -40,11 +50,52 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
     x: domainX || [startDate, endDate],
     y: domainY || undefined,
   };
+
+  const [data, setData] = React.useState<SummaryResponse>();
+
+  if (namespace == ALL_NAMESPACES_KEY) {
+    namespace = '-';
+  }
   const tickValues = getXaxisValues(timespan);
 
-  const chartData = tickValues.map((value) => {
-    return { x: value, y: 100 };
+  const date = getDropDownDate(timespan).toISOString();
+
+  let filter = '';
+  parentName
+    ? (filter = `data.status.startTime>timestamp("${date}")&&data.metadata.labels['tekton.dev/pipeline']=="${parentName}"`)
+    : (filter = `data.status.startTime>timestamp("${date}")`);
+
+  React.useEffect(() => {
+    const summaryOpt = {
+      summary: 'total',
+      data_type: DataType.PipelineRun,
+      filter,
+      groupBy: 'day',
+    };
+
+    getResultsSummary(namespace, summaryOpt)
+      .then((d) => setData(d))
+      .catch((e) => {
+        throw e;
+      });
+  }, [namespace, date, interval]);
+
+  const chartData = tickValues?.map((value) => {
+    return {
+      x: value,
+      y: data?.summary.map((d) => {
+        return new Date(d.group_value * 1000).toDateString() ===
+          new Date(value).toDateString()
+          ? d.total
+          : 0;
+      })[0],
+    };
   });
+
+  const max = Math.max(...chartData.map((yVal) => yVal.y));
+  !isNaN(max) && max > 5
+    ? (domainValue.y = [0, max])
+    : (domainValue.y = [0, 5]);
 
   if (!domainY) {
     let minY: number = _.minBy(chartData, 'y')?.y ?? 0;

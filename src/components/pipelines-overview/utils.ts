@@ -10,18 +10,16 @@ export const alphanumericCompare = (a: string, b: string): number => {
 
 export type SummaryProps = {
   total?: number;
-  'avg-duration'?: string;
-  success?: number;
+  avg_duration?: string;
+  succeeded?: number;
   failed?: number;
-  pending?: number;
-  running?: number;
+  completed?: number;
+  unknown?: number;
   cancelled?: number;
-  'max-duration'?: string;
-  'total-duration'?: string;
-  'runs-in-pipelines'?: number;
-  'runs-in-repositories'?: number;
-  'last-runtime'?: string;
-  'success-rate'?: number;
+  max_duration?: string;
+  min_duration?: string;
+  total_duration?: string;
+  group_value?: number;
 };
 
 export type mainDataType = {

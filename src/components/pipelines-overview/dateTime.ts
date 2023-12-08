@@ -63,6 +63,40 @@ export const getXaxisValues = (timespan: number): number[] => {
   return xValues.slice(0, numDays);
 };
 
+export const getDropDownDate = (timespan: number): Date => {
+  if (!timespan) return new Date();
+  const oneDayDuration = parsePrometheusDuration('1d');
+  const numDays = Math.round(timespan / oneDayDuration);
+  const d = new Date(Date.now());
+  d.setHours(0, 0, 0, 0);
+  if (numDays != 1) {
+    d.setDate(d.getDate() - numDays);
+  }
+  return d;
+};
+
+export const formatTime = (time: string): string => {
+  const t = time?.split(/[:.]+/);
+  if (t == undefined) {
+    return '';
+  }
+
+  let timestring = '';
+  if (t[0] != '00') {
+    timestring = t[0].replace(/^0+/, '') + 'h ';
+  }
+  if (t[1] != '00') {
+    timestring += t[1].replace(/^0+/, '') + 'm ';
+  }
+  if (t[2] != '00') {
+    timestring += t[2].replace(/^0+/, '') + 's ';
+  }
+  if (timestring == '') {
+    timestring = 'less than a sec';
+  }
+  return timestring;
+};
+
 export const dateFormatterNoYear = new Intl.DateTimeFormat(
   getLastLanguage() || undefined,
   {

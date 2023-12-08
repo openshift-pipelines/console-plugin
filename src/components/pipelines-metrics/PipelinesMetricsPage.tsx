@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useParams } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import PipelineRunsStatusCard from '../pipelines-overview/PipelineRunsStatusCard';
 import { Alert, Flex, FlexItem } from '@patternfly/react-core';
@@ -16,6 +17,10 @@ const PipelinesMetricsPage: React.FC = () => {
   const [interval, setInterval] = React.useState(
     parsePrometheusDuration('30s'),
   );
+
+  const params = useParams();
+
+  const { ns: namespace, name: parentName } = params;
 
   const sampleData = {
     summary: {
@@ -74,6 +79,8 @@ const PipelinesMetricsPage: React.FC = () => {
             grow={{ default: 'grow' }}
           >
             <PipelinesRunsNumbersChart
+              namespace={namespace}
+              parentName={parentName}
               timespan={timespan}
               domain={{ y: [0, 500] }}
             />
@@ -91,7 +98,12 @@ const PipelinesMetricsPage: React.FC = () => {
             className="pipelines-metrics__cards"
             grow={{ default: 'grow' }}
           >
-            <PipelinesRunsDurationCard summaryData={sampleData.summary} />
+            <PipelinesRunsDurationCard
+              namespace={namespace}
+              parentName={parentName}
+              timespan={timespan}
+              interval={interval}
+            />
           </FlexItem>
         </Flex>
       </div>

@@ -383,7 +383,7 @@ export const createTektonResultsSummaryUrl = async (
   const URL = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${namespace}/results/-/records/summary?${new URLSearchParams(
     {
       summary: `${options?.summary}`,
-      ...(options.groupBy ? { group_by: `${options.groupBy}` } : {}),
+      ...(options?.groupBy ? { group_by: `${options.groupBy}` } : {}),
       // default sort should always be by `create_time desc`
       // order_by: 'create_time desc', not supported yet
       page_size: `${Math.max(

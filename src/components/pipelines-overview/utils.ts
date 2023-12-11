@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { K8sGroupVersionKind, K8sModel, K8sResourceKindReference } from '@openshift-console/dynamic-plugin-sdk';
 
 export const alphanumericCompare = (a: string, b: string): number => {
   return a.localeCompare(b, undefined, {
@@ -20,7 +21,8 @@ export type SummaryProps = {
   min_duration?: string;
   total_duration?: string;
   others?: number;
-  group_value?: number;
+  group_value?: any;
+  last_runtime?: string;
 };
 
 export type mainDataType = {
@@ -29,6 +31,16 @@ export type mainDataType = {
   pipelineName?: string;
   summary?: SummaryProps;
 };
+
+export const listPageTableColumnClasses = [
+  '', //name
+  '', //namespace
+  'pf-m-hidden pf-m-visible-on-md', //total plr
+  'pf-m-hidden pf-m-visible-on-md', //total duration
+  'pf-m-hidden pf-m-visible-on-xl', //avg duration
+  'pf-m-hidden pf-m-visible-on-xl', //success rate
+  'pf-m-hidden pf-m-visible-on-xl' //last run time
+];
 
 export const TimeRangeOptions = () => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
@@ -68,11 +80,92 @@ export const LAST_LANGUAGE_LOCAL_STORAGE_KEY = 'bridge/last-language';
 export const getLastLanguage = (): string =>
   localStorage.getItem(LAST_LANGUAGE_LOCAL_STORAGE_KEY);
 
+
+export const getReferenceForModel = (model: K8sModel): K8sResourceKindReference =>
+  getReference({ group: model.apiGroup, version: model.apiVersion, kind: model.kind });
+  
+export const getReference = ({
+    group,
+    version,
+    kind,
+}: K8sGroupVersionKind): K8sResourceKindReference => [group || 'core', version, kind].join('~');
+
+export const sortByProperty = (array: SummaryProps[], prop: string, direction: string) => {
+  return array.sort((a:SummaryProps, b:SummaryProps) => {
+      const nameA = prop === 'namespace' ? a.group_value.split('/')[0].toLowerCase() :  a.group_value.split('/')[1].toLowerCase();
+      const nameB = prop === 'namespace' ? b.group_value.split('/')[0].toLowerCase() : b.group_value.split('/')[1].toLowerCase();
+
+      const numberA = parseInt(nameA.replace(/^\D+/g, '')) || 0;
+      const numberB = parseInt(nameB.replace(/^\D+/g, '')) || 0;
+  
+      const nameComparison = nameA.localeCompare(nameB);
+  
+      if (nameComparison === 0) {
+        return (direction === 'desc' ? numberB - numberA : numberA - numberB);
+      }
+  
+      return (direction === 'desc' ? nameComparison * -1 : nameComparison);
+    })
+};
+
+export const sortTimeStrings = (array: SummaryProps[], prop: string ,direction: string) => {
+  return array.slice().sort((a, b) => {
+    const getTimeValue = (timeString) => {
+      const components = timeString?.split(/\s+/);
+      let totalSeconds = 0;
+
+      for (const component of components) {
+        const value = parseInt(component);
+        if (!isNaN(value)) {
+          if (component.includes('year')) {
+            totalSeconds += value * 365 * 24 * 3600; // Assuming 1 year = 365 days
+          } else if (component.includes('month')) {
+            totalSeconds += value * 30 * 24 * 3600; // Assuming 1 month = 30 days
+          } else if (component.includes('day')) {
+            totalSeconds += value * 24 * 3600;
+          } else if (component.includes(':')) {
+            // Parse HH:mm:ss.ms
+            const timeParts = component.split(':').map(Number);
+            totalSeconds += timeParts[0] * 3600 + timeParts[1] * 60 + timeParts[2];
+            if (timeParts.length === 4) {
+              totalSeconds += timeParts[3] / 1000;
+            }
+          }
+        }
+      }
+
+      return totalSeconds;
+    };
+
+    const timeA = getTimeValue(a[prop]);
+    const timeB = getTimeValue(b[prop]);
+
+    return direction === 'asc' ? timeA - timeB : timeB - timeA;
+  });
+};
+
+export const sortByNumbers = (array: SummaryProps[], prop: string ,direction: string) => {
+  const modifier = direction === 'desc' ? -1 : 1;
+
+  return array.slice().sort((a, b) => {
+    const valueA = a[prop];
+    const valueB = b[prop];
+
+    // If 0 is a valid value, handle it separately
+    if (valueA === 0 || valueB === 0) {
+      return modifier * (valueA - valueB);
+    }
+
+    return modifier * (valueA || Infinity) - (valueB || Infinity);
+  });
+};
+
 export const useInterval = (
   getData: () => void,
   interval: number,
   namespace: string,
   date: string,
+  pageFlag?: number
 ) => {
   React.useEffect(() => {
     getData();
@@ -80,5 +173,6 @@ export const useInterval = (
       const intervalID = setInterval(() => getData(), interval);
       return () => clearInterval(intervalID);
     }
-  }, [interval, namespace, date]);
+  }, [interval, namespace, date, pageFlag]);
 };
+

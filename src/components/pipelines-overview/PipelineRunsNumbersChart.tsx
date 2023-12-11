@@ -113,7 +113,10 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
 
   const xTickFormat = (d) => formatDate(d);
   let xAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-global--Color--100)' },
+    tickLabels: { fill: 'var(--pf-global--Color--100)', fontSize: 12 },
+  };
+  const yAxisStyle: ChartAxisProps['style'] = {
+    tickLabels: { fill: 'var(--pf-global--Color--100)', fontSize: 12 },
   };
   if (tickValues.length > 7) {
     xAxisStyle = {
@@ -162,9 +165,9 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
                 style={xAxisStyle}
                 tickFormat={xTickFormat}
               />
-              <ChartAxis dependentAxis />
+              <ChartAxis dependentAxis style={yAxisStyle} />
               <ChartGroup>
-                <ChartBar data={chartData} />
+                <ChartBar data={chartData} barWidth={18} />
               </ChartGroup>
             </Chart>
           </div>

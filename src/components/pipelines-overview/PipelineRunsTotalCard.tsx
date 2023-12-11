@@ -17,6 +17,7 @@ import { getResultsSummary } from '../utils/summary-api';
 import { DataType } from '../utils/tekton-results';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { getDropDownDate } from './dateTime';
+import './PipelineRunsTotalCard.scss';
 
 interface PipelinesRunsDurationProps {
   namespace: string;
@@ -113,10 +114,11 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
                 {t('Runs in pipelines')}
               </span>
             </GridItem>
-            <GridItem span={3}>
-              <span className="pipeline-overview__totals-card__value">
-                {plrRun}
-              </span>
+            <GridItem
+              span={3}
+              className="pipeline-overview__totals-card__value"
+            >
+              {plrRun}
             </GridItem>
           </Grid>
           <Grid hasGutter className="pipeline-overview__totals-card__grid">
@@ -131,10 +133,11 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
                 {t('Runs in repositories')}
               </span>
             </GridItem>
-            <GridItem span={3}>
-              <span className="pipeline-overview__totals-card__value">
-                {repoRun}
-              </span>
+            <GridItem
+              span={3}
+              className="pipeline-overview__totals-card__value"
+            >
+              {repoRun}
             </GridItem>
           </Grid>
           <Grid hasGutter>
@@ -144,10 +147,11 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
                 {t('Total runs')}
               </span>
             </GridItem>
-            <GridItem span={3}>
-              <span className="pipeline-overview__totals-card__value">
-                {totalRun}
-              </span>
+            <GridItem
+              span={3}
+              className="pipeline-overview__totals-card__value"
+            >
+              {totalRun}
             </GridItem>
           </Grid>
         </CardBody>

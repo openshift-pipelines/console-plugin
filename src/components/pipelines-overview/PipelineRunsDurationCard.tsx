@@ -19,6 +19,7 @@ import { getResultsSummary } from '../utils/summary-api';
 import { DataType } from '../utils/tekton-results';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { formatTime, getDropDownDate } from './dateTime';
+import './PipelineRunsDurationCard.scss';
 
 interface PipelinesRunsDurationProps {
   namespace: string;
@@ -81,12 +82,13 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
                 {t('Average Duration')}
               </span>
             </GridItem>
-            <GridItem span={6}>
-              <span className="pipeline-overview__duration-card__value">
-                {summaryData['avg_duration']
-                  ? formatTime(summaryData['avg_duration'])
-                  : '-'}
-              </span>
+            <GridItem
+              span={6}
+              className="pipeline-overview__duration-card__value"
+            >
+              {summaryData['avg_duration']
+                ? formatTime(summaryData['avg_duration'])
+                : '-'}
             </GridItem>
           </Grid>
           <Grid hasGutter className="pipeline-overview__duration-card__grid">
@@ -96,12 +98,13 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
                 {t('Maximun')}
               </span>
             </GridItem>
-            <GridItem span={6}>
-              <span className="pipeline-overview__duration-card__value">
-                {summaryData['max_duration']
-                  ? formatTime(summaryData['max_duration'])
-                  : '-'}
-              </span>
+            <GridItem
+              span={6}
+              className="pipeline-overview__duration-card__value"
+            >
+              {summaryData['max_duration']
+                ? formatTime(summaryData['max_duration'])
+                : '-'}
             </GridItem>
           </Grid>
           <Grid hasGutter>
@@ -111,12 +114,13 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
                 {t('Total Duration')}
               </span>
             </GridItem>
-            <GridItem span={6}>
-              <span className="pipeline-overview__duration-card__value">
-                {summaryData['total_duration']
-                  ? formatTime(summaryData['total_duration'])
-                  : '-'}
-              </span>
+            <GridItem
+              span={6}
+              className="pipeline-overview__duration-card__value"
+            >
+              {summaryData['total_duration']
+                ? formatTime(summaryData['total_duration'])
+                : '-'}
             </GridItem>
           </Grid>
         </CardBody>

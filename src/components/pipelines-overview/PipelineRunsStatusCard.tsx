@@ -40,7 +40,6 @@ import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
 import { DataType } from '../utils/tekton-results';
 import { LoadingInline } from '../Loading';
 import { ALL_NAMESPACES_KEY } from '../../consts';
-
 import './PipelinesOverview.scss';
 
 interface PipelinesRunsStatusCardProps {
@@ -133,6 +132,9 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
 
   const xTickFormat = (d) => formatDate(d);
   let xAxisStyle: ChartAxisProps['style'] = {
+    tickLabels: { fill: 'var(--pf-global--Color--100)' },
+  };
+  const yAxisStyle: ChartAxisProps['style'] = {
     tickLabels: { fill: 'var(--pf-global--Color--100)' },
   };
   if (tickValues?.length > 7) {
@@ -299,10 +301,10 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                   <ChartAxis
                     dependentAxis
                     tickFormat={(v) => `${v}%`}
-                    style={xAxisStyle}
+                    style={yAxisStyle}
                   />
                   <ChartGroup>
-                    <ChartBar data={chartData} />
+                    <ChartBar data={chartData} barWidth={20} />
                   </ChartGroup>
                 </Chart>
               </div>

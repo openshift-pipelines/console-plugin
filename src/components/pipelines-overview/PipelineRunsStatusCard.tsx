@@ -35,12 +35,12 @@ import {
   getXaxisValues,
   parsePrometheusDuration,
 } from './dateTime';
-import { SummaryProps } from './utils';
+import { SummaryProps, useInterval } from './utils';
 import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
 import { DataType } from '../utils/tekton-results';
+import './PipelinesOverview.scss';
 import { LoadingInline } from '../Loading';
 import { ALL_NAMESPACES_KEY } from '../../consts';
-import './PipelinesOverview.scss';
 
 interface PipelinesRunsStatusCardProps {
   timespan?: number;
@@ -48,6 +48,7 @@ interface PipelinesRunsStatusCardProps {
   summaryData: SummaryProps;
   bordered?: boolean;
   namespace: string;
+  interval: number;
 }
 
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
@@ -57,6 +58,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   domain,
   bordered,
   namespace,
+  interval,
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [data, setData] = React.useState<SummaryResponse>();
@@ -75,32 +77,40 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
     namespace = '-';
   }
 
-  React.useEffect(() => {
+  const getSummaryData = (summary, setData, groupBy?) => {
     const summaryOpt = {
-      summary: 'succeeded,cancelled,failed,others,running,total',
+      summary,
       filter: `data.status.startTime>timestamp("${date}")`,
       data_type: DataType.PipelineRun,
     };
-    getResultsSummary(namespace, summaryOpt)
-      .then((d) => setData(d))
-      .catch((e) => {
-        throw e;
-      });
-  }, [namespace, date]);
+    groupBy && (summaryOpt['groupBy'] = groupBy);
 
-  React.useEffect(() => {
-    const summaryOpt2 = {
-      summary: 'succeeded,total',
-      filter: `data.status.startTime>timestamp("${date}")`,
-      groupBy: 'day',
-      data_type: DataType.PipelineRun,
-    };
-    getResultsSummary(namespace, summaryOpt2)
-      .then((d) => setData2(d))
+    getResultsSummary(namespace, summaryOpt)
+      .then((d) => {
+        setData(d);
+      })
       .catch((e) => {
         throw e;
       });
-  }, [namespace, date]);
+  };
+
+  useInterval(
+    () =>
+      getSummaryData(
+        'succeeded,cancelled,failed,others,running,total',
+        setData,
+      ),
+    interval,
+    namespace,
+    date,
+  );
+
+  useInterval(
+    () => getSummaryData('succeeded,total', setData2, 'day'),
+    interval,
+    namespace,
+    date,
+  );
 
   const tickValues = getXaxisValues(timespan);
 

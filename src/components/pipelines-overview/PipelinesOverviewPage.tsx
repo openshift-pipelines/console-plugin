@@ -109,6 +109,7 @@ const PipelinesOverviewPage: React.FC = () => {
           summaryData={sampleData.summary}
           bordered={true}
           namespace={namespace}
+          interval={interval}
         />
 
         <Flex>

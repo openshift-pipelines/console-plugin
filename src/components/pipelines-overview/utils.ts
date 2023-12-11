@@ -67,3 +67,18 @@ export const LAST_LANGUAGE_LOCAL_STORAGE_KEY = 'bridge/last-language';
 
 export const getLastLanguage = (): string =>
   localStorage.getItem(LAST_LANGUAGE_LOCAL_STORAGE_KEY);
+
+export const useInterval = (
+  getData: () => void,
+  interval: number,
+  namespace: string,
+  date: string,
+) => {
+  React.useEffect(() => {
+    getData();
+    if (interval !== null) {
+      const intervalID = setInterval(() => getData(), interval);
+      return () => clearInterval(intervalID);
+    }
+  }, [interval, namespace, date]);
+};

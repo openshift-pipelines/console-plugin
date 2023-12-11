@@ -14,7 +14,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { SummaryProps } from './utils';
+import { SummaryProps, useInterval } from './utils';
 import { getResultsSummary } from '../utils/summary-api';
 import { DataType } from '../utils/tekton-results';
 import { ALL_NAMESPACES_KEY } from '../../consts';
@@ -49,7 +49,7 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
     ? (filter = `data.status.startTime>timestamp("${date}")&&data.metadata.labels['tekton.dev/pipeline']=="${parentName}"`)
     : (filter = `data.status.startTime>timestamp("${date}")`);
 
-  React.useEffect(() => {
+  const getSummaryData = () => {
     getResultsSummary(namespace, {
       summary: 'total_duration,avg_duration,max_duration',
       data_type: DataType.PipelineRun,
@@ -61,7 +61,9 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
       .catch((e) => {
         console.error('unable to post', e);
       });
-  }, [namespace, timespan]);
+  };
+
+  useInterval(getSummaryData, interval, namespace, date);
 
   return (
     <>

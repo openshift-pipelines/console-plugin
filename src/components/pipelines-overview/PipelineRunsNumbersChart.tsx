@@ -22,6 +22,7 @@ import {
 import { DataType } from '../utils/tekton-results';
 import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
 import { ALL_NAMESPACES_KEY } from '../../consts';
+import { useInterval } from './utils';
 
 interface PipelinesRunsNumbersChartProps {
   namespace?: string;
@@ -65,7 +66,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
     ? (filter = `data.status.startTime>timestamp("${date}")&&data.metadata.labels['tekton.dev/pipeline']=="${parentName}"`)
     : (filter = `data.status.startTime>timestamp("${date}")`);
 
-  React.useEffect(() => {
+  const getSummaryData = () => {
     const summaryOpt = {
       summary: 'total',
       data_type: DataType.PipelineRun,
@@ -74,11 +75,15 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
     };
 
     getResultsSummary(namespace, summaryOpt)
-      .then((d) => setData(d))
+      .then((d) => {
+        setData(d);
+      })
       .catch((e) => {
         throw e;
       });
-  }, [namespace, date, interval]);
+  };
+
+  useInterval(getSummaryData, interval, namespace, date);
 
   const chartData = tickValues?.map((value) => {
     return {

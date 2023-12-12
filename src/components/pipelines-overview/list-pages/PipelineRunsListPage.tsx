@@ -30,12 +30,14 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
   bordered,
   namespace,
   timespan,
-  interval
+  interval,
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [pageFlag, setPageFlag] = React.useState(1);
   const [summaryData, setSummaryData] = React.useState<SummaryProps[]>([]);
-  const [summaryDataFiltered, setSummaryDataFiltered] = React.useState<SummaryProps[]>([]);
+  const [summaryDataFiltered, setSummaryDataFiltered] = React.useState<
+    SummaryProps[]
+  >([]);
 
   const date = getDropDownDate(timespan).toISOString();
   if (namespace == ALL_NAMESPACES_KEY) {
@@ -44,18 +46,19 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
   const getSummaryData = () => {
     getResultsSummary(
       namespace,
-      pageFlag === 1 ? {
-        summary: 'total_duration,avg_duration,total,succeeded,last_runtime',
-        data_type: DataType.PipelineRun,
-        groupBy: 'pipeline',
-        filter: `data.status.startTime>timestamp("${date}")&&!data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')`,
-      } : 
-      {
-        summary: 'total_duration,avg_duration,total,succeeded,last_runtime',
-        data_type: DataType.PipelineRun,
-        groupBy: 'repository',
-        filter: `data.status.startTime>timestamp("${date}")&&data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')`,
-      },
+      pageFlag === 1
+        ? {
+            summary: 'total_duration,avg_duration,total,succeeded,last_runtime',
+            data_type: DataType.PipelineRun,
+            groupBy: 'pipeline',
+            filter: `data.status.startTime>timestamp("${date}")&&!data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')`,
+          }
+        : {
+            summary: 'total_duration,avg_duration,total,succeeded,last_runtime',
+            data_type: DataType.PipelineRun,
+            groupBy: 'repository',
+            filter: `data.status.startTime>timestamp("${date}")&&data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')`,
+          },
     )
       .then((response) => {
         setSummaryData(response.summary);
@@ -74,9 +77,14 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
     setPageFlag(pageNumber);
   };
   const handleNameChange = (value: string) => {
-    const filteredData = summaryData.filter((summary) =>  summary.group_value.split('/')[1].toLowerCase().includes(value.toLowerCase()))
+    const filteredData = summaryData.filter((summary) =>
+      summary.group_value
+        .split('/')[1]
+        .toLowerCase()
+        .includes(value.toLowerCase()),
+    );
     setSummaryDataFiltered(filteredData);
-  }
+  };
   return (
     <Card
       className={classNames('pipeline-overview__pipelinerun-status-card', {
@@ -87,21 +95,24 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
         <Grid hasGutter className="pipeline-overview__listpage__grid">
           <GridItem span={9} className="pipeline-overview__listpage__griditem">
             <StatusDropdown />
-            <SearchInputField pageFlag={pageFlag} handleNameChange={handleNameChange}/>
+            <SearchInputField
+              pageFlag={pageFlag}
+              handleNameChange={handleNameChange}
+            />
           </GridItem>
           <GridItem span={3}>
             <ToggleGroup className="pipeline-overview__listpage__button">
               <ToggleGroupItem
-                text={t('Per repository')}
-                buttonId="repositoryButton"
-                isSelected={pageFlag === 2}
-                onChange={() => handlePageChange(2)}
-              />
-              <ToggleGroupItem
-                text={t('Per pipeline')}
+                text={t('Per Pipeline')}
                 buttonId="pipelineButton"
                 isSelected={pageFlag === 1}
                 onChange={() => handlePageChange(1)}
+              />
+              <ToggleGroupItem
+                text={t('Per Repository')}
+                buttonId="repositoryButton"
+                isSelected={pageFlag === 2}
+                onChange={() => handlePageChange(2)}
               />
             </ToggleGroup>
           </GridItem>
@@ -109,9 +120,15 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
         <Grid hasGutter>
           <GridItem span={12}>
             {pageFlag === 1 ? (
-              <PipelineRunsForPipelinesList summaryData={summaryData} summaryDataFiltered={summaryDataFiltered}/>
+              <PipelineRunsForPipelinesList
+                summaryData={summaryData}
+                summaryDataFiltered={summaryDataFiltered}
+              />
             ) : (
-              <PipelineRunsForRepositoriesList summaryData={summaryData} summaryDataFiltered={summaryDataFiltered}/>
+              <PipelineRunsForRepositoriesList
+                summaryData={summaryData}
+                summaryDataFiltered={summaryDataFiltered}
+              />
             )}
           </GridItem>
         </Grid>

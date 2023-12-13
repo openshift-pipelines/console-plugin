@@ -26,7 +26,6 @@ const PipelinesOverviewPage: React.FC = () => {
     setActiveNamespace(namespace);
   }, [namespace]);
 
-
   return (
     <>
       <div className="co-m-nav-title">
@@ -92,7 +91,11 @@ const PipelinesOverviewPage: React.FC = () => {
         </Flex>
       </div>
       <div className="pipelines-metrics__background">
-        <PipelineRunsListPage namespace={namespace} timespan={timespan} interval={interval}/>
+        <PipelineRunsListPage
+          namespace={namespace}
+          timespan={timespan}
+          interval={interval}
+        />
       </div>
     </>
   );

@@ -35,7 +35,7 @@ import {
   getXaxisValues,
   parsePrometheusDuration,
 } from './dateTime';
-import { useInterval } from './utils';
+import { getFilter, useInterval } from './utils';
 import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
 import { DataType } from '../utils/tekton-results';
 import './PipelinesOverview.scss';
@@ -48,6 +48,8 @@ interface PipelinesRunsStatusCardProps {
   bordered?: boolean;
   namespace: string;
   interval: number;
+  kind?: string;
+  parentName?: string;
 }
 
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
@@ -58,6 +60,8 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   bordered,
   namespace,
   interval,
+  parentName,
+  kind,
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [data, setData] = React.useState<SummaryResponse>();
@@ -80,7 +84,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   const getSummaryData = (summary, setData, groupBy?) => {
     const summaryOpt = {
       summary,
-      filter: `data.status.startTime>timestamp("${date}")`,
+      filter: getFilter(date, parentName, kind),
       data_type: DataType.PipelineRun,
     };
     groupBy && (summaryOpt['groupBy'] = groupBy);
@@ -300,7 +304,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                     }
                     scale={{ x: 'time', y: 'linear' }}
                     domain={domainValue}
-                    domainPadding={{ x: [30, 25], y: [30, 25] }}
+                    domainPadding={{ x: [30, 25] }}
                     height={200}
                     padding={{
                       top: 20,

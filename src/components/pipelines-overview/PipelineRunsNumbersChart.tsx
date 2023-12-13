@@ -22,7 +22,7 @@ import {
 import { DataType } from '../utils/tekton-results';
 import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
 import { ALL_NAMESPACES_KEY } from '../../consts';
-import { useInterval } from './utils';
+import { getFilter, useInterval } from './utils';
 import { LoadingInline } from '../Loading';
 
 interface PipelinesRunsNumbersChartProps {
@@ -32,6 +32,7 @@ interface PipelinesRunsNumbersChartProps {
   domain?: DomainPropType;
   parentName?: string;
   bordered?: boolean;
+  kind?: string;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
@@ -42,6 +43,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   domain,
   parentName,
   bordered,
+  kind,
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const startTimespan = timespan - parsePrometheusDuration('1d');
@@ -59,20 +61,16 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
   }
+
   const tickValues = getXaxisValues(timespan);
 
   const date = getDropDownDate(timespan).toISOString();
-
-  let filter = '';
-  parentName
-    ? (filter = `data.status.startTime>timestamp("${date}")&&data.metadata.labels['tekton.dev/pipeline']=="${parentName}"`)
-    : (filter = `data.status.startTime>timestamp("${date}")`);
 
   const getSummaryData = () => {
     const summaryOpt = {
       summary: 'total',
       data_type: DataType.PipelineRun,
-      filter,
+      filter: getFilter(date, parentName, kind),
       groupBy: 'day',
     };
 

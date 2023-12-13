@@ -78,6 +78,24 @@
     }
   },
   {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "pipelinesascode.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "Repository"
+      },
+      "page": {
+        "name": "%Metrics%",
+        "href": "metrics"
+      },
+      "component": { "$codeRef": "metricsComponent.PipelinesMetricsPage" }
+    },
+    "flags": {
+      "required": ["PIPELINE_TEKTON_RESULT_INSTALLED"]
+    }
+  },
+  {
     "type": "console.flag/hookProvider",
     "properties": {
       "handler": { "$codeRef": "hookProvider.useFlagHookProvider" }

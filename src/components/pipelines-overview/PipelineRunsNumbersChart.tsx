@@ -22,7 +22,7 @@ import {
 import { DataType } from '../utils/tekton-results';
 import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
 import { ALL_NAMESPACES_KEY } from '../../consts';
-import { useInterval } from './utils';
+import { getFilter, useInterval } from './utils';
 import { LoadingInline } from '../Loading';
 
 interface PipelinesRunsNumbersChartProps {
@@ -32,6 +32,7 @@ interface PipelinesRunsNumbersChartProps {
   domain?: DomainPropType;
   parentName?: string;
   bordered?: boolean;
+  kind?: string;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
@@ -42,6 +43,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   domain,
   parentName,
   bordered,
+  kind,
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const startTimespan = timespan - parsePrometheusDuration('1d');
@@ -59,20 +61,16 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
   }
+
   const tickValues = getXaxisValues(timespan);
 
   const date = getDropDownDate(timespan).toISOString();
-
-  let filter = '';
-  parentName
-    ? (filter = `data.status.startTime>timestamp("${date}")&&data.metadata.labels['tekton.dev/pipeline']=="${parentName}"`)
-    : (filter = `data.status.startTime>timestamp("${date}")`);
 
   const getSummaryData = () => {
     const summaryOpt = {
       summary: 'total',
       data_type: DataType.PipelineRun,
-      filter,
+      filter: getFilter(date, parentName, kind),
       groupBy: 'day',
     };
 
@@ -155,37 +153,38 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
         </CardTitle>
         <CardBody className="pipeline-overview__number-of-plr-card__body">
           <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
-          {loaded ?
-            <Chart
-              containerComponent={
-                <ChartVoronoiContainer
-                  labels={({ datum }) => `${datum.y}`}
-                  constrainToVisibleArea
+            {loaded ? (
+              <Chart
+                containerComponent={
+                  <ChartVoronoiContainer
+                    labels={({ datum }) => `${datum.y}`}
+                    constrainToVisibleArea
+                  />
+                }
+                scale={{ x: 'time', y: 'linear' }}
+                domain={domainValue}
+                domainPadding={{ x: [30, 25] }}
+                height={150}
+                padding={{
+                  top: 20,
+                  bottom: 40,
+                  left: 50,
+                }}
+                themeColor={ChartThemeColor.blue}
+              >
+                <ChartAxis
+                  tickValues={tickValues}
+                  style={xAxisStyle}
+                  tickFormat={xTickFormat}
                 />
-              }
-              scale={{ x: 'time', y: 'linear' }}
-              domain={domainValue}
-              domainPadding={{ x: [30, 25] }}
-              height={150}
-              padding={{
-                top: 20,
-                bottom: 40,
-                left: 50,
-              }}
-              themeColor={ChartThemeColor.blue}
-            >
-              <ChartAxis
-                tickValues={tickValues}
-                style={xAxisStyle}
-                tickFormat={xTickFormat}
-              />
-              <ChartAxis dependentAxis style={yAxisStyle} />
-              <ChartGroup>
-                <ChartBar data={chartData} barWidth={18} />
-              </ChartGroup>
-            </Chart> : (
-            <LoadingInline />
-          )}
+                <ChartAxis dependentAxis style={yAxisStyle} />
+                <ChartGroup>
+                  <ChartBar data={chartData} barWidth={18} />
+                </ChartGroup>
+              </Chart>
+            ) : (
+              <LoadingInline />
+            )}
           </div>
         </CardBody>
       </Card>

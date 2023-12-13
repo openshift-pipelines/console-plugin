@@ -14,7 +14,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { SummaryProps, useInterval } from './utils';
+import { SummaryProps, getFilter, useInterval } from './utils';
 import { getResultsSummary } from '../utils/summary-api';
 import { DataType } from '../utils/tekton-results';
 import { ALL_NAMESPACES_KEY } from '../../consts';
@@ -30,6 +30,7 @@ interface PipelinesRunsDurationProps {
   parentName?: string;
   summaryData?: SummaryProps;
   bordered?: boolean;
+  kind?: string;
 }
 
 const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
@@ -38,6 +39,7 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
   parentName,
   interval,
   bordered,
+  kind,
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [summaryData, setSummaryData] = React.useState<SummaryProps>({});
@@ -51,16 +53,12 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
   }, [namespace, timespan]);
 
   const date = getDropDownDate(timespan).toISOString();
-  let filter = '';
-  parentName
-    ? (filter = `data.status.startTime>timestamp("${date}")&&data.metadata.labels['tekton.dev/pipeline']=="${parentName}"`)
-    : (filter = `data.status.startTime>timestamp("${date}")`);
 
   const getSummaryData = () => {
     getResultsSummary(namespace, {
       summary: 'total_duration,avg_duration,max_duration',
       data_type: DataType.PipelineRun,
-      filter,
+      filter: getFilter(date, parentName, kind),
     })
       .then((response) => {
         setLoaded(true);

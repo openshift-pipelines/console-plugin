@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { DomainPropType, DomainTuple } from 'victory-core';
@@ -15,14 +15,24 @@ import {
 import { Card, CardBody, CardTitle } from '@patternfly/react-core';
 import {
   formatDate,
+  formatTime,
+  getDropDownDate,
   getXaxisValues,
   parsePrometheusDuration,
 } from '../pipelines-overview/dateTime';
+import { ALL_NAMESPACES_KEY } from '../../consts';
+import { DataType } from '../utils/tekton-results';
+import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
+import { getFilter, useInterval } from '../pipelines-overview/utils';
 
 interface PipelinesAverageDurationProps {
   timespan?: number;
   domain?: DomainPropType;
   bordered?: boolean;
+  interval?: number;
+  parentName?: string;
+  kind?: string;
+  namespace?: string;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
@@ -30,8 +40,13 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
   timespan,
   domain,
   bordered,
+  interval,
+  parentName,
+  namespace,
+  kind,
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const [data, setData] = React.useState<SummaryResponse>();
   const startTimespan = timespan - parsePrometheusDuration('1d');
   const endDate = new Date(Date.now()).setHours(0, 0, 0, 0);
   const startDate = new Date(Date.now() - startTimespan).setHours(0, 0, 0, 0);
@@ -40,25 +55,59 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
     x: domainX || [startDate, endDate],
     y: domainY || undefined,
   };
+
+  if (namespace == ALL_NAMESPACES_KEY) {
+    namespace = '-';
+  }
+
   const tickValues = getXaxisValues(timespan);
 
+  const date = getDropDownDate(timespan).toISOString();
+
+  const getSummaryData = () => {
+    const summaryOpt = {
+      summary: 'avg_duration',
+      data_type: DataType.PipelineRun,
+      filter: getFilter(date, parentName, kind),
+      groupBy: 'day',
+    };
+
+    getResultsSummary(namespace, summaryOpt)
+      .then((d) => {
+        setData(d);
+      })
+      .catch((e) => {
+        throw e;
+      });
+  };
+
+  useInterval(getSummaryData, interval, namespace, date);
+
   const chartData = tickValues.map((value) => {
-    return { x: value, y: 100 };
+    return {
+      x: value,
+      y: data?.summary.map((d) => {
+        return new Date(d.group_value * 1000).toDateString() ===
+          new Date(value).toDateString()
+          ? formatTime(d.avg_duration)
+          : 0;
+      })[0],
+    };
   });
 
-  if (!domainY) {
-    let minY: number = _.minBy(chartData, 'y')?.y ?? 0;
-    let maxY: number = _.maxBy(chartData, 'y')?.y ?? 0;
-    if (minY === 0 && maxY === 0) {
-      minY = -1;
-      maxY = 1;
-    } else if (minY > 0 && maxY > 0) {
-      minY = 0;
-    } else if (minY < 0 && maxY < 0) {
-      maxY = 0;
-    }
-    domainValue.y = [minY, maxY];
-  }
+  // if (!domainY) {
+  //   let minY = _.minBy(chartData, 'y')?.y ?? 0;
+  //   let maxY = _.maxBy(chartData, 'y')?.y ?? 0;
+  //   if (minY === 0 && maxY === 0) {
+  //     minY = -1;
+  //     maxY = 1;
+  //   } else if (minY > 0 && maxY > 0) {
+  //     minY = 0;
+  //   } else if (minY < 0 && maxY < 0) {
+  //     maxY = 0;
+  //   }
+  //   domainValue.y = [minY, maxY];
+  // }
 
   const xTickFormat = (d) => formatDate(d);
   let xAxisStyle: ChartAxisProps['style'] = {
@@ -99,7 +148,7 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
                 />
               }
               scale={{ x: 'time', y: 'linear' }}
-              domain={domainValue}
+              domain={{ x: domainValue.x, y: [1, 5] }}
               domainPadding={{ x: [30, 25] }}
               height={150}
               width={400}
@@ -115,7 +164,11 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
                 style={xAxisStyle}
                 tickFormat={xTickFormat}
               />
-              <ChartAxis dependentAxis style={yAxisStyle} />
+              <ChartAxis
+                dependentAxis
+                style={yAxisStyle}
+                tickFormat={(v) => `${v}m`}
+              />
               <ChartGroup>
                 <ChartBar data={chartData} barWidth={18} />
               </ChartGroup>

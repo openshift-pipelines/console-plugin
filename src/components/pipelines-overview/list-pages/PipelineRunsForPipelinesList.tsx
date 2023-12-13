@@ -13,11 +13,12 @@ import PipelineRunsForPipelinesRow from './PipelineRunsForPipelinesRow';
 type PipelineRunsForPipelinesListProps = {
   summaryData: SummaryProps[];
   summaryDataFiltered?: SummaryProps[];
+  loaded: boolean;
 };
 
 const PipelineRunsForPipelinesList: React.FC<
   PipelineRunsForPipelinesListProps
-> = ({ summaryData, summaryDataFiltered }) => {
+> = ({ summaryData, summaryDataFiltered, loaded }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const EmptyMsg = () => (
     <EmptyState variant={EmptyStateVariant.large}>
@@ -88,7 +89,7 @@ const PipelineRunsForPipelinesList: React.FC<
       columns={columns}
       Row={PipelineRunsForPipelinesRow}
       data={summaryDataFiltered || summaryData}
-      loaded={true}
+      loaded={loaded}
       loadError={false}
       unfilteredData={summaryData}
       EmptyMsg={EmptyMsg}

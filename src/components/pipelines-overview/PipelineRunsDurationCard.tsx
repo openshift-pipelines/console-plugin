@@ -19,6 +19,8 @@ import { getResultsSummary } from '../utils/summary-api';
 import { DataType } from '../utils/tekton-results';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { formatTime, getDropDownDate } from './dateTime';
+import { LoadingInline } from '../Loading';
+
 import './PipelineRunsDurationCard.scss';
 
 interface PipelinesRunsDurationProps {
@@ -39,9 +41,14 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [summaryData, setSummaryData] = React.useState<SummaryProps>({});
+  const [loaded, setLoaded] = React.useState(false);
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
   }
+
+  React.useEffect(() => {
+    setLoaded(false);
+  }, [namespace, timespan]);
 
   const date = getDropDownDate(timespan).toISOString();
   let filter = '';
@@ -56,6 +63,7 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
       filter,
     })
       .then((response) => {
+        setLoaded(true);
         setSummaryData(response.summary[0]);
       })
       .catch((e) => {
@@ -88,9 +96,11 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
               span={6}
               className="pipeline-overview__duration-card__value"
             >
-              {summaryData['avg_duration']
+              {loaded 
+              ? summaryData['avg_duration']
                 ? formatTime(summaryData['avg_duration'])
-                : '-'}
+                : '-' 
+              : <LoadingInline />}
             </GridItem>
           </Grid>
           <Grid hasGutter className="pipeline-overview__duration-card__grid">
@@ -104,9 +114,11 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
               span={6}
               className="pipeline-overview__duration-card__value"
             >
-              {summaryData['max_duration']
+              {loaded 
+              ? summaryData['max_duration']
                 ? formatTime(summaryData['max_duration'])
-                : '-'}
+                : '-'  
+              : <LoadingInline />}
             </GridItem>
           </Grid>
           <Grid hasGutter>
@@ -120,9 +132,11 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
               span={6}
               className="pipeline-overview__duration-card__value"
             >
-              {summaryData['total_duration']
+              {loaded 
+              ? summaryData['total_duration']
                 ? formatTime(summaryData['total_duration'])
-                : '-'}
+                : '-'  
+              : <LoadingInline />}
             </GridItem>
           </Grid>
         </CardBody>

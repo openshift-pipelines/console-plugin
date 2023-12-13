@@ -23,6 +23,7 @@ import { DataType } from '../utils/tekton-results';
 import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { useInterval } from './utils';
+import { LoadingInline } from '../Loading';
 
 interface PipelinesRunsNumbersChartProps {
   namespace?: string;
@@ -53,6 +54,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   };
 
   const [data, setData] = React.useState<SummaryResponse>();
+  const [loaded, setLoaded] = React.useState(false);
 
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
@@ -76,12 +78,17 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
 
     getResultsSummary(namespace, summaryOpt)
       .then((d) => {
+        setLoaded(true);
         setData(d);
       })
       .catch((e) => {
         throw e;
       });
   };
+
+  React.useEffect(() => {
+    setLoaded(false);
+  }, [namespace, timespan]);
 
   useInterval(getSummaryData, interval, namespace, date);
 
@@ -147,6 +154,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
         </CardTitle>
         <CardBody className="pipeline-overview__number-of-plr-card__body">
           <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
+          {loaded ?
             <Chart
               containerComponent={
                 <ChartVoronoiContainer
@@ -174,7 +182,9 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
               <ChartGroup>
                 <ChartBar data={chartData} barWidth={18} />
               </ChartGroup>
-            </Chart>
+            </Chart> : (
+            <LoadingInline />
+          )}
           </div>
         </CardBody>
       </Card>

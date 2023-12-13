@@ -34,6 +34,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [pageFlag, setPageFlag] = React.useState(1);
+  const [loaded, setloaded] = React.useState(false);
   const [summaryData, setSummaryData] = React.useState<SummaryProps[]>([]);
   const [summaryDataFiltered, setSummaryDataFiltered] = React.useState<
     SummaryProps[]
@@ -61,6 +62,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
           },
     )
       .then((response) => {
+        setloaded(true);
         setSummaryData(response.summary);
         setSummaryDataFiltered(response.summary);
       })
@@ -71,7 +73,14 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
 
   useInterval(getSummaryData, interval, namespace, date, pageFlag);
 
+  React.useEffect(() => {
+    setloaded(false)
+    setSummaryData([]);
+    setSummaryDataFiltered([]);
+  }, [namespace, timespan])
+
   const handlePageChange = (pageNumber: number) => {
+    setloaded(false)
     setSummaryData([]);
     setSummaryDataFiltered([]);
     setPageFlag(pageNumber);
@@ -120,15 +129,9 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
         <Grid hasGutter>
           <GridItem span={12}>
             {pageFlag === 1 ? (
-              <PipelineRunsForPipelinesList
-                summaryData={summaryData}
-                summaryDataFiltered={summaryDataFiltered}
-              />
+              <PipelineRunsForPipelinesList summaryData={summaryData} summaryDataFiltered={summaryDataFiltered} loaded={loaded}/>
             ) : (
-              <PipelineRunsForRepositoriesList
-                summaryData={summaryData}
-                summaryDataFiltered={summaryDataFiltered}
-              />
+              <PipelineRunsForRepositoriesList summaryData={summaryData} summaryDataFiltered={summaryDataFiltered} loaded={loaded}/>
             )}
           </GridItem>
         </Grid>

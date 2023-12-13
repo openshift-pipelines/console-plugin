@@ -14,11 +14,12 @@ import { SummaryProps, sortByNumbers, sortByProperty, sortTimeStrings, listPageT
 type PipelineRunsForRepositoriesListProps = {
   summaryData: SummaryProps[];
   summaryDataFiltered: SummaryProps[];
+  loaded: boolean;
 };
 
 const PipelineRunsForRepositoriesList: React.FC<
   PipelineRunsForRepositoriesListProps
-> = ({ summaryData, summaryDataFiltered }) => {
+> = ({ summaryData, summaryDataFiltered, loaded }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const EmptyMsg = () => (
     <EmptyState variant={EmptyStateVariant.large}>
@@ -88,7 +89,7 @@ const PipelineRunsForRepositoriesList: React.FC<
       columns={columns}
       Row={PipelineRunsForRepositoriesRow}
       data={summaryDataFiltered || summaryData}
-      loaded={true}
+      loaded={loaded}
       loadError={false}
       unfilteredData={summaryData}
       EmptyMsg={EmptyMsg}

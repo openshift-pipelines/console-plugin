@@ -150,3 +150,24 @@ export const dateFormatterNoYear = new Intl.DateTimeFormat(
 export const formatDate = (date: Date) => {
   return dateFormatterNoYear.format(date);
 };
+
+export const timeToMinutes = (timeString: string): number => {
+  // Parse the time string
+  const match = timeString?.split(/[:]+/);
+
+  if (match) {
+    // Extract components
+    const hours = parseInt(match[0]);
+    const minutes = parseInt(match[1]);
+    const seconds = parseInt(match[2]);
+
+    // Calculate total minutes
+    const totalMinutes = hours * 60 + minutes + seconds / 60;
+
+    return totalMinutes;
+  } else {
+    // Handle invalid time string
+    console.error('Invalid time format');
+    return null;
+  }
+};

@@ -65,7 +65,7 @@ const PipelinesMetricsPage: React.FC<PipelinesMetricsPageProps> = ({ obj }) => {
           >
             <PipelinesAverageDuration
               timespan={timespan}
-              domain={{ y: [0, 500] }}
+              domain={{ y: [0, 5] }}
               namespace={namespace}
               parentName={parentName}
               interval={interval}

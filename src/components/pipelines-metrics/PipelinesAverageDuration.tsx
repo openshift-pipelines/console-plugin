@@ -15,10 +15,10 @@ import {
 import { Card, CardBody, CardTitle } from '@patternfly/react-core';
 import {
   formatDate,
-  formatTime,
   getDropDownDate,
   getXaxisValues,
   parsePrometheusDuration,
+  timeToMinutes,
 } from '../pipelines-overview/dateTime';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { DataType } from '../utils/tekton-results';
@@ -84,30 +84,31 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
   useInterval(getSummaryData, interval, namespace, date);
 
   const chartData = tickValues.map((value) => {
+    const s = data?.summary.find((d) => {
+      return (
+        new Date(d.group_value * 1000).toDateString() ===
+        new Date(value).toDateString()
+      );
+    });
     return {
       x: value,
-      y: data?.summary.map((d) => {
-        return new Date(d.group_value * 1000).toDateString() ===
-          new Date(value).toDateString()
-          ? formatTime(d.avg_duration)
-          : 0;
-      })[0],
+      y: timeToMinutes(s?.avg_duration) || 0,
     };
   });
 
-  // if (!domainY) {
-  //   let minY = _.minBy(chartData, 'y')?.y ?? 0;
-  //   let maxY = _.maxBy(chartData, 'y')?.y ?? 0;
-  //   if (minY === 0 && maxY === 0) {
-  //     minY = -1;
-  //     maxY = 1;
-  //   } else if (minY > 0 && maxY > 0) {
-  //     minY = 0;
-  //   } else if (minY < 0 && maxY < 0) {
-  //     maxY = 0;
-  //   }
-  //   domainValue.y = [minY, maxY];
-  // }
+  if (!domainY) {
+    let minY: number = _.minBy(chartData, 'y')?.y ?? 0;
+    let maxY: number = _.maxBy(chartData, 'y')?.y ?? 0;
+    if (minY === 0 && maxY === 0) {
+      minY = -1;
+      maxY = 1;
+    } else if (minY > 0 && maxY > 0) {
+      minY = 0;
+    } else if (minY < 0 && maxY < 0) {
+      maxY = 0;
+    }
+    domainValue.y = [minY, maxY];
+  }
 
   const xTickFormat = (d) => formatDate(d);
   let xAxisStyle: ChartAxisProps['style'] = {
@@ -143,12 +144,12 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
             <Chart
               containerComponent={
                 <ChartVoronoiContainer
-                  labels={({ datum }) => `${datum.y}`}
+                  labels={({ datum }) => `${datum.y}m`}
                   constrainToVisibleArea
                 />
               }
               scale={{ x: 'time', y: 'linear' }}
-              domain={{ x: domainValue.x, y: [1, 5] }}
+              domain={domainValue}
               domainPadding={{ x: [30, 25] }}
               height={150}
               width={400}

@@ -62,6 +62,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   const [data, setData] = React.useState<SummaryResponse>();
   const [data2, setData2] = React.useState<SummaryResponse>();
+  const [loaded, setLoaded] = React.useState(false);
   const startTimespan = timespan - parsePrometheusDuration('1d');
   const endDate = new Date(Date.now()).setHours(0, 0, 0, 0);
   const startDate = new Date(Date.now() - startTimespan).setHours(0, 0, 0, 0);
@@ -86,6 +87,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
 
     getResultsSummary(namespace, summaryOpt)
       .then((d) => {
+        setLoaded(true);
         setData(d);
       })
       .catch((e) => {
@@ -110,6 +112,10 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
     namespace,
     date,
   );
+
+  React.useEffect(() => {
+    setLoaded(false);
+  }, [namespace, timespan]);
 
   const tickValues = getXaxisValues(timespan);
 
@@ -231,7 +237,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
           <Grid>
             <GridItem xl2={6} xl={12} lg={12} md={12} sm={12}>
               <div className="pipeline-overview__pipelinerun-status-card__donut-chart-div">
-                {data?.summary?.length > 0 ? (
+                {loaded ? (
                   <ChartDonut
                     constrainToVisibleArea={true}
                     data={donutData}
@@ -283,7 +289,8 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
             </GridItem>
             <GridItem xl2={5} xl={12} lg={12} md={12} sm={12}>
               <div className="pipeline-overview__pipelinerun-status-card__bar-chart-div">
-                <Chart
+              {loaded ? 
+              <Chart
                   containerComponent={
                     <ChartVoronoiContainer
                       labels={({ datum }) => `${t('Succeeded')}: ${datum.y}%`}
@@ -315,7 +322,9 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                   <ChartGroup>
                     <ChartBar data={chartData} barWidth={20} />
                   </ChartGroup>
-                </Chart>
+                </Chart> : (
+                  <LoadingInline />
+                )}
               </div>
             </GridItem>
           </Grid>

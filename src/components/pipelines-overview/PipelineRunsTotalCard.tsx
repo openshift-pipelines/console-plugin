@@ -17,6 +17,8 @@ import { getResultsSummary } from '../utils/summary-api';
 import { DataType } from '../utils/tekton-results';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { getDropDownDate } from './dateTime';
+import { LoadingInline } from '../Loading';
+
 import './PipelineRunsTotalCard.scss';
 
 interface PipelinesRunsDurationProps {
@@ -38,10 +40,15 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
   const [totalRun, setTotalRun] = React.useState(0);
   const [plrRun, setPlrRun] = React.useState(0);
   const [repoRun, setRepoRun] = React.useState(0);
+  const [loaded, setLoaded] = React.useState(false);
 
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
   }
+
+  React.useEffect(() => {
+    setLoaded(false);
+  }, [namespace, timespan]);
 
   const date = getDropDownDate(timespan).toISOString();
 
@@ -52,6 +59,7 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
       filter,
     })
       .then((response) => {
+        setLoaded(true);
         setData(response.summary[0].total);
       })
       .catch((e) => {
@@ -111,7 +119,10 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
               span={3}
               className="pipeline-overview__totals-card__value"
             >
-              {plrRun}
+              {loaded 
+              ? plrRun
+              : <LoadingInline />
+              }
             </GridItem>
           </Grid>
           <Grid hasGutter className="pipeline-overview__totals-card__grid">
@@ -130,7 +141,10 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
               span={3}
               className="pipeline-overview__totals-card__value"
             >
-              {repoRun}
+              {loaded 
+              ? repoRun
+              : <LoadingInline />
+              }
             </GridItem>
           </Grid>
           <Grid hasGutter>
@@ -144,7 +158,10 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
               span={3}
               className="pipeline-overview__totals-card__value"
             >
-              {totalRun}
+              {loaded 
+              ? totalRun
+              : <LoadingInline />
+              }
             </GridItem>
           </Grid>
         </CardBody>

@@ -86,14 +86,15 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   useInterval(getSummaryData, interval, namespace, date);
 
   const chartData = tickValues?.map((value) => {
+    const s = data?.summary.find((d) => {
+      return (
+        new Date(d.group_value * 1000).toDateString() ===
+        new Date(value).toDateString()
+      );
+    });
     return {
       x: value,
-      y: data?.summary.map((d) => {
-        return new Date(d.group_value * 1000).toDateString() ===
-          new Date(value).toDateString()
-          ? d.total
-          : 0;
-      })[0],
+      y: s?.total || 0,
     };
   });
 

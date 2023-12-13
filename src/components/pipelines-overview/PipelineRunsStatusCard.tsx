@@ -120,14 +120,15 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   const tickValues = getXaxisValues(timespan);
 
   const chartData = tickValues?.map((value) => {
+    const s = data2?.summary.find((d) => {
+      return (
+        new Date(d.group_value * 1000).toDateString() ===
+        new Date(value).toDateString()
+      );
+    });
     return {
       x: value,
-      y: data2?.summary.map((d) => {
-        return new Date(d.group_value * 1000).toDateString() ===
-          new Date(value).toDateString()
-          ? Math.round((100 * d.succeeded) / d.total)
-          : 0;
-      })[0],
+      y: Math.round((100 * s?.succeeded) / s?.total) || 0,
     };
   });
 

@@ -155,37 +155,38 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
         </CardTitle>
         <CardBody className="pipeline-overview__number-of-plr-card__body">
           <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
-          {loaded ?
-            <Chart
-              containerComponent={
-                <ChartVoronoiContainer
-                  labels={({ datum }) => `${datum.y}`}
-                  constrainToVisibleArea
+            {loaded ? (
+              <Chart
+                containerComponent={
+                  <ChartVoronoiContainer
+                    labels={({ datum }) => `${datum.y}`}
+                    constrainToVisibleArea
+                  />
+                }
+                scale={{ x: 'time', y: 'linear' }}
+                domain={domainValue}
+                domainPadding={{ x: [30, 25], y: [30, 25] }}
+                height={150}
+                padding={{
+                  top: 20,
+                  bottom: 40,
+                  left: 50,
+                }}
+                themeColor={ChartThemeColor.blue}
+              >
+                <ChartAxis
+                  tickValues={tickValues}
+                  style={xAxisStyle}
+                  tickFormat={xTickFormat}
                 />
-              }
-              scale={{ x: 'time', y: 'linear' }}
-              domain={domainValue}
-              domainPadding={{ x: [30, 25] }}
-              height={150}
-              padding={{
-                top: 20,
-                bottom: 40,
-                left: 50,
-              }}
-              themeColor={ChartThemeColor.blue}
-            >
-              <ChartAxis
-                tickValues={tickValues}
-                style={xAxisStyle}
-                tickFormat={xTickFormat}
-              />
-              <ChartAxis dependentAxis style={yAxisStyle} />
-              <ChartGroup>
-                <ChartBar data={chartData} barWidth={18} />
-              </ChartGroup>
-            </Chart> : (
-            <LoadingInline />
-          )}
+                <ChartAxis dependentAxis style={yAxisStyle} />
+                <ChartGroup>
+                  <ChartBar data={chartData} barWidth={18} />
+                </ChartGroup>
+              </Chart>
+            ) : (
+              <LoadingInline />
+            )}
           </div>
         </CardBody>
       </Card>

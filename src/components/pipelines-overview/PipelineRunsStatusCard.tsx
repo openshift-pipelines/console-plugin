@@ -21,9 +21,7 @@ import {
   CardTitle,
   Grid,
   GridItem,
-  Popover,
 } from '@patternfly/react-core';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { chart_color_black_200 as othersColor } from '@patternfly/react-tokens/dist/js/chart_color_black_200';
 import { chart_color_black_500 as cancelledColor } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
@@ -206,7 +204,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
 
   const legendData = donutData.map((data) => {
     return {
-      name: `${data.x}: ${data.y}%`,
+      name: `${data.x}: ${isNaN(data.y) ? 0 : data.y}%`,
     };
   });
   return (
@@ -219,7 +217,8 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
         <CardTitle className="pipeline-overview__pipelinerun-status-card__title">
           <span>
             {t('PipelineRun status')}{' '}
-            <Popover
+            {/* TODO - Add this tooltip after text content is finalized */}
+            {/* <Popover
               bodyContent={
                 <>
                   {t(
@@ -235,7 +234,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
               >
                 <OutlinedQuestionCircleIcon />
               </span>
-            </Popover>
+            </Popover> */}
           </span>
         </CardTitle>
         <CardBody className="pipeline-overview__pipelinerun-status-card__title">

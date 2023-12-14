@@ -1,18 +1,21 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom-v5-compat';
-import { useTranslation } from 'react-i18next';
 import PipelineRunsStatusCard from '../pipelines-overview/PipelineRunsStatusCard';
-import { Alert, Flex, FlexItem } from '@patternfly/react-core';
+import { Flex, FlexItem } from '@patternfly/react-core';
 import PipelinesRunsDurationCard from '../pipelines-overview/PipelineRunsDurationCard';
 import PipelinesRunsNumbersChart from '../pipelines-overview/PipelineRunsNumbersChart';
 import { parsePrometheusDuration } from '../pipelines-overview/dateTime';
 import TimeRangeDropdown from '../pipelines-overview/TimeRangeDropdown';
 import RefreshDropdown from '../pipelines-overview/RefreshDropdown';
 import PipelinesAverageDuration from './PipelinesAverageDuration';
+import { K8sResourceKind } from '@openshift-console/dynamic-plugin-sdk';
 import './PipelinesMetrics.scss';
 
-const PipelinesMetricsPage: React.FC = () => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+type PipelinesMetricsPageProps = {
+  obj: K8sResourceKind;
+};
+
+const PipelinesMetricsPage: React.FC<PipelinesMetricsPageProps> = ({ obj }) => {
   const params = useParams();
   const { ns: namespace, name: parentName } = params;
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1w'));
@@ -22,21 +25,7 @@ const PipelinesMetricsPage: React.FC = () => {
 
   return (
     <>
-      <Alert
-        className="pipeline-metrics__alert"
-        isInline
-        variant="info"
-        title={t(
-          'Pipeline metrics configuration defaults to pipelines and task level',
-        )}
-      >
-        <p>
-          {t(
-            'Administrators can try this quick start to configure their metrics level to pipelinerun and taskrun. The pipelinerun and taskrun metrics level collects large volume of metrics over time in unbounded cardinality which may lead to metrics unreliability.',
-          )}
-        </p>
-      </Alert>
-      <Flex className="project-dropdown-label__flex">
+      <Flex className="pipelines-metrix-dropdown">
         <FlexItem>
           <TimeRangeDropdown timespan={timespan} setTimespan={setTimespan} />
         </FlexItem>
@@ -51,6 +40,8 @@ const PipelinesMetricsPage: React.FC = () => {
           domain={{ y: [0, 100] }}
           bordered={false}
           namespace={namespace}
+          parentName={parentName}
+          kind={obj.kind}
           interval={interval}
         />
 
@@ -63,6 +54,8 @@ const PipelinesMetricsPage: React.FC = () => {
               namespace={namespace}
               parentName={parentName}
               timespan={timespan}
+              interval={interval}
+              kind={obj.kind}
               domain={{ y: [0, 500] }}
             />
           </FlexItem>
@@ -72,7 +65,11 @@ const PipelinesMetricsPage: React.FC = () => {
           >
             <PipelinesAverageDuration
               timespan={timespan}
-              domain={{ y: [0, 500] }}
+              domain={{ y: [0, 5] }}
+              namespace={namespace}
+              parentName={parentName}
+              interval={interval}
+              kind={obj.kind}
             />
           </FlexItem>
           <FlexItem
@@ -84,6 +81,7 @@ const PipelinesMetricsPage: React.FC = () => {
               parentName={parentName}
               timespan={timespan}
               interval={interval}
+              kind={obj.kind}
             />
           </FlexItem>
         </Flex>

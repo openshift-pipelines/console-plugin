@@ -98,29 +98,34 @@ export const formatTime = (time: string): string => {
 };
 
 export const formatTimeLastRunTime = (time: string): string => {
-  let timeValue = time?.split(/\s+/);
+  const timeValue = time?.split(/\s+/);
   if (timeValue === undefined) {
     return '-';
   }
-  if(timeValue.length > 1){
+  if (timeValue.length > 1) {
     // Check for the presence of each component
     const hasYear = timeValue.includes('year') || timeValue.includes('years');
-    const hasMonth = timeValue.includes('month') || timeValue.includes('months');
+    const hasMonth =
+      timeValue.includes('month') || timeValue.includes('months');
     const hasDay = timeValue.includes('day') || timeValue.includes('days');
 
     // Return the most significant time component
     if (hasYear) {
-      return timeValue.includes('year') ? timeValue[timeValue.indexOf('year') - 1] + ' year ago' : timeValue[timeValue.indexOf('years') - 1] + ' years ago';
+      return timeValue.includes('year')
+        ? timeValue[timeValue.indexOf('year') - 1] + ' year ago'
+        : timeValue[timeValue.indexOf('years') - 1] + ' years ago';
     } else if (hasMonth) {
-      return timeValue.includes('month') ? timeValue[timeValue.indexOf('month') - 1] + ' month ago' : timeValue[timeValue.indexOf('months') - 1] + ' months ago';
+      return timeValue.includes('month')
+        ? timeValue[timeValue.indexOf('month') - 1] + ' month ago'
+        : timeValue[timeValue.indexOf('months') - 1] + ' months ago';
     } else if (hasDay) {
-      return timeValue.includes('day') ? timeValue[timeValue.indexOf('day') - 1] + ' day ago' : timeValue[timeValue.indexOf('days') - 1] + ' days ago';
-    }
-    else {
+      return timeValue.includes('day')
+        ? timeValue[timeValue.indexOf('day') - 1] + ' day ago'
+        : timeValue[timeValue.indexOf('days') - 1] + ' days ago';
+    } else {
       return `${timeValue.pop()} ago`;
     }
-  }
-  else{
+  } else {
     const [hours, minutes, seconds] = time.split(/[:.]/).map(Number);
     if (!isNaN(hours) && hours > 0) {
       return hours === 1 ? `${hours} hour ago` : `${hours} hours ago`;
@@ -144,4 +149,25 @@ export const dateFormatterNoYear = new Intl.DateTimeFormat(
 
 export const formatDate = (date: Date) => {
   return dateFormatterNoYear.format(date);
+};
+
+export const timeToMinutes = (timeString: string): number => {
+  // Parse the time string
+  const match = timeString?.split(/[:]+/);
+
+  if (match) {
+    // Extract components
+    const hours = parseInt(match[0]);
+    const minutes = parseInt(match[1]);
+    const seconds = parseInt(match[2]);
+
+    // Calculate total minutes
+    const totalMinutes = hours * 60 + minutes + seconds / 60;
+
+    return totalMinutes;
+  } else {
+    // Handle invalid time string
+    console.error('Invalid time format');
+    return null;
+  }
 };

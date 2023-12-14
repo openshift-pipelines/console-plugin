@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { K8sGroupVersionKind, K8sModel, K8sResourceKindReference } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  K8sGroupVersionKind,
+  K8sModel,
+  K8sResourceKindReference,
+} from '@openshift-console/dynamic-plugin-sdk';
 
 export const alphanumericCompare = (a: string, b: string): number => {
   return a.localeCompare(b, undefined, {
@@ -15,7 +19,6 @@ export type SummaryProps = {
   succeeded?: number;
   failed?: number;
   running?: number;
-  unknown?: number;
   cancelled?: number;
   max_duration?: string;
   min_duration?: string;
@@ -39,7 +42,7 @@ export const listPageTableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-md', //total duration
   'pf-m-hidden pf-m-visible-on-xl', //avg duration
   'pf-m-hidden pf-m-visible-on-xl', //success rate
-  'pf-m-hidden pf-m-visible-on-xl' //last run time
+  'pf-m-hidden pf-m-visible-on-xl', //last run time
 ];
 
 export const TimeRangeOptions = () => {
@@ -80,35 +83,55 @@ export const LAST_LANGUAGE_LOCAL_STORAGE_KEY = 'bridge/last-language';
 export const getLastLanguage = (): string =>
   localStorage.getItem(LAST_LANGUAGE_LOCAL_STORAGE_KEY);
 
+export const getReferenceForModel = (
+  model: K8sModel,
+): K8sResourceKindReference =>
+  getReference({
+    group: model.apiGroup,
+    version: model.apiVersion,
+    kind: model.kind,
+  });
 
-export const getReferenceForModel = (model: K8sModel): K8sResourceKindReference =>
-  getReference({ group: model.apiGroup, version: model.apiVersion, kind: model.kind });
-  
 export const getReference = ({
-    group,
-    version,
-    kind,
-}: K8sGroupVersionKind): K8sResourceKindReference => [group || 'core', version, kind].join('~');
+  group,
+  version,
+  kind,
+}: K8sGroupVersionKind): K8sResourceKindReference =>
+  [group || 'core', version, kind].join('~');
 
-export const sortByProperty = (array: SummaryProps[], prop: string, direction: string) => {
-  return array.sort((a:SummaryProps, b:SummaryProps) => {
-      const nameA = prop === 'namespace' ? a.group_value.split('/')[0].toLowerCase() :  a.group_value.split('/')[1].toLowerCase();
-      const nameB = prop === 'namespace' ? b.group_value.split('/')[0].toLowerCase() : b.group_value.split('/')[1].toLowerCase();
+export const sortByProperty = (
+  array: SummaryProps[],
+  prop: string,
+  direction: string,
+) => {
+  return array.sort((a: SummaryProps, b: SummaryProps) => {
+    const nameA =
+      prop === 'namespace'
+        ? a.group_value.split('/')[0].toLowerCase()
+        : a.group_value.split('/')[1].toLowerCase();
+    const nameB =
+      prop === 'namespace'
+        ? b.group_value.split('/')[0].toLowerCase()
+        : b.group_value.split('/')[1].toLowerCase();
 
-      const numberA = parseInt(nameA.replace(/^\D+/g, '')) || 0;
-      const numberB = parseInt(nameB.replace(/^\D+/g, '')) || 0;
-  
-      const nameComparison = nameA.localeCompare(nameB);
-  
-      if (nameComparison === 0) {
-        return (direction === 'desc' ? numberB - numberA : numberA - numberB);
-      }
-  
-      return (direction === 'desc' ? nameComparison * -1 : nameComparison);
-    })
+    const numberA = parseInt(nameA.replace(/^\D+/g, '')) || 0;
+    const numberB = parseInt(nameB.replace(/^\D+/g, '')) || 0;
+
+    const nameComparison = nameA.localeCompare(nameB);
+
+    if (nameComparison === 0) {
+      return direction === 'desc' ? numberB - numberA : numberA - numberB;
+    }
+
+    return direction === 'desc' ? nameComparison * -1 : nameComparison;
+  });
 };
 
-export const sortTimeStrings = (array: SummaryProps[], prop: string ,direction: string) => {
+export const sortTimeStrings = (
+  array: SummaryProps[],
+  prop: string,
+  direction: string,
+) => {
   return array.slice().sort((a, b) => {
     const getTimeValue = (timeString) => {
       const components = timeString?.split(/\s+/);
@@ -126,7 +149,8 @@ export const sortTimeStrings = (array: SummaryProps[], prop: string ,direction: 
           } else if (component.includes(':')) {
             // Parse HH:mm:ss.ms
             const timeParts = component.split(':').map(Number);
-            totalSeconds += timeParts[0] * 3600 + timeParts[1] * 60 + timeParts[2];
+            totalSeconds +=
+              timeParts[0] * 3600 + timeParts[1] * 60 + timeParts[2];
             if (timeParts.length === 4) {
               totalSeconds += timeParts[3] / 1000;
             }
@@ -144,7 +168,11 @@ export const sortTimeStrings = (array: SummaryProps[], prop: string ,direction: 
   });
 };
 
-export const sortByNumbers = (array: SummaryProps[], prop: string ,direction: string) => {
+export const sortByNumbers = (
+  array: SummaryProps[],
+  prop: string,
+  direction: string,
+) => {
   const modifier = direction === 'desc' ? -1 : 1;
 
   return array.slice().sort((a, b) => {
@@ -165,7 +193,7 @@ export const useInterval = (
   interval: number,
   namespace: string,
   date: string,
-  pageFlag?: number
+  pageFlag?: number,
 ) => {
   React.useEffect(() => {
     getData();
@@ -176,3 +204,16 @@ export const useInterval = (
   }, [interval, namespace, date, pageFlag]);
 };
 
+export const getFilter = (date, parentName, kind): string => {
+  let filter = `data.status.startTime>timestamp("${date}")`;
+  if (parentName) {
+    if (kind === 'Repository') {
+      filter = `data.status.startTime>timestamp("${date}")&&data.metadata.labels['pipelinesascode.tekton.dev/repository']=="${parentName}"`;
+    } else {
+      filter = `data.status.startTime>timestamp("${date}")&&!data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')&&data.metadata.labels['tekton.dev/pipeline']=="${parentName}"`;
+    }
+  } else {
+    filter = `data.status.startTime>timestamp("${date}")`;
+  }
+  return filter;
+};

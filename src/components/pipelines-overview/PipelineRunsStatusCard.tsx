@@ -290,40 +290,42 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
             </GridItem>
             <GridItem xl2={5} xl={12} lg={12} md={12} sm={12}>
               <div className="pipeline-overview__pipelinerun-status-card__bar-chart-div">
-              {loaded ? 
-              <Chart
-                  containerComponent={
-                    <ChartVoronoiContainer
-                      labels={({ datum }) => `${t('Succeeded')}: ${datum.y}%`}
-                      constrainToVisibleArea
+                {loaded ? (
+                  <Chart
+                    containerComponent={
+                      <ChartVoronoiContainer
+                        labels={({ datum }) => `${t('Succeeded')}: ${datum.y}%`}
+                        constrainToVisibleArea
+                      />
+                    }
+                    scale={{ x: 'time', y: 'linear' }}
+                    domain={domainValue}
+                    domainPadding={{ x: [30, 25], y: [30, 25] }}
+                    height={200}
+                    padding={{
+                      top: 20,
+                      bottom: 40,
+                      right: 40,
+                      left: 50,
+                    }}
+                    width={600}
+                    themeColor={ChartThemeColor.blue}
+                  >
+                    <ChartAxis
+                      tickValues={tickValues}
+                      style={xAxisStyle}
+                      tickFormat={xTickFormat}
                     />
-                  }
-                  scale={{ x: 'time', y: 'linear' }}
-                  domain={domainValue}
-                  domainPadding={{ x: [30, 25] }}
-                  height={200}
-                  padding={{
-                    top: 20,
-                    bottom: 40,
-                    left: 50,
-                  }}
-                  width={600}
-                  themeColor={ChartThemeColor.blue}
-                >
-                  <ChartAxis
-                    tickValues={tickValues}
-                    style={xAxisStyle}
-                    tickFormat={xTickFormat}
-                  />
-                  <ChartAxis
-                    dependentAxis
-                    tickFormat={(v) => `${v}%`}
-                    style={yAxisStyle}
-                  />
-                  <ChartGroup>
-                    <ChartBar data={chartData} barWidth={20} />
-                  </ChartGroup>
-                </Chart> : (
+                    <ChartAxis
+                      dependentAxis
+                      tickFormat={(v) => `${v}%`}
+                      style={yAxisStyle}
+                    />
+                    <ChartGroup>
+                      <ChartBar data={chartData} barWidth={20} />
+                    </ChartGroup>
+                  </Chart>
+                ) : (
                   <LoadingInline />
                 )}
               </div>

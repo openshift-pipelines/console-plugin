@@ -1,0 +1,63 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  namespace: $NAMESPACE
+  name: $PIPELINERUN_NAME
+  creationTimestamp: $CREATIONTIMESTAMP
+  labels:
+    tekton.dev/pipeline: $PIPELINE_NAME
+spec:
+  params:
+    - name: NAME
+      value: world
+  pipelineSpec:
+    tasks:
+      - name: echo-hello
+        taskSpec:
+          metadata: {}
+          spec: null
+          steps:
+            - computeResources: {}
+              image: ubuntu
+              name: echo
+              script: |
+                #!/usr/bin/env bash
+                echo "Hello"
+      - name: echo-name
+        runAfter:
+          - echo-hello
+        taskSpec:
+          metadata: {}
+          spec: null
+          steps:
+            - computeResources: {}
+              image: ubuntu
+              name: echo
+              script: |
+                #!/usr/bin/env bash
+                echo "$(params.NAME)"
+      - name: echo-bye
+        taskSpec:
+          metadata: {}
+          spec: null
+          steps:
+            - computeResources: {}
+              image: ubuntu
+              name: echo
+              script: |
+                #!/usr/bin/env bash
+                sleep 3
+                echo "Goodbye!"
+  taskRunTemplate:
+    serviceAccountName: pipeline
+  timeouts:
+    pipeline: 1h0m0s
+status:
+  startTime: $CREATIONTIMESTAMP
+  completionTime: $COMPLETIONTIMESTAMP
+  conditions:
+    - lastTransitionTime: $COMPLETIONTIMESTAMP
+      message: 'Tasks Completed: 2 (Failed: 1, Cancelled 0), Skipped: 1'
+      reason: Failed
+      status: 'False'
+      type: Succeeded

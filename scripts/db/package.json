@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "db",
+  "version": "0.1.0",
+  "main": "index.js",
+  "scripts": {
+    "create-demo-data": "ts-node create-demo-data.ts",
+    "show-stats": "ts-node show-stats.ts"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "postgres": "^3.4.3",
+    "ts-node": "^10.9.1"
+  }
+}

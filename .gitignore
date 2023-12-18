@@ -3,6 +3,6 @@ dist/
 .devcontainer/dev.env
 integration-tests/videos
 integration-tests/screenshots
-integration-tests/.DS_Store
 yarn-error.log
 .DS_Store
+*.pem

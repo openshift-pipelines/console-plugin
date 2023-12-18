@@ -205,15 +205,24 @@ export const useInterval = (
 };
 
 export const getFilter = (date, parentName, kind): string => {
-  let filter = `data.status.startTime>timestamp("${date}")`;
-  if (parentName) {
-    if (kind === 'Repository') {
-      filter = `data.status.startTime>timestamp("${date}")&&data.metadata.labels['pipelinesascode.tekton.dev/repository']=="${parentName}"`;
-    } else {
-      filter = `data.status.startTime>timestamp("${date}")&&!data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')&&data.metadata.labels['tekton.dev/pipeline']=="${parentName}"`;
-    }
-  } else {
-    filter = `data.status.startTime>timestamp("${date}")`;
+  const filter = [`data.status.startTime>timestamp("${date}")`];
+  if (kind === 'Pipeline') {
+    filter.push(`data.spec.pipelineRef.contains("name")`);
+  } else if (kind === 'Repository') {
+    filter.push(
+      `data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')`,
+    );
   }
-  return filter;
+  if (parentName) {
+    if (kind === 'Pipeline') {
+      filter.push(
+        `data.metadata.labels['tekton.dev/pipeline']=="${parentName}"`,
+      );
+    } else if (kind === 'Repository') {
+      filter.push(
+        `data.metadata.labels['pipelinesascode.tekton.dev/repository']=="${parentName}"`,
+      );
+    }
+  }
+  return filter.join(' && ');
 };

@@ -67,25 +67,25 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
       });
   };
 
-  const filter = `data.metadata.labels.contains("pipelinesascode.tekton.dev/repository")&&data.status.startTime>timestamp("${date}")`;
+  const pipelineFilter = `data.spec.pipelineRef.contains("name") && data.status.startTime>timestamp("${date}")`;
   useInterval(
-    () => getSummaryData(filter, setRepoRun),
+    () => getSummaryData(pipelineFilter, setPlrRun),
     interval,
     namespace,
     date,
   );
 
-  const filter2 = `!data.metadata.labels.contains("pipelinesascode.tekton.dev/repository")&&data.status.startTime>timestamp("${date}")`;
+  const pacFilter = `data.metadata.labels.contains("pipelinesascode.tekton.dev/repository") && data.status.startTime>timestamp("${date}")`;
   useInterval(
-    () => getSummaryData(filter2, setPlrRun),
+    () => getSummaryData(pacFilter, setRepoRun),
     interval,
     namespace,
     date,
   );
 
-  const filter3 = `data.status.startTime>timestamp("${date}")`;
+  const allFilter = `data.status.startTime>timestamp("${date}")`;
   useInterval(
-    () => getSummaryData(filter3, setTotalRun),
+    () => getSummaryData(allFilter, setTotalRun),
     interval,
     namespace,
     date,

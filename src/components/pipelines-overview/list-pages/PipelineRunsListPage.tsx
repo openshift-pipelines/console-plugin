@@ -52,13 +52,13 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
             summary: 'total_duration,avg_duration,total,succeeded,last_runtime',
             data_type: DataType.PipelineRun,
             groupBy: 'pipeline',
-            filter: `data.status.startTime>timestamp("${date}")&&!data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')`,
+            filter: `data.status.startTime>timestamp("${date}") && data.spec.pipelineRef.contains("name")`,
           }
         : {
             summary: 'total_duration,avg_duration,total,succeeded,last_runtime',
             data_type: DataType.PipelineRun,
             groupBy: 'repository',
-            filter: `data.status.startTime>timestamp("${date}")&&data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')`,
+            filter: `data.status.startTime>timestamp("${date}") && data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')`,
           },
     )
       .then((response) => {

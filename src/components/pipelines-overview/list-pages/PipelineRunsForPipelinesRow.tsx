@@ -25,7 +25,7 @@ const PipelineRunsForPipelinesRow: React.FC<RowProps<SummaryProps>> = ({
       </td>
       {activeNamespace === ALL_NAMESPACES_KEY && 
       <td className={tableColumnClasses[1]}>
-        <ResourceLink kind="Namespace" name={name} />
+        <ResourceLink kind="Namespace" name={namespace} />
       </td>}
       <td className={tableColumnClasses[2]}>
         <Link to={`/k8s/ns/${namespace}/${pipelineReference}/${name}/Runs`}>

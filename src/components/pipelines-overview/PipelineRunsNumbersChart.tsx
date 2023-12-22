@@ -69,7 +69,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   const getSummaryData = () => {
     const summaryOpt = {
       summary: 'total',
-      data_type: DataType.PipelineRun,
+      data_type: DataType?.PipelineRun,
       filter: getFilter(date, parentName, kind),
       groupBy: 'day',
     };

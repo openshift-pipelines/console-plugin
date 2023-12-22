@@ -1,5 +1,6 @@
 node_modules/
 dist/
+/coverage
 .devcontainer/dev.env
 integration-tests/videos
 integration-tests/screenshots

@@ -83,7 +83,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
     const summaryOpt = {
       summary,
       filter: getFilter(date, parentName, kind),
-      data_type: DataType.PipelineRun,
+      data_type: DataType?.PipelineRun,
     };
     groupBy && (summaryOpt['groupBy'] = groupBy);
 
@@ -122,7 +122,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   const tickValues = getXaxisValues(timespan);
 
   const chartData = tickValues?.map((value) => {
-    const s = data2?.summary.find((d) => {
+    const s = data2?.summary?.find((d) => {
       return (
         new Date(d.group_value * 1000).toDateString() ===
         new Date(value).toDateString()
@@ -179,26 +179,32 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
     {
       x: t('Succeeded'),
       y: Math.round(
-        (100 * data?.summary[0].succeeded) / data?.summary[0].total,
+        (100 * data?.summary?.[0].succeeded) / data?.summary?.[0].total,
       ),
     },
     {
       x: t('Failed'),
-      y: Math.round((100 * data?.summary[0].failed) / data?.summary[0].total),
+      y: Math.round(
+        (100 * data?.summary?.[0].failed) / data?.summary?.[0].total,
+      ),
     },
     {
       x: t('Running'),
-      y: Math.round((100 * data?.summary[0].running) / data?.summary[0].total),
+      y: Math.round(
+        (100 * data?.summary?.[0].running) / data?.summary?.[0].total,
+      ),
     },
     {
       x: t('Cancelled'),
       y: Math.round(
-        (100 * data?.summary[0].cancelled) / data?.summary[0].total,
+        (100 * data?.summary?.[0].cancelled) / data?.summary?.[0].total,
       ),
     },
     {
       x: t('Others'),
-      y: Math.round((100 * data?.summary[0].others) / data?.summary[0].total),
+      y: Math.round(
+        (100 * data?.summary?.[0].others) / data?.summary?.[0].total,
+      ),
     },
   ];
 
@@ -275,7 +281,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                         }}
                       />
                     }
-                    title={`${data?.summary[0].succeeded}/${data?.summary[0].total}`}
+                    title={`${data?.summary?.[0].succeeded}/${data?.summary?.[0].total}`}
                     titleComponent={
                       <ChartLabel
                         style={{

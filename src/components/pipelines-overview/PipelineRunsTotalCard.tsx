@@ -55,12 +55,12 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
   const getSummaryData = (filter, setData) => {
     getResultsSummary(namespace, {
       summary: 'total',
-      data_type: DataType.PipelineRun,
+      data_type: DataType?.PipelineRun,
       filter,
     })
       .then((response) => {
         setLoaded(true);
-        setData(response.summary[0].total);
+        setData(response.summary?.[0].total);
       })
       .catch((e) => {
         console.error('Error in getSummary', e);

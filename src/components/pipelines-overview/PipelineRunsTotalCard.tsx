@@ -119,10 +119,7 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
               span={3}
               className="pipeline-overview__totals-card__value"
             >
-              {loaded 
-              ? plrRun
-              : <LoadingInline />
-              }
+              {loaded ? plrRun : <LoadingInline />}
             </GridItem>
           </Grid>
           <Grid hasGutter className="pipeline-overview__totals-card__grid">
@@ -141,10 +138,7 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
               span={3}
               className="pipeline-overview__totals-card__value"
             >
-              {loaded 
-              ? repoRun
-              : <LoadingInline />
-              }
+              {loaded ? repoRun : <LoadingInline />}
             </GridItem>
           </Grid>
           <Grid hasGutter>
@@ -158,10 +152,7 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
               span={3}
               className="pipeline-overview__totals-card__value"
             >
-              {loaded 
-              ? totalRun
-              : <LoadingInline />
-              }
+              {loaded ? totalRun : <LoadingInline />}
             </GridItem>
           </Grid>
         </CardBody>

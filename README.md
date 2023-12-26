@@ -6,8 +6,8 @@ It will be shipped and enabled automatically by the [Tekton CD / OpenShift Pipel
 
 ## Rough roadmap
 
-* 2023 / v1: Adds a new **Dashboard** and **Metrics** tab to the Pipeline pages that shows aggregated PipelineRun stats from the [Tekton Results API](https://github.com/tektoncd/results)
-* 2024 / v2: Additional pages, like the Pipeline list and details pages are moved from the "static" [pipelines-plugin](https://github.com/openshift/console/tree/master/frontend/packages/pipelines-plugin) from the OpenShift Console into this project.
+- 2023 / v1: Adds a new **Dashboard** and **Metrics** tab to the Pipeline pages that shows aggregated PipelineRun stats from the [Tekton Results API](https://github.com/tektoncd/results)
+- 2024 / v2: Additional pages, like the Pipeline list and details pages are moved from the "static" [pipelines-plugin](https://github.com/openshift/console/tree/master/frontend/packages/pipelines-plugin) from the OpenShift Console into this project.
 
 ## Compatiblity
 

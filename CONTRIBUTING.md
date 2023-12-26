@@ -6,15 +6,14 @@
 
 Required tools:
 
-* [Node.js](https://nodejs.org/en/) v16 or newer and [yarn](https://yarnpkg.com) are required
-to build and run the example.
-* To run OpenShift console in a container, either
-[Docker](https://www.docker.com) or [podman 3.2.0+](https://podman.io) and
-[oc](https://console.redhat.com/openshift/downloads) are required.
+- [Node.js](https://nodejs.org/en/) v16 or newer and [yarn](https://yarnpkg.com) are required
+  to build and run the example.
+- To run OpenShift console in a container, either
+  [Docker](https://www.docker.com) or [podman 3.2.0+](https://podman.io) and
+  [oc](https://console.redhat.com/openshift/downloads) are required.
 
 You can run the plugin using a local development environment or build an image
 to deploy it to a cluster.
-
 
 ### Option 1: Local development, with a local (cloned) console
 
@@ -160,15 +159,15 @@ the message for the current language from the `plugin__pipeline-console-plugin`
 namespace. For example:
 
 ```json
-  {
-    "type": "console.navigation/href",
-    "properties": {
-      "id": "pipelines-overview",
-      "perspective": "admin",
-      "section": "pipelines",
-      "name": "%plugin__pipeline-console-plugin~Overview%"
-    }
+{
+  "type": "console.navigation/href",
+  "properties": {
+    "id": "pipelines-overview",
+    "perspective": "admin",
+    "section": "pipelines",
+    "name": "%plugin__pipeline-console-plugin~Overview%"
   }
+}
 ```
 
 Running `yarn i18n` updates the JSON files in the `locales` folder of the
@@ -197,7 +196,7 @@ Steps to generate reports
 
 1. In command prompt, navigate to root folder and execute the command `yarn run cypress-merge`
 2. Then execute command `yarn run cypress-generate`
-The cypress-report.html file is generated and should be in (/integration-tests/screenshots) directory
+   The cypress-report.html file is generated and should be in (/integration-tests/screenshots) directory
 
 ## References
 

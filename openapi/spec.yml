@@ -41,7 +41,7 @@ info:
     name: Apache 2.0
     url: https://github.com/tektoncd/results/blob/main/LICENSE
   x-logo:
-    url: ""
+    url: ''
 servers:
   - url: https://{server_url}/apis/results.tekton.dev
     description: The common url format for tekton results API
@@ -57,8 +57,8 @@ paths:
       tags:
         - Results
       responses:
-        "200":
-          $ref: "#/components/responses/ResultsList"
+        '200':
+          $ref: '#/components/responses/ResultsList'
           x-last-modified: 1677673623817
       operationId: list_results_by_parent_name
       summary: Get the list of the Results
@@ -67,19 +67,19 @@ paths:
         This is useful for listing all results stored in the system without
         prior knowledge about the available parents.
     parameters:
-      - $ref: "#/components/parameters/parent"
+      - $ref: '#/components/parameters/parent'
         name: parent
         x-last-modified: 1677826043887
-      - $ref: "#/components/parameters/filter"
+      - $ref: '#/components/parameters/filter'
         name: filter
         x-last-modified: 1679484691871
-      - $ref: "#/components/parameters/page_token"
+      - $ref: '#/components/parameters/page_token'
         name: page_token
         x-last-modified: 1679484706871
-      - $ref: "#/components/parameters/page_size"
+      - $ref: '#/components/parameters/page_size'
         name: page_size
         x-last-modified: 1679484719471
-      - $ref: "#/components/parameters/order_by"
+      - $ref: '#/components/parameters/order_by'
         name: order_by
         x-last-modified: 1679484733009
     x-last-modified: 1677671948697
@@ -89,80 +89,80 @@ paths:
       tags:
         - Records
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Record"
+                $ref: '#/components/schemas/Record'
           description: Default response
       operationId: get_record_by_uid
       summary: Get a record given uid
-      description: ""
+      description: ''
     post:
       requestBody:
         description: The record to be created.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Record"
+              $ref: '#/components/schemas/Record'
         required: true
       tags:
         - Records
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Record"
+                $ref: '#/components/schemas/Record'
           description: Default response
       operationId: create_record_by_uid
       summary: Create record with given uid
-      description: ""
+      description: ''
     delete:
       tags:
         - Records
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                description: ""
+                description: ''
                 type: object
-                example: ""
-              example: ""
-          description: ""
+                example: ''
+              example: ''
+          description: ''
           x-last-modified: 1677760439227
       operationId: delete_record_by_uid
       summary: Delete record given the uid
-      description: ""
+      description: ''
     patch:
       requestBody:
         description: The record to be updated.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Record"
+              $ref: '#/components/schemas/Record'
         required: true
       tags:
         - Records
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Record"
+                $ref: '#/components/schemas/Record'
           description: Default response
-      operationId: ""
+      operationId: ''
       summary: Update a record given the uid
-      description: ""
+      description: ''
     parameters:
-      - $ref: "#/components/parameters/parent"
+      - $ref: '#/components/parameters/parent'
         name: parent
         x-last-modified: 1677672324160
-      - $ref: "#/components/parameters/result_uid"
+      - $ref: '#/components/parameters/result_uid'
         name: result_uid
         x-last-modified: 1677672338019
-      - $ref: "#/components/parameters/record_uid"
+      - $ref: '#/components/parameters/record_uid'
         name: record_uid
         x-last-modified: 1677672352453
     x-last-modified: 1677672432307
@@ -172,74 +172,74 @@ paths:
       tags:
         - Results
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Result"
+                $ref: '#/components/schemas/Result'
           description: Default response
       operationId: get_result_by_uid
       summary: Get a single result given the UID
-      description: ""
+      description: ''
     post:
       requestBody:
         description: The result to be created
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Result"
+              $ref: '#/components/schemas/Result'
         required: true
       tags:
         - Results
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Result"
+                $ref: '#/components/schemas/Result'
           description: Default response
       operationId: create_result_by_uid
       summary: Create a Result given data and UID
-      description: ""
+      description: ''
     delete:
       tags:
         - Results
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Result"
-              example: ""
+                $ref: '#/components/schemas/Result'
+              example: ''
           description: Default response
       operationId: delete_result_by_uid
       summary: Delete a particular result using UID
-      description: ""
+      description: ''
     patch:
       requestBody:
         description: The result to be updated.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Result"
+              $ref: '#/components/schemas/Result'
         required: true
       tags:
         - Results
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Result"
+                $ref: '#/components/schemas/Result'
           description: Default response
       operationId: update_result_by_uid
       summary: Update result given the UID
-      description: ""
+      description: ''
     parameters:
-      - $ref: "#/components/parameters/parent"
+      - $ref: '#/components/parameters/parent'
         name: parent
         x-last-modified: 1677672496911
-      - $ref: "#/components/parameters/result_uid"
+      - $ref: '#/components/parameters/result_uid'
         name: result_uid
         x-last-modified: 1677672511792
     x-last-modified: 1677672484697
@@ -249,8 +249,8 @@ paths:
       tags:
         - Logs
       responses:
-        "200":
-          $ref: "#/components/responses/RecordsList"
+        '200':
+          $ref: '#/components/responses/RecordsList'
           x-last-modified: 1677673949442
       operationId: list_logs_by_result_uid
       summary: List Logs given the Result UID
@@ -260,22 +260,22 @@ paths:
         **default/results/-** or **-/results/-**). This can be used to read and
         filter matching Logs without knowing the exact Result name.
     parameters:
-      - $ref: "#/components/parameters/parent"
+      - $ref: '#/components/parameters/parent'
         name: parent
         x-last-modified: 1677672653795
-      - $ref: "#/components/parameters/result_uid"
+      - $ref: '#/components/parameters/result_uid'
         name: result_uid
         x-last-modified: 1677672667367
-      - $ref: "#/components/parameters/filter"
+      - $ref: '#/components/parameters/filter'
         name: filter
         x-last-modified: 1679485318262
-      - $ref: "#/components/parameters/page_size"
+      - $ref: '#/components/parameters/page_size'
         name: page_size
         x-last-modified: 1679485331528
-      - $ref: "#/components/parameters/page_token"
+      - $ref: '#/components/parameters/page_token'
         name: page_token
         x-last-modified: 1679485343811
-      - $ref: "#/components/parameters/order_by"
+      - $ref: '#/components/parameters/order_by'
         name: order_by
         x-last-modified: 1679485356281
     x-last-modified: 1677672632222
@@ -285,12 +285,12 @@ paths:
       tags:
         - Logs
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Log"
-          description: ""
+                $ref: '#/components/schemas/Log'
+          description: ''
           x-last-modified: 1677676553132
       operationId: get_log_by_uid
       summary: Get a Log given UID
@@ -298,37 +298,37 @@ paths:
       tags:
         - Logs
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                description: ""
+                description: ''
                 type: object
-                example: ""
-              example: ""
-          description: ""
+                example: ''
+              example: ''
+          description: ''
           x-last-modified: 1677760513398
       operationId: delete_log_by_uid
       summary: Delete a log given the UID
     parameters:
-      - $ref: "#/components/parameters/parent"
+      - $ref: '#/components/parameters/parent'
         name: parent
         x-last-modified: 1677672795198
-      - $ref: "#/components/parameters/result_uid"
+      - $ref: '#/components/parameters/result_uid'
         name: result_uid
         x-last-modified: 1677672810563
-      - $ref: "#/components/parameters/log_uid"
+      - $ref: '#/components/parameters/log_uid'
         name: log_uid
         x-last-modified: 1677672825675
     x-last-modified: 1677774010236
   /v1alpha2/parents/{parent}/results/{result_uid}/records:
-    summary: "Get list of records associated with a result "
+    summary: 'Get list of records associated with a result '
     get:
       tags:
         - Records
       responses:
-        "200":
-          $ref: "#/components/responses/RecordsList"
+        '200':
+          $ref: '#/components/responses/RecordsList'
           x-last-modified: 1677828297346
       operationId: get_records_by_results_uid
       summary: Get list of records
@@ -338,22 +338,22 @@ paths:
         **default/results/-** or **-/results/-**). This can be used to read and
         filter matching Records without knowing the exact Result name.
     parameters:
-      - $ref: "#/components/parameters/parent"
+      - $ref: '#/components/parameters/parent'
         name: parent
         x-last-modified: 1677828269940
-      - $ref: "#/components/parameters/result_uid"
+      - $ref: '#/components/parameters/result_uid'
         name: result_uid
         x-last-modified: 1677828284019
-      - $ref: "#/components/parameters/filter"
+      - $ref: '#/components/parameters/filter'
         name: filter
         x-last-modified: 1679484834694
-      - $ref: "#/components/parameters/order_by"
+      - $ref: '#/components/parameters/order_by'
         name: order_by
         x-last-modified: 1679485370769
-      - $ref: "#/components/parameters/page_size"
+      - $ref: '#/components/parameters/page_size'
         name: page_size
         x-last-modified: 1679485384718
-      - $ref: "#/components/parameters/page_token"
+      - $ref: '#/components/parameters/page_token'
         name: page_token
         x-last-modified: 1679485400765
     x-last-modified: 1677828254610
@@ -377,7 +377,7 @@ components:
       type: string
       x-last-modified: 1677762811698
     Status:
-      description: "Completion status of the Record. "
+      description: 'Completion status of the Record. '
       enum:
         - UNKNOWN
         - SUCCESS
@@ -440,7 +440,7 @@ components:
           type: string
           example: pipelines.tekton.dev/PipelineRun
         status:
-          $ref: "#/components/schemas/Status"
+          $ref: '#/components/schemas/Status'
         startTime:
           format: date-time
           type: string
@@ -466,7 +466,7 @@ components:
           type: string
           example: VGhpcyBpcyBhbiBleG1hcGxlIG9mIHJlY29yZCBkYXRhCg==
         type:
-          $ref: "#/components/schemas/RecordType"
+          $ref: '#/components/schemas/RecordType'
           type: object
       x-last-modified: 1677769074438
     Record:
@@ -483,7 +483,7 @@ components:
       properties:
         id:
           deprecated: true
-          description: "DEPRECATED: use uid instead."
+          description: 'DEPRECATED: use uid instead.'
           type: string
         uid:
           description: Server assigned identifier of the Record.
@@ -503,7 +503,7 @@ components:
         createdTime:
           deprecated: true
           format: date-time
-          description: "DEPRECATED: use createTime instead."
+          description: 'DEPRECATED: use createTime instead.'
           type: string
         createTime:
           format: date-time
@@ -512,14 +512,14 @@ components:
         updatedTime:
           deprecated: true
           format: date-time
-          description: "DEPRECATED: use updateTime instead."
+          description: 'DEPRECATED: use updateTime instead.'
           type: string
         updateTime:
           format: date-time
           description: Server assigned timestamp for when the record was updated.
           type: string
         data:
-          $ref: "#/components/schemas/Any"
+          $ref: '#/components/schemas/Any'
       x-last-modified: 1677769164720
     Result:
       description: >-
@@ -534,7 +534,7 @@ components:
           description: Arbitrary user provided labels for the result.
           type: object
         uid:
-          description: "server assigned identified of the Results "
+          description: 'server assigned identified of the Results '
           type: string
           example: 0e0536c1-eccc-4727-9f99-5bb26ce3db90
         name:
@@ -542,7 +542,7 @@ components:
           type: string
           example: default/results/2be47d31-4d7f-4762-9616-969f2d7d9cc3
         summary:
-          $ref: "#/components/schemas/RecordSummary"
+          $ref: '#/components/schemas/RecordSummary'
           description: >-
             High level overview of the root record for the Result. This is
             provided as a convinence for clients to query Record state without
@@ -550,7 +550,7 @@ components:
         createdTime:
           deprecated: true
           format: date-time
-          description: "DEPRECATED: Use createTime instead"
+          description: 'DEPRECATED: Use createTime instead'
           type: string
         createTime:
           format: date-time
@@ -559,7 +559,7 @@ components:
         updatedTime:
           deprecated: true
           format: date-time
-          description: "DEPRECATED: Use updateTime instead"
+          description: 'DEPRECATED: Use updateTime instead'
           type: string
         updateTime:
           format: date-time
@@ -567,7 +567,7 @@ components:
           type: string
         id:
           deprecated: true
-          description: "DEPRECATED: use uid instead"
+          description: 'DEPRECATED: use uid instead'
           type: string
           example: 0e0536c1-eccc-4727-9f99-5bb26ce3db90
         etag:
@@ -591,7 +591,7 @@ components:
               results:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Result"
+                  $ref: '#/components/schemas/Result'
               nextPageToken:
                 type: string
       description: List of Results with nextPageToken
@@ -609,7 +609,7 @@ components:
               records:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Record"
+                  $ref: '#/components/schemas/Record'
               nextPageToken:
                 type: string
       description: List of Records with nextPageToken.
@@ -733,7 +733,7 @@ tags:
       url: https://github.com/tektoncd/results#data-model
     x-last-modified: 1677767456366
   - name: Logs
-    description: "Logs is a type of Record. "
+    description: 'Logs is a type of Record. '
     x-last-modified: 1677767481655
   - name: Results
     description: >

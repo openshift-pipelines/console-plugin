@@ -74,13 +74,13 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
   useInterval(getSummaryData, interval, namespace, date, pageFlag);
 
   React.useEffect(() => {
-    setloaded(false)
+    setloaded(false);
     setSummaryData([]);
     setSummaryDataFiltered([]);
-  }, [namespace, timespan])
+  }, [namespace, timespan]);
 
   const handlePageChange = (pageNumber: number) => {
-    setloaded(false)
+    setloaded(false);
     setSummaryData([]);
     setSummaryDataFiltered([]);
     setPageFlag(pageNumber);
@@ -129,9 +129,17 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
         <Grid hasGutter>
           <GridItem span={12}>
             {pageFlag === 1 ? (
-              <PipelineRunsForPipelinesList summaryData={summaryData} summaryDataFiltered={summaryDataFiltered} loaded={loaded}/>
+              <PipelineRunsForPipelinesList
+                summaryData={summaryData}
+                summaryDataFiltered={summaryDataFiltered}
+                loaded={loaded}
+              />
             ) : (
-              <PipelineRunsForRepositoriesList summaryData={summaryData} summaryDataFiltered={summaryDataFiltered} loaded={loaded}/>
+              <PipelineRunsForRepositoriesList
+                summaryData={summaryData}
+                summaryDataFiltered={summaryDataFiltered}
+                loaded={loaded}
+              />
             )}
           </GridItem>
         </Grid>

@@ -150,7 +150,7 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
               }
               scale={{ x: 'time', y: 'linear' }}
               domain={domainValue}
-              domainPadding={{ x: [30, 25]}}
+              domainPadding={{ x: [30, 25] }}
               height={150}
               width={400}
               padding={{

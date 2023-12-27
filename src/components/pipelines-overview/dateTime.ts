@@ -97,45 +97,30 @@ export const formatTime = (time: string): string => {
   return timestring;
 };
 
-export const formatTimeLastRunTime = (time: string): string => {
-  const timeValue = time?.split(/\s+/);
-  if (timeValue === undefined) {
-    return '-';
-  }
-  if (timeValue.length > 1) {
-    // Check for the presence of each component
-    const hasYear = timeValue.includes('year') || timeValue.includes('years');
-    const hasMonth =
-      timeValue.includes('month') || timeValue.includes('months');
-    const hasDay = timeValue.includes('day') || timeValue.includes('days');
+export const formatTimeLastRunTime = (time: number): string => {
+  const currentTimestamp = Math.floor(Date.now() / 1000); // Current timestamp in seconds
+    const timeDifference = currentTimestamp - time;
 
-    // Return the most significant time component
-    if (hasYear) {
-      return timeValue.includes('year')
-        ? timeValue[timeValue.indexOf('year') - 1] + ' year ago'
-        : timeValue[timeValue.indexOf('years') - 1] + ' years ago';
-    } else if (hasMonth) {
-      return timeValue.includes('month')
-        ? timeValue[timeValue.indexOf('month') - 1] + ' month ago'
-        : timeValue[timeValue.indexOf('months') - 1] + ' months ago';
-    } else if (hasDay) {
-      return timeValue.includes('day')
-        ? timeValue[timeValue.indexOf('day') - 1] + ' day ago'
-        : timeValue[timeValue.indexOf('days') - 1] + ' days ago';
+    // Convert the time difference into seconds, minutes, hours, etc.
+    const minutes = Math.floor(timeDifference / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30); // Approximate months (30 days)
+    const years = Math.floor(months / 12); // Approximate years (12 months)
+
+    // Determine the output based on the time difference
+    if (years > 0) {
+        return `${years} year${years > 1 ? 's' : ''} ago`;
+    } else if (months > 0) {
+        return `${months} month${months > 1 ? 's' : ''} ago`;
+    } else if (days > 0) {
+        return `${days} day${days > 1 ? 's' : ''} ago`;
+    } else if (hours > 0) {
+        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else if (minutes > 0) {
+        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
     } else {
-      return `${timeValue.pop()} ago`;
-    }
-  } else {
-    const [hours, minutes, seconds] = time.split(/[:.]/).map(Number);
-    if (!isNaN(hours) && hours > 0) {
-      return hours === 1 ? `${hours} hour ago` : `${hours} hours ago`;
-    } else if (!isNaN(minutes) && minutes > 0) {
-      return minutes === 1 ? `${minutes} min ago` : `${minutes} mins ago`;
-    } else if (!isNaN(seconds) && seconds > 0) {
-      return seconds === 1 ? `${seconds} sec ago` : `${seconds} secs ago`;
-    } else {
-      return null; // No significant time component found
-    }
+      return `${timeDifference} second${timeDifference !== 1 ? 's' : ''} ago`;
   }
 };
 

@@ -25,7 +25,7 @@ export type SummaryProps = {
   total_duration?: string;
   others?: number;
   group_value?: any;
-  last_runtime?: string;
+  last_runtime?: number;
 };
 
 export type mainDataType = {
@@ -166,6 +166,19 @@ export const sortTimeStrings = (
 
     return direction === 'asc' ? timeA - timeB : timeB - timeA;
   });
+};
+
+export const sortByTimestamp = (items: SummaryProps[], prop: string,direction: string) => {
+  const compareTimestamps = (a: SummaryProps, b: SummaryProps) => {
+      const timestampA = a[prop];
+      const timestampB = b[prop];
+
+      return direction === 'asc' ? timestampA - timestampB : timestampB - timestampA;
+  };
+
+  const sortedItems = [...items].sort(compareTimestamps);
+
+  return sortedItems;
 };
 
 export const sortByNumbers = (

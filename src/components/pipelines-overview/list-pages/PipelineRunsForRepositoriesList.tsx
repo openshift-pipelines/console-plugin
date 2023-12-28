@@ -8,7 +8,7 @@ import {
   useActiveColumns,
 } from '@openshift-console/dynamic-plugin-sdk';
 import PipelineRunsForRepositoriesRow from './PipelineRunsForRepositoriesRow';
-import { SummaryProps, sortByNumbers, sortByProperty, sortTimeStrings, listPageTableColumnClasses as tableColumnClasses } from '../utils';
+import { SummaryProps, sortByNumbers, sortByProperty, sortByTimestamp, sortTimeStrings, listPageTableColumnClasses as tableColumnClasses } from '../utils';
 
 
 type PipelineRunsForRepositoriesListProps = {
@@ -74,7 +74,7 @@ const PipelineRunsForRepositoriesList: React.FC<
       {
         id: 'lastRunTime',
         title: t('Last run time'),
-        sort: (summary, direction: 'asc' | 'desc') =>  sortTimeStrings(summary, 'last_runtime',direction),
+        sort: (summary, direction: 'asc' | 'desc') =>  sortByTimestamp(summary, 'last_runtime',direction),
         transforms: [sortable],
         props: { className: tableColumnClasses[6] },
       },

@@ -94,11 +94,15 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
               span={6}
               className="pipeline-overview__duration-card__value"
             >
-              {loaded 
-              ? summaryData['avg_duration']
-                ? formatTime(summaryData['avg_duration'])
-                : '-' 
-              : <LoadingInline />}
+              {loaded ? (
+                summaryData['avg_duration'] ? (
+                  formatTime(summaryData['avg_duration'])
+                ) : (
+                  '-'
+                )
+              ) : (
+                <LoadingInline />
+              )}
             </GridItem>
           </Grid>
           <Grid hasGutter className="pipeline-overview__duration-card__grid">
@@ -112,11 +116,15 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
               span={6}
               className="pipeline-overview__duration-card__value"
             >
-              {loaded 
-              ? summaryData['max_duration']
-                ? formatTime(summaryData['max_duration'])
-                : '-'  
-              : <LoadingInline />}
+              {loaded ? (
+                summaryData['max_duration'] ? (
+                  formatTime(summaryData['max_duration'])
+                ) : (
+                  '-'
+                )
+              ) : (
+                <LoadingInline />
+              )}
             </GridItem>
           </Grid>
           <Grid hasGutter>
@@ -130,11 +138,15 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
               span={6}
               className="pipeline-overview__duration-card__value"
             >
-              {loaded 
-              ? summaryData['total_duration']
-                ? formatTime(summaryData['total_duration'])
-                : '-'  
-              : <LoadingInline />}
+              {loaded ? (
+                summaryData['total_duration'] ? (
+                  formatTime(summaryData['total_duration'])
+                ) : (
+                  '-'
+                )
+              ) : (
+                <LoadingInline />
+              )}
             </GridItem>
           </Grid>
         </CardBody>

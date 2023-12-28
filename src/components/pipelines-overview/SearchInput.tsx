@@ -2,12 +2,15 @@ import { SearchInput } from '@patternfly/react-core';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-type SearchInputProps = { 
-  pageFlag: number,   
+type SearchInputProps = {
+  pageFlag: number;
   handleNameChange: (searchKeyword: string) => void;
-}
+};
 
-const SearchInputField: React.FC<SearchInputProps> = ({ pageFlag, handleNameChange }) => {
+const SearchInputField: React.FC<SearchInputProps> = ({
+  pageFlag,
+  handleNameChange,
+}) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   return (
     <SearchInput

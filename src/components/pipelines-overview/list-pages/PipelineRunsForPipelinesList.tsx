@@ -7,7 +7,14 @@ import {
   VirtualizedTable,
   useActiveColumns,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { SummaryProps, sortByNumbers, sortByProperty, sortByTimestamp, sortTimeStrings, listPageTableColumnClasses as tableColumnClasses } from '../utils';
+import {
+  SummaryProps,
+  sortByNumbers,
+  sortByProperty,
+  sortByTimestamp,
+  sortTimeStrings,
+  listPageTableColumnClasses as tableColumnClasses,
+} from '../utils';
 import PipelineRunsForPipelinesRow from './PipelineRunsForPipelinesRow';
 
 type PipelineRunsForPipelinesListProps = {
@@ -31,14 +38,16 @@ const PipelineRunsForPipelinesList: React.FC<
       {
         id: 'pipelineName',
         title: t('Pipeline'),
-        sort: (summary, direction: 'asc' | 'desc') => sortByProperty(summary, 'pipelineName', direction),
+        sort: (summary, direction: 'asc' | 'desc') =>
+          sortByProperty(summary, 'pipelineName', direction),
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
         id: 'namespace',
         title: t('Project'),
-        sort: (summary, direction: 'asc' | 'desc') => sortByProperty(summary, 'namespace', direction),
+        sort: (summary, direction: 'asc' | 'desc') =>
+          sortByProperty(summary, 'namespace', direction),
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
@@ -52,28 +61,32 @@ const PipelineRunsForPipelinesList: React.FC<
       {
         id: 'totalDuration',
         title: t('Total duration'),
-        sort: (summary, direction: 'asc' | 'desc') => sortTimeStrings(summary, 'total_duration',direction),
+        sort: (summary, direction: 'asc' | 'desc') =>
+          sortTimeStrings(summary, 'total_duration', direction),
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
       },
       {
         id: 'avgDuration',
         title: t('Average duration'),
-        sort: (summary, direction: 'asc' | 'desc') =>  sortTimeStrings(summary, 'avg_duration',direction),
+        sort: (summary, direction: 'asc' | 'desc') =>
+          sortTimeStrings(summary, 'avg_duration', direction),
         transforms: [sortable],
         props: { className: tableColumnClasses[4] },
       },
       {
         id: 'successRate',
         title: t('Success rate'),
-        sort: (summary, direction: 'asc' | 'desc') =>  sortByNumbers(summary, 'succeeded',direction),
+        sort: (summary, direction: 'asc' | 'desc') =>
+          sortByNumbers(summary, 'succeeded', direction),
         transforms: [sortable],
         props: { className: tableColumnClasses[5] },
       },
       {
         id: 'lastRunTime',
         title: t('Last run time'),
-        sort: (summary, direction: 'asc' | 'desc') =>  sortByTimestamp(summary, 'last_runtime',direction),
+        sort: (summary, direction: 'asc' | 'desc') =>
+          sortByTimestamp(summary, 'last_runtime', direction),
         transforms: [sortable],
         props: { className: tableColumnClasses[6] },
       },
@@ -81,8 +94,11 @@ const PipelineRunsForPipelinesList: React.FC<
     [t],
   );
 
-  const [columns] = useActiveColumns({ columns: plrColumns, showNamespaceOverride: false, columnManagementID: '' });
-
+  const [columns] = useActiveColumns({
+    columns: plrColumns,
+    showNamespaceOverride: false,
+    columnManagementID: '',
+  });
 
   return (
     <VirtualizedTable

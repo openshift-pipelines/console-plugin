@@ -7,7 +7,7 @@ const jsonc = require('comment-json');
 module.exports.CustomJSONLexer = class extends EventEmitter {
   extract(content, filename) {
     let keys = [];
-    console.log(1)
+    console.log(1);
     try {
       jsonc.parse(
         content,

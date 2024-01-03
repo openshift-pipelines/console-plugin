@@ -152,7 +152,7 @@ export const timeToMinutes = (timeString: string): number => {
     // Calculate total minutes
     const totalMinutes = hours * 60 + minutes + seconds / 60;
 
-    return totalMinutes;
+    return parseFloat(totalMinutes.toFixed(2));
   } else {
     // Handle invalid time string
     console.error('Invalid time format');

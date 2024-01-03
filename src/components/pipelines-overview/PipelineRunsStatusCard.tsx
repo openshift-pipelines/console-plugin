@@ -239,7 +239,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
         </CardTitle>
         <CardBody className="pipeline-overview__pipelinerun-status-card__title">
           <Grid>
-            <GridItem xl2={6} xl={12} lg={12} md={12} sm={12}>
+            <GridItem xl2={4} xl={12} lg={12} md={12} sm={12}>
               <div className="pipeline-overview__pipelinerun-status-card__donut-chart-div">
                 {loaded ? (
                   <ChartDonut
@@ -291,7 +291,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                 )}
               </div>
             </GridItem>
-            <GridItem xl2={5} xl={12} lg={12} md={12} sm={12}>
+            <GridItem xl2={8} xl={12} lg={12} md={12} sm={12}>
               <div className="pipeline-overview__pipelinerun-status-card__bar-chart-div">
                 {loaded ? (
                   <Chart
@@ -311,7 +311,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                       right: 40,
                       left: 50,
                     }}
-                    width={600}
+                    width={1000}
                     themeColor={ChartThemeColor.blue}
                   >
                     <ChartAxis

@@ -19,7 +19,6 @@
 .pipeline-overview__pipelinerun-status-card {
   &__title {
     padding-bottom: 0 !important;
-    padding-right: 5rem !important;
   }
 
   &__list-page {
@@ -94,15 +93,21 @@
 .pipeline-overview__number-of-plr-card {
   &__title {
     padding-bottom: 0 !important;
+    padding-left: var(--pf-global--spacer--md);
   }
 
   &__body {
-    padding-bottom: 0;
+    padding: 0;
     height: 145px;
+    width: 500px;
   }
 
   &__bar-chart-div {
     height: 145px;
+  }
+
+  &__loading {
+    padding-left: var(--pf-global--spacer--md);
   }
 }
 
@@ -142,7 +147,7 @@
 
 .pipeline-overview__search-input {
   height: fit-content;
-  width: fit-content;
+  width: 220px;
   margin-left: var(--pf-global--spacer--sm);
 }
 

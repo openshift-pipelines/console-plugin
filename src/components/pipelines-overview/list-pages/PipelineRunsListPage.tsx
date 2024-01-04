@@ -19,14 +19,14 @@ import { DataType } from '../../../components/utils/tekton-results';
 import { getDropDownDate } from '../dateTime';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
 
-type PipelineRunsForPipelinesListProps = {
+type PipelineRunsListPageProps = {
   bordered?: boolean;
   namespace: string;
   timespan: number;
   interval: number;
 };
 
-const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
+const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
   bordered,
   namespace,
   timespan,
@@ -50,13 +50,13 @@ const PipelineRunsListPage: React.FC<PipelineRunsForPipelinesListProps> = ({
       pageFlag === 1
         ? {
             summary: 'total_duration,avg_duration,total,succeeded,last_runtime',
-            data_type: DataType.PipelineRun,
+            data_type: DataType?.PipelineRun,
             groupBy: 'pipeline',
             filter: `data.status.startTime>timestamp("${date}") && data.spec.pipelineRef.contains("name")`,
           }
         : {
             summary: 'total_duration,avg_duration,total,succeeded,last_runtime',
-            data_type: DataType.PipelineRun,
+            data_type: DataType?.PipelineRun,
             groupBy: 'repository',
             filter: `data.status.startTime>timestamp("${date}") && data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')`,
           },

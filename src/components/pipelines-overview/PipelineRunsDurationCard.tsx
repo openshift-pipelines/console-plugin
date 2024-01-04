@@ -57,12 +57,12 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
   const getSummaryData = () => {
     getResultsSummary(namespace, {
       summary: 'total_duration,avg_duration,max_duration',
-      data_type: DataType.PipelineRun,
+      data_type: DataType?.PipelineRun,
       filter: getFilter(date, parentName, kind),
     })
       .then((response) => {
         setLoaded(true);
-        setSummaryData(response.summary[0]);
+        setSummaryData(response.summary?.[0]);
       })
       .catch((e) => {
         console.error('unable to post', e);

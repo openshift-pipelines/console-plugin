@@ -164,7 +164,8 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
                 scale={{ x: 'time', y: 'linear' }}
                 domain={domainValue}
                 domainPadding={{ x: [30, 25] }}
-                height={150}
+                height={145}
+                width={530}
                 padding={{
                   top: 20,
                   bottom: 40,
@@ -183,7 +184,9 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
                 </ChartGroup>
               </Chart>
             ) : (
-              <LoadingInline />
+              <div className="pipeline-overview__number-of-plr-card__loading">
+                <LoadingInline />
+              </div>
             )}
           </div>
         </CardBody>

@@ -7,12 +7,11 @@ import {
   Chart,
   ChartAxis,
   ChartAxisProps,
-  ChartBar,
   ChartDonut,
   ChartGroup,
   ChartLabel,
   ChartLegend,
-  ChartThemeColor,
+  ChartLine,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
 import {
@@ -109,7 +108,12 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   );
 
   useInterval(
-    () => getSummaryData('succeeded,total', setData2, 'day'),
+    () =>
+      getSummaryData(
+        'succeeded,cancelled,failed,others,total',
+        setData2,
+        'day',
+      ),
     interval,
     namespace,
     date,
@@ -121,8 +125,8 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
 
   const tickValues = getXaxisValues(timespan);
 
-  const chartData = tickValues?.map((value) => {
-    const s = data2?.summary?.find((d) => {
+  const chartDataSucceeded = tickValues?.map((value) => {
+    const s = data2?.summary.find((d) => {
       return (
         new Date(d.group_value * 1000).toDateString() ===
         new Date(value).toDateString()
@@ -131,22 +135,51 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
     return {
       x: value,
       y: Math.round((100 * s?.succeeded) / s?.total) || 0,
+      name: t('Succeeded'),
     };
   });
 
-  if (!domainY) {
-    let minY: number = _.minBy(chartData, 'y')?.y ?? 0;
-    let maxY: number = _.maxBy(chartData, 'y')?.y ?? 0;
-    if (minY === 0 && maxY === 0) {
-      minY = -1;
-      maxY = 1;
-    } else if (minY > 0 && maxY > 0) {
-      minY = 0;
-    } else if (minY < 0 && maxY < 0) {
-      maxY = 0;
-    }
-    domainValue.y = [minY, maxY];
-  }
+  const chartDataFailed = tickValues?.map((value) => {
+    const s = data2?.summary.find((d) => {
+      return (
+        new Date(d.group_value * 1000).toDateString() ===
+        new Date(value).toDateString()
+      );
+    });
+    return {
+      x: value,
+      y: Math.round((100 * s?.failed) / s?.total) || 0,
+      name: t('Failed'),
+    };
+  });
+
+  const chartDataCancelled = tickValues?.map((value) => {
+    const s = data2?.summary.find((d) => {
+      return (
+        new Date(d.group_value * 1000).toDateString() ===
+        new Date(value).toDateString()
+      );
+    });
+    return {
+      x: value,
+      y: Math.round((100 * s?.cancelled) / s?.total) || 0,
+      name: t('Cancelled'),
+    };
+  });
+
+  const chartDataOthers = tickValues?.map((value) => {
+    const s = data2?.summary.find((d) => {
+      return (
+        new Date(d.group_value * 1000).toDateString() ===
+        new Date(value).toDateString()
+      );
+    });
+    return {
+      x: value,
+      y: Math.round((100 * s?.others) / s?.total) || 0,
+      name: t('Others'),
+    };
+  });
 
   const xTickFormat = (d) => formatDate(d);
   let xAxisStyle: ChartAxisProps['style'] = {
@@ -171,6 +204,13 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
     successColor.value,
     failureColor.value,
     runningColor.value,
+    cancelledColor.value,
+    othersColor.value,
+  ];
+
+  const colorScaleLineChart = [
+    successColor.value,
+    failureColor.value,
     cancelledColor.value,
     othersColor.value,
   ];
@@ -303,7 +343,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                   <Chart
                     containerComponent={
                       <ChartVoronoiContainer
-                        labels={({ datum }) => `${t('Succeeded')}: ${datum.y}%`}
+                        labels={({ datum }) => `${datum.name}: ${datum.y}%`}
                         constrainToVisibleArea
                       />
                     }
@@ -318,7 +358,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                       left: 50,
                     }}
                     width={600}
-                    themeColor={ChartThemeColor.blue}
+                    colorScale={colorScaleLineChart}
                   >
                     <ChartAxis
                       tickValues={tickValues}
@@ -331,7 +371,10 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                       style={yAxisStyle}
                     />
                     <ChartGroup>
-                      <ChartBar data={chartData} barWidth={20} />
+                      <ChartLine data={chartDataSucceeded} />
+                      <ChartLine data={chartDataFailed} />
+                      <ChartLine data={chartDataCancelled} />
+                      <ChartLine data={chartDataOthers} />
                     </ChartGroup>
                   </Chart>
                 ) : (

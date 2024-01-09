@@ -5,15 +5,18 @@ import { useTranslation } from 'react-i18next';
 type SearchInputProps = {
   pageFlag: number;
   handleNameChange: (searchKeyword: string) => void;
+  searchText: string;
 };
 
 const SearchInputField: React.FC<SearchInputProps> = ({
   pageFlag,
   handleNameChange,
+  searchText,
 }) => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
   return (
     <SearchInput
+      value={searchText}
       className="pipeline-overview__search-input"
       placeholder={
         pageFlag === 1

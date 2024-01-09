@@ -4,12 +4,20 @@ import PipelineRunsStatusCard from '../pipelines-overview/PipelineRunsStatusCard
 import { Flex, FlexItem } from '@patternfly/react-core';
 import PipelinesRunsDurationCard from '../pipelines-overview/PipelineRunsDurationCard';
 import PipelinesRunsNumbersChart from '../pipelines-overview/PipelineRunsNumbersChart';
-import { parsePrometheusDuration } from '../pipelines-overview/dateTime';
+import {
+  formatPrometheusDuration,
+  parsePrometheusDuration,
+} from '../pipelines-overview/dateTime';
 import TimeRangeDropdown from '../pipelines-overview/TimeRangeDropdown';
 import RefreshDropdown from '../pipelines-overview/RefreshDropdown';
 import PipelinesAverageDuration from './PipelinesAverageDuration';
 import { K8sResourceKind } from '@openshift-console/dynamic-plugin-sdk';
 import './PipelinesMetrics.scss';
+import {
+  IntervalOptions,
+  TimeRangeOptions,
+  useQueryParams,
+} from '../pipelines-overview/utils';
 
 type PipelinesMetricsPageProps = {
   obj: K8sResourceKind;
@@ -22,6 +30,26 @@ const PipelinesMetricsPage: React.FC<PipelinesMetricsPageProps> = ({ obj }) => {
   const [interval, setInterval] = React.useState(
     parsePrometheusDuration('30s'),
   );
+
+  useQueryParams({
+    key: 'refreshinterval',
+    value: interval,
+    setValue: setInterval,
+    defaultValue: parsePrometheusDuration('30s'),
+    options: { ...IntervalOptions(), off: 'OFF_KEY' },
+    displayFormat: (v) => (v ? formatPrometheusDuration(v) : 'off'),
+    loadFormat: (v) => (v == 'off' ? null : parsePrometheusDuration(v)),
+  });
+
+  useQueryParams({
+    key: 'timerange',
+    value: timespan,
+    setValue: setTimespan,
+    defaultValue: parsePrometheusDuration('1w'),
+    options: TimeRangeOptions(),
+    displayFormat: formatPrometheusDuration,
+    loadFormat: parsePrometheusDuration,
+  });
 
   return (
     <>

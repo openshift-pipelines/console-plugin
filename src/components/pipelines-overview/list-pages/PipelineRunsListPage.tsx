@@ -11,7 +11,6 @@ import {
 } from '@patternfly/react-core';
 import PipelineRunsForRepositoriesList from './PipelineRunsForRepositoriesList';
 import PipelineRunsForPipelinesList from './PipelineRunsForPipelinesList';
-import StatusDropdown from '../StatusDropdown';
 import SearchInputField from '../SearchInput';
 import { SummaryProps, useInterval } from '../utils';
 import { getResultsSummary } from '../../../components/utils/summary-api';
@@ -103,7 +102,8 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
       <CardBody>
         <Grid hasGutter className="pipeline-overview__listpage__grid">
           <GridItem span={9} className="pipeline-overview__listpage__griditem">
-            <StatusDropdown />
+            {/* Lastrun Status is not provided by API  */}
+            {/* <StatusDropdown /> */}
             <SearchInputField
               pageFlag={pageFlag}
               handleNameChange={handleNameChange}

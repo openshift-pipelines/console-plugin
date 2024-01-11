@@ -17,7 +17,7 @@ const PipelinesOverviewPage: React.FC = () => {
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();
 
   const [namespace, setNamespace] = React.useState(activeNamespace);
-  const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1w'));
+  const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1d'));
   const [interval, setInterval] = React.useState(
     parsePrometheusDuration('30s'),
   );

@@ -17,7 +17,9 @@ import {
   formatDate,
   getDropDownDate,
   getXaxisValues,
+  hourformat,
   parsePrometheusDuration,
+  monthYear,
 } from './dateTime';
 import { DataType } from '../utils/tekton-results';
 import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
@@ -35,6 +37,40 @@ interface PipelinesRunsNumbersChartProps {
   kind?: string;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
+
+const getChartData = (
+  tickValues: number[] | Date[],
+  data: SummaryResponse,
+  type: string,
+) => {
+  const chartData = tickValues?.map((value) => {
+    const s = data?.summary?.find((d) => {
+      if (type == 'hour') {
+        return new Date(d.group_value * 1000).getHours() === value;
+      }
+      if (type == 'day') {
+        return (
+          new Date(d.group_value * 1000).toDateString() ===
+          new Date(value).toDateString()
+        );
+      }
+      if (type == 'week') {
+        const wDate = new Date(d.group_value * 1000);
+        const weekend = new Date(value);
+        weekend.setDate(weekend.getDate() + 6);
+        return wDate >= new Date(value) && wDate <= weekend;
+      }
+      if (type == 'month') {
+        return new Date(d.group_value * 1000).getMonth() === value.getMonth();
+      }
+    });
+    return {
+      x: value,
+      y: s?.total || 0,
+    };
+  });
+  return chartData;
+};
 
 const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   namespace,
@@ -62,16 +98,15 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
     namespace = '-';
   }
 
-  const tickValues = getXaxisValues(timespan);
-
+  const [tickValues, type] = getXaxisValues(timespan);
   const date = getDropDownDate(timespan).toISOString();
 
-  const getSummaryData = () => {
+  const getSummaryData = (group_by: string) => {
     const summaryOpt = {
       summary: 'total',
       data_type: DataType?.PipelineRun,
       filter: getFilter(date, parentName, kind),
-      groupBy: 'day',
+      groupBy: group_by,
     };
 
     getResultsSummary(namespace, summaryOpt)
@@ -88,22 +123,43 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
     setLoaded(false);
   }, [namespace, timespan]);
 
-  useInterval(getSummaryData, interval, namespace, date);
+  let xTickFormat;
+  let dayLabel;
+  let showLabel = false;
+  let chartData = [];
+  switch (type) {
+    case 'hour':
+      xTickFormat = (d) => hourformat(d);
+      showLabel = true;
+      domainValue.x = [0, 23];
+      useInterval(() => getSummaryData('hour'), interval, namespace, date);
+      dayLabel = formatDate(new Date());
+      chartData = getChartData(tickValues, data, 'hour');
+      break;
+    case 'day':
+      xTickFormat = (d) => formatDate(d);
+      domainValue.x = [startDate, endDate];
+      useInterval(() => getSummaryData('day'), interval, namespace, date);
+      chartData = getChartData(tickValues, data, 'day');
+      break;
+    case 'week':
+      xTickFormat = (d) => formatDate(d);
+      domainValue.x = [new Date(tickValues[0]), new Date(tickValues[11])];
+      useInterval(() => getSummaryData('week'), interval, namespace, date);
+      chartData = getChartData(tickValues, data, 'week');
+      break;
+    case 'month':
+      xTickFormat = (d) => monthYear(d);
+      domainValue.x = [new Date(tickValues[0]), new Date(tickValues[11])];
+      useInterval(() => getSummaryData('month'), interval, namespace, date);
+      chartData = getChartData(tickValues, data, 'month');
+      break;
+    default:
+      console.log('Received wrong data');
+      break;
+  }
 
-  const chartData = tickValues?.map((value) => {
-    const s = data?.summary?.find((d) => {
-      return (
-        new Date(d.group_value * 1000).toDateString() ===
-        new Date(value).toDateString()
-      );
-    });
-    return {
-      x: value,
-      y: s?.total || 0,
-    };
-  });
-
-  const max = Math.max(...chartData.map((yVal) => yVal.y));
+  const max: number = Math.max(...chartData.map((yVal) => yVal.y));
   !isNaN(max) && max > 5
     ? (domainValue.y = [0, max])
     : (domainValue.y = [0, 5]);
@@ -122,7 +178,6 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
     domainValue.y = [minY, maxY];
   }
 
-  const xTickFormat = (d) => formatDate(d);
   let xAxisStyle: ChartAxisProps['style'] = {
     tickLabels: { fill: 'var(--pf-global--Color--100)', fontSize: 12 },
   };
@@ -168,7 +223,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
                 width={530}
                 padding={{
                   top: 20,
-                  bottom: 40,
+                  bottom: 50,
                   left: 50,
                 }}
                 themeColor={ChartThemeColor.blue}
@@ -177,6 +232,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
                   tickValues={tickValues}
                   style={xAxisStyle}
                   tickFormat={xTickFormat}
+                  label={showLabel ? dayLabel : ''}
                 />
                 <ChartAxis dependentAxis style={yAxisStyle} />
                 <ChartGroup>

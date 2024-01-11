@@ -18,7 +18,7 @@ type PipelinesMetricsPageProps = {
 const PipelinesMetricsPage: React.FC<PipelinesMetricsPageProps> = ({ obj }) => {
   const params = useParams();
   const { ns: namespace, name: parentName } = params;
-  const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1w'));
+  const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1d'));
   const [interval, setInterval] = React.useState(
     parsePrometheusDuration('30s'),
   );

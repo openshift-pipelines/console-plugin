@@ -21,7 +21,8 @@ const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
   podName,
   title,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipeline-console-plugin');
+
   const [logSnippet, setLogSnippet] = React.useState<string>(null);
   const [logError, setLogError] = React.useState<string>(null);
 

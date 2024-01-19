@@ -1,5 +1,6 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { ComputedStatus } from '../../types';
+import { t } from './common-utils';
 
 export enum SucceedConditionReason {
   PipelineRunCancelled = 'StoppedRunFinally',
@@ -67,26 +68,24 @@ export const pipelineRunStatus = (pipelineRun): ComputedStatus => {
   return status;
 };
 
-// Converts the PipelineRun (and TaskRun) condition status into a human readable string.
-// See also tkn cli implementation at https://github.com/tektoncd/cli/blob/release-v0.15.0/pkg/formatted/k8s.go#L54-L83
 export const pipelineRunStatusTitle = (pipelineRun): string => {
   const status = pipelineRunStatus(pipelineRun);
   if (!status) return '-';
   switch (status) {
     case ComputedStatus.Cancelled:
-      return 'Cancelled';
+      return t('Cancelled');
     case ComputedStatus.Failed:
-      return 'Failed';
+      return t('Failed');
     case ComputedStatus.Succeeded:
-      return 'Succeeded';
+      return t('Succeeded');
     case ComputedStatus.Pending:
-      return 'Pending';
+      return t('Pending');
     case ComputedStatus.Running:
-      return 'Running';
+      return t('Running');
     case ComputedStatus.Skipped:
-      return 'Skipped';
+      return t('Skipped');
     case ComputedStatus.Cancelling:
-      return 'Cancelling';
+      return t('Cancelling');
     default:
       return status;
   }
@@ -106,10 +105,6 @@ export const pipelineRunTitleFilterReducer = (pipelineRun): string => {
   const status = pipelineRunStatusTitle(pipelineRun);
   return status || '-';
 };
-export const pipelineRunFilterReducer = (pipelineRun): ComputedStatus => {
-  const status = pipelineRunStatus(pipelineRun);
-  return status || ComputedStatus.Other;
-};
 
 export const pipelineStatusFilter = (filters, pipeline) => {
   if (!filters || !filters.selected || !filters.selected.length) {
@@ -117,15 +112,6 @@ export const pipelineStatusFilter = (filters, pipeline) => {
   }
   const status = pipelineFilterReducer(pipeline);
   return filters.selected?.includes(status) || !_.includes(filters.all, status);
-};
-
-export const pipelineRunStatusFilter = (phases, pipeline) => {
-  if (!phases || !phases.selected || !phases.selected.length) {
-    return true;
-  }
-
-  const status = pipelineRunFilterReducer(pipeline);
-  return phases.selected?.includes(status) || !_.includes(phases.all, status);
 };
 
 export const pipelineResourceFilterReducer = (pipelineResource): string => {
@@ -151,4 +137,19 @@ export const taskRunFilterReducer = (taskRun): ComputedStatus => {
 export const taskRunFilterTitleReducer = (taskRun): string => {
   const status = pipelineRunStatusTitle(taskRun);
   return status || '-';
+};
+
+export const pipelineRunFilterReducer = (pipelineRun): ComputedStatus => {
+  const status = pipelineRunStatus(pipelineRun);
+  return status || ComputedStatus.Other;
+};
+
+export const pipelineRunStatusFilter = (phases, pipeline) => {
+  if (!phases || !phases.selected || !phases.selected.length) {
+    return true;
+  }
+
+  const status = pipelineRunFilterReducer(pipeline);
+
+  return phases.selected?.includes(status) || !_.includes(phases.all, status);
 };

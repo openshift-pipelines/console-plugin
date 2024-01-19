@@ -93,7 +93,8 @@
       "hookProvider": "./components/hooks",
       "pipelinesComponent": "./components/pipelines-overview",
       "pipelinesList": "./components/pipelines-list",
-      "metricsComponent": "./components/pipelines-metrics"
+      "metricsComponent": "./components/pipelines-metrics",
+      "tasksComponent": "./components/pipelines-tasks"
     },
     "dependencies": {
       "@console/pluginAPI": "*"

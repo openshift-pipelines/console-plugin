@@ -1,5 +1,7 @@
 export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAIL_METRICS_TAB =
   'HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAIL_METRICS_TAB';
+export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_TASKRUNS_TAB =
+  'HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_TASKRUNS_TAB';
 export const FLAG_PIPELINE_TEKTON_RESULT_INSTALLED =
   'PIPELINE_TEKTON_RESULT_INSTALLED';
 export const ALL_NAMESPACES_KEY = '#ALL_NS#';
@@ -106,3 +108,10 @@ export enum VolumeTypes {
   PVC = 'pvc',
   VolumeClaimTemplate = 'volumeClaimTemplate',
 }
+export const KEBAB_ACTION_DELETE_ID = 'delete';
+export const KEBAB_ACTION_EDIT_ANNOTATIONS_ID = 'edit-annotations';
+export const KEBAB_ACTION_EDIT_ID = 'edit';
+export const KEBAB_ACTION_EDIT_LABELS_ID = 'edit-labels';
+export const KEBAB_BUTTON_ID = 'kebab-button';
+
+export const DELETED_RESOURCE_IN_K8S_ANNOTATION = 'resource.deleted.in.k8s';

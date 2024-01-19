@@ -155,6 +155,34 @@
     }
   },
   {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/tasks/all-namespaces", "/tasks/ns/:ns"],
+      "component": {
+        "$codeRef": "tasksComponent.TasksNavigationPage"
+      }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKS_NAV_OPTION"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "pipeline-tasks",
+      "perspective": "admin",
+      "section": "pipelines",
+      "insertAfter": "pipelines",
+      "name": "%Tasks%",
+      "href": "/tasks",
+      "namespaced": true
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKS_NAV_OPTION"]
+    }
+  },
+  {
     "type": "console.flag/hookProvider",
     "properties": {
       "handler": { "$codeRef": "hookProvider.useFlagHookProvider" }
@@ -192,6 +220,130 @@
     },
     "flags": {
       "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINES_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "Task"
+      },
+      "component": { "$codeRef": "tasksComponent.TasksListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "TaskRun"
+      },
+      "component": { "$codeRef": "tasksComponent.TaskRunsListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKRUNS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "ClusterTask"
+      },
+      "component": { "$codeRef": "tasksComponent.ClusterTaskListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Task"
+      },
+      "component": { "$codeRef": "tasksComponent.TasksListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "TaskRun"
+      },
+      "component": { "$codeRef": "tasksComponent.TaskRunsListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKRUNS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "ClusterTask"
+      },
+      "component": { "$codeRef": "tasksComponent.ClusterTaskListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "PipelineRun"
+      },
+      "page": {
+        "name": "%TaskRuns%",
+        "href": "task-runs"
+      },
+      "component": { "$codeRef": "tasksComponent.TaskRunsListPage" }
+    },
+    "flags": {
+      "required": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_TASKRUNS_TAB"
+      ]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "PipelineRun"
+      },
+      "page": {
+        "name": "%TaskRuns%",
+        "href": "task-runs"
+      },
+      "component": { "$codeRef": "tasksComponent.TaskRunsListPage" }
+    },
+    "flags": {
+      "required": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_TASKRUNS_TAB"
+      ]
     }
   }
 ]

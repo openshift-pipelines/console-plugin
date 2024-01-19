@@ -1,5 +1,6 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { ComputedStatus } from '../../types';
+import { t } from './common-utils';
 
 export enum SucceedConditionReason {
   PipelineRunCancelled = 'StoppedRunFinally',
@@ -74,19 +75,19 @@ export const pipelineRunStatusTitle = (pipelineRun): string => {
   if (!status) return '-';
   switch (status) {
     case ComputedStatus.Cancelled:
-      return 'Cancelled';
+      return t('Cancelled');
     case ComputedStatus.Failed:
-      return 'Failed';
+      return t('Failed');
     case ComputedStatus.Succeeded:
-      return 'Succeeded';
+      return t('Succeeded');
     case ComputedStatus.Pending:
-      return 'Pending';
+      return t('Pending');
     case ComputedStatus.Running:
-      return 'Running';
+      return t('Running');
     case ComputedStatus.Skipped:
-      return 'Skipped';
+      return t('Skipped');
     case ComputedStatus.Cancelling:
-      return 'Cancelling';
+      return t('Cancelling');
     default:
       return status;
   }

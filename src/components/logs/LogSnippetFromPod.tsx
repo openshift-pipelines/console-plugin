@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { LoadingInline } from '../Loading';
+import { Alert } from '@patternfly/react-core';
 import { consoleFetchText } from '@openshift-console/dynamic-plugin-sdk';
 import { PodModel } from '../../models';
+import { LoadingInline } from '../Loading';
 import { resourceURL } from '../utils/k8s-utils';
 
 type LogSnippetFromPodProps = {
@@ -21,7 +21,8 @@ const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
   podName,
   title,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipeline-console-plugin');
+
   const [logSnippet, setLogSnippet] = React.useState<string>(null);
   const [logError, setLogError] = React.useState<string>(null);
 

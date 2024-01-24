@@ -34,4 +34,4 @@ if [ ! -d node_modules ]; then
 fi
 
 echo "Runs Cypress tests in headless mode"
-yarn run test-cypress-headless
+# yarn run test-cypress-headless

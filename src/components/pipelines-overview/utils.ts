@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   K8sGroupVersionKind,
   K8sModel,
   K8sResourceKindReference,
 } from '@openshift-console/dynamic-plugin-sdk';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const alphanumericCompare = (a: string, b: string): number => {
   return a.localeCompare(b, undefined, {
@@ -168,12 +168,18 @@ export const sortTimeStrings = (
   });
 };
 
-export const sortByTimestamp = (items: SummaryProps[], prop: string,direction: string) => {
+export const sortByTimestamp = (
+  items: SummaryProps[],
+  prop: string,
+  direction: string,
+) => {
   const compareTimestamps = (a: SummaryProps, b: SummaryProps) => {
-      const timestampA = a[prop];
-      const timestampB = b[prop];
+    const timestampA = a[prop];
+    const timestampB = b[prop];
 
-      return direction === 'asc' ? timestampA - timestampB : timestampB - timestampA;
+    return direction === 'asc'
+      ? timestampA - timestampB
+      : timestampB - timestampA;
   };
 
   const sortedItems = [...items].sort(compareTimestamps);

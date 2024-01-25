@@ -6,7 +6,9 @@ set -euo pipefail
 OPENSHIFT_CI=${OPENSHIFT_CI:=false}
 ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
 
-yarn install
+if [ ! -d node_modules ]; then
+  yarn install
+fi
 
 # Check for outdated yarn.lock file
 if [[ -n "$(git status --porcelain -- yarn.lock)" ]]; then
@@ -15,6 +17,7 @@ if [[ -n "$(git status --porcelain -- yarn.lock)" ]]; then
   exit 1
 fi
 
+# Check for outdated i18n files
 yarn i18n
 GIT_STATUS="$(git status --short --untracked-files -- locales)"
 if [ -n "$GIT_STATUS" ]; then
@@ -24,6 +27,7 @@ if [ -n "$GIT_STATUS" ]; then
 fi
 
 yarn run lint
+
 if [ "$OPENSHIFT_CI" = true ]; then
   JEST_SUITE_NAME="Pipeline Console Plugin Unit Tests" JEST_JUNIT_OUTPUT_DIR="$ARTIFACT_DIR" yarn run test --ci --maxWorkers=2 --reporters=default --reporters=jest-junit
 else

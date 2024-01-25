@@ -126,7 +126,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   const tickValues = getXaxisValues(timespan);
 
   const chartDataSucceeded = tickValues?.map((value) => {
-    const s = data2?.summary.find((d) => {
+    const s = data2?.summary?.find((d) => {
       return (
         new Date(d.group_value * 1000).toDateString() ===
         new Date(value).toDateString()
@@ -140,7 +140,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   });
 
   const chartDataFailed = tickValues?.map((value) => {
-    const s = data2?.summary.find((d) => {
+    const s = data2?.summary?.find((d) => {
       return (
         new Date(d.group_value * 1000).toDateString() ===
         new Date(value).toDateString()
@@ -154,7 +154,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   });
 
   const chartDataCancelled = tickValues?.map((value) => {
-    const s = data2?.summary.find((d) => {
+    const s = data2?.summary?.find((d) => {
       return (
         new Date(d.group_value * 1000).toDateString() ===
         new Date(value).toDateString()
@@ -168,7 +168,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   });
 
   const chartDataOthers = tickValues?.map((value) => {
-    const s = data2?.summary.find((d) => {
+    const s = data2?.summary?.find((d) => {
       return (
         new Date(d.group_value * 1000).toDateString() ===
         new Date(value).toDateString()

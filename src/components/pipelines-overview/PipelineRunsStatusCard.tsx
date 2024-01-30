@@ -29,7 +29,9 @@ import {
   formatDate,
   getDropDownDate,
   getXaxisValues,
+  hourformat,
   parsePrometheusDuration,
+  monthYear,
 } from './dateTime';
 import { getFilter, useInterval } from './utils';
 import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
@@ -49,6 +51,48 @@ interface PipelinesRunsStatusCardProps {
 }
 
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
+
+const getChartData = (
+  tickValues: number[] | Date[],
+  data: SummaryResponse,
+  key: string,
+  type: string,
+): {
+  x: number;
+  y: number;
+  name: string;
+}[] => {
+  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const k = key.toLowerCase();
+  const chartData = tickValues?.map((value) => {
+    const s = data?.summary?.find((d) => {
+      if (type == 'hour') {
+        return new Date(d.group_value * 1000).getHours() === value;
+      }
+      if (type == 'day') {
+        return (
+          new Date(d.group_value * 1000).toDateString() ===
+          new Date(value).toDateString()
+        );
+      }
+      if (type == 'week') {
+        const wDate = new Date(d.group_value * 1000);
+        const weekend = new Date(value);
+        weekend.setDate(weekend.getDate() + 6);
+        return wDate >= new Date(value) && wDate <= weekend;
+      }
+      if (type == 'month') {
+        return new Date(d.group_value * 1000).getMonth() === value.getMonth();
+      }
+    });
+    return {
+      x: value,
+      y: Math.round((100 * s?.[k]) / s?.total) || 0,
+      name: t(key),
+    };
+  });
+  return chartData;
+};
 
 const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   timespan,
@@ -105,82 +149,115 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
     namespace,
     date,
   );
-
-  useInterval(
-    () =>
-      getSummaryData(
-        'succeeded,cancelled,failed,others,total',
-        setData2,
-        'day',
-      ),
-    interval,
-    namespace,
-    date,
-  );
-
   React.useEffect(() => {
     setLoaded(false);
   }, [namespace, timespan]);
+  const [tickValues, type] = getXaxisValues(timespan);
 
-  const tickValues = getXaxisValues(timespan);
-
-  const chartDataSucceeded = tickValues?.map((value) => {
-    const s = data2?.summary?.find((d) => {
-      return (
-        new Date(d.group_value * 1000).toDateString() ===
-        new Date(value).toDateString()
+  let xTickFormat;
+  let dayLabel;
+  let showLabel = false;
+  let chartDataSucceeded = [];
+  let chartDataFailed = [];
+  let chartDataCancelled = [];
+  let chartDataOthers = [];
+  switch (type) {
+    case 'hour':
+      xTickFormat = (d) => hourformat(d);
+      showLabel = true;
+      domainValue.x = [0, 23];
+      useInterval(
+        () =>
+          getSummaryData(
+            'succeeded,cancelled,failed,others,total',
+            setData2,
+            'hour',
+          ),
+        interval,
+        namespace,
+        date,
       );
-    });
-    return {
-      x: value,
-      y: Math.round((100 * s?.succeeded) / s?.total) || 0,
-      name: t('Succeeded'),
-    };
-  });
-
-  const chartDataFailed = tickValues?.map((value) => {
-    const s = data2?.summary?.find((d) => {
-      return (
-        new Date(d.group_value * 1000).toDateString() ===
-        new Date(value).toDateString()
+      dayLabel = formatDate(new Date());
+      chartDataSucceeded = getChartData(tickValues, data2, 'Succeeded', 'hour');
+      chartDataFailed = getChartData(tickValues, data2, 'Failed', 'hour');
+      chartDataCancelled = getChartData(tickValues, data2, 'Cancelled', 'hour');
+      chartDataOthers = getChartData(tickValues, data2, 'Others', 'hour');
+      break;
+    case 'day':
+      xTickFormat = (d) => formatDate(d);
+      domainValue.x = [startDate, endDate];
+      useInterval(
+        () =>
+          getSummaryData(
+            'succeeded,cancelled,failed,others,total',
+            setData2,
+            'day',
+          ),
+        interval,
+        namespace,
+        date,
       );
-    });
-    return {
-      x: value,
-      y: Math.round((100 * s?.failed) / s?.total) || 0,
-      name: t('Failed'),
-    };
-  });
 
-  const chartDataCancelled = tickValues?.map((value) => {
-    const s = data2?.summary?.find((d) => {
-      return (
-        new Date(d.group_value * 1000).toDateString() ===
-        new Date(value).toDateString()
+      chartDataSucceeded = getChartData(tickValues, data2, 'Succeeded', 'day');
+      chartDataFailed = getChartData(tickValues, data2, 'Failed', 'day');
+      chartDataCancelled = getChartData(tickValues, data2, 'Cancelled', 'day');
+      chartDataOthers = getChartData(tickValues, data2, 'Others', 'day');
+      break;
+    case 'week':
+      xTickFormat = (d) => formatDate(d);
+      domainValue.x = [new Date(tickValues[0]), new Date(tickValues[11])];
+      useInterval(
+        () =>
+          getSummaryData(
+            'succeeded,cancelled,failed,others,total',
+            setData2,
+            'week',
+          ),
+        interval,
+        namespace,
+        date,
       );
-    });
-    return {
-      x: value,
-      y: Math.round((100 * s?.cancelled) / s?.total) || 0,
-      name: t('Cancelled'),
-    };
-  });
 
-  const chartDataOthers = tickValues?.map((value) => {
-    const s = data2?.summary?.find((d) => {
-      return (
-        new Date(d.group_value * 1000).toDateString() ===
-        new Date(value).toDateString()
+      chartDataSucceeded = getChartData(tickValues, data2, 'Succeeded', 'week');
+      chartDataFailed = getChartData(tickValues, data2, 'Failed', 'week');
+      chartDataCancelled = getChartData(tickValues, data2, 'Cancelled', 'week');
+      chartDataOthers = getChartData(tickValues, data2, 'Others', 'week');
+      break;
+    case 'month':
+      xTickFormat = (d) => monthYear(d);
+      domainValue.x = [new Date(tickValues[0]), new Date(tickValues[11])];
+      useInterval(
+        () =>
+          getSummaryData(
+            'succeeded,cancelled,failed,others,total',
+            setData2,
+            'month',
+          ),
+        interval,
+        namespace,
+        date,
       );
-    });
-    return {
-      x: value,
-      y: Math.round((100 * s?.others) / s?.total) || 0,
-      name: t('Others'),
-    };
-  });
 
-  const xTickFormat = (d) => formatDate(d);
+      chartDataSucceeded = getChartData(
+        tickValues,
+        data2,
+        'Succeeded',
+        'month',
+      );
+      chartDataFailed = getChartData(tickValues, data2, 'Failed', 'month');
+      chartDataCancelled = getChartData(
+        tickValues,
+        data2,
+        'Cancelled',
+        'month',
+      );
+      chartDataOthers = getChartData(tickValues, data2, 'Others', 'month');
+      break;
+    default:
+      console.log('Received wrong data');
+      break;
+  }
+
   let xAxisStyle: ChartAxisProps['style'] = {
     tickLabels: { fill: 'var(--pf-global--Color--100)' },
   };
@@ -363,6 +440,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                       tickValues={tickValues}
                       style={xAxisStyle}
                       tickFormat={xTickFormat}
+                      label={showLabel ? dayLabel : ''}
                     />
                     <ChartAxis
                       dependentAxis

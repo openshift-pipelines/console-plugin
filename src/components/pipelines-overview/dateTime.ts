@@ -49,18 +49,81 @@ export const formatPrometheusDuration = (ms: number) => {
   return _.trim(str);
 };
 
-export const getXaxisValues = (timespan: number): number[] => {
+export const getXaxisValues = (
+  timespan: number,
+): [number[] | Date[], string] => {
   const xValues = [];
-  if (!timespan) return xValues;
+  if (!timespan) return [xValues, '-'];
   const oneDayDuration = parsePrometheusDuration('1d');
   const numDays = Math.round(timespan / oneDayDuration);
   const d = new Date(Date.now());
   d.setHours(0, 0, 0, 0);
-  while (xValues.length - 1 < numDays) {
-    xValues.push(d.getTime());
-    d.setDate(d.getDate() - 1);
+
+  if (numDays == 1) {
+    return [
+      [
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+        20, 21, 22, 23,
+      ],
+      'hour',
+    ];
+  } else if (numDays > 1 && numDays <= 31) {
+    while (xValues.length - 1 < numDays) {
+      xValues.push(d.getTime());
+      d.setDate(d.getDate() - 1);
+    }
+    return [xValues.slice(0, numDays), 'day'];
+  } else if (numDays >= 84 && numDays <= 90) {
+    return [getLast12Mondays(d).reverse(), 'week'];
+  } else if (numDays > 90) {
+    return [getLast12MonthsFromDate(d).reverse(), 'month'];
   }
-  return xValues.slice(0, numDays);
+};
+
+export const monthYear = (currentDate: Date) => {
+  const formattedDate = currentDate.toLocaleDateString('en-US', {
+    month: 'short',
+    year: 'numeric',
+  });
+  return formattedDate;
+};
+
+export const hourformat = (hour: number) => {
+  if (hour == 0) return '12 AM';
+  if (hour <= 11) return hour + ' AM';
+  if (hour == 12) return '12 PM';
+  if (hour > 12) return hour - 12 + ' PM';
+};
+
+function getLast12Mondays(cDate: Date): Date[] {
+  const today = cDate;
+  const dayOfWeek = today.getDay();
+  const daysUntilLastMonday = (dayOfWeek + 6) % 7; // Calculate days until last Monday
+
+  today.setDate(today.getDate() - daysUntilLastMonday); // Move to last Monday
+
+  const last12Mondays = [];
+  for (let i = 0; i < 12; i++) {
+    last12Mondays.push(new Date(today));
+    today.setDate(today.getDate() - 7); // Move to the previous Monday
+  }
+  return last12Mondays;
+}
+
+const getLast12MonthsFromDate = (date: Date): Date[] => {
+  const months = [];
+  const currentDate = new Date(date);
+
+  for (let i = 0; i < 12; i++) {
+    const month = currentDate.getMonth() - i;
+    const year = currentDate.getFullYear() - (month < 0 ? 1 : 0);
+    const lastDayOfMonth = new Date(year, ((month + 12) % 12) + 1, 0).getDate();
+    const day = Math.min(currentDate.getDate(), lastDayOfMonth);
+    const currentDateInMonth = new Date(year, (month + 12) % 12, day);
+
+    months.push(currentDateInMonth);
+  }
+  return months;
 };
 
 export const getDropDownDate = (timespan: number): Date => {

@@ -17,6 +17,8 @@ import {
   formatDate,
   getDropDownDate,
   getXaxisValues,
+  hourformat,
+  monthYear,
   parsePrometheusDuration,
   timeToMinutes,
 } from '../pipelines-overview/dateTime';
@@ -35,6 +37,40 @@ interface PipelinesAverageDurationProps {
   namespace?: string;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
+
+const getChartData = (
+  tickValues: number[] | Date[],
+  data: SummaryResponse,
+  type: string,
+) => {
+  const chartData = tickValues?.map((value) => {
+    const s = data?.summary?.find((d) => {
+      if (type == 'hour') {
+        return new Date(d.group_value * 1000).getHours() === value;
+      }
+      if (type == 'day') {
+        return (
+          new Date(d.group_value * 1000).toDateString() ===
+          new Date(value).toDateString()
+        );
+      }
+      if (type == 'week') {
+        const wDate = new Date(d.group_value * 1000);
+        const weekend = new Date(value);
+        weekend.setDate(weekend.getDate() + 6);
+        return wDate >= new Date(value) && wDate <= weekend;
+      }
+      if (type == 'month') {
+        return new Date(d.group_value * 1000).getMonth() === value.getMonth();
+      }
+    });
+    return {
+      x: value,
+      y: timeToMinutes(s?.avg_duration) || 0,
+    };
+  });
+  return chartData;
+};
 
 const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
   timespan,
@@ -60,16 +96,16 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
     namespace = '-';
   }
 
-  const tickValues = getXaxisValues(timespan);
+  const [tickValues, type] = getXaxisValues(timespan);
 
   const date = getDropDownDate(timespan).toISOString();
 
-  const getSummaryData = () => {
+  const getSummaryData = (group_by: string) => {
     const summaryOpt = {
       summary: 'avg_duration',
       data_type: DataType.PipelineRun,
       filter: getFilter(date, parentName, kind),
-      groupBy: 'day',
+      groupBy: group_by,
     };
 
     getResultsSummary(namespace, summaryOpt)
@@ -81,20 +117,41 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
       });
   };
 
-  useInterval(getSummaryData, interval, namespace, date);
-
-  const chartData = tickValues.map((value) => {
-    const s = data?.summary.find((d) => {
-      return (
-        new Date(d.group_value * 1000).toDateString() ===
-        new Date(value).toDateString()
-      );
-    });
-    return {
-      x: value,
-      y: timeToMinutes(s?.avg_duration) || 0,
-    };
-  });
+  let xTickFormat;
+  let dayLabel;
+  let showLabel = false;
+  let chartData = [];
+  switch (type) {
+    case 'hour':
+      xTickFormat = (d) => hourformat(d);
+      showLabel = true;
+      domainValue.x = [0, 23];
+      useInterval(() => getSummaryData('hour'), interval, namespace, date);
+      dayLabel = formatDate(new Date());
+      chartData = getChartData(tickValues, data, 'hour');
+      break;
+    case 'day':
+      xTickFormat = (d) => formatDate(d);
+      domainValue.x = [startDate, endDate];
+      useInterval(() => getSummaryData('day'), interval, namespace, date);
+      chartData = getChartData(tickValues, data, 'day');
+      break;
+    case 'week':
+      xTickFormat = (d) => formatDate(d);
+      domainValue.x = [new Date(tickValues[0]), new Date(tickValues[11])];
+      useInterval(() => getSummaryData('week'), interval, namespace, date);
+      chartData = getChartData(tickValues, data, 'week');
+      break;
+    case 'month':
+      xTickFormat = (d) => monthYear(d);
+      domainValue.x = [new Date(tickValues[0]), new Date(tickValues[11])];
+      useInterval(() => getSummaryData('month'), interval, namespace, date);
+      chartData = getChartData(tickValues, data, 'month');
+      break;
+    default:
+      console.log('Received wrong data');
+      break;
+  }
 
   if (!domainY) {
     let minY: number = _.minBy(chartData, 'y')?.y ?? 0;
@@ -110,7 +167,6 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
     domainValue.y = [minY, maxY];
   }
 
-  const xTickFormat = (d) => formatDate(d);
   let xAxisStyle: ChartAxisProps['style'] = {
     tickLabels: { fill: 'var(--pf-global--Color--100)', fontSize: 12 },
   };
@@ -155,7 +211,7 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
               width={500}
               padding={{
                 top: 20,
-                bottom: 40,
+                bottom: 55,
                 left: 50,
               }}
               themeColor={ChartThemeColor.blue}
@@ -164,6 +220,7 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
                 tickValues={tickValues}
                 style={xAxisStyle}
                 tickFormat={xTickFormat}
+                label={showLabel ? dayLabel : ''}
               />
               <ChartAxis
                 dependentAxis

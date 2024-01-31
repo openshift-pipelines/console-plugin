@@ -36,10 +36,6 @@ import {
 import { TektonResultModel } from '../../models';
 
 export const useFlagHookProvider = (setFeatureFlag: SetFeatureFlag) => {
-  setFeatureFlag(
-    FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAIL_METRICS_TAB,
-    true,
-  );
   setFeatureFlag(FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINES_NAV_OPTION, false);
   setFeatureFlag(FLAG_HIDE_STATIC_PIPELINE_PLUGIN_TASKS_NAV_OPTION, false);
   setFeatureFlag(FLAG_HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERS_NAV_OPTION, false);
@@ -98,4 +94,8 @@ export const useTektonResultInstallProvider = (
     fetch();
   }, []);
   setFeatureFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED, data ? true : false);
+  setFeatureFlag(
+    FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAIL_METRICS_TAB,
+    data ? true : false,
+  );
 };

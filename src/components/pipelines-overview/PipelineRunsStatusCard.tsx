@@ -69,17 +69,11 @@ const getChartData = (
       if (type == 'hour') {
         return new Date(d.group_value * 1000).getHours() === value;
       }
-      if (type == 'day') {
+      if (type == 'day' || type == 'week') {
         return (
           new Date(d.group_value * 1000).toDateString() ===
           new Date(value).toDateString()
         );
-      }
-      if (type == 'week') {
-        const wDate = new Date(d.group_value * 1000);
-        const weekend = new Date(value);
-        weekend.setDate(weekend.getDate() + 6);
-        return wDate >= new Date(value) && wDate <= weekend;
       }
       if (type == 'month') {
         return new Date(d.group_value * 1000).getMonth() === value.getMonth();

@@ -12,7 +12,7 @@ import {
 import PipelineRunsForRepositoriesList from './PipelineRunsForRepositoriesList';
 import PipelineRunsForPipelinesList from './PipelineRunsForPipelinesList';
 import SearchInputField from '../SearchInput';
-import { SummaryProps, useInterval } from '../utils';
+import { SummaryProps, useInterval, useQueryParams } from '../utils';
 import { getResultsSummary } from '../../../components/utils/summary-api';
 import { DataType } from '../../../components/utils/tekton-results';
 import { getDropDownDate } from '../dateTime';
@@ -35,6 +35,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
   const [pageFlag, setPageFlag] = React.useState(1);
   const [loaded, setloaded] = React.useState(false);
   const [summaryData, setSummaryData] = React.useState<SummaryProps[]>([]);
+  const [searchText, setSearchText] = React.useState('');
   const [summaryDataFiltered, setSummaryDataFiltered] = React.useState<
     SummaryProps[]
   >([]);
@@ -78,6 +79,23 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
     setSummaryDataFiltered([]);
   }, [namespace, timespan]);
 
+  useQueryParams({
+    key: 'search',
+    value: searchText,
+    setValue: setSearchText,
+    defaultValue: '',
+  });
+
+  useQueryParams({
+    key: 'list',
+    value: pageFlag,
+    setValue: setPageFlag,
+    defaultValue: 1,
+    options: { perpipeline: 1, perrepository: 2 },
+    displayFormat: (v) => (v == 1 ? 'perpipeline' : 'perrepository'),
+    loadFormat: (v) => (v == 'perrepository' ? 2 : 1),
+  });
+
   const handlePageChange = (pageNumber: number) => {
     setloaded(false);
     setSummaryData([]);
@@ -85,6 +103,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
     setPageFlag(pageNumber);
   };
   const handleNameChange = (value: string) => {
+    setSearchText(value);
     const filteredData = summaryData.filter((summary) =>
       summary.group_value
         .split('/')[1]
@@ -105,6 +124,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
             {/* Lastrun Status is not provided by API  */}
             {/* <StatusDropdown /> */}
             <SearchInputField
+              searchText={searchText}
               pageFlag={pageFlag}
               handleNameChange={handleNameChange}
             />

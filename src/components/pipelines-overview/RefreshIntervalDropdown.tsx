@@ -1,8 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
-import { useBoolean } from './utils';
+import { IntervalOptions, useBoolean } from './utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from './dateTime';
 
 import './PipelinesOverview.scss';
@@ -17,26 +16,13 @@ type Props = {
 
 const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
   const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const intervalOptions = IntervalOptions();
 
   const onChange = React.useCallback(
     (v: string) =>
       setInterval(v === OFF_KEY ? null : parsePrometheusDuration(v)),
     [setInterval],
   );
-
-  const intervalOptions = {
-    [OFF_KEY]: t('Refresh off'),
-    '15s': t('{{count}} second', { count: 15 }),
-    '30s': t('{{count}} second', { count: 30 }),
-    '1m': t('{{count}} minute', { count: 1 }),
-    '5m': t('{{count}} minute', { count: 5 }),
-    '15m': t('{{count}} minute', { count: 15 }),
-    '30m': t('{{count}} minute', { count: 30 }),
-    '1h': t('{{count}} hour', { count: 1 }),
-    '2h': t('{{count}} hour', { count: 2 }),
-    '1d': t('{{count}} day', { count: 1 }),
-  };
 
   const selectedKey =
     interval === null ? OFF_KEY : formatPrometheusDuration(interval);

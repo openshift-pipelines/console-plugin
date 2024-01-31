@@ -8,6 +8,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import PipelinesOverviewPage from '../PipelinesOverviewPage';
 import { getResultsSummary } from '../../utils/summary-api';
+import * as utils from '../utils';
 
 const virtualizedTableRenderProps = jest.fn();
 const setActiveNamespace = jest.fn();
@@ -28,6 +29,8 @@ jest.mock('../../utils/summary-api', () => ({
   virtualizedTableRenderProps(props);
   return null;
 });
+
+jest.spyOn(utils, 'useQueryParams').mockReturnValue(null);
 
 const virtualizedTableMock = VirtualizedTable as jest.Mock;
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;

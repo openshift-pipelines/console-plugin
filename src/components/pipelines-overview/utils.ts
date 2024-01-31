@@ -5,6 +5,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom-v5-compat';
 
 export const alphanumericCompare = (a: string, b: string): number => {
   return a.localeCompare(b, undefined, {
@@ -64,6 +65,23 @@ export const StatusOptions = () => {
     Running: t('Running'),
     Pending: t('Pending'),
     Cancelled: t('Cancelled'),
+  };
+};
+
+export const IntervalOptions = () => {
+  const OFF_KEY = 'OFF_KEY';
+  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  return {
+    [OFF_KEY]: t('Refresh off'),
+    '15s': t('{{count}} second', { count: 15 }),
+    '30s': t('{{count}} second', { count: 30 }),
+    '1m': t('{{count}} minute', { count: 1 }),
+    '5m': t('{{count}} minute', { count: 5 }),
+    '15m': t('{{count}} minute', { count: 15 }),
+    '30m': t('{{count}} minute', { count: 30 }),
+    '1h': t('{{count}} hour', { count: 1 }),
+    '2h': t('{{count}} hour', { count: 2 }),
+    '1d': t('{{count}} day', { count: 1 }),
   };
 };
 
@@ -243,4 +261,61 @@ export const getFilter = (date, parentName, kind): string => {
     }
   }
   return filter.join(' && ');
+};
+
+export const useQueryParams = (param) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const {
+    key,
+    value,
+    setValue,
+    defaultValue,
+    options,
+    displayFormat,
+    loadFormat,
+  } = param;
+  const [isLoaded, setIsLoaded] = React.useState(0);
+  //Loads Url Params Data
+  React.useEffect(() => {
+    if (searchParams.has(key)) {
+      const paramValue = searchParams.get(key);
+      if (!options || options[paramValue])
+        setValue(loadFormat ? loadFormat(paramValue) : paramValue);
+    }
+  }, []);
+
+  //If Url Params doesn't contain a key, initializes with defaultValue
+  React.useEffect(() => {
+    if (isLoaded >= 0) {
+      if (!searchParams.has(key)) {
+        const newValue = displayFormat
+          ? displayFormat(defaultValue)
+          : defaultValue;
+        if (newValue) {
+          setSearchParams((prevParams) => {
+            const newParams = new URLSearchParams(prevParams);
+            newParams.append(key, newValue);
+            return newParams;
+          });
+          setIsLoaded(isLoaded + 1);
+        }
+      } else {
+        setIsLoaded(-1);
+      }
+    }
+  }, [isLoaded]);
+
+  //Updating Url Params when values of filter changes
+  React.useEffect(() => {
+    const newValue = displayFormat ? displayFormat(value) : value;
+    setSearchParams((prevParams) => {
+      const newParams = new URLSearchParams(prevParams);
+      if (newValue)
+        newParams.has(key)
+          ? newParams.set(key, newValue)
+          : newParams.append(key, newValue);
+      else if (newParams.has(key)) newParams.delete(key);
+      return newParams;
+    });
+  }, [value]);
 };

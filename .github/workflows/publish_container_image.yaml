@@ -17,6 +17,8 @@ jobs:
         with:
           node-version: '16'
 
+      - uses: docker/setup-buildx-action@v1
+
       - name: Login in to ghcr.io registry
         uses: docker/login-action@v3
         with:
@@ -27,5 +29,6 @@ jobs:
       - name: Build and push Dynamic Console container image
         run: ./build.sh
         env:
+          SUPPORT_MULTI_ARCH: "true"
           CONSOLE_PLUGIN_IMAGE_REPO: 'ghcr.io/${{ github.repository }}'
           CONSOLE_PLUGIN_IMAGE_TAG: '${{ github.ref_name }}'

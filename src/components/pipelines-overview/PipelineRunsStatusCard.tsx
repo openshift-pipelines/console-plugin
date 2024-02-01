@@ -66,17 +66,15 @@ const getChartData = (
   const k = key.toLowerCase();
   const chartData = tickValues?.map((value) => {
     const s = data?.summary?.find((d) => {
+      const group_date = new Date(Number(d.group_value) * 1000);
       if (type == 'hour') {
-        return new Date(d.group_value * 1000).getHours() === value;
+        return group_date.getHours() === value;
       }
       if (type == 'day' || type == 'week') {
-        return (
-          new Date(d.group_value * 1000).toDateString() ===
-          new Date(value).toDateString()
-        );
+        return group_date.toDateString() === new Date(value).toDateString();
       }
       if (type == 'month') {
-        return new Date(d.group_value * 1000).getMonth() === value.getMonth();
+        return group_date.getMonth() === value.getMonth();
       }
     });
     return {

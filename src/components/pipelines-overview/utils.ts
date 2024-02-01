@@ -25,7 +25,7 @@ export type SummaryProps = {
   min_duration?: string;
   total_duration?: string;
   others?: number;
-  group_value?: any;
+  group_value?: string;
   last_runtime?: number;
 };
 

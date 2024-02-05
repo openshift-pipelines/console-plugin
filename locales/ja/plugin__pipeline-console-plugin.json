@@ -1,0 +1,19 @@
+{
+  "Pipeline": "Pipeline",
+  "Pipelines": "Pipelines",
+  "Repository": "Repository",
+  "Repositories": "Repositories",
+  "Metrics": "Metrics",
+  "Duration": "期間",
+  "Last run time": "最終実行時刻",
+  "Number of PipelineRuns": "PipelineRuns の数",
+  "Refresh Interval": "更新間隔",
+  "Time Range": "時間の範囲",
+  "TektonResult": "TektonResult",
+  "TektonResults": "TektonResults",
+  "Succeeded": "成功",
+  "Failed": "失敗",
+  "Running": "実行中",
+  "Cancelled": "キャンセル済み",
+  "Pending": "保留中"
+}

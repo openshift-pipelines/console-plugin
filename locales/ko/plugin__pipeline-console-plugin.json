@@ -1,0 +1,19 @@
+{
+  "Pipeline": "파이프라인",
+  "Pipelines": "파이프라인",
+  "Repository": "리포지터리",
+  "Repositories": "리포지토리",
+  "Metrics": "메트릭",
+  "Duration": "기간",
+  "Last run time": "마지막 실행 시간",
+  "Number of PipelineRuns": "파이프 라인 실행 수",
+  "Refresh Interval": "새로 고침 간격",
+  "Time Range": "시간 범위",
+  "TektonResult": "TektonResult",
+  "TektonResults": "TektonResults",
+  "Succeeded": "성공",
+  "Failed": "실패",
+  "Running": "실행 중",
+  "Cancelled": "취소",
+  "Pending": "보류"
+}

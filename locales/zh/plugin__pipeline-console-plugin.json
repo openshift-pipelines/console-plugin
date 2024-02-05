@@ -1,0 +1,19 @@
+{
+  "Pipeline": "管道",
+  "Pipelines": "管道",
+  "Repository": "软件仓库",
+  "Repositories": "存储库",
+  "Metrics": "指标",
+  "Duration": "持续时间",
+  "Last run time": "最后运行时间",
+  "Number of PipelineRuns": "管道运行数量",
+  "Refresh Interval": "刷新间隔",
+  "Time Range": "时间范围",
+  "TektonResult": "TektonResult",
+  "TektonResults": "TektonResults",
+  "Succeeded": "成功",
+  "Failed": "失败",
+  "Running": "运行",
+  "Cancelled": "取消",
+  "Pending": "Pending"
+}

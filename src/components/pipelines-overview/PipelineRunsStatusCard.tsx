@@ -19,6 +19,7 @@ import {
   CardTitle,
   Grid,
   GridItem,
+  Popover,
 } from '@patternfly/react-core';
 import { chart_color_black_200 as othersColor } from '@patternfly/react-tokens/dist/js/chart_color_black_200';
 import { chart_color_black_500 as cancelledColor } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
@@ -39,6 +40,7 @@ import { DataType } from '../utils/tekton-results';
 import './PipelinesOverview.scss';
 import { LoadingInline } from '../Loading';
 import { ALL_NAMESPACES_KEY } from '../../consts';
+import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 
 interface PipelinesRunsStatusCardProps {
   timespan?: number;
@@ -331,12 +333,11 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
         <CardTitle className="pipeline-overview__pipelinerun-status-card__title">
           <span>
             {t('PipelineRun status')}{' '}
-            {/* TODO - Add this tooltip after text content is finalized */}
-            {/* <Popover
+            <Popover
               bodyContent={
                 <>
                   {t(
-                    'Success Rate measures the rate at which PipelineRuns succeed compared to failed runs. The trending shown is based on the time range selected. This metric does not show runs that are running or pending.',
+                    'PipelineRun Status shows the % of PipelineRuns for various status like "Succeeded", "Failed", "Running", "Cancelled" and "Others". Here, Others includes statuses like "Started", "CreateRunFailed", "PipelineRunTimeout"',
                   )}
                 </>
               }
@@ -348,7 +349,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
               >
                 <OutlinedQuestionCircleIcon />
               </span>
-            </Popover> */}
+            </Popover>
           </span>
         </CardTitle>
         <CardBody className="pipeline-overview__pipelinerun-status-card__title">

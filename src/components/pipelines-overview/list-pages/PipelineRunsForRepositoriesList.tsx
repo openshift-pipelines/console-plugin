@@ -72,7 +72,15 @@ const PipelineRunsForRepositoriesList: React.FC<
         sort: (summary, direction: 'asc' | 'desc') =>
           sortTimeStrings(summary, 'avg_duration', direction),
         transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
+        props: {
+          className: tableColumnClasses[4],
+          info: {
+            tooltip: t(
+              'An average of the time taken to run PipelineRuns. The trending shown is based on the time range selected. This metric does not show runs that are running or pending.',
+            ),
+            className: 'pipeline-overview__for-pipelines-list__tooltip',
+          },
+        },
       },
       {
         id: 'successRate',
@@ -80,7 +88,15 @@ const PipelineRunsForRepositoriesList: React.FC<
         sort: (summary, direction: 'asc' | 'desc') =>
           sortByNumbers(summary, 'succeeded', direction),
         transforms: [sortable],
-        props: { className: tableColumnClasses[5] },
+        props: {
+          className: tableColumnClasses[5],
+          info: {
+            tooltip: t(
+              'Success rate measure the % of successfully completed pipeline runs in relation to the total number of pipeline runs',
+            ),
+            className: 'pipeline-overview__for-pipelines-list__tooltip',
+          },
+        },
       },
       {
         id: 'lastRunTime',

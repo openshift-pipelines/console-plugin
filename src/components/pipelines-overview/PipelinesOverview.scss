@@ -165,3 +165,7 @@
   padding-top: var(--pf-global--spacer--md);
   padding-bottom: var(--pf-global--spacer--sm);
 }
+
+.pipeline-overview__for-pipelines-list__tooltip > span {
+  margin-bottom: 0.1rem;
+}

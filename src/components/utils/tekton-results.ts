@@ -5,10 +5,10 @@ import {
   Selector,
   k8sGet,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { TektonResultModel } from '../../models';
+import { RouteModel, TektonResultModel } from '../../models';
 import { PipelineRunKind, TaskRunKind } from '../../types';
 import { K8sResourceKind } from '../../types/openshift';
-import { consoleProxyFetchJSON } from './proxy';
+import { consoleProxyFetch, consoleProxyFetchJSON } from './proxy';
 
 // REST API spec
 // https://github.com/tektoncd/results/blob/main/docs/api/rest-api-spec.md
@@ -18,7 +18,7 @@ import { consoleProxyFetchJSON } from './proxy';
 const MINIMUM_PAGE_SIZE = 5;
 const MAXIMUM_PAGE_SIZE = 10000;
 
-export type Record = {
+export type ResultRecord = {
   name: string;
   uid: string;
   createTime: string;
@@ -40,7 +40,7 @@ export type Log = {
 
 export type RecordsList = {
   nextPageToken?: string;
-  records: Record[];
+  records: ResultRecord[];
 };
 
 export type TektonResultsOptions = {
@@ -54,10 +54,19 @@ export type TektonResultsOptions = {
   groupBy?: string;
 };
 
-// const throw404 = () => {
-//   // eslint-disable-next-line no-throw-literal
-//   throw { code: 404 };
-// };
+type ProxyRequest = {
+  allowInsecure?: boolean;
+  method: string;
+  url: string;
+  headers?: Record<string, string[]>;
+  queryparams?: Record<string, string[]>;
+  body?: string;
+};
+
+const throw404 = () => {
+  // eslint-disable-next-line no-throw-literal
+  throw { code: 404 };
+};
 
 // decoding result base64
 export const decodeValue = (value: string) => atob(value);
@@ -409,21 +418,64 @@ export const createTektonResultsSummaryUrl = async (
   return URL;
 };
 
-// const getLog = (taskRunPath: string) =>
-//   consoleProxyFetchJSON({
-//     url: `${getTRUrlPrefix()}/${taskRunPath.replace('/records/', '/logs/')}`,
-//     method: 'GET', allowInsecure: true
-//   });
+const isJSONString = (str: string): boolean => {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+};
 
-// export const getTaskRunLog = (namespace: string, taskRunName: string): Promise<string> =>
-//   getFilteredRecord<any>(
-//     namespace,
-//     DataType.Log,
-//     AND(EQ(`data.spec.resource.kind`, 'TaskRun'), EQ(`data.spec.resource.name`, taskRunName)),
-//     { limit: 1 },
-//   ).then((x) =>
-//     x?.[1]?.records.length > 0
-//       ? // eslint-disable-next-line promise/no-nesting
-//         getLog(x?.[1]?.records[0].name).then((response) => decodeValue(response.result.data))
-//       : throw404(),
-//   );
+export const consoleProxyFetchLog = <T>(
+  proxyRequest: ProxyRequest,
+): Promise<T> => {
+  return consoleProxyFetch(proxyRequest).then((response) => {
+    return isJSONString(response.body)
+      ? JSON.parse(response.body)
+      : response.body;
+  });
+};
+
+export const getTRURLHost = async () => {
+  const tektonResult: K8sResourceKind = await k8sGet({
+    model: TektonResultModel,
+    name: 'result',
+  });
+  const targetNamespace = tektonResult?.spec?.targetNamespace;
+  const route: K8sResourceKind = await k8sGet({
+    model: RouteModel,
+    name: 'tekton-results-api-service',
+    ns: targetNamespace,
+  });
+  return route?.spec.host;
+};
+
+const getLog = async (taskRunPath: string) => {
+  const tektonResultUrl = await getTRURLHost();
+  const url = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${taskRunPath.replace(
+    '/records/',
+    '/logs/',
+  )}`;
+  return consoleProxyFetchLog({ url, method: 'GET', allowInsecure: true });
+};
+
+export const getTaskRunLog = (
+  namespace: string,
+  taskRunName: string,
+): Promise<string> =>
+  getFilteredRecord<any>(
+    namespace,
+    DataType.Log,
+    AND(
+      EQ(`data.spec.resource.kind`, 'TaskRun'),
+      EQ(`data.spec.resource.name`, taskRunName),
+    ),
+    { limit: 1 },
+  ).then((x) =>
+    x?.[1]?.records.length > 0
+      ? getLog(x?.[1]?.records[0].name).then((response: string) => {
+          return response;
+        })
+      : throw404(),
+  );

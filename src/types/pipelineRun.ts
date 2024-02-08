@@ -118,7 +118,9 @@ export type PipelineRunWorkspace = {
     | VolumeTypeSecret
     | VolumeTypeConfigMaps
     | VolumeTypePVC
-    | VolumeTypeClaim;
+    | VolumeTypeClaim
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    | {};
 };
 
 export type PipelineRunParam = {

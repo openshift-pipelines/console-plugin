@@ -3,6 +3,34 @@
     "type": "console.model-metadata",
     "properties": {
       "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "Pipeline"
+      },
+      "color": "#38812f",
+      "label": "%Pipeline%",
+      "labelPlural": "%Pipelines%",
+      "abbr": "PL"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
+      "color": "#38812f",
+      "label": "%Pipeline%",
+      "labelPlural": "%Pipelines%",
+      "abbr": "PL"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
         "group": "operator.tekton.dev",
         "version": "v1alpha1",
         "kind": "TektonResult"
@@ -136,6 +164,34 @@
     "type": "console.flag/hookProvider",
     "properties": {
       "handler": { "$codeRef": "hookProvider.useTektonResultInstallProvider" }
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "Pipeline"
+      },
+      "component": { "$codeRef": "pipelinesList.PipelineListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINES_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
+      "component": { "$codeRef": "pipelinesList.PipelineListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINES_LIST"]
     }
   }
 ]

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import {
   SummaryProps,
   getReferenceForModel,
@@ -8,11 +8,12 @@ import {
 import {
   ResourceLink,
   RowProps,
-  useActiveNamespace,
+  getGroupVersionKindForModel,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { formatTime, formatTimeLastRunTime } from '../dateTime';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
 import { PipelineModel } from '../../../models';
+import { useActiveNamespace } from '../../hooks/useActiveNamespace';
 
 const pipelineReference = getReferenceForModel(PipelineModel);
 
@@ -26,7 +27,7 @@ const PipelineRunsForPipelinesRow: React.FC<RowProps<SummaryProps>> = ({
     <>
       <td className={tableColumnClasses[0]}>
         <ResourceLink
-          kind={pipelineReference}
+          groupVersionKind={getGroupVersionKindForModel(PipelineModel)}
           name={name}
           namespace={namespace}
         />

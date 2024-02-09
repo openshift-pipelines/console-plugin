@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
 import PipelineRunsStatusCard from '../pipelines-overview/PipelineRunsStatusCard';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import PipelinesRunsDurationCard from '../pipelines-overview/PipelineRunsDurationCard';
@@ -11,21 +10,22 @@ import {
 import TimeRangeDropdown from '../pipelines-overview/TimeRangeDropdown';
 import RefreshDropdown from '../pipelines-overview/RefreshDropdown';
 import PipelinesAverageDuration from './PipelinesAverageDuration';
-import { K8sResourceKind } from '@openshift-console/dynamic-plugin-sdk';
-import './PipelinesMetrics.scss';
 import {
   IntervalOptions,
   TimeRangeOptions,
   useQueryParams,
 } from '../pipelines-overview/utils';
+import { PipelineKind } from '../../types';
+import './PipelinesMetrics.scss';
 
 type PipelinesMetricsPageProps = {
-  obj: K8sResourceKind;
+  obj: PipelineKind;
 };
 
 const PipelinesMetricsPage: React.FC<PipelinesMetricsPageProps> = ({ obj }) => {
-  const params = useParams();
-  const { ns: namespace, name: parentName } = params;
+  const {
+    metadata: { namespace, name: parentName },
+  } = obj;
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1d'));
   const [interval, setInterval] = React.useState(
     parsePrometheusDuration('30s'),

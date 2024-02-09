@@ -24,8 +24,8 @@
   },
   "devDependencies": {
     "@cypress/webpack-preprocessor": "^5.15.5",
-    "@openshift-console/dynamic-plugin-sdk": "0.0.21",
-    "@openshift-console/dynamic-plugin-sdk-webpack": "0.0.11",
+    "@openshift-console/dynamic-plugin-sdk": "0.0.18",
+    "@openshift-console/dynamic-plugin-sdk-webpack": "0.0.9",
     "@patternfly/react-charts": "6.94.19",
     "@patternfly/react-core": "4.276.8",
     "@patternfly/react-table": "4.113.0",
@@ -37,6 +37,7 @@
     "@types/node": "^18.0.0",
     "@types/react": "^17.0.37",
     "@types/react-helmet": "^6.1.4",
+    "@types/react-redux": "6.0.2",
     "@types/react-router-dom": "^5.3.2",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "@typescript-eslint/parser": "^5.14.0",
@@ -66,7 +67,6 @@
     "react-i18next": "^11.7.3",
     "react-router": "5.3.x",
     "react-router-dom": "5.3.x",
-    "react-router-dom-v5-compat": "^6.11.2",
     "resolve-url-loader": "2.x",
     "sass": "^1.42.1",
     "sass-loader": "^10.1.1",
@@ -100,6 +100,9 @@
     "@types/express": "^4.17.18",
     "classnames": "^2.3.2",
     "lodash-es": "^4.17.21",
+    "react-redux": "7.2.2",
+    "redux": "4.0.1",
+    "typesafe-actions": "^4.2.1",
     "victory-core": "^36.6.11"
   }
 }

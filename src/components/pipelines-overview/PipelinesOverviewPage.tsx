@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { action } from 'typesafe-actions';
 import PipelineRunsStatusCard from './PipelineRunsStatusCard';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import PipelinesRunsDurationCard from './PipelineRunsDurationCard';
@@ -10,21 +11,39 @@ import NameSpaceDropdown from './NamespaceDropdown';
 import PipelineRunsListPage from './list-pages/PipelineRunsListPage';
 import TimeRangeDropdown from './TimeRangeDropdown';
 import RefreshDropdown from './RefreshDropdown';
-import { useActiveNamespace } from '@openshift-console/dynamic-plugin-sdk';
-import { IntervalOptions, TimeRangeOptions, useQueryParams } from './utils';
+import {
+  IntervalOptions,
+  TimeRangeOptions,
+  formatNamespaceRoute,
+  useQueryParams,
+} from './utils';
+
+// FIXME upgrading redux types is causing many errors at this time
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { useActiveNamespace } from '../hooks/useActiveNamespace';
 
 const PipelinesOverviewPage: React.FC = () => {
   const { t } = useTranslation('plugin__pipeline-console-plugin');
-  const [activeNamespace, setActiveNamespace] = useActiveNamespace();
-
+  const [activeNamespace] = useActiveNamespace();
+  const dispatch = useDispatch();
+  const history = useHistory();
   const [namespace, setNamespace] = React.useState(activeNamespace);
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1d'));
   const [interval, setInterval] = React.useState(
     parsePrometheusDuration('30s'),
   );
-
   React.useEffect(() => {
-    setActiveNamespace(namespace);
+    if (namespace !== activeNamespace) {
+      dispatch(action('setActiveNamespace', { namespace }));
+      const oldPath = window.location.pathname;
+      const newPath = formatNamespaceRoute(namespace, oldPath, window.location);
+      if (newPath !== oldPath) {
+        history.push(newPath);
+      }
+    }
   }, [namespace]);
 
   useQueryParams({

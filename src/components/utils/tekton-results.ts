@@ -1,14 +1,14 @@
 import {
   K8sResourceCommon,
-  K8sResourceKind,
   MatchExpression,
   MatchLabels,
   Selector,
   k8sGet,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { RouteModel, TektonResultModel } from '../../models';
-import { consoleProxyFetchJSON } from './proxy';
 import { PipelineRunKind, TaskRunKind } from '../../types';
+import { K8sResourceKind } from '../../types/openshift';
+import { consoleProxyFetchJSON } from './proxy';
 
 // REST API spec
 // https://github.com/tektoncd/results/blob/main/docs/api/rest-api-spec.md

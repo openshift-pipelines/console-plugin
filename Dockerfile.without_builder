@@ -1,0 +1,18 @@
+# used to generate multiarch container image
+
+# performing "yarn install" on multiarch with "docker buildx" takes a lot of time
+# to avoid this, "yarn install" and "yarn build" should be executed outside of docker
+# and only copy the "dist" to different platform/architecture runtime containers
+# WARNING: with this approach, if we use platform naive package may lead to a malfunction
+# however in this project, the code will be executed on a browser,
+# hence assuming no impact on this approach
+
+FROM registry.access.redhat.com/ubi8/nginx-120:latest
+
+COPY ./dist /usr/share/nginx/html
+
+COPY ./nginx.conf /etc/nginx/nginx.conf
+
+USER 1001
+
+ENTRYPOINT ["nginx", "-g", "daemon off;"]

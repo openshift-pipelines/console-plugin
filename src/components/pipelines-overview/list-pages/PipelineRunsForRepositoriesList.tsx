@@ -26,7 +26,7 @@ type PipelineRunsForRepositoriesListProps = {
 const PipelineRunsForRepositoriesList: React.FC<
   PipelineRunsForRepositoriesListProps
 > = ({ summaryData, summaryDataFiltered, loaded }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const EmptyMsg = () => (
     <EmptyState variant={EmptyStateVariant.large}>
       {t('No PipelineRuns found')}

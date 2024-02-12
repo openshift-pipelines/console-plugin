@@ -41,7 +41,7 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
   bordered,
   kind,
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [summaryData, setSummaryData] = React.useState<SummaryProps>({});
   const [loaded, setLoaded] = React.useState(false);
   if (namespace == ALL_NAMESPACES_KEY) {

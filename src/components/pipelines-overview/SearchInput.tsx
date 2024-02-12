@@ -13,7 +13,7 @@ const SearchInputField: React.FC<SearchInputProps> = ({
   handleNameChange,
   searchText,
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <SearchInput
       value={searchText}

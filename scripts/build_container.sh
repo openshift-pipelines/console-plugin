@@ -26,10 +26,10 @@ if [ "$SUPPORT_MULTI_ARCH" = "true" ]; then
   docker buildx build --push \
     --progress=plain \
     --platform "linux/amd64,linux/arm64,linux/ppc64le,linux/s390x" \
-    --file ./docker/Dockerfile.without_builder \
+    --file ./Dockerfile.without_builder \
     --tag ${CONSOLE_PLUGIN_IMAGE} .
 
 else # build platform specific image
-  ${CONTAINER_RUNTIME} build --file ./docker/Dockerfile --tag ${CONSOLE_PLUGIN_IMAGE} .
+  ${CONTAINER_RUNTIME} build --file ./Dockerfile --tag ${CONSOLE_PLUGIN_IMAGE} .
   ${CONTAINER_RUNTIME} push ${CONSOLE_PLUGIN_IMAGE}
 fi

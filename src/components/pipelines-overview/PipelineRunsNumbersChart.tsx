@@ -73,7 +73,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   bordered,
   kind,
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const startTimespan = timespan - parsePrometheusDuration('1d');
   const endDate = new Date(Date.now()).setHours(0, 0, 0, 0);
   const startDate = new Date(Date.now() - startTimespan).setHours(0, 0, 0, 0);

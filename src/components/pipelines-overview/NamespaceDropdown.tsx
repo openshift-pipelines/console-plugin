@@ -18,7 +18,7 @@ const NameSpaceDropdown: React.FC<NameSpaceDropdownProps> = ({
   selected,
   setSelected,
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [isOpen, setValue] = React.useState(false);
   const toggleIsOpen = React.useCallback(() => setValue((v) => !v), []);
   const setClosed = React.useCallback(() => setValue(false), []);

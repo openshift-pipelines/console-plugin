@@ -1,5 +1,5 @@
 {
-  "name": "pipeline-console-plugin",
+  "name": "pipelines-console-plugin",
   "version": "0.0.1",
   "private": true,
   "repository": "git@github.com:openshift-pipelines/console-plugin.git",
@@ -83,10 +83,10 @@
     "webpack-dev-server": "^4.7.4"
   },
   "consolePlugin": {
-    "name": "pipeline-console-plugin",
+    "name": "pipelines-console-plugin",
     "version": "0.0.1",
-    "displayName": "OpenShift pipeline console plugin",
-    "description": "Plugin for Openshift console.",
+    "displayName": "Pipelines console plugin",
+    "description": "OpenShift Pipelines UI plugin for OpenShift web console",
     "exposedModules": {
       "hookProvider": "./components/hooks",
       "pipelinesComponent": "./components/pipelines-overview",

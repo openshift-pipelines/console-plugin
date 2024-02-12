@@ -5,7 +5,8 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useHistory } from 'react-router-dom';
+import { ALL_NAMESPACES_KEY } from '../../consts';
 
 export const alphanumericCompare = (a: string, b: string): number => {
   return a.localeCompare(b, undefined, {
@@ -264,39 +265,57 @@ export const getFilter = (date, parentName, kind): string => {
 };
 
 export const useQueryParams = (param) => {
-  const [searchParams, setSearchParams] = useSearchParams();
   const {
     key,
-    value,
     setValue,
     defaultValue,
     options,
     displayFormat,
     loadFormat,
+    value,
   } = param;
   const [isLoaded, setIsLoaded] = React.useState(0);
+  const history = useHistory();
+  const queryParams = {};
+  history.location.search
+    .substring(1)
+    ?.split('&')
+    .forEach((_) => {
+      const [key, value] = _.split('=');
+      if (key) queryParams[key] = value;
+    });
+
+  function setQueryParams(key?: string, value?: string) {
+    const path = history.location.pathname;
+
+    if (key && value) queryParams[key] = value;
+    history.push(
+      `${path}?${Object.keys(queryParams)
+        .map((k) => {
+          const v = queryParams[k];
+          if (k) return k + '=' + v;
+        })
+        .join('&')}`,
+    );
+  }
+
   //Loads Url Params Data
   React.useEffect(() => {
-    if (searchParams.has(key)) {
-      const paramValue = searchParams.get(key);
+    if (queryParams[key]) {
+      const paramValue = queryParams[key];
       if (!options || options[paramValue])
         setValue(loadFormat ? loadFormat(paramValue) : paramValue);
     }
   }, []);
-
   //If Url Params doesn't contain a key, initializes with defaultValue
   React.useEffect(() => {
     if (isLoaded >= 0) {
-      if (!searchParams.has(key)) {
+      if (!queryParams[key]) {
         const newValue = displayFormat
           ? displayFormat(defaultValue)
           : defaultValue;
         if (newValue) {
-          setSearchParams((prevParams) => {
-            const newParams = new URLSearchParams(prevParams);
-            newParams.append(key, newValue);
-            return newParams;
-          });
+          setQueryParams(key, newValue);
           setIsLoaded(isLoaded + 1);
         }
       } else {
@@ -304,18 +323,66 @@ export const useQueryParams = (param) => {
       }
     }
   }, [isLoaded]);
-
   //Updating Url Params when values of filter changes
   React.useEffect(() => {
     const newValue = displayFormat ? displayFormat(value) : value;
-    setSearchParams((prevParams) => {
-      const newParams = new URLSearchParams(prevParams);
-      if (newValue)
-        newParams.has(key)
-          ? newParams.set(key, newValue)
-          : newParams.append(key, newValue);
-      else if (newParams.has(key)) newParams.delete(key);
-      return newParams;
-    });
+    if (newValue) {
+      setQueryParams(key, newValue);
+    } else if (queryParams[key]) {
+      delete queryParams[key];
+      setQueryParams();
+    }
   }, [value]);
+};
+
+export const formatNamespaceRoute = (
+  activeNamespace,
+  originalPath,
+  location?,
+  forceList?: boolean,
+) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let path = originalPath.substr((window as any).SERVER_FLAGS.basePath.length);
+
+  let parts = path.split('/').filter((p) => p);
+  const prefix = parts.shift();
+
+  let previousNS;
+  if (parts[0] === 'all-namespaces') {
+    parts.shift();
+    previousNS = ALL_NAMESPACES_KEY;
+  } else if (parts[0] === 'ns') {
+    parts.shift();
+    previousNS = parts.shift();
+  }
+
+  if (!previousNS) {
+    return originalPath;
+  }
+
+  if (
+    (previousNS !== activeNamespace &&
+      (parts[1] !== 'new' || activeNamespace !== ALL_NAMESPACES_KEY)) ||
+    (activeNamespace === ALL_NAMESPACES_KEY && parts[1] === 'new') ||
+    forceList
+  ) {
+    // a given resource will not exist when we switch namespaces, so pop off the tail end
+    parts = parts.slice(0, 1);
+  }
+
+  const namespacePrefix =
+    activeNamespace === ALL_NAMESPACES_KEY
+      ? 'all-namespaces'
+      : `ns/${activeNamespace}`;
+
+  path = `/${prefix}/${namespacePrefix}`;
+  if (parts.length) {
+    path += `/${parts.join('/')}`;
+  }
+
+  if (location) {
+    path += `${location.search}${location.hash}`;
+  }
+
+  return path;
 };

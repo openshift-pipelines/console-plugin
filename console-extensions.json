@@ -8,9 +8,37 @@
         "kind": "TektonResult"
       },
       "color": "#38812f",
-      "label": "%TektonResult%",
-      "labelPlural": "%TektonResults%",
+      "label": "%plugin__pipeline-console-plugin~TektonResult%",
+      "labelPlural": "%plugin__pipeline-console-plugin~TektonResults%",
       "abbr": "TR"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "Pipeline"
+      },
+      "color": "#38812f",
+      "label": "%plugin__pipeline-console-plugin~Pipeline%",
+      "labelPlural": "%plugin__pipeline-console-plugin~Pipelines%",
+      "abbr": "PL"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
+      "color": "#38812f",
+      "label": "%plugin__pipeline-console-plugin~Pipeline%",
+      "labelPlural": "%plugin__pipeline-console-plugin~Pipelines%",
+      "abbr": "PL"
     }
   },
   {

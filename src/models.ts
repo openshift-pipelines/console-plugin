@@ -1,5 +1,5 @@
-import { chart_color_green_400 as tektonGroupColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
 import { K8sKind } from '@openshift-console/dynamic-plugin-sdk';
+import { chart_color_green_400 as tektonGroupColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
 
 const color = tektonGroupColor.value;
 
@@ -26,9 +26,9 @@ export const RepositoryModel = {
   apiVersion: 'v1alpha1',
   label: 'Repository',
   // t('Repository')
-  labelKey: 'plugin__pipeline-console-plugin~Repository',
+  labelKey: 'plugin__pipelines-console-plugin~Repository',
   // t('Repositories')
-  labelPluralKey: 'plugin__pipeline-console-plugin~Repositories',
+  labelPluralKey: 'plugin__pipelines-console-plugin~Repositories',
   plural: 'repositories',
   abbr: 'R',
   namespaced: true,

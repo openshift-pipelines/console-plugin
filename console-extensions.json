@@ -8,8 +8,8 @@
         "kind": "TektonResult"
       },
       "color": "#38812f",
-      "label": "%plugin__pipeline-console-plugin~TektonResult%",
-      "labelPlural": "%plugin__pipeline-console-plugin~TektonResults%",
+      "label": "%plugin__pipelines-console-plugin~TektonResult%",
+      "labelPlural": "%plugin__pipelines-console-plugin~TektonResults%",
       "abbr": "TR"
     }
   },
@@ -22,8 +22,8 @@
         "kind": "Pipeline"
       },
       "color": "#38812f",
-      "label": "%plugin__pipeline-console-plugin~Pipeline%",
-      "labelPlural": "%plugin__pipeline-console-plugin~Pipelines%",
+      "label": "%plugin__pipelines-console-plugin~Pipeline%",
+      "labelPlural": "%plugin__pipelines-console-plugin~Pipelines%",
       "abbr": "PL"
     }
   },
@@ -36,8 +36,8 @@
         "kind": "Pipeline"
       },
       "color": "#38812f",
-      "label": "%plugin__pipeline-console-plugin~Pipeline%",
-      "labelPlural": "%plugin__pipeline-console-plugin~Pipelines%",
+      "label": "%plugin__pipelines-console-plugin~Pipeline%",
+      "labelPlural": "%plugin__pipelines-console-plugin~Pipelines%",
       "abbr": "PL"
     }
   },

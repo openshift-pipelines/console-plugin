@@ -35,7 +35,7 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
   interval,
   bordered,
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   const [totalRun, setTotalRun] = React.useState(0);
   const [plrRun, setPlrRun] = React.useState(0);

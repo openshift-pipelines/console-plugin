@@ -62,7 +62,7 @@ const getChartData = (
   y: number;
   name: string;
 }[] => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const k = key.toLowerCase();
   const chartData = tickValues?.map((value) => {
     const s = data?.summary?.find((d) => {
@@ -95,7 +95,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   parentName,
   kind,
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [data, setData] = React.useState<SummaryResponse>();
   const [data2, setData2] = React.useState<SummaryResponse>();
   const [loaded, setLoaded] = React.useState(false);

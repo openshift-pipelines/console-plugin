@@ -34,7 +34,7 @@ cd console
 # the first time you need to build the backend and frontend with ./build.sh
 # oc login...
 # source ./contrib/oc-environment.sh
-./bin/bridge -plugins "pipeline-console-plugin=http://localhost:9001"
+./bin/bridge -plugins "pipelines-console-plugin=http://localhost:9001"
 ```
 
 ### Option 2: Local development, running a console as container
@@ -79,7 +79,7 @@ cached containers will help you start developing in seconds.
 1. Create a `dev.env` file inside the `.devcontainer` folder with the correct values for your cluster:
 
 ```bash
-OC_PLUGIN_NAME=pipeline-console-plugin
+OC_PLUGIN_NAME=pipelines-console-plugin
 OC_URL=https://api.example.com:6443
 OC_USER=kubeadmin
 OC_PASS=<password>
@@ -142,20 +142,20 @@ NOTE: When defining i18n namespace, adhere `plugin__<name-of-the-plugin>` format
 
 The plugin use [react-i18next](https://react.i18next.com/) to translate messages.
 The i18n namespace must match the name of the `ConsolePlugin` resource with the `plugin__` prefix to avoid
-naming conflicts. For this plugin this means `plugin__pipeline-console-plugin`.
+naming conflicts. For this plugin this means `plugin__pipelines-console-plugin`.
 
 All translation calls like the `useTranslation` hook must use this namespace as follows:
 
 ```tsx
 conster Header: React.FC = () => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return <h1>{t('Hello, World!')}</h1>;
 };
 ```
 
 For labels in `console-extensions.json`, you can use the format
-`%plugin__pipeline-console-plugin~My Label%`. Console will replace the value with
-the message for the current language from the `plugin__pipeline-console-plugin`
+`%plugin__pipelines-console-plugin~My Label%`. Console will replace the value with
+the message for the current language from the `plugin__pipelines-console-plugin`
 namespace. For example:
 
 ```json
@@ -165,7 +165,7 @@ namespace. For example:
     "id": "pipelines-overview",
     "perspective": "admin",
     "section": "pipelines",
-    "name": "%plugin__pipeline-console-plugin~Overview%"
+    "name": "%plugin__pipelines-console-plugin~Overview%"
   }
 }
 ```

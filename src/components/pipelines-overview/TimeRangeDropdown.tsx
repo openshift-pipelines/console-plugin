@@ -21,7 +21,7 @@ const TimeRangeDropdown: React.FC<TimeRangeDropdownProps> = ({
     (v: string) => setTimespan(parsePrometheusDuration(v)),
     [setTimespan],
   );
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const timeRangeOptions = TimeRangeOptions();
   return (
     <div className="form-group">

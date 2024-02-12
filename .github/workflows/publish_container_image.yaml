@@ -1,12 +1,14 @@
 name: publish container images
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - release-v* # example: release-v1.14
     tags: ['v*']
 
 jobs:
   setup:
-    name: Setup
+    name: build container
     runs-on: ubuntu-latest
 
     steps:
@@ -26,8 +28,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+
       - name: Build and push Dynamic Console container image
-        run: ./build.sh
+        run: ./scripts/build_container.sh
         env:
           SUPPORT_MULTI_ARCH: "true"
           CONSOLE_PLUGIN_IMAGE_REPO: 'ghcr.io/${{ github.repository }}'

@@ -9,7 +9,7 @@ module.exports = {
   locales: ['en'],
   namespaceSeparator: '~',
   reactNamespace: false,
-  defaultNamespace: 'plugin__pipeline-console-plugin',
+  defaultNamespace: 'plugin__pipelines-console-plugin',
   useKeysAsDefaultValue: true,
 
   // see below for more details

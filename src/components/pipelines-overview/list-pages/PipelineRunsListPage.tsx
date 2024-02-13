@@ -31,7 +31,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
   timespan,
   interval,
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [pageFlag, setPageFlag] = React.useState(1);
   const [loaded, setloaded] = React.useState(false);
   const [summaryData, setSummaryData] = React.useState<SummaryProps[]>([]);

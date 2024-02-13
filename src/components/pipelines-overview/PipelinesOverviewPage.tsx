@@ -26,7 +26,7 @@ import { useHistory } from 'react-router-dom';
 import { useActiveNamespace } from '../hooks/useActiveNamespace';
 
 const PipelinesOverviewPage: React.FC = () => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [activeNamespace] = useActiveNamespace();
   const dispatch = useDispatch();
   const history = useHistory();

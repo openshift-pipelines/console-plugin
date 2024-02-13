@@ -11,7 +11,7 @@ const RefreshDropdown: React.FC<RefreshDropdownProps> = ({
   interval,
   setInterval,
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <div className="form-group">
       <label htmlFor="pipeline-refresh-interval-dropdown">

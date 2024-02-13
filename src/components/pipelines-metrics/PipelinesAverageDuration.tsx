@@ -73,7 +73,7 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
   namespace,
   kind,
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [data, setData] = React.useState<SummaryResponse>();
   const startTimespan = timespan - parsePrometheusDuration('1d');
   const endDate = new Date(Date.now()).setHours(0, 0, 0, 0);

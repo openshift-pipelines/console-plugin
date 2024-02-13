@@ -48,7 +48,7 @@ export const listPageTableColumnClasses = [
 ];
 
 export const TimeRangeOptions = () => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return {
     '1d': t('Last day'),
     '2w': t('Last weeks'),
@@ -59,7 +59,7 @@ export const TimeRangeOptions = () => {
 };
 
 export const StatusOptions = () => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return {
     Succeeded: t('Succeeded'),
     Failed: t('Failed'),
@@ -71,7 +71,7 @@ export const StatusOptions = () => {
 
 export const IntervalOptions = () => {
   const OFF_KEY = 'OFF_KEY';
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return {
     [OFF_KEY]: t('Refresh off'),
     '15s': t('{{count}} second', { count: 15 }),

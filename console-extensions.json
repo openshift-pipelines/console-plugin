@@ -52,6 +52,9 @@
       "component": {
         "$codeRef": "pipelinesComponent.PipelinesOverviewPage"
       }
+    },
+    "flags": {
+      "required": ["PIPELINE_TEKTON_RESULT_INSTALLED"]
     }
   },
   {

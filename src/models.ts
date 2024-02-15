@@ -21,6 +21,24 @@ export const PipelineModel = {
   color,
 };
 
+export const PipelineModelV1Beta1 = {
+  apiGroup: 'tekton.dev',
+  apiVersion: 'v1beta1',
+  label: 'Pipeline',
+  // t('Pipeline')
+  labelKey: 'Pipeline',
+  // t('Pipelines')
+  labelPluralKey: 'Pipelines',
+  plural: 'pipelines',
+  abbr: 'PL',
+  namespaced: true,
+  kind: 'Pipeline',
+  id: 'pipeline',
+  labelPlural: 'Pipelines',
+  crd: true,
+  color,
+};
+
 export const RepositoryModel = {
   apiGroup: 'pipelinesascode.tekton.dev',
   apiVersion: 'v1alpha1',
@@ -70,4 +88,21 @@ export const RouteModel: K8sKind = {
   namespaced: true,
   kind: 'Route',
   id: 'route',
+};
+
+export const ClusterVersionModel: K8sKind = {
+  label: 'ClusterVersion',
+  // t('ClusterVersion')
+  labelKey: 'ClusterVersion',
+  labelPlural: 'ClusterVersions',
+  // t('ClusterVersions')
+  labelPluralKey: 'ClusterVersions',
+  apiVersion: 'v1',
+  apiGroup: 'config.openshift.io',
+  plural: 'clusterversions',
+  abbr: 'CV',
+  namespaced: false,
+  kind: 'ClusterVersion',
+  id: 'clusterversion',
+  crd: true,
 };

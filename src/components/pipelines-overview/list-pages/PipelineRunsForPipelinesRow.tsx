@@ -12,22 +12,29 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { formatTime, formatTimeLastRunTime } from '../dateTime';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
-import { PipelineModel } from '../../../models';
+import { PipelineModel, PipelineModelV1Beta1 } from '../../../models';
 import { useActiveNamespace } from '../../hooks/useActiveNamespace';
 
-const pipelineReference = getReferenceForModel(PipelineModel);
-
-const PipelineRunsForPipelinesRow: React.FC<RowProps<SummaryProps>> = ({
-  obj,
-}) => {
+const PipelineRunsForPipelinesRow: React.FC<
+  RowProps<SummaryProps, { clusterVersion: string }>
+> = ({ obj, rowData }) => {
   const [activeNamespace] = useActiveNamespace();
   const [namespace, name] = obj.group_value.split('/');
-
+  const { clusterVersion } = rowData;
+  const isV1SupportCluster =
+    clusterVersion.split('.')[0] === '4' && clusterVersion.split('.')[1] > '13';
+  const pipelineReference = getReferenceForModel(
+    isV1SupportCluster ? PipelineModel : PipelineModelV1Beta1,
+  );
   return (
     <>
       <td className={tableColumnClasses[0]}>
         <ResourceLink
-          groupVersionKind={getGroupVersionKindForModel(PipelineModel)}
+          groupVersionKind={
+            isV1SupportCluster
+              ? getGroupVersionKindForModel(PipelineModel)
+              : getGroupVersionKindForModel(PipelineModelV1Beta1)
+          }
           name={name}
           namespace={namespace}
         />

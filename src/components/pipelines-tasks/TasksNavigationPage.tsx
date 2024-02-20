@@ -8,21 +8,22 @@ import {
   NamespaceBar,
 } from '@openshift-console/dynamic-plugin-sdk';
 import TaskRunsListPage from './TaskRunsListPage';
-import { useParams } from 'react-router-dom-v5-compat';
 import ClusterTaskPage from './ClusterTaskListPage';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { ClusterTaskModel, TaskModel, TaskRunModel } from '../../models';
 import TasksListPage from './TasksListPage';
+import useActiveNamespace from '../hooks/useActiveNamespace';
 
 import './TasksNavigationPage.scss';
+import { ALL_NAMESPACES_KEY, DEFAULT_NAMESPACE } from '../../consts';
 
 const taskModelRef = getReferenceForModel(TaskModel);
 const taskRunModelRef = getReferenceForModel(TaskRunModel);
 const clusterTaskModelRef = getReferenceForModel(ClusterTaskModel);
 
-const TasksNavigationPage = (...props) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
-  const params = useParams();
+const TasksNavigationPage = () => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const [activeNamespace] = useActiveNamespace();
   const history = useHistory();
   const [activeTabKey, setActiveTabKey] = useState<number>(0);
 
@@ -34,10 +35,28 @@ const TasksNavigationPage = (...props) => {
 
   const onCreate = (type: string) => {
     return type === 'tasks'
-      ? history.push(`/k8s/ns/${params?.ns}/${taskModelRef}/~new`)
+      ? history.push(
+          `/k8s/ns/${
+            activeNamespace === ALL_NAMESPACES_KEY
+              ? DEFAULT_NAMESPACE
+              : activeNamespace
+          }/${taskModelRef}/~new`,
+        )
       : type === 'taskRun'
-      ? history.push(`/k8s/ns/${params?.ns}/${taskRunModelRef}/~new`)
-      : history.push(`/k8s/ns/${params?.ns}/${clusterTaskModelRef}/~new`);
+      ? history.push(
+          `/k8s/ns/${
+            activeNamespace === ALL_NAMESPACES_KEY
+              ? DEFAULT_NAMESPACE
+              : activeNamespace
+          }/${taskRunModelRef}/~new`,
+        )
+      : history.push(
+          `/k8s/ns/${
+            activeNamespace === ALL_NAMESPACES_KEY
+              ? DEFAULT_NAMESPACE
+              : activeNamespace
+          }/${clusterTaskModelRef}/~new`,
+        );
   };
 
   return (

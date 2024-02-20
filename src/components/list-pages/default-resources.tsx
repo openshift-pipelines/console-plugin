@@ -6,7 +6,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 
 export const useDefaultColumns = () => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   const columns: TableColumn<K8sResourceCommon>[] = [
     {

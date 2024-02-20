@@ -86,6 +86,13 @@
     }
   },
   {
+    "properties": {
+      "provider": { "$codeRef": "modalProvider.ModalProvider" },
+      "useValueHook": { "$codeRef": "modalProvider.useModalValue" }
+    },
+    "type": "console.context-provider"
+  },
+  {
     "type": "console.navigation/href",
     "properties": {
       "id": "pipelines-overview",

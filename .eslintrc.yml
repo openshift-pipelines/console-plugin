@@ -19,6 +19,8 @@ plugins:
 rules:
   prettier/prettier:
     - error
+  react/prop-types: off
+  react/display-name: off
 settings:
   react:
     version: detect

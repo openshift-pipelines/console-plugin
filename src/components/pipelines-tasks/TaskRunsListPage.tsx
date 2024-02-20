@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { TFunction, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import {
   K8sResourceCommon,
@@ -22,14 +21,14 @@ import {
   pipelineRunFilterReducer,
   pipelineRunStatusFilter,
 } from '../utils/pipeline-filter-reducer';
-import { TektonResourceLabel } from '../../consts';
+import { ALL_NAMESPACES_KEY, TektonResourceLabel } from '../../consts';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useHistory } from 'react-router-dom';
+import useActiveNamespace from '../hooks/useActiveNamespace';
 
 interface TaskRunsListPageProps {
   hideBadge?: boolean;
   showPipelineColumn?: boolean;
-  pipelineRunName?: string;
   showLabelFilters?: boolean;
   obj?: K8sResourceCommon;
 }
@@ -66,7 +65,7 @@ export const runFilters = (t: TFunction): RowFilter[] => {
 };
 
 const useTaskColumns = () => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   const columns: TableColumn<K8sResourceCommon>[] = [
     {
@@ -135,18 +134,18 @@ const useTaskColumns = () => {
 };
 
 const TaskRunsListPage: React.FC<TaskRunsListPageProps> = ({
-  hideBadge,
   showPipelineColumn = true,
-  pipelineRunName,
   showLabelFilters,
   ...props
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
-  const params = useParams();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [columns, activeColumns] = useTaskColumns();
   const history = useHistory();
-  const { ns: namespace, name: parentName } = params;
-  const [taskRuns, loaded, loadError] = useTaskRuns(namespace, parentName);
+  const [activeNamespace] = useActiveNamespace();
+  const ns = activeNamespace === ALL_NAMESPACES_KEY ? '-' : activeNamespace;
+  const parentName = props?.obj?.metadata?.name;
+  const [taskRuns, loaded, loadError] = useTaskRuns(ns, parentName);
+
   const [staticData, filteredData, onFilterChange] = useListPageFilter(
     taskRuns,
     runFilters(t),
@@ -161,7 +160,11 @@ const TaskRunsListPage: React.FC<TaskRunsListPageProps> = ({
         {!showLabelFilters && !parentName && (
           <ListPageCreateButton
             onClick={() =>
-              history.push(`/k8s/ns/${namespace}/${taskRunModelRef}/~new`)
+              history.push(
+                activeNamespace === ALL_NAMESPACES_KEY
+                  ? `/k8s/cluster/${taskRunModelRef}/~new`
+                  : `/k8s/ns/${ns}/${taskRunModelRef}/~new`,
+              )
             }
             id="taskrun-create-id"
           >

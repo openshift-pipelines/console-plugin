@@ -17,6 +17,11 @@
         color: var(--pf-global--Color--400);
       }
     }
+
+    &__modal {
+      margin-top: var(--pf-global--spacer--md);
+      margin-bottom: var(--pf-global--spacer--md);
+    }
   }
 
 .pf-c-tabs__link {

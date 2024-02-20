@@ -26,7 +26,7 @@ const clusterTaskModelRef = getReferenceForModel(ClusterTaskModel);
 const ClusterTaskListPage: React.FC<ClusterTaskListPageProps> = ({
   showLabelFilters,
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const history = useHistory();
 
   const [data, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>({

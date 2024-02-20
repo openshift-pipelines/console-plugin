@@ -5,7 +5,7 @@ import { taskRunSnippetMessage } from '../utils/log-snippet-utils';
 import { taskRunFilterReducer } from '../utils/pipeline-filter-reducer';
 
 export const getTRLogSnippet = (taskRun: TaskRunKind): CombinedErrorDetails => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   if (!taskRun?.status) {
     // Lack information to pull from the Pipeline Run

@@ -1,5 +1,5 @@
-import { consoleProxyFetchJSON } from './proxy';
 import { SummaryProps } from '../pipelines-overview/utils';
+import { consoleProxyFetchJSON } from './proxy';
 import {
   TektonResultsOptions,
   createTektonResultsSummaryUrl,

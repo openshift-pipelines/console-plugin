@@ -5,7 +5,7 @@ import {
   Selector,
   k8sGet,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { RouteModel, TektonResultModel } from '../../models';
+import { TektonResultModel } from '../../models';
 import { PipelineRunKind, TaskRunKind } from '../../types';
 import { K8sResourceKind } from '../../types/openshift';
 import { consoleProxyFetchJSON } from './proxy';
@@ -212,13 +212,17 @@ export const createTektonResultsUrl = async (
     name: 'result',
   });
   const targetNamespace = tektonResult?.spec?.targetNamespace;
-  const route: K8sResourceKind = await k8sGet({
-    model: RouteModel,
-    name: 'tekton-results-api-service',
-    ns: targetNamespace,
-  });
-  const tektonResultUrl = route?.spec.host;
-  const URL = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${namespace}/results/-/records?${new URLSearchParams(
+  const serverPort = tektonResult?.spec?.server_port ?? '8080';
+  const tlsHostname = tektonResult?.spec?.tls_hostname_override;
+  let tektonResultsAPI;
+  if (tlsHostname) {
+    tektonResultsAPI = `${tlsHostname}:${serverPort}`;
+  } else if (targetNamespace && serverPort) {
+    tektonResultsAPI = `tekton-results-api-service.${targetNamespace}.svc.cluster.local:${serverPort}`;
+  } else {
+    tektonResultsAPI = `tekton-results-api-service.openshift-pipelines.svc.cluster.local:${serverPort}`;
+  }
+  const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespace}/results/-/records?${new URLSearchParams(
     {
       // default sort should always be by `create_time desc`
       // order_by: 'create_time desc', not supported yet
@@ -371,16 +375,17 @@ export const createTektonResultsSummaryUrl = async (
     name: 'result',
   });
   const targetNamespace = tektonResult?.spec?.targetNamespace;
-  const route: K8sResourceKind = await k8sGet({
-    model: RouteModel,
-    name: 'tekton-results-api-service',
-    ns: targetNamespace,
-  });
-  const tektonResultUrl = route?.spec.host;
-  if (!tektonResultUrl) {
-    throw new Error('route.spec.host is undefined');
+  const serverPort = tektonResult?.spec?.server_port ?? '8080';
+  const tlsHostname = tektonResult?.spec?.tls_hostname_override;
+  let tektonResultsAPI;
+  if (tlsHostname) {
+    tektonResultsAPI = `${tlsHostname}:${serverPort}`;
+  } else if (targetNamespace && serverPort) {
+    tektonResultsAPI = `tekton-results-api-service.${targetNamespace}.svc.cluster.local:${serverPort}`;
+  } else {
+    tektonResultsAPI = `tekton-results-api-service.openshift-pipelines.svc.cluster.local:${serverPort}`;
   }
-  const URL = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${namespace}/results/-/records/summary?${new URLSearchParams(
+  const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespace}/results/-/records/summary?${new URLSearchParams(
     {
       summary: `${options?.summary}`,
       ...(options?.groupBy ? { group_by: `${options.groupBy}` } : {}),

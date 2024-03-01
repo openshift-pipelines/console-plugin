@@ -15,14 +15,15 @@ import { ALL_NAMESPACES_KEY } from '../../../consts';
 import { PipelineModel, PipelineModelV1Beta1 } from '../../../models';
 import { useActiveNamespace } from '../../hooks/useActiveNamespace';
 
-const PipelineRunsForPipelinesRow: React.FC<
-  RowProps<SummaryProps, { clusterVersion: string }>
-> = ({ obj, rowData }) => {
+const PipelineRunsForPipelinesRow: React.FC<RowProps<SummaryProps>> = ({
+  obj,
+}) => {
   const [activeNamespace] = useActiveNamespace();
   const [namespace, name] = obj.group_value.split('/');
-  const { clusterVersion } = rowData;
+  const clusterVersion = (window as any).SERVER_FLAGS?.releaseVersion;
   const isV1SupportCluster =
-    clusterVersion.split('.')[0] === '4' && clusterVersion.split('.')[1] > '13';
+    clusterVersion?.split('.')[0] === '4' &&
+    clusterVersion?.split('.')[1] > '13';
   const pipelineReference = getReferenceForModel(
     isV1SupportCluster ? PipelineModel : PipelineModelV1Beta1,
   );

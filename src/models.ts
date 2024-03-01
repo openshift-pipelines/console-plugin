@@ -89,20 +89,3 @@ export const RouteModel: K8sKind = {
   kind: 'Route',
   id: 'route',
 };
-
-export const ClusterVersionModel: K8sKind = {
-  label: 'ClusterVersion',
-  // t('ClusterVersion')
-  labelKey: 'ClusterVersion',
-  labelPlural: 'ClusterVersions',
-  // t('ClusterVersions')
-  labelPluralKey: 'ClusterVersions',
-  apiVersion: 'v1',
-  apiGroup: 'config.openshift.io',
-  plural: 'clusterversions',
-  abbr: 'CV',
-  namespaced: false,
-  kind: 'ClusterVersion',
-  id: 'clusterversion',
-  crd: true,
-};

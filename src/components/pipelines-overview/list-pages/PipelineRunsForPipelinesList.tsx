@@ -16,9 +16,6 @@ import {
   listPageTableColumnClasses as tableColumnClasses,
 } from '../utils';
 import PipelineRunsForPipelinesRow from './PipelineRunsForPipelinesRow';
-import { ClusterVersionModel } from '../../../models';
-import { ClusterVersionKind } from '../../../types';
-import { useK8sGet } from '../../hooks/use-k8sGet-hook';
 
 type PipelineRunsForPipelinesListProps = {
   summaryData: SummaryProps[];
@@ -26,18 +23,10 @@ type PipelineRunsForPipelinesListProps = {
   loaded: boolean;
 };
 
-export const getClusterVersion = (cv: ClusterVersionKind): string => {
-  return cv?.status?.history?.[0]?.version || cv?.spec?.desiredUpdate?.version;
-};
-
 const PipelineRunsForPipelinesList: React.FC<
   PipelineRunsForPipelinesListProps
 > = ({ summaryData, summaryDataFiltered, loaded }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [clusterVersionData, clusterVersionLoaded] =
-    useK8sGet<ClusterVersionKind>(ClusterVersionModel, 'version');
-  const clusterVersion =
-    clusterVersionLoaded && getClusterVersion(clusterVersionData);
   const EmptyMsg = () => (
     <EmptyState variant={EmptyStateVariant.large}>
       {t('No PipelineRuns found')}
@@ -120,7 +109,6 @@ const PipelineRunsForPipelinesList: React.FC<
       loadError={false}
       unfilteredData={summaryData}
       EmptyMsg={EmptyMsg}
-      rowData={{ clusterVersion }}
     />
   );
 };

@@ -2,7 +2,6 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import { useParams } from 'react-router-dom-v5-compat';
 import {
   K8sResourceCommon,
   ListPageBody,
@@ -17,6 +16,8 @@ import { TaskModel } from '../../models';
 import TaskRow from './TasksRow';
 import { useDefaultColumns } from '../list-pages/default-resources';
 import { getReferenceForModel } from '../pipelines-overview/utils';
+import { ALL_NAMESPACES_KEY } from '../../consts';
+import useActiveNamespace from '../hooks/useActiveNamespace';
 
 interface TasksListPageProps {
   showLabelFilters?: boolean;
@@ -25,15 +26,16 @@ interface TasksListPageProps {
 const taskModelRef = getReferenceForModel(TaskModel);
 
 const TasksListPage: React.FC<TasksListPageProps> = ({ showLabelFilters }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
-  const params = useParams();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const [activeNamespace] = useActiveNamespace();
+
   const history = useHistory();
-  const { ns: namespace } = params;
   const [data, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>({
     groupVersionKind: getGroupVersionKindForModel(TaskModel),
     isList: true,
     namespaced: true,
-    namespace,
+    namespace:
+      activeNamespace === ALL_NAMESPACES_KEY ? undefined : activeNamespace,
   });
 
   const [staticData, filteredData, onFilterChange] = useListPageFilter(data);
@@ -46,7 +48,11 @@ const TasksListPage: React.FC<TasksListPageProps> = ({ showLabelFilters }) => {
         {!showLabelFilters && (
           <ListPageCreateButton
             onClick={() =>
-              history.push(`/k8s/ns/${namespace}/${taskModelRef}/~new`)
+              history.push(
+                activeNamespace === ALL_NAMESPACES_KEY
+                  ? `/k8s/cluster/${taskModelRef}/~new`
+                  : `/k8s/ns/${activeNamespace}/${taskModelRef}/~new`,
+              )
             }
             id="task-create-id"
           >

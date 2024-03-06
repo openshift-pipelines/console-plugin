@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { TaskRunKind } from '../../types';
 import PipelineResourceStatus from '../status/PipelineResourceStatus';
 import { taskRunFilterTitleReducer } from '../utils/pipeline-filter-reducer';
@@ -14,7 +14,7 @@ type TaskRunStatusProps = {
   taskRun: TaskRunKind;
 };
 const TaskRunStatus: React.FC<TaskRunStatusProps> = ({ status, taskRun }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return (
     <PipelineResourceStatus

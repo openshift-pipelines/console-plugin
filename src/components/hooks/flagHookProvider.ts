@@ -39,7 +39,7 @@ import { TektonResultModel } from '../../models';
 export const useFlagHookProvider = (setFeatureFlag: SetFeatureFlag) => {
   setFeatureFlag(
     FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_TASKRUNS_TAB,
-    true,
+    false,
   );
   setFeatureFlag(FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINES_NAV_OPTION, false);
   setFeatureFlag(FLAG_HIDE_STATIC_PIPELINE_PLUGIN_TASKS_NAV_OPTION, false);

@@ -107,7 +107,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
     etcdRunsRef.current = [];
     return {
       groupVersionKind,
-      namespace: namespace || undefined,
+      namespace: namespace && namespace !== '-' ? namespace : undefined,
       isList,
       selector: optionsMemo?.selector,
       name: optionsMemo?.name,
@@ -186,7 +186,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
   return React.useMemo(() => {
     const rResources =
       runs && trResources
-        ? uniqBy([...runs, ...trResources], (r) => r.metadata.name)
+        ? uniqBy([...runs, ...trResources], (r) => r.metadata.uid)
         : runs || trResources;
     return [
       rResources,
@@ -194,9 +194,9 @@ const useRuns = <Kind extends K8sResourceCommon>(
       namespace
         ? queryTr
           ? isList
-            ? trError || error
+            ? trError && error
             : // when searching by name, return an error if we have no result
-              trError || (trLoaded && !trResources.length ? error : undefined)
+              trError && (trLoaded && !trResources.length ? error : undefined)
           : error
         : undefined,
       trGetNextPage,

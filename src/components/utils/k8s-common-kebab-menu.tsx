@@ -19,7 +19,7 @@ import {
 } from '../../consts';
 
 export const K8sCommonKebabMenu = (obj: K8sResourceCommon, model: K8sModel) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const launchDeleteModal = useDeleteModal(obj);
   const launchAnnotationsModal = useAnnotationsModal(obj);
   const launchLabelsModal = useLabelsModal(obj);

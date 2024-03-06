@@ -260,7 +260,9 @@ export const createTektonResultsUrl = async (
   } else {
     tektonResultsAPI = `tekton-results-api-service.openshift-pipelines.svc.cluster.local:${serverPort}`;
   }
-  const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespace}/results/-/records?${new URLSearchParams(
+  const namespaceToSearch =
+    namespace && namespace !== ALL_NAMESPACES_KEY ? namespace : '-';
+  const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespaceToSearch}/results/-/records?${new URLSearchParams(
     {
       // default sort should always be by `create_time desc`
       // order_by: 'create_time desc', not supported yet

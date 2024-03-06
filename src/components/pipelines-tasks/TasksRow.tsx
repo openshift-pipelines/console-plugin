@@ -62,7 +62,7 @@ const TaskRow: React.FC<RowProps<K8sResourceCommon>> = ({
   activeColumnIDs,
   obj,
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return (
     <>

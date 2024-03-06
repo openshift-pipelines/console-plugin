@@ -46,7 +46,7 @@ type TaskRunKebabProps = {
 };
 
 const TaskRunKebab: React.FC<TaskRunKebabProps> = ({ obj }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [isOpen, setIsOpen] = React.useState(false);
 
   const message = (
@@ -138,7 +138,7 @@ const TaskRunsRow: React.FC<RowProps<TaskRunKind>> = ({
   activeColumnIDs,
   obj,
 }) => {
-  const { t } = useTranslation('plugin__pipeline-console-plugin');
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <>
       <TableData activeColumnIDs={activeColumnIDs} id="name">

@@ -14,7 +14,7 @@ export type Status = components['schemas']['Status'];
 
 export type RecordType = components['schemas']['RecordType'];
 
-export * from './computedStatus';
+export * from './common';
 export * from './coreTekton';
 export * from './openshift';
 export * from './pipeline';
@@ -22,3 +22,4 @@ export * from './pipelineResource';
 export * from './pipelineRun';
 export * from './task';
 export * from './taskRun';
+export * from './triggers';

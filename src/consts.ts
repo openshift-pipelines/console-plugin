@@ -53,3 +53,56 @@ export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTRIGGERSBINDING_DETAILS =
   'HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTRIGGERSBINDING_DETAILS';
 export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_CONDITIONS_DETAILS =
   'HIDE_STATIC_PIPELINE_PLUGIN_CONDITIONS_DETAILS';
+
+export const RESOURCE_LOADED_FROM_RESULTS_ANNOTATION =
+  'resource.loaded.from.tektonResults';
+
+export const LOG_SOURCE_RESTARTING = 'restarting';
+export const LOG_SOURCE_RUNNING = 'running';
+export const LOG_SOURCE_TERMINATED = 'terminated';
+export const LOG_SOURCE_WAITING = 'waiting';
+
+export const PIPELINE_SERVICE_ACCOUNT = 'pipeline';
+
+export enum SecretAnnotationId {
+  Git = 'git',
+  Image = 'docker',
+}
+
+export enum StartedByAnnotation {
+  user = 'pipeline.openshift.io/started-by',
+}
+
+export enum TektonResourceLabel {
+  pipeline = 'tekton.dev/pipeline',
+  pipelinerun = 'tekton.dev/pipelineRun',
+  taskrun = 'tekton.dev/taskRun',
+  pipelineTask = 'tekton.dev/pipelineTask',
+}
+
+export enum RepositoryFields {
+  REPOSITORY = 'Repository',
+  BRANCH = 'Branch',
+  URL_REPO = 'RepoUrl',
+  URL_ORG = 'RepoOrg',
+  SHA = 'sha',
+  EVENT_TYPE = 'EventType',
+}
+
+export const RepositoryLabels: Record<RepositoryFields, string> = {
+  [RepositoryFields.REPOSITORY]: 'pipelinesascode.tekton.dev/repository',
+  [RepositoryFields.BRANCH]: 'pipelinesascode.tekton.dev/branch',
+  [RepositoryFields.URL_REPO]: 'pipelinesascode.tekton.dev/url-repository',
+  [RepositoryFields.URL_ORG]: 'pipelinesascode.tekton.dev/url-org',
+  [RepositoryFields.SHA]: 'pipelinesascode.tekton.dev/sha',
+  [RepositoryFields.EVENT_TYPE]: 'pipelinesascode.tekton.dev/event-type',
+};
+
+export enum VolumeTypes {
+  NoWorkspace = 'noWorkspace',
+  EmptyDirectory = 'emptyDirectory',
+  ConfigMap = 'configMap',
+  Secret = 'secret',
+  PVC = 'pvc',
+  VolumeClaimTemplate = 'volumeClaimTemplate',
+}

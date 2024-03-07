@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import * as _ from 'lodash-es';
 import { getLastLanguage } from './utils';
 
@@ -221,4 +222,41 @@ export const timeToMinutes = (timeString: string): number => {
     console.error('Invalid time format');
     return null;
   }
+};
+
+export const getDuration = (seconds: number, long?: boolean): string => {
+  if (seconds === 0) {
+    return i18next.t('less than a sec');
+  }
+  let sec = Math.round(seconds);
+  let min = 0;
+  let hr = 0;
+  let duration = '';
+  if (sec >= 60) {
+    min = Math.floor(sec / 60);
+    sec %= 60;
+  }
+  if (min >= 60) {
+    hr = Math.floor(min / 60);
+    min %= 60;
+  }
+  if (hr > 0) {
+    duration += long
+      ? i18next.t('{{count}} hour', { count: hr })
+      : i18next.t('{{hr}}h', { hr });
+    duration += ' ';
+  }
+  if (min > 0) {
+    duration += long
+      ? i18next.t('{{count}} minute', { count: min })
+      : i18next.t('{{min}}m', { min });
+    duration += ' ';
+  }
+  if (sec > 0) {
+    duration += long
+      ? i18next.t('{{count}} second', { count: sec })
+      : i18next.t('{{sec}}s', { sec });
+  }
+
+  return duration.trim();
 };

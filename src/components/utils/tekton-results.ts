@@ -5,6 +5,12 @@ import {
   Selector,
   k8sGet,
 } from '@openshift-console/dynamic-plugin-sdk';
+import _ from 'lodash';
+import {
+  ALL_NAMESPACES_KEY,
+  DELETED_RESOURCE_IN_K8S_ANNOTATION,
+  RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
+} from '../../consts';
 import { RouteModel, TektonResultModel } from '../../models';
 import { PipelineRunKind, TaskRunKind } from '../../types';
 import { K8sResourceKind } from '../../types/openshift';
@@ -70,8 +76,31 @@ const throw404 = () => {
 
 // decoding result base64
 export const decodeValue = (value: string) => atob(value);
-export const decodeValueJson = (value: string) =>
-  value ? JSON.parse(decodeValue(value)) : null;
+
+export const decodeValueJson = (value: string) => {
+  const decodedValue = value ? JSON.parse(decodeValue(value)) : null;
+  let resourceDeletedInK8sAnnotation;
+  if (_.has(decodedValue?.metadata, 'deletionTimestamp')) {
+    delete decodedValue?.metadata?.deletionTimestamp;
+    resourceDeletedInK8sAnnotation = {
+      [DELETED_RESOURCE_IN_K8S_ANNOTATION]: 'true',
+    };
+  }
+  const decodedValueWithTRAnnotation = decodedValue
+    ? {
+        ...decodedValue,
+        metadata: {
+          ...decodedValue?.metadata,
+          annotations: {
+            ...decodedValue?.metadata?.annotations,
+            [RESOURCE_LOADED_FROM_RESULTS_ANNOTATION]: 'true',
+            ...resourceDeletedInK8sAnnotation,
+          },
+        },
+      }
+    : null;
+  return decodedValueWithTRAnnotation;
+};
 
 // filter functions
 export const AND = (...expressions: string[]) =>
@@ -231,7 +260,9 @@ export const createTektonResultsUrl = async (
   } else {
     tektonResultsAPI = `tekton-results-api-service.openshift-pipelines.svc.cluster.local:${serverPort}`;
   }
-  const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespace}/results/-/records?${new URLSearchParams(
+  const namespaceToSearch =
+    namespace && namespace !== ALL_NAMESPACES_KEY ? namespace : '-';
+  const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespaceToSearch}/results/-/records?${new URLSearchParams(
     {
       // default sort should always be by `create_time desc`
       // order_by: 'create_time desc', not supported yet
@@ -394,7 +425,9 @@ export const createTektonResultsSummaryUrl = async (
   } else {
     tektonResultsAPI = `tekton-results-api-service.openshift-pipelines.svc.cluster.local:${serverPort}`;
   }
-  const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespace}/results/-/records/summary?${new URLSearchParams(
+  const namespaceToSearch =
+    namespace && namespace !== ALL_NAMESPACES_KEY ? namespace : '-';
+  const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespaceToSearch}/results/-/records/summary?${new URLSearchParams(
     {
       summary: `${options?.summary}`,
       ...(options?.groupBy ? { group_by: `${options.groupBy}` } : {}),

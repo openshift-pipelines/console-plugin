@@ -1,0 +1,24 @@
+.tasks-list-page {
+    &__tabs {
+        padding-left: var(--pf-global--spacer--sm);
+    }
+
+    &__card {
+        height: fit-content;
+        box-shadow: none;
+    }
+}
+
+.task-run-list {
+    &__results-indicator {
+      display: inline-block;
+      margin-left: var(--pf-global--spacer--xs);
+      > svg{
+        color: var(--pf-global--Color--400);
+      }
+    }
+  }
+
+.pf-c-tabs__link {
+    font-size: larger;
+}

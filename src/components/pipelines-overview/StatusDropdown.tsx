@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownList,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { map } from 'lodash';
 import { StatusOptions } from './utils';
 
@@ -12,24 +18,27 @@ const StatusDropdown = () => {
     <div className="form-group">
       <div>
         <Dropdown
-          dropdownItems={map(statusOptions, (name, key) => (
-            <DropdownItem
-              component="button"
-              key={key}
-              onClick={() => {
-                setClosed();
-              }}
-            >
-              {name}
-            </DropdownItem>
-          ))}
           isOpen={isOpen}
-          toggle={
-            <DropdownToggle onToggle={toggleIsOpen}>
+          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            <MenuToggle ref={toggleRef} onClick={toggleIsOpen}>
               {'All statuses'}
-            </DropdownToggle>
-          }
-        />
+            </MenuToggle>
+          )}
+        >
+          <DropdownList>
+            {map(statusOptions, (name, key) => (
+              <DropdownItem
+                component="button"
+                key={key}
+                onClick={() => {
+                  setClosed();
+                }}
+              >
+                {name}
+              </DropdownItem>
+            ))}
+          </DropdownList>
+        </Dropdown>
       </div>
     </div>
   );

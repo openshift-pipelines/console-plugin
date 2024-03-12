@@ -12,9 +12,11 @@ import { useTranslation } from 'react-i18next';
 import { KEBAB_BUTTON_ID } from '../../consts';
 import {
   Dropdown,
-  DropdownPosition,
-  KebabToggle,
+  DropdownList,
+  MenuToggle,
+  MenuToggleElement,
 } from '@patternfly/react-core';
+import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import { K8sCommonKebabMenu } from '../utils/k8s-common-kebab-menu';
 
 type ClusterTaskKebabProps = {
@@ -24,8 +26,8 @@ type ClusterTaskKebabProps = {
 const ClusterTaskKebab: React.FC<ClusterTaskKebabProps> = ({ obj }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const onToggle = (isOpen: boolean) => {
-    setIsOpen(isOpen);
+  const onToggle = () => {
+    setIsOpen(!isOpen);
   };
 
   const onFocus = () => {
@@ -43,18 +45,25 @@ const ClusterTaskKebab: React.FC<ClusterTaskKebabProps> = ({ obj }) => {
   return (
     <Dropdown
       onSelect={onSelect}
-      toggle={
-        <KebabToggle
+      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        <MenuToggle
+          ref={toggleRef}
+          aria-label="kebab menu"
+          variant="plain"
+          onClick={onToggle}
+          isExpanded={isOpen}
           id={KEBAB_BUTTON_ID}
           data-test={KEBAB_BUTTON_ID}
-          onToggle={onToggle}
-        />
-      }
+        >
+          <EllipsisVIcon />
+        </MenuToggle>
+      )}
       isOpen={isOpen}
-      isPlain
-      dropdownItems={dropdownItems}
-      position={DropdownPosition.right}
-    />
+      isPlain={false}
+      popperProps={{ position: 'right' }}
+    >
+      <DropdownList>{dropdownItems}</DropdownList>
+    </Dropdown>
   );
 };
 

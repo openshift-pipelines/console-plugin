@@ -4,11 +4,13 @@ import _ from 'lodash';
 import {
   Dropdown,
   DropdownItem,
-  DropdownPosition,
-  KebabToggle,
+  DropdownList,
+  MenuToggle,
+  MenuToggleElement,
   Tooltip,
 } from '@patternfly/react-core';
 import { ArchiveIcon } from '@patternfly/react-icons';
+import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import {
   K8sResourceCommon,
   ResourceLink,
@@ -67,8 +69,8 @@ const TaskRunKebab: React.FC<TaskRunKebabProps> = ({ obj }) => {
     namespace,
   });
 
-  const onToggle = (isOpen: boolean) => {
-    setIsOpen(isOpen);
+  const onToggle = () => {
+    setIsOpen(!isOpen);
   };
 
   const onFocus = () => {
@@ -119,18 +121,25 @@ const TaskRunKebab: React.FC<TaskRunKebabProps> = ({ obj }) => {
   return (
     <Dropdown
       onSelect={onSelect}
-      toggle={
-        <KebabToggle
+      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        <MenuToggle
+          ref={toggleRef}
+          aria-label="kebab menu"
+          variant="plain"
+          onClick={onToggle}
+          isExpanded={isOpen}
           id={KEBAB_BUTTON_ID}
           data-test={KEBAB_BUTTON_ID}
-          onToggle={onToggle}
-        />
-      }
+        >
+          <EllipsisVIcon />
+        </MenuToggle>
+      )}
       isOpen={isOpen}
-      isPlain
-      dropdownItems={dropdownItems}
-      position={DropdownPosition.right}
-    />
+      isPlain={false}
+      popperProps={{ position: 'right' }}
+    >
+      <DropdownList>{dropdownItems}</DropdownList>
+    </Dropdown>
   );
 };
 

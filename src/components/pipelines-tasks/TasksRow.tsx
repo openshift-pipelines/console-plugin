@@ -30,14 +30,8 @@ const TaskKebab: React.FC<TasksKebabProps> = ({ obj }) => {
     setIsOpen(!isOpen);
   };
 
-  const onFocus = () => {
-    const element = document.getElementById('kebab-button');
-    element.focus();
-  };
-
   const onSelect = () => {
     setIsOpen(false);
-    onFocus();
   };
 
   const dropdownItems = K8sCommonKebabMenu(obj, TaskModel);
@@ -45,6 +39,7 @@ const TaskKebab: React.FC<TasksKebabProps> = ({ obj }) => {
   return (
     <Dropdown
       onSelect={onSelect}
+      onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
         <MenuToggle
           ref={toggleRef}

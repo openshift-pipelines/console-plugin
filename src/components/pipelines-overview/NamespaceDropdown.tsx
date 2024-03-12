@@ -63,6 +63,7 @@ const NameSpaceDropdown: React.FC<NameSpaceDropdownProps> = ({
       <label className="project-dropdown-label">{t('Project')}</label>
       <Dropdown
         isOpen={isOpen}
+        onOpenChange={(isOpen: boolean) => setValue(isOpen)}
         onSelect={setClosed}
         toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
           <MenuToggle

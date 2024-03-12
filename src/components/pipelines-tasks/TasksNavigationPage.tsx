@@ -76,13 +76,21 @@ const TasksNavigationPage = (...props) => {
           activeKey={activeTabKey}
           className="tasks-list-page__tabs"
         >
-          <Tab eventKey={0} title={t('Tasks')}>
+          <Tab eventKey={0} title={t('Tasks')} className="tasks-list-page__tab">
             <TasksListPage showLabelFilters={true} />
           </Tab>
-          <Tab eventKey={1} title={t('TaskRuns')}>
+          <Tab
+            eventKey={1}
+            title={t('TaskRuns')}
+            className="tasks-list-page__tab"
+          >
             <TaskRunsListPage showLabelFilters={true} />
           </Tab>
-          <Tab eventKey={2} title={t('ClusterTasks')}>
+          <Tab
+            eventKey={2}
+            title={t('ClusterTasks')}
+            className="tasks-list-page__tab"
+          >
             <ClusterTaskPage showLabelFilters={true} />
           </Tab>
         </Tabs>

@@ -7,7 +7,7 @@ import {
   MenuToggle,
   DropdownList,
 } from '@patternfly/react-core';
-import { IntervalOptions, useBoolean } from './utils';
+import { IntervalOptions } from './utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from './dateTime';
 
 import './PipelinesOverview.scss';
@@ -21,7 +21,9 @@ type Props = {
 };
 
 const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
-  const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
+  const [isOpen, setValue] = React.useState(false);
+  const toggleIsOpen = React.useCallback(() => setValue((v) => !v), []);
+  const setClosed = React.useCallback(() => setValue(false), []);
   const intervalOptions = IntervalOptions();
 
   const onChange = React.useCallback(
@@ -37,6 +39,7 @@ const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
     <Dropdown
       isOpen={isOpen}
       onSelect={setClosed}
+      onOpenChange={(isOpen: boolean) => setValue(isOpen)}
       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
         <MenuToggle
           ref={toggleRef}

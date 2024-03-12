@@ -1,24 +1,24 @@
 .tasks-list-page {
-    &__tabs {
-        padding-left: var(--pf-global--spacer--sm);
-    }
+  &__tabs {
+    padding-left: var(--pf-global--spacer--sm);
+  }
 
-    &__card {
-        height: fit-content;
-        box-shadow: none;
-    }
+  &__card {
+    height: fit-content;
+    box-shadow: none;
+  }
+
+  &__tab > button {
+    font-size: larger;
+  }
 }
 
 .task-run-list {
-    &__results-indicator {
-      display: inline-block;
-      margin-left: var(--pf-global--spacer--xs);
-      > svg{
-        color: var(--pf-global--Color--400);
-      }
+  &__results-indicator {
+    display: inline-block;
+    margin-left: var(--pf-global--spacer--xs);
+    > svg {
+      color: var(--pf-global--Color--400);
     }
   }
-
-.pf-c-tabs__link {
-    font-size: larger;
 }

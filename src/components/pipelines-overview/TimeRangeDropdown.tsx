@@ -36,6 +36,7 @@ const TimeRangeDropdown: React.FC<TimeRangeDropdownProps> = ({
         <Dropdown
           className="pipeline-overview__variable-dropdown"
           isOpen={isOpen}
+          onOpenChange={(isOpen: boolean) => setValue(isOpen)}
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
             <MenuToggle ref={toggleRef} onClick={toggleIsOpen}>
               {timeRangeOptions[formatPrometheusDuration(timespan)]}

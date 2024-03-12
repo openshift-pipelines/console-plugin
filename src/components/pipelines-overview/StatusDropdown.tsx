@@ -19,6 +19,7 @@ const StatusDropdown = () => {
       <div>
         <Dropdown
           isOpen={isOpen}
+          onOpenChange={(isOpen: boolean) => setValue(isOpen)}
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
             <MenuToggle ref={toggleRef} onClick={toggleIsOpen}>
               {'All statuses'}

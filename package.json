@@ -97,7 +97,7 @@
       "tasksComponent": "./components/pipelines-tasks"
     },
     "dependencies": {
-      "@console/pluginAPI": ">=4.15.0"
+      "@console/pluginAPI": ">=4.15"
     }
   },
   "dependencies": {

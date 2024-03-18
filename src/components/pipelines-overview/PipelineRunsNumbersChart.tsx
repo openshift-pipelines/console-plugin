@@ -211,11 +211,11 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
                 scale={{ x: 'time', y: 'linear' }}
                 domain={domainValue}
                 domainPadding={{ x: [30, 25] }}
-                height={128}
+                height={145}
                 width={600}
                 padding={{
-                  top: 20,
-                  bottom: 50,
+                  top: 10,
+                  bottom: 55,
                   left: 50,
                 }}
                 themeColor={ChartThemeColor.blue}

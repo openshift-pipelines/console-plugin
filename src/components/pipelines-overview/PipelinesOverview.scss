@@ -83,18 +83,22 @@
 }
 
 .pipeline-overview__number-of-plr-card {
+  .pf-v5-c-card__title {
+    padding-bottom: 0;
+  }
+
   &__title {
     padding-bottom: 0 !important;
   }
 
   &__body {
     padding: 0;
-    height: 128px;
+    height: 145px;
     width: 600px;
   }
 
   &__bar-chart-div {
-    height: 128px;
+    height: 145px;
   }
 
   &__loading {
@@ -123,17 +127,6 @@
 .pipeline-overview__dropdown-button {
   max-width: 280px !important; // allow truncation
   min-width: 100px;
-}
-
-.pipeline-overview__variable-dropdown {
-  .pf-c-dropdown__menu,
-  .pf-c-select__menu {
-    max-height: 60vh;
-    overflow-y: auto;
-  }
-  .pf-m-search {
-    min-width: 140px;
-  }
 }
 
 .pipeline-overview__search-input {

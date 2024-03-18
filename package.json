@@ -104,9 +104,6 @@
   "dependencies": {
     "@types/express": "^4.17.18",
     "classnames": "^2.3.2",
-    "lodash-es": "^4.17.21",
-    "react-redux": "7.2.2",
-    "redux": "4.0.1",
-    "typesafe-actions": "^4.2.1"
+    "lodash-es": "^4.17.21"
   }
 }

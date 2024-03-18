@@ -6,16 +6,16 @@ import {
   ListPageCreateDropdown,
   ListPageHeader,
   NamespaceBar,
+  useActiveNamespace,
 } from '@openshift-console/dynamic-plugin-sdk';
 import TaskRunsListPage from './TaskRunsListPage';
 import ClusterTaskPage from './ClusterTaskListPage';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { ClusterTaskModel, TaskModel, TaskRunModel } from '../../models';
 import TasksListPage from './TasksListPage';
+import { ALL_NAMESPACES_KEY, DEFAULT_NAMESPACE } from '../../consts';
 
 import './TasksNavigationPage.scss';
-import useActiveNamespace from '../hooks/useActiveNamespace';
-import { ALL_NAMESPACES_KEY, DEFAULT_NAMESPACE } from '../../consts';
 
 const taskModelRef = getReferenceForModel(TaskModel);
 const taskRunModelRef = getReferenceForModel(TaskRunModel);

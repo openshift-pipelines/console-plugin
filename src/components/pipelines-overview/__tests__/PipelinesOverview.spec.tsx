@@ -1,28 +1,23 @@
 import * as React from 'react';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import * as redux from 'react-redux';
 import { render, screen, waitFor } from '@testing-library/react';
 import {
   VirtualizedTable,
   useK8sWatchResource,
   useActiveColumns,
+  useActiveNamespace,
 } from '@openshift-console/dynamic-plugin-sdk';
 import PipelinesOverviewPage from '../PipelinesOverviewPage';
 import { getResultsSummary } from '../../utils/summary-api';
 import * as utils from '../utils';
-import * as namespaceHooks from '../../hooks/useActiveNamespace';
 
 const virtualizedTableRenderProps = jest.fn();
+const setActiveNamespace = jest.fn();
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => ({
   useK8sWatchResource: jest.fn(),
+  useActiveNamespace: jest.fn(),
   useActiveColumns: jest.fn(),
   VirtualizedTable: jest.fn(),
   k8sGet: jest.fn(),
-}));
-jest.mock('../../hooks/useActiveNamespace', () => ({
-  useActiveNamespace: jest.fn(),
 }));
 jest.mock('../../utils/tekton-results', () => ({
   createTektonResultsSummaryUrl: jest.fn(),
@@ -36,22 +31,9 @@ jest.mock('../../utils/summary-api', () => ({
 });
 
 jest.spyOn(utils, 'useQueryParams').mockReturnValue(null);
-jest.spyOn(namespaceHooks, 'useActiveNamespace').mockReturnValue(['active']);
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-jest.spyOn(redux, 'useDispatch').mockReturnValue(() => {});
-const mockHistoryPush = jest.fn();
-
-jest.mock('react-router-dom', () => ({
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
-}));
-jest.spyOn(namespaceHooks, 'useActiveNamespace').mockReturnValue(['active']);
 
 const virtualizedTableMock = VirtualizedTable as jest.Mock;
+const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const useActiveColumnsMock = useActiveColumns as jest.Mock;
 const getResultsSummaryMock = getResultsSummary as jest.Mock;
@@ -59,6 +41,10 @@ const getResultsSummaryMock = getResultsSummary as jest.Mock;
 describe('Pipeline Overview page', () => {
   beforeEach(() => {
     virtualizedTableMock.mockReturnValue(<></>);
+    useActiveNamespaceMock.mockReturnValue([
+      'active-namespace',
+      setActiveNamespace,
+    ]);
     useK8sWatchResourceMock.mockReturnValue([[], true]);
     useActiveColumnsMock.mockReturnValue([[]]);
     getResultsSummaryMock.mockReturnValue(Promise.resolve({}));

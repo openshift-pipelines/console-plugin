@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { ResourceLink, RowProps } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  ResourceLink,
+  RowProps,
+  useActiveNamespace,
+} from '@openshift-console/dynamic-plugin-sdk';
 import {
   SummaryProps,
   getReferenceForModel,
@@ -9,7 +13,6 @@ import {
 import { formatTime, formatTimeLastRunTime } from '../dateTime';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
 import { RepositoryModel } from '../../../models';
-import { useActiveNamespace } from '../../hooks/useActiveNamespace';
 
 const repositoryReference = getReferenceForModel(RepositoryModel);
 

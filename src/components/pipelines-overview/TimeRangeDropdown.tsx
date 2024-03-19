@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownList,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { formatPrometheusDuration, parsePrometheusDuration } from './dateTime';
@@ -28,26 +34,30 @@ const TimeRangeDropdown: React.FC<TimeRangeDropdownProps> = ({
       <label>{t('Time Range')}</label>
       <div>
         <Dropdown
-          dropdownItems={map(timeRangeOptions, (name, key) => (
-            <DropdownItem
-              component="button"
-              key={key}
-              onClick={() => {
-                onChange(key);
-                setClosed();
-              }}
-            >
-              {name}
-            </DropdownItem>
-          ))}
           className="pipeline-overview__variable-dropdown"
           isOpen={isOpen}
-          toggle={
-            <DropdownToggle onToggle={toggleIsOpen}>
+          onOpenChange={(isOpen: boolean) => setValue(isOpen)}
+          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            <MenuToggle ref={toggleRef} onClick={toggleIsOpen}>
               {timeRangeOptions[formatPrometheusDuration(timespan)]}
-            </DropdownToggle>
-          }
-        />
+            </MenuToggle>
+          )}
+        >
+          <DropdownList>
+            {map(timeRangeOptions, (name, key) => (
+              <DropdownItem
+                component="button"
+                key={key}
+                onClick={() => {
+                  onChange(key);
+                  setClosed();
+                }}
+              >
+                {name}
+              </DropdownItem>
+            ))}
+          </DropdownList>
+        </Dropdown>
       </div>
     </div>
   );

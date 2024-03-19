@@ -9,6 +9,7 @@ import {
   ListPageFilter,
   VirtualizedTable,
   getGroupVersionKindForModel,
+  useActiveNamespace,
   useK8sWatchResource,
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
@@ -17,7 +18,6 @@ import TaskRow from './TasksRow';
 import { useDefaultColumns } from '../list-pages/default-resources';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { ALL_NAMESPACES_KEY } from '../../consts';
-import useActiveNamespace from '../hooks/useActiveNamespace';
 
 interface TasksListPageProps {
   showLabelFilters?: boolean;

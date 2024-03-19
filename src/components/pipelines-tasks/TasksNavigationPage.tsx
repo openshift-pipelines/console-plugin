@@ -6,16 +6,16 @@ import {
   ListPageCreateDropdown,
   ListPageHeader,
   NamespaceBar,
+  useActiveNamespace,
 } from '@openshift-console/dynamic-plugin-sdk';
 import TaskRunsListPage from './TaskRunsListPage';
 import ClusterTaskPage from './ClusterTaskListPage';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { ClusterTaskModel, TaskModel, TaskRunModel } from '../../models';
 import TasksListPage from './TasksListPage';
+import { ALL_NAMESPACES_KEY, DEFAULT_NAMESPACE } from '../../consts';
 
 import './TasksNavigationPage.scss';
-import useActiveNamespace from '../hooks/useActiveNamespace';
-import { ALL_NAMESPACES_KEY, DEFAULT_NAMESPACE } from '../../consts';
 
 const taskModelRef = getReferenceForModel(TaskModel);
 const taskRunModelRef = getReferenceForModel(TaskRunModel);
@@ -76,13 +76,21 @@ const TasksNavigationPage = (...props) => {
           activeKey={activeTabKey}
           className="tasks-list-page__tabs"
         >
-          <Tab eventKey={0} title={t('Tasks')}>
+          <Tab eventKey={0} title={t('Tasks')} className="tasks-list-page__tab">
             <TasksListPage showLabelFilters={true} />
           </Tab>
-          <Tab eventKey={1} title={t('TaskRuns')}>
+          <Tab
+            eventKey={1}
+            title={t('TaskRuns')}
+            className="tasks-list-page__tab"
+          >
             <TaskRunsListPage showLabelFilters={true} />
           </Tab>
-          <Tab eventKey={2} title={t('ClusterTasks')}>
+          <Tab
+            eventKey={2}
+            title={t('ClusterTasks')}
+            className="tasks-list-page__tab"
+          >
             <ClusterTaskPage showLabelFilters={true} />
           </Tab>
         </Tabs>

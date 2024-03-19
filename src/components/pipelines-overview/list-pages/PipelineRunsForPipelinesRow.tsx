@@ -9,11 +9,11 @@ import {
   ResourceLink,
   RowProps,
   getGroupVersionKindForModel,
+  useActiveNamespace,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { formatTime, formatTimeLastRunTime } from '../dateTime';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
 import { PipelineModel, PipelineModelV1Beta1 } from '../../../models';
-import { useActiveNamespace } from '../../hooks/useActiveNamespace';
 
 const PipelineRunsForPipelinesRow: React.FC<RowProps<SummaryProps>> = ({
   obj,

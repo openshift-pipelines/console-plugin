@@ -253,15 +253,15 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   }
 
   let xAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-global--Color--100)' },
+    tickLabels: { fill: 'var(--pf-v5-global--Color--100)' },
   };
   const yAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-global--Color--100)' },
+    tickLabels: { fill: 'var(--pf-v5-global--Color--100)' },
   };
   if (tickValues?.length > 7) {
     xAxisStyle = {
       tickLabels: {
-        fill: 'var(--pf-global--Color--100)',
+        fill: 'var(--pf-v5-global--Color--100)',
         angle: 320,
         fontSize: 10,
         textAnchor: 'end',
@@ -375,7 +375,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                         data={legendData}
                         style={{
                           labels: {
-                            fill: 'var(--pf-global--Color--100)',
+                            fill: 'var(--pf-v5-global--Color--100)',
                             fontSize: 14,
                           },
                         }}
@@ -385,7 +385,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                     subTitleComponent={
                       <ChartLabel
                         style={{
-                          fill: 'var(--pf-global--Color--400)',
+                          fill: 'var(--pf-v5-global--Color--400)',
                           fontSize: 14,
                         }}
                       />
@@ -394,7 +394,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                     titleComponent={
                       <ChartLabel
                         style={{
-                          fill: 'var(--pf-global--Color--100)',
+                          fill: 'var(--pf-v5-global--Color--100)',
                           fontSize: 24,
                         }}
                       />

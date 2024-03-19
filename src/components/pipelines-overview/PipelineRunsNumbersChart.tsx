@@ -35,6 +35,7 @@ interface PipelinesRunsNumbersChartProps {
   parentName?: string;
   bordered?: boolean;
   kind?: string;
+  width?: number;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
@@ -72,6 +73,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   parentName,
   bordered,
   kind,
+  width = 530,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const startTimespan = timespan - parsePrometheusDuration('1d');
@@ -171,15 +173,15 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   }
 
   let xAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-global--Color--100)', fontSize: 12 },
+    tickLabels: { fill: 'var(--pf-v5-global--Color--100)', fontSize: 12 },
   };
   const yAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-global--Color--100)', fontSize: 12 },
+    tickLabels: { fill: 'var(--pf-v5-global--Color--100)', fontSize: 12 },
   };
   if (tickValues.length > 7) {
     xAxisStyle = {
       tickLabels: {
-        fill: 'var(--pf-global--Color--100)',
+        fill: 'var(--pf-v5-global--Color--100)',
         angle: 320,
         fontSize: 10,
         textAnchor: 'end',
@@ -212,10 +214,10 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
                 domain={domainValue}
                 domainPadding={{ x: [30, 25] }}
                 height={145}
-                width={530}
+                width={width}
                 padding={{
-                  top: 20,
-                  bottom: 50,
+                  top: 10,
+                  bottom: 55,
                   left: 50,
                 }}
                 themeColor={ChartThemeColor.blue}

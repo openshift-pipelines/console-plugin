@@ -12,6 +12,7 @@ import {
   TableColumn,
   VirtualizedTable,
   useActiveColumns,
+  useActiveNamespace,
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { useTaskRuns } from '../hooks/useTaskRuns';
@@ -24,7 +25,6 @@ import {
 } from '../utils/pipeline-filter-reducer';
 import { ALL_NAMESPACES_KEY, TektonResourceLabel } from '../../consts';
 import { getReferenceForModel } from '../pipelines-overview/utils';
-import useActiveNamespace from '../hooks/useActiveNamespace';
 
 interface TaskRunsListPageProps {
   hideBadge?: boolean;

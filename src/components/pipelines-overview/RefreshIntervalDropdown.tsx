@@ -1,7 +1,13 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
-import { IntervalOptions, useBoolean } from './utils';
+import {
+  Dropdown,
+  DropdownItem,
+  MenuToggleElement,
+  MenuToggle,
+  DropdownList,
+} from '@patternfly/react-core';
+import { IntervalOptions } from './utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from './dateTime';
 
 import './PipelinesOverview.scss';
@@ -15,7 +21,9 @@ type Props = {
 };
 
 const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
-  const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
+  const [isOpen, setValue] = React.useState(false);
+  const toggleIsOpen = React.useCallback(() => setValue((v) => !v), []);
+  const setClosed = React.useCallback(() => setValue(false), []);
   const intervalOptions = IntervalOptions();
 
   const onChange = React.useCallback(
@@ -29,28 +37,33 @@ const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
 
   return (
     <Dropdown
-      dropdownItems={_.map(intervalOptions, (name, key) => (
-        <DropdownItem
-          component="button"
-          key={key}
-          onClick={() => onChange(key)}
-        >
-          {name}
-        </DropdownItem>
-      ))}
       isOpen={isOpen}
       onSelect={setClosed}
-      toggle={
-        <DropdownToggle
+      onOpenChange={(isOpen: boolean) => setValue(isOpen)}
+      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        <MenuToggle
+          ref={toggleRef}
+          onClick={toggleIsOpen}
           className="pipeline-overview__dropdown-button"
           id={`${id}-dropdown`}
-          onToggle={toggleIsOpen}
         >
           {intervalOptions[selectedKey]}
-        </DropdownToggle>
-      }
+        </MenuToggle>
+      )}
       className="pipeline-overview__variable-dropdown"
-    />
+    >
+      <DropdownList>
+        {_.map(intervalOptions, (name, key) => (
+          <DropdownItem
+            component="button"
+            key={key}
+            onClick={() => onChange(key)}
+          >
+            {name}
+          </DropdownItem>
+        ))}
+      </DropdownList>
+    </Dropdown>
   );
 };
 

@@ -1,17 +1,27 @@
 .pipelines-metrix-dropdown {
-  margin-top: var(--pf-global--spacer--md);
-  margin-left: var(--pf-global--spacer--md);
+  margin-top: var(--pf-v5-global--spacer--md);
+  margin-left: var(--pf-v5-global--spacer--md);
 }
 
 .pipelines-metrics__background {
-  background-color: var(--pf-global--BackgroundColor--200);
-  padding-left: var(--pf-global--spacer--md);
-  padding-right: var(--pf-global--spacer--md);
-  padding-top: var(--pf-global--spacer--md);
-  padding-bottom: var(--pf-global--spacer--md);
+  background-color: var(--pf-v5-global--BackgroundColor--200);
+  padding-left: var(--pf-v5-global--spacer--md);
+  padding-right: var(--pf-v5-global--spacer--md);
+  padding-top: var(--pf-v5-global--spacer--md);
+  padding-bottom: var(--pf-v5-global--spacer--md);
 }
 
 .pipelines-metrics__cards {
-  margin-top: var(--pf-global--gutter);
-  margin-bottom: var(--pf-global--gutter);
+  margin-top: var(--pf-v5-global--gutter);
+  margin-bottom: var(--pf-v5-global--gutter);
+}
+
+.pipelines-metrics__cards {
+  .pipeline-overview__number-of-plr-card {
+    &__body {
+      padding: 0;
+      height: 145px;
+      width: 400px;
+    }
+  }
 }

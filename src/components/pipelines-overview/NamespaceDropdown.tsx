@@ -1,6 +1,12 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownList,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { alphanumericCompare } from './utils';
 import { useTranslation } from 'react-i18next';
 
@@ -56,28 +62,34 @@ const NameSpaceDropdown: React.FC<NameSpaceDropdownProps> = ({
     <>
       <label className="project-dropdown-label">{t('Project')}</label>
       <Dropdown
-        allowFullScreen={false}
-        dropdownItems={_.map(optionItems, (name, key) => (
-          <DropdownItem
-            component="button"
-            key={key}
-            onClick={() => setSelected(name.key)}
-            listItemClassName={'max-height-menu'}
-            className={'max-height-menu'}
-          >
-            {name.title}
-          </DropdownItem>
-        ))}
         isOpen={isOpen}
+        onOpenChange={(isOpen: boolean) => setValue(isOpen)}
         onSelect={setClosed}
-        toggle={
-          <DropdownToggle onToggle={toggleIsOpen}>
+        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+          <MenuToggle
+            ref={toggleRef}
+            onClick={toggleIsOpen}
+            isExpanded={isOpen}
+          >
             {selected !== ALL_NAMESPACES_KEY ? selected : allNamespacesTitle}
-          </DropdownToggle>
-        }
-        isFullHeight={false}
+          </MenuToggle>
+        )}
         className="pipeline-overview__variable-dropdown"
-      />
+        isScrollable
+      >
+        <DropdownList>
+          {_.map(optionItems, (name, key) => (
+            <DropdownItem
+              component="button"
+              key={key}
+              onClick={() => setSelected(name.key)}
+              className={'max-height-menu'}
+            >
+              {name.title}
+            </DropdownItem>
+          ))}
+        </DropdownList>
+      </Dropdown>
     </>
   );
 };

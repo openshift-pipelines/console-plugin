@@ -28,7 +28,7 @@ const PipelineRunsForPipelinesList: React.FC<
 > = ({ summaryData, summaryDataFiltered, loaded }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const EmptyMsg = () => (
-    <EmptyState variant={EmptyStateVariant.large}>
+    <EmptyState variant={EmptyStateVariant.lg}>
       {t('No PipelineRuns found')}
     </EmptyState>
   );

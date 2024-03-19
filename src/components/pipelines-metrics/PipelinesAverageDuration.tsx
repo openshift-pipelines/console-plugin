@@ -160,15 +160,15 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
   }
 
   let xAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-global--Color--100)', fontSize: 12 },
+    tickLabels: { fill: 'var(--pf-v5-global--Color--100)', fontSize: 12 },
   };
   const yAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-global--Color--100)', fontSize: 12 },
+    tickLabels: { fill: 'var(--pf-v5-global--Color--100)', fontSize: 12 },
   };
   if (tickValues.length > 7) {
     xAxisStyle = {
       tickLabels: {
-        fill: 'var(--pf-global--Color--100)',
+        fill: 'var(--pf-v5-global--Color--100)',
         angle: 320,
         fontSize: 10,
         textAnchor: 'end',

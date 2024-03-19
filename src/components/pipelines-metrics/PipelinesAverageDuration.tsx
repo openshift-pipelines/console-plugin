@@ -200,7 +200,7 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
               domain={domainValue}
               domainPadding={{ x: [30, 25] }}
               height={145}
-              width={600}
+              width={400}
               padding={{
                 top: 10,
                 bottom: 55,

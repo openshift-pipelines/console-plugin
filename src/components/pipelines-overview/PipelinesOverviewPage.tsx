@@ -74,6 +74,7 @@ const PipelinesOverviewPage: React.FC = () => {
 
         <Flex>
           <FlexItem
+            spacer={{ default: 'spacerXs' }}
             grow={{ default: 'grow' }}
             className="pipelines-overview__cards"
           >
@@ -85,6 +86,7 @@ const PipelinesOverviewPage: React.FC = () => {
             />
           </FlexItem>
           <FlexItem
+            spacer={{ default: 'spacerXs' }}
             grow={{ default: 'grow' }}
             className="pipelines-overview__cards"
           >
@@ -96,6 +98,7 @@ const PipelinesOverviewPage: React.FC = () => {
             />
           </FlexItem>
           <FlexItem
+            spacer={{ default: 'spacerXs' }}
             grow={{ default: 'grow' }}
             className="pipelines-overview__cards"
           >

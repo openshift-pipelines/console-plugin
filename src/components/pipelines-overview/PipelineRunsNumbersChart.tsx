@@ -35,6 +35,7 @@ interface PipelinesRunsNumbersChartProps {
   parentName?: string;
   bordered?: boolean;
   kind?: string;
+  width?: number;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
@@ -72,6 +73,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   parentName,
   bordered,
   kind,
+  width = 530,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const startTimespan = timespan - parsePrometheusDuration('1d');
@@ -212,7 +214,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
                 domain={domainValue}
                 domainPadding={{ x: [30, 25] }}
                 height={145}
-                width={600}
+                width={width}
                 padding={{
                   top: 10,
                   bottom: 55,

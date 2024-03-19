@@ -85,6 +85,7 @@ const PipelinesMetricsPage: React.FC<PipelinesMetricsPageProps> = ({ obj }) => {
               interval={interval}
               kind={obj.kind}
               domain={{ y: [0, 500] }}
+              width={400}
             />
           </FlexItem>
           <FlexItem

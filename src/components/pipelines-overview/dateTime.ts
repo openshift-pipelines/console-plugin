@@ -1,4 +1,3 @@
-import i18next from 'i18next';
 import * as _ from 'lodash-es';
 import { getLastLanguage } from './utils';
 
@@ -226,7 +225,7 @@ export const timeToMinutes = (timeString: string): number => {
 
 export const getDuration = (seconds: number, long?: boolean): string => {
   if (seconds === 0) {
-    return i18next.t('less than a sec');
+    return 'less than a sec';
   }
   let sec = Math.round(seconds);
   let min = 0;
@@ -241,21 +240,15 @@ export const getDuration = (seconds: number, long?: boolean): string => {
     min %= 60;
   }
   if (hr > 0) {
-    duration += long
-      ? i18next.t('{{count}} hour', { count: hr })
-      : i18next.t('{{hr}}h', { hr });
+    duration += long ? `${hr} hour` : `${hr}h`;
     duration += ' ';
   }
   if (min > 0) {
-    duration += long
-      ? i18next.t('{{count}} minute', { count: min })
-      : i18next.t('{{min}}m', { min });
+    duration += long ? `${min} minute` : `${min}m`;
     duration += ' ';
   }
   if (sec > 0) {
-    duration += long
-      ? i18next.t('{{count}} second', { count: sec })
-      : i18next.t('{{sec}}s', { sec });
+    duration += long ? `${sec} second` : `${sec}s`;
   }
 
   return duration.trim();

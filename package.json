@@ -106,6 +106,7 @@
       "pipelinesComponent": "./components/pipelines-overview",
       "pipelinesList": "./components/pipelines-list",
       "pipelineRunsList": "./components/pipelineRuns-list",
+      "repositoriesList": "./components/repositories-list",
       "metricsComponent": "./components/pipelines-metrics",
       "tasksComponent": "./components/pipelines-tasks",
       "triggersDetails": "./components/triggers-details",

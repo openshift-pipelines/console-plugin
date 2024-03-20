@@ -228,6 +228,34 @@
       "model": {
         "group": "tekton.dev",
         "version": "v1beta1",
+        "kind": "PipelineRun"
+      },
+      "component": { "$codeRef": "pipelineRunsList.PipelineRunsListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUNS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "PipelineRun"
+      },
+      "component": { "$codeRef": "pipelineRunsList.PipelineRunsListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUNS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
         "kind": "Task"
       },
       "component": { "$codeRef": "tasksComponent.TasksListPage" }

@@ -5,7 +5,6 @@ import {
   k8sGet,
   k8sUpdate,
 } from '@openshift-console/dynamic-plugin-sdk';
-import i18next from 'i18next';
 import * as _ from 'lodash';
 import {
   LOG_SOURCE_RESTARTING,
@@ -98,11 +97,11 @@ export enum ListFilterId {
 }
 
 export const ListFilterLabels = {
-  [ListFilterId.Running]: i18next.t('Running'),
-  [ListFilterId.Failed]: i18next.t('Failed'),
-  [ListFilterId.Succeeded]: i18next.t('Succeeded'),
-  [ListFilterId.Cancelled]: i18next.t('Cancelled'),
-  [ListFilterId.Other]: i18next.t('Other'),
+  [ListFilterId.Running]: 'Running',
+  [ListFilterId.Failed]: 'Failed',
+  [ListFilterId.Succeeded]: 'Succeeded',
+  [ListFilterId.Cancelled]: 'Cancelled',
+  [ListFilterId.Other]: 'Other',
 };
 
 export enum PipelineResourceListFilterId {

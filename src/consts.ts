@@ -116,3 +116,5 @@ export const KEBAB_ACTION_EDIT_LABELS_ID = 'edit-labels';
 export const KEBAB_BUTTON_ID = 'kebab-button';
 
 export const DELETED_RESOURCE_IN_K8S_ANNOTATION = 'resource.deleted.in.k8s';
+
+export const chainsSignedAnnotation = 'chains.tekton.dev/signed';

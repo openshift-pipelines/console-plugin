@@ -118,3 +118,4 @@ export const KEBAB_BUTTON_ID = 'kebab-button';
 export const DELETED_RESOURCE_IN_K8S_ANNOTATION = 'resource.deleted.in.k8s';
 
 export const chainsSignedAnnotation = 'chains.tekton.dev/signed';
+export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';

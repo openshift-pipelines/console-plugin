@@ -27,6 +27,7 @@ import {
 } from '../utils/pipeline-filter-reducer';
 import LinkedPipelineRunTaskStatus from '../pipelines-list/status/LinkedPipelineRunTaskStatus';
 import { pipelineRunDuration } from '../utils/pipelines-utils';
+import PipelineRunsKebab from './PipelineRunsKebab';
 
 export const tableColumnClasses = {
   name: '',
@@ -148,7 +149,7 @@ const PipelineRunsRow: React.FC<
         id="kebab-menu"
         activeColumnIDs={activeColumnIDs}
       >
-        {'-'}
+        <PipelineRunsKebab obj={obj} />
       </TableData>
     </>
   );

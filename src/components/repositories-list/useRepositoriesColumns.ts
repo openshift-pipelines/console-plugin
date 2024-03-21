@@ -58,7 +58,7 @@ const useRepositoriesColumns = (namespace): TableColumn<RepositoryKind>[] => {
     },
     {
       id: 'last-run-duration',
-      title: t('pipelines-plugin~Last run duration'),
+      title: t('Last run duration'),
       transforms: [sortable],
       props: { className: repositoriesTableColumnClasses[7] },
     },

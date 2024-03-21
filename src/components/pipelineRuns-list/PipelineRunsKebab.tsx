@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PipelineRunKind } from '../../types';
+import { PipelineRunKind, TaskRunKind } from '../../types';
 import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import {
   Dropdown,
@@ -19,17 +19,26 @@ import {
 import { PipelineRunModel } from '../../models';
 import { returnValidPipelineRunModel } from '../utils/pipeline-utils';
 import { getPipelineRunData } from '../utils/utils';
+import { getTaskRunsOfPipelineRun } from '../hooks/useTaskRuns';
+import {
+  shouldHidePipelineRunCancel,
+  shouldHidePipelineRunStop,
+} from '../utils/pipeline-augment';
 
 type PipelineRunsKebabProps = {
   obj: PipelineRunKind;
+  taskRuns: TaskRunKind[];
 };
 
-const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({ obj }) => {
+const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
+  obj,
+  taskRuns,
+}) => {
   const { t } = useTranslation();
   const launchDeleteModal = useDeleteModal(obj);
   const [isOpen, setIsOpen] = React.useState(false);
   const { name, namespace } = obj.metadata;
-
+  const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, name);
   const onToggle = () => {
     setIsOpen(!isOpen);
   };
@@ -125,34 +134,42 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({ obj }) => {
     >
       {t('Rerun')}
     </DropdownItem>,
-    <DropdownItem
-      key="cancel"
-      component="button"
-      isDisabled={!canEditResource}
-      data-test-action="cancel-pipelineRun"
-      tooltipProps={{
-        content: t(
-          'Interrupt any executing non finally tasks, then execute finally tasks',
-        ),
-      }}
-      onClick={cancelAction}
-    >
-      {t('Cancel')}
-    </DropdownItem>,
-    <DropdownItem
-      key="stop"
-      component="button"
-      isDisabled={!canEditResource}
-      data-test-action="stop-pipelineRun"
-      tooltipProps={{
-        content: t(
-          'Let the running tasks complete, then execute finally tasks',
-        ),
-      }}
-      onClick={stopAction}
-    >
-      {t('Stop')}
-    </DropdownItem>,
+    ...(!shouldHidePipelineRunCancel(obj, PLRTasks)
+      ? [
+          <DropdownItem
+            key="cancel"
+            component="button"
+            isDisabled={!canEditResource}
+            data-test-action="cancel-pipelineRun"
+            tooltipProps={{
+              content: t(
+                'Interrupt any executing non finally tasks, then execute finally tasks',
+              ),
+            }}
+            onClick={cancelAction}
+          >
+            {t('Cancel')}
+          </DropdownItem>,
+        ]
+      : []),
+    ...(!shouldHidePipelineRunStop(obj, PLRTasks)
+      ? [
+          <DropdownItem
+            key="stop"
+            component="button"
+            isDisabled={!canEditResource}
+            data-test-action="stop-pipelineRun"
+            tooltipProps={{
+              content: t(
+                'Let the running tasks complete, then execute finally tasks',
+              ),
+            }}
+            onClick={stopAction}
+          >
+            {t('Stop')}
+          </DropdownItem>,
+        ]
+      : []),
     <DropdownItem
       key="delete"
       component="button"

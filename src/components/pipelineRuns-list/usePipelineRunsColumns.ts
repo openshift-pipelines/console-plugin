@@ -9,7 +9,7 @@ const usePipelineRunsColumns = (namespace): TableColumn<PipelineRunKind>[] => {
   const columns = [
     {
       id: 'name',
-      title: t('pipelines-plugin~Name'),
+      title: t('Name'),
       sort: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses.name },
@@ -18,7 +18,7 @@ const usePipelineRunsColumns = (namespace): TableColumn<PipelineRunKind>[] => {
       ? [
           {
             id: 'namespace',
-            title: t('pipelines-plugin~Namespace'),
+            title: t('Namespace'),
             sort: 'metadata.namespace',
             transforms: [sortable],
             props: { className: tableColumnClasses.namespace },
@@ -27,35 +27,35 @@ const usePipelineRunsColumns = (namespace): TableColumn<PipelineRunKind>[] => {
       : []),
     {
       id: 'vulnerabilities',
-      title: t('pipelines-plugin~Vulnerabilities'),
+      title: t('Vulnerabilities'),
       sortFunc: 'vulnerabilities',
       transforms: [sortable],
       props: { className: tableColumnClasses.vulnerabilities },
     },
     {
       id: 'status',
-      title: t('pipelines-plugin~Status'),
+      title: t('Status'),
       sort: 'status.conditions[0].reason',
       transforms: [sortable],
       props: { className: tableColumnClasses.status },
     },
     {
       id: 'task-status',
-      title: t('pipelines-plugin~Task status'),
+      title: t('Task status'),
       sort: 'status.conditions[0].reason',
       transforms: [sortable],
       props: { className: tableColumnClasses.taskStatus },
     },
     {
       id: 'started',
-      title: t('pipelines-plugin~Started'),
+      title: t('Started'),
       sort: 'status.startTime',
       transforms: [sortable],
       props: { className: tableColumnClasses.started },
     },
     {
       id: 'duration',
-      title: t('pipelines-plugin~Duration'),
+      title: t('Duration'),
       sort: 'status.completionTime',
       transforms: [sortable],
       props: { className: tableColumnClasses.duration },

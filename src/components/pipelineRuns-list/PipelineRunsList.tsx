@@ -1,5 +1,4 @@
 import {
-  K8sResourceCommon,
   ListPageBody,
   ListPageFilter,
   VirtualizedTable,
@@ -14,12 +13,16 @@ import { PipelineRunKind } from '../../types';
 import { PipelineRunModel } from '../../models';
 import { useGetTaskRuns } from '../hooks/useTektonResult';
 import PipelineRunsRow from './PipelineRunsRow';
+import { useTranslation } from 'react-i18next';
+
+import './PipelineRunsList.scss';
 
 type PipelineRunsListProps = {
   namespace: string;
 };
 
 const PipelineRunsList: React.FC<PipelineRunsListProps> = ({ namespace }) => {
+  const { t } = useTranslation();
   const columns = usePipelineRunsColumns(namespace);
   const filters = usePipelineRunsFilters();
   const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] =
@@ -49,10 +52,10 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({ namespace }) => {
         loaded={pipelineRunsLoaded}
         hideColumnManagement
       />
-      <VirtualizedTable<K8sResourceCommon>
+      <VirtualizedTable<PipelineRunKind>
         EmptyMsg={() => (
           <div className="pf-u-text-align-center" id="no-templates-msg">
-            No PipelineRuns found
+            {t('No PipelineRuns found')}
           </div>
         )}
         columns={columns}

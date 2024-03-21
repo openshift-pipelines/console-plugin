@@ -78,7 +78,7 @@ const PipelineRunsRow: React.FC<
             <>
               {obj?.metadata?.annotations?.[chainsSignedAnnotation] ===
               'true' ? (
-                <Tooltip content={t('pipelines-plugin~Signed')}>
+                <Tooltip content={t('Signed')}>
                   <div className="opp-pipeline-run-list__signed-indicator">
                     <SignedBadgeIcon />
                   </div>
@@ -90,9 +90,7 @@ const PipelineRunsRow: React.FC<
               obj?.metadata?.annotations?.[
                 RESOURCE_LOADED_FROM_RESULTS_ANNOTATION
               ] === 'true' ? (
-                <Tooltip
-                  content={t('pipelines-plugin~Archived in Tekton results')}
-                >
+                <Tooltip content={t('Archived in Tekton results')}>
                   <div className="opp-pipeline-run-list__results-indicator">
                     <ArchiveIcon />
                   </div>
@@ -149,7 +147,7 @@ const PipelineRunsRow: React.FC<
         id="kebab-menu"
         activeColumnIDs={activeColumnIDs}
       >
-        <PipelineRunsKebab obj={obj} />
+        <PipelineRunsKebab obj={obj} taskRuns={taskRuns} />
       </TableData>
     </>
   );

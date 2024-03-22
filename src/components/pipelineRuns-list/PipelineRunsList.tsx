@@ -16,6 +16,7 @@ import PipelineRunsRow from './PipelineRunsRow';
 import { useTranslation } from 'react-i18next';
 
 import './PipelineRunsList.scss';
+import { useParams } from 'react-router-dom-v5-compat';
 
 type PipelineRunsListProps = {
   namespace: string;
@@ -23,6 +24,8 @@ type PipelineRunsListProps = {
 
 const PipelineRunsList: React.FC<PipelineRunsListProps> = ({ namespace }) => {
   const { t } = useTranslation();
+  const { ns } = useParams();
+  namespace = namespace || ns;
   const columns = usePipelineRunsColumns(namespace);
   const filters = usePipelineRunsFilters();
   const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] =

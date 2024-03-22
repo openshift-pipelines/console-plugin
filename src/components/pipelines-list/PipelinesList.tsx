@@ -15,12 +15,15 @@ import { useGetTaskRuns } from '../hooks/useTektonResult';
 import { PipelineModel, PipelineRunModel } from '../../models';
 import { PropPipelineData, augmentRunsToData } from '../utils/pipeline-augment';
 import { PipelineRunKind } from '../../types';
+import { useParams } from 'react-router-dom-v5-compat';
 
 type PipelineListProps = {
   namespace: string;
 };
 
 const PipelinesList: React.FC<PipelineListProps> = ({ namespace }) => {
+  const { ns } = useParams();
+  namespace = namespace || ns;
   const columns = usePipelinesColumns(namespace);
   const filters = usePipelinesFilters();
   const [pipelines, pipelinesLoaded, pipelinesLoadError] = useK8sWatchResource<

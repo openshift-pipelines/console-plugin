@@ -12,18 +12,22 @@ import { PipelineRunKind, RepositoryKind } from '../../types';
 import useRepositoriesColumns from './useRepositoriesColumns';
 import RepositoriesRow from './RepositoriesRow';
 import { useGetTaskRuns } from '../hooks/useTektonResult';
+import { useParams } from 'react-router-dom-v5-compat';
 
 type RepositoriesListProps = {
   namespace: string;
 };
 
 const RepositoriesList: React.FC<RepositoriesListProps> = ({ namespace }) => {
+  const { ns } = useParams();
+  namespace = namespace || ns;
   const columns = useRepositoriesColumns(namespace);
   const [repositories, repositoriesLoaded, repositoriesLoadError] =
     useK8sWatchResource<RepositoryKind[]>({
       groupVersionKind: getGroupVersionKindForModel(RepositoryModel),
       isList: true,
-      namespaced: false,
+      namespace,
+      optional: true,
     });
   const [pipelineRuns, pipelineRunsLoaded] = useK8sWatchResource<
     PipelineRunKind[]

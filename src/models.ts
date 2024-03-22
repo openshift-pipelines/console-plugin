@@ -44,9 +44,9 @@ export const RepositoryModel = {
   apiVersion: 'v1alpha1',
   label: 'Repository',
   // t('Repository')
-  labelKey: 'plugin__pipelines-console-plugin~Repository',
+  labelKey: 'Repository',
   // t('Repositories')
-  labelPluralKey: 'plugin__pipelines-console-plugin~Repositories',
+  labelPluralKey: 'Repositories',
   plural: 'repositories',
   abbr: 'R',
   namespaced: true,

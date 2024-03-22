@@ -23,16 +23,16 @@ const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const logPath = `/k8s/ns/${
-    pipelineRun.metadata.namespace
+    pipelineRun?.metadata.namespace
   }/${getReferenceForModel(PipelineRunModel)}/${
-    pipelineRun.metadata.name
+    pipelineRun?.metadata.name
   }/logs`;
   return pipelineRun ? (
     taskRuns.length > 0 ? (
       <PipelineResourceStatus status={status} title={title}>
         <StatusPopoverContent
           logDetails={getPLRLogSnippet(pipelineRun, taskRuns)}
-          namespace={pipelineRun.metadata.namespace}
+          namespace={pipelineRun?.metadata.namespace}
           link={<Link to={logPath}>{t('View logs')}</Link>}
         />
       </PipelineResourceStatus>

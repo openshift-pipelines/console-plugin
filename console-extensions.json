@@ -532,6 +532,19 @@
   {
     "type": "console.page/route",
     "properties": {
+      "path": ["/dev-pipelines/ns/:ns", "/dev-pipelines/all-namespaces"],
+      "exact": false,
+      "component": {
+        "$codeRef": "pipelinesList.PipelinesTabbedPage"
+      }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
       "path": ["/triggers/ns/:ns", "/triggers/all-namespaces"],
       "exact": false,
       "component": {
@@ -540,6 +553,19 @@
     },
     "flags": {
       "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERS_NAV_OPTION"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/pipelines/ns/:ns", "/pipelines/all-namespaces"],
+      "exact": false,
+      "component": {
+        "$codeRef": "pipelinesList.PipelinesTabbedPage"
+      }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION"]
     }
   },
   {
@@ -647,6 +673,42 @@
     },
     "flags": {
       "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKRUN_DETAILS"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "pipelines",
+      "perspective": "admin",
+      "section": "pipelines",
+      "name": "%Pipelines%",
+      "href": "/pipelines",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-pipelines"
+      }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "pipelines",
+      "perspective": "dev",
+      "section": "resources",
+      "insertAfter": "builds",
+      "name": "%Pipelines%",
+      "href": "/dev-pipelines",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-pipelines",
+        "data-test-id": "pipeline-header"
+      }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_NAV_OPTION"]
     }
   }
 ]

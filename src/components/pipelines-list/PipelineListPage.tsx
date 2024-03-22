@@ -13,7 +13,7 @@ type PipelineListPageProps = {
 };
 
 const PipelineListPage: React.FC<PipelineListPageProps> = ({ namespace }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <>
       <ListPageHeader title={t('Pipelines')}>

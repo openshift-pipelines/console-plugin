@@ -58,7 +58,17 @@ const TaskRunKebab: React.FC<TaskRunKebabProps> = ({ obj }) => {
     </p>
   );
 
-  const launchDeleteModal = useDeleteModal(obj, undefined, message);
+  const tektonResultsFlag =
+    obj?.metadata?.annotations?.['results.tekton.dev/log'] ||
+    obj?.metadata?.annotations?.['results.tekton.dev/record'] ||
+    obj?.metadata?.annotations?.['results.tekton.dev/result'];
+  const isResourceLoadedFromTR =
+    obj?.metadata?.annotations?.[RESOURCE_LOADED_FROM_RESULTS_ANNOTATION];
+
+  const launchDeleteModal =
+    !isResourceLoadedFromTR && tektonResultsFlag
+      ? useDeleteModal(obj, undefined, message)
+      : useDeleteModal(obj);
   const { name, namespace } = obj.metadata;
   const canDeleteTaskRun = useAccessReview({
     group: TaskRunModel.apiGroup,
@@ -75,26 +85,9 @@ const TaskRunKebab: React.FC<TaskRunKebabProps> = ({ obj }) => {
   const onSelect = () => {
     setIsOpen(false);
   };
-
   const dropdownItems = [
     obj?.metadata?.annotations?.[DELETED_RESOURCE_IN_K8S_ANNOTATION] ===
     'true' ? (
-      <Tooltip content={t('Resource is being fetched from Tekton Results.')}>
-        <DropdownItem
-          key={KEBAB_ACTION_DELETE_ID}
-          component="button"
-          onClick={launchDeleteModal}
-          isDisabled={
-            !canDeleteTaskRun[0] ||
-            obj?.metadata?.annotations?.[DELETED_RESOURCE_IN_K8S_ANNOTATION] ===
-              'true'
-          }
-          data-test-action={KEBAB_ACTION_DELETE_ID}
-        >
-          {t('Delete {{resourceKind}}', { resourceKind: TaskRunModel.kind })}
-        </DropdownItem>
-      </Tooltip>
-    ) : (
       <DropdownItem
         key={KEBAB_ACTION_DELETE_ID}
         component="button"
@@ -104,6 +97,19 @@ const TaskRunKebab: React.FC<TaskRunKebabProps> = ({ obj }) => {
           obj?.metadata?.annotations?.[DELETED_RESOURCE_IN_K8S_ANNOTATION] ===
             'true'
         }
+        data-test-action={KEBAB_ACTION_DELETE_ID}
+        tooltipProps={{
+          content: t('Resource is being fetched from Tekton Results.'),
+          isVisible: true,
+        }}
+      >
+        {t('Delete {{resourceKind}}', { resourceKind: TaskRunModel.kind })}
+      </DropdownItem>
+    ) : (
+      <DropdownItem
+        key={KEBAB_ACTION_DELETE_ID}
+        component="button"
+        onClick={launchDeleteModal}
         data-test-action={KEBAB_ACTION_DELETE_ID}
       >
         {t('Delete {{resourceKind}}', { resourceKind: TaskRunModel.kind })}

@@ -29,7 +29,7 @@ const Logs: React.FC<LogsProps> = ({
   render,
   autoScroll = true,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { name } = container;
   const { kind, metadata = {} } = resource;
   const { name: resName, namespace: resNamespace } = metadata;

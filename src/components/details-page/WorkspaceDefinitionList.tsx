@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+
+export type TektonWorkspace = {
+  name: string;
+  description?: string;
+  mountPath?: string;
+  readOnly?: boolean;
+  optional?: boolean;
+};
+export interface WorkspaceDefinitionListProps {
+  workspaces: TektonWorkspace[];
+}
+
+const WorkspaceDefinitionList: React.FC<WorkspaceDefinitionListProps> = ({
+  workspaces,
+}) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
+
+  if (!workspaces || workspaces.length === 0) return null;
+
+  return (
+    <dl data-test-id="workspace-definition-section">
+      <dt>{t('Workspaces')}</dt>
+      <dd>
+        {workspaces.map((workspace) => (
+          <div
+            key={workspace.name}
+            data-test-id={`workspace-definition${
+              workspace.optional ? '-optional' : ''
+            }`}
+          >
+            {workspace.optional
+              ? `${workspace.name} (${t('optional')})`
+              : `${workspace.name}`}
+          </div>
+        ))}
+      </dd>
+    </dl>
+  );
+};
+
+export default WorkspaceDefinitionList;

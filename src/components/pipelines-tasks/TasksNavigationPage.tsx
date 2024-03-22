@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Card, Tab, Tabs } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
+  HorizontalNav,
   ListPageCreateDropdown,
   ListPageHeader,
   NamespaceBar,
+  NavPage,
   useActiveNamespace,
 } from '@openshift-console/dynamic-plugin-sdk';
-import TaskRunsListPage from './TaskRunsListPage';
-import ClusterTaskPage from './ClusterTaskListPage';
+import TasksList from './TasksList';
+import TaskRunsList from './TaskRunsList';
+import ClusterTaskList from './ClusterTaskList';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { ClusterTaskModel, TaskModel, TaskRunModel } from '../../models';
-import TasksListPage from './TasksListPage';
 import { ALL_NAMESPACES_KEY, DEFAULT_NAMESPACE } from '../../consts';
 
 import './TasksNavigationPage.scss';
@@ -21,11 +22,10 @@ const taskModelRef = getReferenceForModel(TaskModel);
 const taskRunModelRef = getReferenceForModel(TaskRunModel);
 const clusterTaskModelRef = getReferenceForModel(ClusterTaskModel);
 
-const TasksNavigationPage = (...props) => {
+const TasksNavigationPage = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [activeNamespace] = useActiveNamespace();
   const history = useHistory();
-  const [activeTabKey, setActiveTabKey] = useState<number>(0);
 
   const createItems = {
     tasks: TaskModel.labelKey || TaskModel.label,
@@ -59,6 +59,24 @@ const TasksNavigationPage = (...props) => {
         );
   };
 
+  const pages: NavPage[] = [
+    {
+      href: '',
+      name: t('Tasks'),
+      component: TasksList,
+    },
+    {
+      href: 'task-runs',
+      name: t('TaskRuns'),
+      component: TaskRunsList,
+    },
+    {
+      href: 'cluster-tasks',
+      name: t('ClusterTasks'),
+      component: ClusterTaskList,
+    },
+  ];
+
   return (
     <>
       {' '}
@@ -68,33 +86,7 @@ const TasksNavigationPage = (...props) => {
           {t('Create')}
         </ListPageCreateDropdown>
       </ListPageHeader>
-      <Card className="tasks-list-page__card">
-        <Tabs
-          onSelect={(_, tabIndex: number) => {
-            setActiveTabKey(tabIndex);
-          }}
-          activeKey={activeTabKey}
-          className="tasks-list-page__tabs"
-        >
-          <Tab eventKey={0} title={t('Tasks')} className="tasks-list-page__tab">
-            <TasksListPage showLabelFilters={true} />
-          </Tab>
-          <Tab
-            eventKey={1}
-            title={t('TaskRuns')}
-            className="tasks-list-page__tab"
-          >
-            <TaskRunsListPage showLabelFilters={true} />
-          </Tab>
-          <Tab
-            eventKey={2}
-            title={t('ClusterTasks')}
-            className="tasks-list-page__tab"
-          >
-            <ClusterTaskPage showLabelFilters={true} />
-          </Tab>
-        </Tabs>
-      </Card>
+      <HorizontalNav pages={pages} />
     </>
   );
 };

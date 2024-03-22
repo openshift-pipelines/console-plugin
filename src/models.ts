@@ -302,7 +302,7 @@ export const ClusterTriggerBindingModel: K8sKind = {
   color,
 };
 
-export const PodModel: K8sKind = {
+export const PodModel = {
   apiVersion: 'v1',
   label: 'Pod',
   // t('Pod')
@@ -315,4 +315,78 @@ export const PodModel: K8sKind = {
   labelPlural: 'Pods',
   // t('Pods')
   labelPluralKey: 'Pods',
+};
+
+export const NodeModel: K8sKind = {
+  apiVersion: 'v1',
+  label: 'Node',
+  // t('Node')
+  labelKey: 'Node',
+  plural: 'nodes',
+  abbr: 'N',
+  kind: 'Node',
+  id: 'node',
+  labelPlural: 'Nodes',
+  // t('Nodes')
+  labelPluralKey: 'Nodes',
+};
+
+export const EventModel: K8sKind = {
+  apiVersion: 'v1',
+  label: 'Event',
+  // t('Event')
+  labelKey: 'Event',
+  plural: 'events',
+  abbr: 'E',
+  namespaced: true,
+  kind: 'Event',
+  id: 'event',
+  labelPlural: 'Events',
+  // t('Events')
+  labelPluralKey: 'Events',
+};
+
+export const PersistentVolumeClaimModel: K8sKind = {
+  label: 'PersistentVolumeClaim',
+  // t('PersistentVolumeClaim')
+  labelKey: 'PersistentVolumeClaim',
+  apiVersion: 'v1',
+  plural: 'persistentvolumeclaims',
+  abbr: 'PVC',
+  namespaced: true,
+  kind: 'PersistentVolumeClaim',
+  id: 'persistentvolumeclaim',
+  labelPlural: 'PersistentVolumeClaims',
+  // t('PersistentVolumeClaims')
+  labelPluralKey: 'PersistentVolumeClaims',
+};
+
+export const ConfigMapModel: K8sKind = {
+  apiVersion: 'v1',
+  label: 'ConfigMap',
+  // t('ConfigMap')
+  labelKey: 'ConfigMap',
+  plural: 'configmaps',
+  abbr: 'CM',
+  namespaced: true,
+  kind: 'ConfigMap',
+  id: 'configmap',
+  labelPlural: 'ConfigMaps',
+  // t('ConfigMaps')
+  labelPluralKey: 'ConfigMaps',
+};
+
+export const SecretModel: K8sKind = {
+  apiVersion: 'v1',
+  label: 'Secret',
+  // t('Secret')
+  labelKey: 'Secret',
+  plural: 'secrets',
+  abbr: 'S',
+  namespaced: true,
+  kind: 'Secret',
+  id: 'secret',
+  labelPlural: 'Secrets',
+  // t('Secrets')
+  labelPluralKey: 'Secrets',
 };

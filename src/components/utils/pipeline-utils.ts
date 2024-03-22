@@ -5,7 +5,6 @@ import {
   k8sGet,
   k8sUpdate,
 } from '@openshift-console/dynamic-plugin-sdk';
-import i18next from 'i18next';
 import * as _ from 'lodash';
 import {
   LOG_SOURCE_RESTARTING,
@@ -56,6 +55,7 @@ import {
   formatPrometheusDuration,
   getDuration,
 } from '../pipelines-overview/dateTime';
+import { t } from './common-utils';
 import { getLatestRun } from './pipeline-augment';
 import {
   SucceedConditionReason,
@@ -98,11 +98,11 @@ export enum ListFilterId {
 }
 
 export const ListFilterLabels = {
-  [ListFilterId.Running]: i18next.t('Running'),
-  [ListFilterId.Failed]: i18next.t('Failed'),
-  [ListFilterId.Succeeded]: i18next.t('Succeeded'),
-  [ListFilterId.Cancelled]: i18next.t('Cancelled'),
-  [ListFilterId.Other]: i18next.t('Other'),
+  [ListFilterId.Running]: t('Running'),
+  [ListFilterId.Failed]: t('Failed'),
+  [ListFilterId.Succeeded]: t('Succeeded'),
+  [ListFilterId.Cancelled]: t('Cancelled'),
+  [ListFilterId.Other]: t('Other'),
 };
 
 export enum PipelineResourceListFilterId {
@@ -636,3 +636,21 @@ export const taskRunStatus = (
   const status: ComputedStatus = pipelineRunStatus(taskRun);
   return status;
 };
+
+export enum runStatus {
+  Succeeded = 'Succeeded',
+  Failed = 'Failed',
+  Running = 'Running',
+  'In Progress' = 'In Progress',
+  FailedToStart = 'FailedToStart',
+  PipelineNotStarted = 'Starting',
+  NeedsMerge = 'PR needs merge',
+  Skipped = 'Skipped',
+  Cancelled = 'Cancelled',
+  Cancelling = 'Cancelling',
+  Pending = 'Pending',
+  Idle = 'Idle',
+  TestWarning = 'Test Warnings',
+  TestFailed = 'Test Failures',
+  Unknown = 'Unknown',
+}

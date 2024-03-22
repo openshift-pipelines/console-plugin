@@ -11,7 +11,7 @@ interface TaskStatusToolTipProps {
 const TaskStatusToolTip: React.FC<TaskStatusToolTipProps> = ({
   taskStatus,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <div className="odc-task-status-tooltip">
       {Object.keys(ComputedStatus).map((status) => {

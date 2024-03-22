@@ -119,7 +119,7 @@ export const pipelineStatusFilter = (filters, pipeline) => {
 };
 
 export const usePipelinesFilters = (): RowFilter[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return [
     {
       filterGroupName: t('Status'),

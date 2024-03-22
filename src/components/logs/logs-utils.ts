@@ -3,7 +3,7 @@ import {
   k8sGet,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { saveAs } from 'file-saver';
-import { LOG_SOURCE_TERMINATED, LOG_SOURCE_WAITING } from 'src/consts';
+import { LOG_SOURCE_TERMINATED, LOG_SOURCE_WAITING } from '../../consts';
 import { PodModel } from '../../models';
 import {
   ContainerSpec,

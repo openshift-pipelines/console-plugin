@@ -109,6 +109,9 @@ export const pipelineRunDuration = (
   return calculateDuration(startTime, completionTime, true);
 };
 
+export const apiGroupForReference = (ref: GroupVersionKind) =>
+  ref.split('~')[0];
+
 export const resourcePathFromModel = (
   model: K8sModel,
   name?: string,

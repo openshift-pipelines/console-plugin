@@ -15,7 +15,7 @@ const tableColumnClasses = [
 ];
 
 const usePipelinesColumns = (namespace): TableColumn<K8sResourceCommon>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const columns = [
     {
       id: 'name',

@@ -1,4 +1,3 @@
-// import { referenceForModel } from '@console/internal/module/k8s';
 import {
   K8sResourceCommon,
   WatchK8sResource,

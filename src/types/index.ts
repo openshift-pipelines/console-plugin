@@ -20,6 +20,7 @@ export * from './openshift';
 export * from './pipeline';
 export * from './pipelineResource';
 export * from './pipelineRun';
+export * from './repository';
 export * from './task';
 export * from './taskRun';
 export * from './triggers';

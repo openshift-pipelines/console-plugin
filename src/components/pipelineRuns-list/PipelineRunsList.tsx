@@ -1,5 +1,4 @@
 import {
-  K8sResourceCommon,
   ListPageBody,
   ListPageFilter,
   VirtualizedTable,
@@ -8,32 +7,27 @@ import {
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
-import usePipelinesColumns from './usePipelinesColumns';
-import { usePipelinesFilters } from './usePipelinesFilters';
-import PipelineRow from './PipelineRow';
-import { useGetTaskRuns } from '../hooks/useTektonResult';
-import { PipelineModel, PipelineRunModel } from '../../models';
-import { PropPipelineData, augmentRunsToData } from '../utils/pipeline-augment';
+import usePipelineRunsColumns from './usePipelineRunsColumns';
+import { usePipelineRunsFilters } from './usePipelineRunsFilters';
 import { PipelineRunKind } from '../../types';
+import { PipelineRunModel } from '../../models';
+import { useGetTaskRuns } from '../hooks/useTektonResult';
+import PipelineRunsRow from './PipelineRunsRow';
+import { useTranslation } from 'react-i18next';
+
+import './PipelineRunsList.scss';
 import { useParams } from 'react-router-dom-v5-compat';
 
-type PipelineListProps = {
+type PipelineRunsListProps = {
   namespace: string;
 };
 
-const PipelinesList: React.FC<PipelineListProps> = ({ namespace }) => {
+const PipelineRunsList: React.FC<PipelineRunsListProps> = ({ namespace }) => {
+  const { t } = useTranslation();
   const { ns } = useParams();
   namespace = namespace || ns;
-  const columns = usePipelinesColumns(namespace);
-  const filters = usePipelinesFilters();
-  const [pipelines, pipelinesLoaded, pipelinesLoadError] = useK8sWatchResource<
-    PropPipelineData[]
-  >({
-    isList: true,
-    groupVersionKind: getGroupVersionKindForModel(PipelineModel),
-    namespace,
-    optional: true,
-  });
+  const columns = usePipelineRunsColumns(namespace);
+  const filters = usePipelineRunsFilters();
   const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] =
     useK8sWatchResource<PipelineRunKind[]>({
       isList: true,
@@ -41,9 +35,8 @@ const PipelinesList: React.FC<PipelineListProps> = ({ namespace }) => {
       namespace,
       optional: true,
     });
-  const pipelinesData = augmentRunsToData(pipelines, pipelineRuns);
   const [data, filteredData, onFilterChange] = useListPageFilter(
-    pipelinesData,
+    pipelineRuns,
     filters,
   );
   const [taskRuns] = useGetTaskRuns(namespace);
@@ -52,27 +45,27 @@ const PipelinesList: React.FC<PipelineListProps> = ({ namespace }) => {
       <ListPageFilter
         columnLayout={{
           columns: columns?.map(({ id, title }) => ({ id, title })),
-          id: 'pipeline-list',
-          type: 'Pipeline',
+          id: 'pipelineRuns-list',
+          type: 'PipelineRun',
           selectedColumns: new Set(['name']),
         }}
         rowFilters={filters}
         onFilterChange={onFilterChange}
         data={data}
-        loaded={pipelinesLoaded && pipelineRunsLoaded}
+        loaded={pipelineRunsLoaded}
         hideColumnManagement
       />
-      <VirtualizedTable<K8sResourceCommon>
+      <VirtualizedTable<PipelineRunKind>
         EmptyMsg={() => (
           <div className="pf-u-text-align-center" id="no-templates-msg">
-            No Pipelines found
+            {t('No PipelineRuns found')}
           </div>
         )}
         columns={columns}
         data={filteredData}
-        loaded={pipelinesLoaded && pipelineRunsLoaded}
-        loadError={pipelinesLoadError || pipelineRunsLoadError}
-        Row={PipelineRow}
+        loaded={pipelineRunsLoaded}
+        loadError={pipelineRunsLoadError}
+        Row={PipelineRunsRow}
         rowData={{
           taskRuns,
         }}
@@ -82,4 +75,4 @@ const PipelinesList: React.FC<PipelineListProps> = ({ namespace }) => {
   );
 };
 
-export default PipelinesList;
+export default PipelineRunsList;

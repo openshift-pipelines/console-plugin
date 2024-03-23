@@ -430,5 +430,89 @@
       "sortWeight": 0,
       "column": "right"
     }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "EventListener"
+      },
+      "component": { "$codeRef": "triggersList.EventListenersListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_EVENTLISTENERS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "TriggerBinding"
+      },
+      "component": { "$codeRef": "triggersList.TriggerBindingsListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERBINDINGS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "TriggerTemplate"
+      },
+      "component": { "$codeRef": "triggersList.TriggerTemplatesListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERTEMPLATES_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "ClusterTriggerBinding"
+      },
+      "component": { "$codeRef": "triggersList.ClusterTriggerBindingsListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTRIGGERSBINDINGS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/triggers/ns/:ns", "/triggers/all-namespaces"],
+      "exact": false,
+      "component": {
+        "$codeRef": "triggersList.TriggersTabbedPage"
+      }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERS_NAV_OPTION"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "pipeline-triggers",
+      "perspective": "admin",
+      "section": "pipelines",
+      "insertAfter": "pipeline-tasks",
+      "name": "%Triggers%",
+      "href": "/triggers",
+      "namespaced": true
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERS_NAV_OPTION"]
+    }
   }
 ]

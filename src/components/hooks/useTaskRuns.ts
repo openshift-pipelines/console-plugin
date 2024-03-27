@@ -213,3 +213,24 @@ const useRuns = <Kind extends K8sResourceCommon>(
     trGetNextPage,
   ]);
 };
+
+export const useTaskRun = (
+  namespace: string,
+  taskRunName: string,
+): [TaskRunKind, boolean, string] => {
+  const result = useTaskRuns2(
+    namespace,
+    React.useMemo(
+      () => ({
+        name: taskRunName,
+        limit: 1,
+      }),
+      [taskRunName],
+    ),
+  ) as unknown as [TaskRunKind[], boolean, string];
+
+  return React.useMemo(
+    () => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]],
+    [result],
+  );
+};

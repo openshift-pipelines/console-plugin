@@ -17,7 +17,7 @@ export const PipelineBars: React.FC<PipelineBarProps> = ({
   taskRuns,
 }) => {
   const taskStatus = useTaskStatus(pipelinerun, taskRuns);
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <Tooltip content={<TaskStatusToolTip taskStatus={taskStatus} />}>
       <HorizontalStackedBars

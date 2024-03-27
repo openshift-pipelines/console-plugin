@@ -19,7 +19,7 @@ export interface LinkedPipelineRunTaskStatusProps {
 const LinkedPipelineRunTaskStatus: React.FC<
   LinkedPipelineRunTaskStatusProps
 > = ({ pipelineRun, taskRuns }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const pipelineStatus =
     taskRuns.length > 0 ? (
       <PipelineBars

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   CriticalRiskIcon,
   AngleDoubleDownIcon,
@@ -9,7 +10,6 @@ import { global_palette_blue_300 as blueColor } from '@patternfly/react-tokens/d
 import { global_palette_gold_400 as goldColor } from '@patternfly/react-tokens/dist/js/global_palette_gold_400';
 import { global_palette_orange_300 as orangeColor } from '@patternfly/react-tokens/dist/js/global_palette_orange_300';
 import { global_palette_red_200 as redColor } from '@patternfly/react-tokens/dist/js/global_palette_red_200';
-import i18n from 'i18next';
 import { PipelineRunKind } from '../../../types';
 import { usePipelineRunVulnerabilities } from '../../hooks/usePipelineRunVulnerabilities';
 
@@ -37,6 +37,7 @@ const PipelineRunVulnerabilities: React.FC<PipelineRunVulnerabilitiesProps> = ({
   pipelineRun,
   condensed,
 }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const scanResults = usePipelineRunVulnerabilities(pipelineRun);
 
   return scanResults?.vulnerabilities ? (
@@ -47,7 +48,7 @@ const PipelineRunVulnerabilities: React.FC<PipelineRunVulnerabilitiesProps> = ({
       <div className="opp-vulnerabilities__severity">
         <span className="opp-vulnerabilities__severity-status">
           <CriticalIcon />
-          {!condensed ? i18n.t('Critical') : null}
+          {!condensed ? t('Critical') : null}
         </span>
         <span className="opp-vulnerabilities__severity-count">
           {scanResults.vulnerabilities.critical}
@@ -56,7 +57,7 @@ const PipelineRunVulnerabilities: React.FC<PipelineRunVulnerabilitiesProps> = ({
       <div className="opp-vulnerabilities__severity">
         <span className="opp-vulnerabilities__severity-status">
           <HighIcon />
-          {!condensed ? i18n.t('High') : null}
+          {!condensed ? t('High') : null}
         </span>
         <span className="opp-vulnerabilities__severity-count">
           {scanResults.vulnerabilities.high}
@@ -65,7 +66,7 @@ const PipelineRunVulnerabilities: React.FC<PipelineRunVulnerabilitiesProps> = ({
       <div className="opp-vulnerabilities__severity">
         <span className="opp-vulnerabilities__severity-status">
           <MediumIcon />
-          {!condensed ? i18n.t('Medium') : null}
+          {!condensed ? t('Medium') : null}
         </span>
         <span className="opp-vulnerabilities__severity-count">
           {scanResults.vulnerabilities.medium}
@@ -74,7 +75,7 @@ const PipelineRunVulnerabilities: React.FC<PipelineRunVulnerabilitiesProps> = ({
       <div className="opp-vulnerabilities__severity">
         <span className="opp-vulnerabilities__severity-status">
           <LowIcon />
-          {!condensed ? i18n.t('Low') : null}
+          {!condensed ? t('Low') : null}
         </span>
         <span className="opp-vulnerabilities__severity-count">
           {scanResults.vulnerabilities.low}

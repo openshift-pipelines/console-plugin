@@ -400,7 +400,7 @@
   {
     "type": "console.resource/details-item",
     "properties": {
-      "id": "triggerTemplate-pipelines",
+      "id": "triggerTemplate-eventListeners",
       "model": {
         "group": "triggers.tekton.dev",
         "version": "v1beta1",
@@ -411,6 +411,23 @@
         "$codeRef": "triggersDetails.TriggerTemplateEventListeners"
       },
       "sortWeight": 1,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "triggerBinding-eventListeners",
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "TriggerBinding"
+      },
+      "title": "%EventListeners%",
+      "component": {
+        "$codeRef": "triggersDetails.TriggerBindingEventListeners"
+      },
+      "sortWeight": 0,
       "column": "right"
     }
   }

@@ -228,8 +228,8 @@ export const useTriggerBindingEventListenerNames = (
     .filter((eventListener: EventListenerKind) =>
       eventListener.spec.triggers?.find(({ bindings }) =>
         bindings?.find(
-          ({ kind, name }) =>
-            getResourceName(triggerBinding) === name &&
+          ({ kind, ref }) =>
+            getResourceName(triggerBinding) === ref &&
             getResourceModelFromBindingKind(kind).kind === triggerBinding.kind,
         ),
       ),

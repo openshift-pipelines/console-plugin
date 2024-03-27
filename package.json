@@ -95,7 +95,8 @@
       "pipelinesComponent": "./components/pipelines-overview",
       "pipelinesList": "./components/pipelines-list",
       "metricsComponent": "./components/pipelines-metrics",
-      "tasksComponent": "./components/pipelines-tasks"
+      "tasksComponent": "./components/pipelines-tasks",
+      "triggersDetails": "./components/triggers-details"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

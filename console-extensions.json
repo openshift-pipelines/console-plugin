@@ -345,5 +345,39 @@
         "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_TASKRUNS_TAB"
       ]
     }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "eventListener-url",
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "EventListener"
+      },
+      "title": "%URL%",
+      "component": {
+        "$codeRef": "triggersDetails.EventListenerURL"
+      },
+      "sortWeight": 0,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "eventListener-triggers",
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "EventListener"
+      },
+      "title": "%Triggers%",
+      "component": {
+        "$codeRef": "triggersDetails.EventListenerTriggers"
+      },
+      "sortWeight": 1,
+      "column": "right"
+    }
   }
 ]

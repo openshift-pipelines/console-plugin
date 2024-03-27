@@ -1,4 +1,5 @@
 import {
+  K8sKind,
   K8sModel,
   K8sResourceCommon,
   k8sGet,
@@ -6,7 +7,7 @@ import {
 import * as React from 'react';
 
 export const useK8sGet = <R extends K8sResourceCommon = K8sResourceCommon>(
-  kind: K8sModel,
+  kind: K8sModel | K8sKind,
   name?: string,
   namespace?: string,
 ): [R, boolean, unknown] => {

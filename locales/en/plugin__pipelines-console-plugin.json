@@ -119,9 +119,11 @@
   "Total runs": "Total runs",
   "TriggerBinding": "TriggerBinding",
   "TriggerBindings": "TriggerBindings",
+  "Triggers": "Triggers",
   "TriggerTemplate": "TriggerTemplate",
   "TriggerTemplates": "TriggerTemplates",
   "Unknown error retrieving logs": "Unknown error retrieving logs",
   "Unknown failure condition": "Unknown failure condition",
+  "URL": "URL",
   "View logs": "View logs"
 }

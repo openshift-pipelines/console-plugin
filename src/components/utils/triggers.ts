@@ -27,6 +27,7 @@ import {
   TriggerBindingKind,
   TriggerTemplateKind,
 } from '../../types';
+import { useK8sGet } from '../hooks/use-k8sGet-hook';
 import {
   getResourceModelFromBindingKind,
   getSafeBindingResourceKind,
@@ -44,7 +45,7 @@ const getEventListenerTemplateNames = (el: EventListenerKind): string[] =>
       elTrigger.template?.ref || elTrigger.template?.name,
   ) || [];
 const getEventListenerGeneratedName = (eventListener: EventListenerKind) =>
-  eventListener.status?.configuration.generatedName;
+  eventListener?.status?.configuration.generatedName;
 
 const useEventListenerRoutes = (
   namespace: string,
@@ -227,11 +228,23 @@ export const useTriggerBindingEventListenerNames = (
     .filter((eventListener: EventListenerKind) =>
       eventListener.spec.triggers?.find(({ bindings }) =>
         bindings?.find(
-          ({ kind, name }) =>
-            getResourceName(triggerBinding) === name &&
+          ({ kind, ref }) =>
+            getResourceName(triggerBinding) === ref &&
             getResourceModelFromBindingKind(kind).kind === triggerBinding.kind,
         ),
       ),
     )
     .map(getResourceName);
+};
+
+export const useEventListenerURL = (
+  eventListener: EventListenerKind,
+  namespace: string,
+): string | null => {
+  const [route, routeLoaded] = useK8sGet<RouteKind>(
+    RouteModel,
+    getEventListenerGeneratedName(eventListener),
+    namespace,
+  );
+  return routeLoaded && route?.status?.ingress ? getRouteWebURL(route) : null;
 };

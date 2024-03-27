@@ -14,11 +14,13 @@ import { EventListenerModel } from '../../models';
 import EventListenersRow from './EventListenersRow';
 
 type EventListenersListProps = {
-  namespace: string;
+  namespace?: string;
+  hideNameLabelFilters?: boolean;
 };
 
 const EventListenersList: React.FC<EventListenersListProps> = ({
   namespace,
+  hideNameLabelFilters,
 }) => {
   const { ns } = useParams();
   namespace = namespace || ns;
@@ -37,6 +39,8 @@ const EventListenersList: React.FC<EventListenersListProps> = ({
         data={staticData}
         onFilterChange={onFilterChange}
         loaded={eventListenersLoaded}
+        hideColumnManagement
+        hideNameLabelFilters={hideNameLabelFilters}
       />
       <VirtualizedTable
         columns={columns}

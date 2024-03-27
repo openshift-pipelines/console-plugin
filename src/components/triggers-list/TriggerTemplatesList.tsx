@@ -14,11 +14,13 @@ import { TriggerTemplateModel } from '../../models';
 import EventListenersRow from './EventListenersRow';
 
 type TriggerTemplatesListProps = {
-  namespace: string;
+  namespace?: string;
+  hideNameLabelFilters?: boolean;
 };
 
 const TriggerTemplatesList: React.FC<TriggerTemplatesListProps> = ({
   namespace,
+  hideNameLabelFilters,
 }) => {
   const { ns } = useParams();
   namespace = namespace || ns;
@@ -37,6 +39,8 @@ const TriggerTemplatesList: React.FC<TriggerTemplatesListProps> = ({
         data={staticData}
         onFilterChange={onFilterChange}
         loaded={triggerTemplatesLoaded}
+        hideColumnManagement
+        hideNameLabelFilters={hideNameLabelFilters}
       />
       <VirtualizedTable
         columns={columns}

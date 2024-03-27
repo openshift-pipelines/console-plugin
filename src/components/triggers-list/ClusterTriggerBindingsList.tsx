@@ -12,7 +12,13 @@ import { useDefaultColumns } from '../list-pages/default-resources';
 import { ClusterTriggerBindingModel } from '../../models';
 import EventListenersRow from './EventListenersRow';
 
-const ClusterTriggerBindingsList: React.FC = () => {
+type ClusterTriggerBindingsListProps = {
+  hideNameLabelFilters?: boolean;
+};
+
+const ClusterTriggerBindingsList: React.FC<ClusterTriggerBindingsListProps> = ({
+  hideNameLabelFilters,
+}) => {
   const columns = useDefaultColumns();
   const [
     clusterTriggerBindings,
@@ -33,6 +39,8 @@ const ClusterTriggerBindingsList: React.FC = () => {
         data={staticData}
         onFilterChange={onFilterChange}
         loaded={clusterTriggerBindingsLoaded}
+        hideColumnManagement
+        hideNameLabelFilters={hideNameLabelFilters}
       />
       <VirtualizedTable
         columns={columns}

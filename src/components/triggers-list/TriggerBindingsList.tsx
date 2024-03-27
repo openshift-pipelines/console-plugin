@@ -14,11 +14,13 @@ import { TriggerBindingModel } from '../../models';
 import EventListenersRow from './EventListenersRow';
 
 type TriggerBindingsListProps = {
-  namespace: string;
+  namespace?: string;
+  hideNameLabelFilters?: boolean;
 };
 
 const TriggerBindingsList: React.FC<TriggerBindingsListProps> = ({
   namespace,
+  hideNameLabelFilters,
 }) => {
   const { ns } = useParams();
   namespace = namespace || ns;
@@ -37,6 +39,8 @@ const TriggerBindingsList: React.FC<TriggerBindingsListProps> = ({
         data={staticData}
         onFilterChange={onFilterChange}
         loaded={triggerBindingsLoaded}
+        hideColumnManagement
+        hideNameLabelFilters={hideNameLabelFilters}
       />
       <VirtualizedTable
         columns={columns}

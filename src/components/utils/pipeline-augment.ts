@@ -298,7 +298,7 @@ export const getResourceModelFromBindingKind = (kind: string): K8sKind => {
     return EventListenerModel;
   }
   if (kind === TriggerTemplateModel.kind) {
-    return TriggerBindingModel;
+    return TriggerTemplateModel;
   }
   return null;
 };

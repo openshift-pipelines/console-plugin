@@ -379,5 +379,39 @@
       "sortWeight": 1,
       "column": "right"
     }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "triggerTemplate-pipelines",
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "TriggerTemplate"
+      },
+      "title": "%Pipelines%",
+      "component": {
+        "$codeRef": "triggersDetails.TriggerTemplatePipelines"
+      },
+      "sortWeight": 0,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "triggerTemplate-pipelines",
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "TriggerTemplate"
+      },
+      "title": "%EventListeners%",
+      "component": {
+        "$codeRef": "triggersDetails.TriggerTemplateEventListeners"
+      },
+      "sortWeight": 1,
+      "column": "right"
+    }
   }
 ]

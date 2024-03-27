@@ -5,6 +5,5 @@ export { default as TaskRunsListPage } from './TaskRunsListPage';
 export { default as TasksList } from './TasksList';
 export { default as TasksListPage } from './TasksListPage';
 export { default as TasksNavigationPage } from './TasksNavigationPage';
-export { default as ClusterTaskDetailsPage } from './tasks-details-pages/ClusterTaskDetailsPage';
-export { default as TaskDetailsPage } from './tasks-details-pages/TaskDetailsPage';
 export { default as TaskRunsDetailsPage } from './tasks-details-pages/TaskRunDetailsPage';
+export { default as WorkspaceDefinitionList } from './tasks-details-pages/WorkspaceDefinitionList';

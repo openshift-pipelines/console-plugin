@@ -7,20 +7,19 @@ import {
   ListPageFilter,
   VirtualizedTable,
   getGroupVersionKindForModel,
-  useActiveNamespace,
   useK8sWatchResource,
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { TaskModel } from '../../models';
 import TaskRow from './TasksRow';
 import { useDefaultColumns } from '../list-pages/default-resources';
-import { ALL_NAMESPACES_KEY } from '../../consts';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 
 interface TaskListProps {
   showTitle?: boolean;
   hideColumnManagement?: boolean;
   hideNameLabelFilters?: boolean;
+  namespace: string;
 }
 const taskModelRef = getReferenceForModel(TaskModel);
 
@@ -28,16 +27,15 @@ const TasksList: React.FC<TaskListProps> = ({
   showTitle = true,
   hideColumnManagement = false,
   hideNameLabelFilters = false,
+  namespace,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const columns = useDefaultColumns();
-  const [activeNamespace] = useActiveNamespace();
   const [data, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>({
     groupVersionKind: getGroupVersionKindForModel(TaskModel),
     isList: true,
     namespaced: true,
-    namespace:
-      activeNamespace === ALL_NAMESPACES_KEY ? undefined : activeNamespace,
+    namespace,
   });
 
   const [staticData, filteredData, onFilterChange] = useListPageFilter(data);
@@ -48,12 +46,12 @@ const TasksList: React.FC<TaskListProps> = ({
           <ListPageCreateLink
             createAccessReview={{
               groupVersionKind: getGroupVersionKindForModel(TaskModel),
-              namespace: activeNamespace,
+              namespace,
             }}
             to={
-              activeNamespace === ALL_NAMESPACES_KEY
+              !namespace
                 ? `/k8s/cluster/${taskModelRef}/~new`
-                : `/k8s/ns/${activeNamespace}/${taskModelRef}/~new`
+                : `/k8s/ns/${namespace}/${taskModelRef}/~new`
             }
           >
             {t('Create {{resourceKind}}', { resourceKind: TaskModel.kind })}

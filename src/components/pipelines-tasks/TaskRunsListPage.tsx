@@ -8,7 +8,6 @@ import {
   getGroupVersionKindForModel,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { TaskRunModel } from '../../models';
-import { ALL_NAMESPACES_KEY } from '../../consts';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import TaskRunsList from './TaskRunsList';
 
@@ -44,7 +43,7 @@ const TaskRunsListPage: React.FC<TaskRunsListPageProps> = ({
               namespace,
             }}
             to={
-              namespace === ALL_NAMESPACES_KEY
+              !namespace
                 ? `/k8s/cluster/${taskRunModelRef}/~new`
                 : `/k8s/ns/${namespace}/${taskRunModelRef}/~new`
             }

@@ -8,7 +8,6 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { TaskModel } from '../../models';
 import { getReferenceForModel } from '../pipelines-overview/utils';
-import { ALL_NAMESPACES_KEY } from '../../consts';
 import TasksList from './TasksList';
 
 const taskModelRef = getReferenceForModel(TaskModel);
@@ -40,7 +39,7 @@ const TasksListPage: React.FC<TasksListPageProps> = ({
               namespace,
             }}
             to={
-              namespace === ALL_NAMESPACES_KEY
+              !namespace
                 ? `/k8s/cluster/${taskModelRef}/~new`
                 : `/k8s/ns/${namespace}/${taskModelRef}/~new`
             }
@@ -53,6 +52,7 @@ const TasksListPage: React.FC<TasksListPageProps> = ({
         showTitle={showTitle}
         hideColumnManagement={hideColumnManagement}
         hideNameLabelFilters={hideNameLabelFilters}
+        namespace={namespace}
       />
     </>
   );

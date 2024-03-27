@@ -161,7 +161,7 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
               namespace,
             }}
             to={
-              namespace === ALL_NAMESPACES_KEY
+              !namespace
                 ? `/k8s/cluster/${taskRunModelRef}/~new`
                 : `/k8s/ns/${namespace}/${taskRunModelRef}/~new`
             }

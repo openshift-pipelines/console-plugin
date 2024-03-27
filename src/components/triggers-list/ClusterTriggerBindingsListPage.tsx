@@ -11,15 +11,19 @@ import ClusterTriggerBindingsList from './ClusterTriggerBindingsList';
 
 type ClusterTriggerBindingsListPageProps = {
   namespace: string;
+  hideNameLabelFilters?: boolean;
 };
 
 const ClusterTriggerBindingsListPage: React.FC<
   ClusterTriggerBindingsListPageProps
-> = ({ namespace }) => {
+> = (props) => {
   const { t } = useTranslation();
+  const { namespace, hideNameLabelFilters } = props;
   return (
     <>
-      <ListPageHeader title={t('ClusterTriggerBindings')}>
+      <ListPageHeader
+        title={!hideNameLabelFilters && t('ClusterTriggerBindings')}
+      >
         <ListPageCreateLink
           createAccessReview={{
             groupVersionKind: getGroupVersionKindForModel(
@@ -34,7 +38,7 @@ const ClusterTriggerBindingsListPage: React.FC<
           {t('Create ClusterTriggerBinding')}
         </ListPageCreateLink>
       </ListPageHeader>
-      <ClusterTriggerBindingsList />
+      <ClusterTriggerBindingsList {...props} />
     </>
   );
 };

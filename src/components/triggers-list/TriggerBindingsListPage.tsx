@@ -11,15 +11,17 @@ import TriggerBindingsList from './TriggerBindingsList';
 
 type TriggerBindingsListPageProps = {
   namespace: string;
+  hideNameLabelFilters?: boolean;
 };
 
-const TriggerBindingsListPage: React.FC<TriggerBindingsListPageProps> = ({
-  namespace,
-}) => {
+const TriggerBindingsListPage: React.FC<TriggerBindingsListPageProps> = (
+  props,
+) => {
   const { t } = useTranslation();
+  const { namespace, hideNameLabelFilters } = props;
   return (
     <>
-      <ListPageHeader title={t('TriggerBindings')}>
+      <ListPageHeader title={!hideNameLabelFilters && t('TriggerBindings')}>
         <ListPageCreateLink
           createAccessReview={{
             groupVersionKind: getGroupVersionKindForModel(TriggerBindingModel),
@@ -32,7 +34,7 @@ const TriggerBindingsListPage: React.FC<TriggerBindingsListPageProps> = ({
           {t('Create TriggerBindings')}
         </ListPageCreateLink>
       </ListPageHeader>
-      <TriggerBindingsList namespace={namespace} />
+      <TriggerBindingsList {...props} />
     </>
   );
 };

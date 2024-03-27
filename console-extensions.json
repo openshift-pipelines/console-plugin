@@ -379,7 +379,7 @@
     "properties": {
       "model": {
         "group": "triggers.tekton.dev",
-        "version": "v1alpha1",
+        "version": "v1beta1",
         "kind": "TriggerTemplate"
       },
       "component": { "$codeRef": "triggersList.TriggerTemplatesListPage" }
@@ -418,9 +418,10 @@
   {
     "type": "console.navigation/href",
     "properties": {
-      "id": "pipelinetriggers",
+      "id": "pipeline-triggers",
       "perspective": "admin",
       "section": "pipelines",
+      "insertAfter": "pipeline-tasks",
       "name": "%Triggers%",
       "href": "/triggers",
       "namespaced": true

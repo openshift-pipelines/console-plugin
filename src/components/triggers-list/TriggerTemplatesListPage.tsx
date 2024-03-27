@@ -11,15 +11,17 @@ import TriggerTemplatesList from './TriggerTemplatesList';
 
 type TriggerTemplatesListPageProps = {
   namespace: string;
+  hideNameLabelFilters?: boolean;
 };
 
-const TriggerTemplatesListPage: React.FC<TriggerTemplatesListPageProps> = ({
-  namespace,
-}) => {
+const TriggerTemplatesListPage: React.FC<TriggerTemplatesListPageProps> = (
+  props,
+) => {
   const { t } = useTranslation();
+  const { hideNameLabelFilters, namespace } = props;
   return (
     <>
-      <ListPageHeader title={t('TriggerTemplates')}>
+      <ListPageHeader title={!hideNameLabelFilters && t('TriggerTemplates')}>
         <ListPageCreateLink
           createAccessReview={{
             groupVersionKind: getGroupVersionKindForModel(TriggerTemplateModel),
@@ -32,7 +34,7 @@ const TriggerTemplatesListPage: React.FC<TriggerTemplatesListPageProps> = ({
           {t('Create TriggerTemplates')}
         </ListPageCreateLink>
       </ListPageHeader>
-      <TriggerTemplatesList namespace={namespace} />
+      <TriggerTemplatesList {...props} />
     </>
   );
 };

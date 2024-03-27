@@ -11,15 +11,17 @@ import EventListenersList from './EventListenersList';
 
 type EventListenersListPageProps = {
   namespace: string;
+  hideNameLabelFilters?: boolean;
 };
 
-const EventListenersListPage: React.FC<EventListenersListPageProps> = ({
-  namespace,
-}) => {
+const EventListenersListPage: React.FC<EventListenersListPageProps> = (
+  props,
+) => {
   const { t } = useTranslation();
+  const { hideNameLabelFilters, namespace } = props;
   return (
     <>
-      <ListPageHeader title={t('EventListeners')}>
+      <ListPageHeader title={!hideNameLabelFilters && t('EventListeners')}>
         <ListPageCreateLink
           createAccessReview={{
             groupVersionKind: getGroupVersionKindForModel(EventListenerModel),
@@ -32,7 +34,7 @@ const EventListenersListPage: React.FC<EventListenersListPageProps> = ({
           {t('Create EventListener')}
         </ListPageCreateLink>
       </ListPageHeader>
-      <EventListenersList namespace={namespace} />
+      <EventListenersList {...props} />
     </>
   );
 };

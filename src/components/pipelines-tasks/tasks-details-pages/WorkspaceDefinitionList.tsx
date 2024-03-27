@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { TaskKind } from '../../../types';
 
 export type TektonWorkspace = {
   name: string;
@@ -9,28 +10,28 @@ export type TektonWorkspace = {
   optional?: boolean;
 };
 export interface WorkspaceDefinitionListProps {
-  workspaces: TektonWorkspace[];
+  obj: TaskKind;
 }
 
 const WorkspaceDefinitionList: React.FC<WorkspaceDefinitionListProps> = ({
-  workspaces,
+  obj,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-
-  if (!workspaces || workspaces.length === 0) return null;
+  if (!obj?.spec?.workspaces || obj?.spec?.workspaces?.length === 0)
+    return null;
 
   return (
     <dl data-test-id="workspace-definition-section">
       <dt>{t('Workspaces')}</dt>
       <dd>
-        {workspaces.map((workspace) => (
+        {obj.spec.workspaces.map((workspace) => (
           <div
             key={workspace.name}
             data-test-id={`workspace-definition${
-              workspace.optional ? '-optional' : ''
+              workspace?.optional ? '-optional' : ''
             }`}
           >
-            {workspace.optional
+            {workspace?.optional
               ? `${workspace.name} (${t('optional')})`
               : `${workspace.name}`}
           </div>

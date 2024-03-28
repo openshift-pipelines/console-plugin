@@ -70,6 +70,7 @@
     "react-i18next": "^11.7.3",
     "react-router": "5.3.x",
     "react-router-dom": "5.3.x",
+    "react-router-dom-v5-compat": "^6.11.2",
     "resolve-url-loader": "2.x",
     "sass": "^1.42.1",
     "sass-loader": "^10.1.1",
@@ -96,7 +97,8 @@
       "pipelinesList": "./components/pipelines-list",
       "metricsComponent": "./components/pipelines-metrics",
       "tasksComponent": "./components/pipelines-tasks",
-      "triggersDetails": "./components/triggers-details"
+      "triggersDetails": "./components/triggers-details",
+      "triggersList": "./components/triggers-list"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

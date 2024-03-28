@@ -9,9 +9,11 @@ import { TektonResourceLabel } from '../../consts';
 import {
   ClusterTaskModel,
   ClusterTriggerBindingModel,
+  EventListenerModel,
   PipelineModel,
   TaskModel,
   TriggerBindingModel,
+  TriggerTemplateModel,
 } from '../../models';
 import {
   ComputedStatus,
@@ -291,6 +293,12 @@ export const getResourceModelFromBindingKind = (kind: string): K8sKind => {
   }
   if (kind === TriggerBindingModel.kind || kind === undefined) {
     return TriggerBindingModel;
+  }
+  if (kind === EventListenerModel.kind) {
+    return EventListenerModel;
+  }
+  if (kind === TriggerTemplateModel.kind) {
+    return TriggerTemplateModel;
   }
   return null;
 };

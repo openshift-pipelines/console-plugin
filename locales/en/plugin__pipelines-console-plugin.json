@@ -26,6 +26,7 @@
   "ClusterVersions": "ClusterVersions",
   "Collapse": "Collapse",
   "Create": "Create",
+  "Create {{name}}": "Create {{name}}",
   "Create {{resourceKind}}": "Create {{resourceKind}}",
   "Create Pipeline": "Create Pipeline",
   "Created": "Created",

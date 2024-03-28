@@ -9,14 +9,16 @@ import PipelinesList from './PipelinesList';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 
 type PipelineListPageProps = {
-  namespace: string;
+  namespace?: string;
+  hideTextFilter?: boolean;
 };
 
-const PipelineListPage: React.FC<PipelineListPageProps> = ({ namespace }) => {
+const PipelineListPage: React.FC<PipelineListPageProps> = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const { namespace, hideTextFilter } = props;
   return (
     <>
-      <ListPageHeader title={t('Pipelines')}>
+      <ListPageHeader title={!hideTextFilter && t('Pipelines')}>
         <ListPageCreateLink
           createAccessReview={{
             groupVersionKind: getReferenceForModel(PipelineModel),
@@ -29,7 +31,7 @@ const PipelineListPage: React.FC<PipelineListPageProps> = ({ namespace }) => {
           {t('Create Pipeline')}
         </ListPageCreateLink>
       </ListPageHeader>
-      <PipelinesList namespace={namespace} />
+      <PipelinesList {...props} />
     </>
   );
 };

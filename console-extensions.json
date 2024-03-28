@@ -683,6 +683,7 @@
       "section": "pipelines",
       "name": "%Pipelines%",
       "href": "/pipelines",
+      "insertBefore": "pipeline-tasks",
       "namespaced": true,
       "dataAttributes": {
         "data-quickstart-id": "qs-nav-pipelines"

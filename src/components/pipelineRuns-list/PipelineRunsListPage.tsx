@@ -11,15 +11,15 @@ import PipelineRunsList from './PipelineRunsList';
 
 type PipelineRunsListPageProps = {
   namespace: string;
+  hideTextFilter?: boolean;
 };
 
-const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
-  namespace,
-}) => {
+const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = (props) => {
   const { t } = useTranslation();
+  const { namespace, hideTextFilter } = props;
   return (
     <>
-      <ListPageHeader title={t('PipelineRuns')}>
+      <ListPageHeader title={!hideTextFilter && t('PipelineRuns')}>
         <ListPageCreateLink
           createAccessReview={{
             groupVersionKind: getGroupVersionKindForModel(PipelineRunModel),
@@ -32,7 +32,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
           {t('Create PipelineRun')}
         </ListPageCreateLink>
       </ListPageHeader>
-      <PipelineRunsList namespace={namespace} />
+      <PipelineRunsList {...props} />
     </>
   );
 };

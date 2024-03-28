@@ -13,12 +13,18 @@ import useRepositoriesColumns from './useRepositoriesColumns';
 import RepositoriesRow from './RepositoriesRow';
 import { useGetTaskRuns } from '../hooks/useTektonResult';
 import { useParams } from 'react-router-dom-v5-compat';
+import { useTranslation } from 'react-i18next';
 
 type RepositoriesListProps = {
-  namespace: string;
+  namespace?: string;
+  hideTextFilter?: boolean;
 };
 
-const RepositoriesList: React.FC<RepositoriesListProps> = ({ namespace }) => {
+const RepositoriesList: React.FC<RepositoriesListProps> = ({
+  namespace,
+  hideTextFilter,
+}) => {
+  const { t } = useTranslation();
   const { ns } = useParams();
   namespace = namespace || ns;
   const columns = useRepositoriesColumns(namespace);
@@ -47,9 +53,17 @@ const RepositoriesList: React.FC<RepositoriesListProps> = ({ namespace }) => {
         data={staticData}
         onFilterChange={onFilterChange}
         loaded={repositoriesLoaded}
-        hideNameLabelFilters
+        hideNameLabelFilters={hideTextFilter}
       />
       <VirtualizedTable
+        EmptyMsg={() => (
+          <div
+            className="pf-u-text-align-center virtualized-table-empty-msg"
+            id="no-templates-msg"
+          >
+            {t('No Repositories found')}
+          </div>
+        )}
         columns={columns}
         data={filteredData}
         loaded={repositoriesLoaded && pipelineRunsLoaded}

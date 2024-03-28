@@ -15,6 +15,7 @@ import {
   NavPage,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { PageTitleContext } from './PageTitleContext';
+import './MultiTabListPage.scss';
 
 interface MultiTabListPageProps {
   title: string;

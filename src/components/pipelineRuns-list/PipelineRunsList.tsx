@@ -19,10 +19,14 @@ import './PipelineRunsList.scss';
 import { useParams } from 'react-router-dom-v5-compat';
 
 type PipelineRunsListProps = {
-  namespace: string;
+  namespace?: string;
+  hideTextFilter?: boolean;
 };
 
-const PipelineRunsList: React.FC<PipelineRunsListProps> = ({ namespace }) => {
+const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
+  namespace,
+  hideTextFilter,
+}) => {
   const { t } = useTranslation();
   const { ns } = useParams();
   namespace = namespace || ns;
@@ -54,10 +58,14 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({ namespace }) => {
         data={data}
         loaded={pipelineRunsLoaded}
         hideColumnManagement
+        hideNameLabelFilters={hideTextFilter}
       />
       <VirtualizedTable<PipelineRunKind>
         EmptyMsg={() => (
-          <div className="pf-u-text-align-center" id="no-templates-msg">
+          <div
+            className="pf-u-text-align-center virtualized-table-empty-msg"
+            id="no-templates-msg"
+          >
             {t('No PipelineRuns found')}
           </div>
         )}

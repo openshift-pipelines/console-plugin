@@ -10,16 +10,16 @@ import { getReferenceForModel } from '../pipelines-overview/utils';
 import RepositoriesList from './RepositoriesList';
 
 type RepositoriesListPageProps = {
-  namespace: string;
+  namespace?: string;
+  hideTextFilter?: boolean;
 };
 
-const RepositoriesListPage: React.FC<RepositoriesListPageProps> = ({
-  namespace,
-}) => {
+const RepositoriesListPage: React.FC<RepositoriesListPageProps> = (props) => {
   const { t } = useTranslation();
+  const { namespace, hideTextFilter } = props;
   return (
     <>
-      <ListPageHeader title={t('Pipeline Repositories')}>
+      <ListPageHeader title={!hideTextFilter && t('Repositories')}>
         <ListPageCreateLink
           createAccessReview={{
             groupVersionKind: getGroupVersionKindForModel(RepositoryModel),
@@ -32,7 +32,7 @@ const RepositoriesListPage: React.FC<RepositoriesListPageProps> = ({
           {t('Create Repository')}
         </ListPageCreateLink>
       </ListPageHeader>
-      <RepositoriesList namespace={namespace} />
+      <RepositoriesList {...props} />
     </>
   );
 };

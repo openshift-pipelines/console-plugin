@@ -1,13 +1,9 @@
-import {
-  ListPageCreateLink,
-  ListPageHeader,
-  getGroupVersionKindForModel,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { EventListenerModel } from '../../models';
-import { getReferenceForModel } from '../pipelines-overview/utils';
 import EventListenersList from './EventListenersList';
+import ListPageCreateButton from '../list-pages/ListPageCreateButton';
 
 type EventListenersListPageProps = {
   namespace: string;
@@ -21,20 +17,27 @@ const EventListenersListPage: React.FC<EventListenersListPageProps> = (
   const { hideNameLabelFilters, namespace } = props;
   return (
     <>
-      <ListPageHeader title={!hideNameLabelFilters && t('EventListeners')}>
-        <ListPageCreateLink
-          createAccessReview={{
-            groupVersionKind: getGroupVersionKindForModel(EventListenerModel),
-            namespace,
-          }}
-          to={`/k8s/ns/${namespace}/${getReferenceForModel(
-            EventListenerModel,
-          )}/~new`}
-        >
-          {t('Create EventListener')}
-        </ListPageCreateLink>
-      </ListPageHeader>
-      <EventListenersList {...props} />
+      {hideNameLabelFilters ? (
+        <>
+          <ListPageCreateButton
+            model={EventListenerModel}
+            namespace={namespace}
+            hideTitle={hideNameLabelFilters}
+          />
+          <EventListenersList {...props} />
+        </>
+      ) : (
+        <>
+          <ListPageHeader title={t('EventListeners')}>
+            <ListPageCreateButton
+              model={EventListenerModel}
+              namespace={namespace}
+              hideTitle={hideNameLabelFilters}
+            />
+          </ListPageHeader>
+          <EventListenersList {...props} />
+        </>
+      )}
     </>
   );
 };

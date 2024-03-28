@@ -1,13 +1,9 @@
-import {
-  ListPageCreateLink,
-  ListPageHeader,
-  getGroupVersionKindForModel,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TriggerTemplateModel } from '../../models';
-import { getReferenceForModel } from '../pipelines-overview/utils';
 import TriggerTemplatesList from './TriggerTemplatesList';
+import ListPageCreateButton from '../list-pages/ListPageCreateButton';
 
 type TriggerTemplatesListPageProps = {
   namespace: string;
@@ -21,20 +17,27 @@ const TriggerTemplatesListPage: React.FC<TriggerTemplatesListPageProps> = (
   const { hideNameLabelFilters, namespace } = props;
   return (
     <>
-      <ListPageHeader title={!hideNameLabelFilters && t('TriggerTemplates')}>
-        <ListPageCreateLink
-          createAccessReview={{
-            groupVersionKind: getGroupVersionKindForModel(TriggerTemplateModel),
-            namespace,
-          }}
-          to={`/k8s/ns/${namespace}/${getReferenceForModel(
-            TriggerTemplateModel,
-          )}/~new`}
-        >
-          {t('Create TriggerTemplates')}
-        </ListPageCreateLink>
-      </ListPageHeader>
-      <TriggerTemplatesList {...props} />
+      {hideNameLabelFilters ? (
+        <>
+          <ListPageCreateButton
+            model={TriggerTemplateModel}
+            namespace={namespace}
+            hideTitle={hideNameLabelFilters}
+          />
+          <TriggerTemplatesList {...props} />
+        </>
+      ) : (
+        <>
+          <ListPageHeader title={t('TriggerTemplates')}>
+            <ListPageCreateButton
+              model={TriggerTemplateModel}
+              namespace={namespace}
+              hideTitle={hideNameLabelFilters}
+            />
+          </ListPageHeader>
+          <TriggerTemplatesList {...props} />
+        </>
+      )}
     </>
   );
 };

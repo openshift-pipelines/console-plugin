@@ -1,13 +1,9 @@
-import {
-  ListPageCreateLink,
-  ListPageHeader,
-  getGroupVersionKindForModel,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ClusterTriggerBindingModel } from '../../models';
-import { getReferenceForModel } from '../pipelines-overview/utils';
 import ClusterTriggerBindingsList from './ClusterTriggerBindingsList';
+import ListPageCreateButton from '../list-pages/ListPageCreateButton';
 
 type ClusterTriggerBindingsListPageProps = {
   namespace: string;
@@ -21,24 +17,27 @@ const ClusterTriggerBindingsListPage: React.FC<
   const { namespace, hideNameLabelFilters } = props;
   return (
     <>
-      <ListPageHeader
-        title={!hideNameLabelFilters && t('ClusterTriggerBindings')}
-      >
-        <ListPageCreateLink
-          createAccessReview={{
-            groupVersionKind: getGroupVersionKindForModel(
-              ClusterTriggerBindingModel,
-            ),
-            namespace,
-          }}
-          to={`/k8s/ns/${namespace}/${getReferenceForModel(
-            ClusterTriggerBindingModel,
-          )}/~new`}
-        >
-          {t('Create ClusterTriggerBinding')}
-        </ListPageCreateLink>
-      </ListPageHeader>
-      <ClusterTriggerBindingsList {...props} />
+      {hideNameLabelFilters ? (
+        <>
+          <ListPageCreateButton
+            model={ClusterTriggerBindingModel}
+            namespace={namespace}
+            hideTitle={hideNameLabelFilters}
+          />
+          <ClusterTriggerBindingsList {...props} />
+        </>
+      ) : (
+        <>
+          <ListPageHeader title={t('ClusterTriggerBindings')}>
+            <ListPageCreateButton
+              model={ClusterTriggerBindingModel}
+              namespace={namespace}
+              hideTitle={hideNameLabelFilters}
+            />
+          </ListPageHeader>
+          <ClusterTriggerBindingsList {...props} />
+        </>
+      )}
     </>
   );
 };

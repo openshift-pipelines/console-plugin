@@ -214,7 +214,7 @@ export const TaskModelV1Beta1: K8sKind = {
 
 export const EventListenerModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   label: 'EventListener',
   // t('EventListener')
   labelKey: 'EventListener',
@@ -250,7 +250,7 @@ export const ClusterTaskModel: K8sKind = {
 
 export const TriggerTemplateModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   label: 'TriggerTemplate',
   // t('TriggerTemplate')
   labelKey: 'TriggerTemplate',
@@ -268,7 +268,7 @@ export const TriggerTemplateModel: K8sKind = {
 
 export const TriggerBindingModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   label: 'TriggerBinding',
   // t('TriggerBinding')
   labelKey: 'TriggerBinding',
@@ -286,7 +286,7 @@ export const TriggerBindingModel: K8sKind = {
 
 export const ClusterTriggerBindingModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   label: 'ClusterTriggerBinding',
   // t('ClusterTriggerBinding')
   labelKey: 'ClusterTriggerBinding',

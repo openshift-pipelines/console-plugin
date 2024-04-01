@@ -1,13 +1,9 @@
-import {
-  ListPageCreateLink,
-  ListPageHeader,
-  getGroupVersionKindForModel,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PipelineRunModel } from '../../models';
-import { getReferenceForModel } from '../pipelines-overview/utils';
 import PipelineRunsList from './PipelineRunsList';
+import ListPageCreateButton from '../list-pages/ListPageCreateButton';
 
 type PipelineRunsListPageProps = {
   namespace: string;
@@ -19,20 +15,27 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = (props) => {
   const { namespace, hideTextFilter } = props;
   return (
     <>
-      <ListPageHeader title={!hideTextFilter && t('PipelineRuns')}>
-        <ListPageCreateLink
-          createAccessReview={{
-            groupVersionKind: getGroupVersionKindForModel(PipelineRunModel),
-            namespace,
-          }}
-          to={`/k8s/ns/${namespace}/${getReferenceForModel(
-            PipelineRunModel,
-          )}/~new`}
-        >
-          {t('Create PipelineRun')}
-        </ListPageCreateLink>
-      </ListPageHeader>
-      <PipelineRunsList {...props} />
+      {hideTextFilter ? (
+        <>
+          <ListPageCreateButton
+            model={PipelineRunModel}
+            namespace={namespace}
+            hideTitle={hideTextFilter}
+          />
+          <PipelineRunsList {...props} />
+        </>
+      ) : (
+        <>
+          <ListPageHeader title={t('PipelineRuns')}>
+            <ListPageCreateButton
+              model={PipelineRunModel}
+              namespace={namespace}
+              hideTitle={hideTextFilter}
+            />
+            <PipelineRunsList {...props} />
+          </ListPageHeader>
+        </>
+      )}
     </>
   );
 };

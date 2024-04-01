@@ -1,13 +1,9 @@
-import {
-  ListPageCreateLink,
-  ListPageHeader,
-  getGroupVersionKindForModel,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RepositoryModel } from '../../models';
-import { getReferenceForModel } from '../pipelines-overview/utils';
 import RepositoriesList from './RepositoriesList';
+import ListPageCreateButton from '../list-pages/ListPageCreateButton';
 
 type RepositoriesListPageProps = {
   namespace?: string;
@@ -19,20 +15,25 @@ const RepositoriesListPage: React.FC<RepositoriesListPageProps> = (props) => {
   const { namespace, hideTextFilter } = props;
   return (
     <>
-      <ListPageHeader title={!hideTextFilter && t('Repositories')}>
-        <ListPageCreateLink
-          createAccessReview={{
-            groupVersionKind: getGroupVersionKindForModel(RepositoryModel),
-            namespace,
-          }}
-          to={`/k8s/ns/${namespace}/${getReferenceForModel(
-            RepositoryModel,
-          )}/~new`}
-        >
-          {t('Create Repository')}
-        </ListPageCreateLink>
-      </ListPageHeader>
-      <RepositoriesList {...props} />
+      {hideTextFilter ? (
+        <>
+          <ListPageCreateButton
+            model={RepositoryModel}
+            namespace={namespace}
+            hideTitle={hideTextFilter}
+          />
+          <RepositoriesList {...props} />
+        </>
+      ) : (
+        <ListPageHeader title={t('Repositories')}>
+          <ListPageCreateButton
+            model={RepositoryModel}
+            namespace={namespace}
+            hideTitle={hideTextFilter}
+          />
+          <RepositoriesList {...props} />
+        </ListPageHeader>
+      )}
     </>
   );
 };

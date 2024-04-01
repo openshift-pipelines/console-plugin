@@ -1,4 +1,3 @@
-import i18next from 'i18next';
 import {
   Condition,
   PipelineRunKind,
@@ -6,6 +5,7 @@ import {
   PLRTaskRunStep,
   TaskRunKind,
 } from '../../types';
+import { t } from '../utils/common-utils';
 import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
 import { CombinedErrorDetails } from './log-snippet-types';
 import { taskRunSnippetMessage } from './log-snippet-utils';
@@ -57,8 +57,8 @@ export const getPLRLogSnippet = (
     // No specific task run failure information, just print pipeline run status
     return {
       staticMessage:
-        succeededCondition.message || i18next.t('Unknown failure condition'),
-      title: i18next.t('Failure - check logs for details.'),
+        succeededCondition.message || t('Unknown failure condition'),
+      title: t('Failure - check logs for details.'),
     };
   }
 

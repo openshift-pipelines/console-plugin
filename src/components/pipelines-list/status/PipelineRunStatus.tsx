@@ -21,7 +21,7 @@ const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({
   title,
   taskRuns,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const logPath = `/k8s/ns/${
     pipelineRun.metadata.namespace
   }/${getReferenceForModel(PipelineRunModel)}/${

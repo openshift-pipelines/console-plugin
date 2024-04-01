@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import {
   CompressIcon,
@@ -7,40 +9,41 @@ import {
 } from '@patternfly/react-icons/dist/js/icons';
 import classNames from 'classnames';
 import { saveAs } from 'file-saver';
-import { useTranslation } from 'react-i18next';
-import { PodKind, TaskRunKind } from '../../types';
-import { MultiStreamLogs } from './MultiStreamLogs';
-import { TektonTaskRunLog } from './TektonTaskRunLog';
 import {
   WatchK8sResource,
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { PodKind, TaskRunKind } from '../../types';
+import { MultiStreamLogs } from './MultiStreamLogs';
+import { TektonTaskRunLog } from './TektonTaskRunLog';
 import { useFullscreen } from './fullscreen';
 import { LoadingInline } from '../Loading';
 
 type LogsWrapperComponentProps = {
-  taskName?: string;
+  taskRun: TaskRunKind;
   downloadAllLabel?: string;
   onDownloadAll?: () => Promise<Error>;
-  taskRun?: TaskRunKind;
-  resource?: WatchK8sResource;
+  resource: WatchK8sResource;
 };
 
-const LogsWrapperComponent: React.FC<LogsWrapperComponentProps> = ({
+const LogsWrapperComponent: React.FC<
+  React.PropsWithChildren<LogsWrapperComponentProps>
+> = ({
   resource,
   taskRun,
-  taskName,
   onDownloadAll,
   downloadAllLabel = 'Download all',
   ...props
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const resourceRef = React.useRef(null);
   const [obj, loaded, error] = useK8sWatchResource<PodKind>(resource);
   const [isFullscreen, fullscreenRef, fullscreenToggle] =
     useFullscreen<HTMLDivElement>();
   const [downloadAllStatus, setDownloadAllStatus] = React.useState(false);
   const currentLogGetterRef = React.useRef<() => string>();
+
+  const taskName = taskRun?.spec.taskRef?.name ?? taskRun?.metadata.name;
 
   if (loaded && !error && resource.name === obj.metadata.name) {
     resourceRef.current = obj;
@@ -57,7 +60,7 @@ const LogsWrapperComponent: React.FC<LogsWrapperComponentProps> = ({
     saveAs(blob, `${taskName}.log`);
   };
   const setLogGetter = React.useCallback(
-    (getter) => (currentLogGetterRef.current = getter),
+    (getter: any) => (currentLogGetterRef.current = getter),
     [],
   );
 
@@ -126,18 +129,29 @@ const LogsWrapperComponent: React.FC<LogsWrapperComponentProps> = ({
           </FlexItem>
         )}
       </Flex>
-      {!error ? (
-        <MultiStreamLogs
-          {...props}
-          taskName={taskName}
-          resource={resourceRef.current}
-          setCurrentLogsGetter={setLogGetter}
-        />
+      {loaded || error ? (
+        <>
+          {!error ? (
+            <MultiStreamLogs
+              {...props}
+              taskName={taskName}
+              resource={resourceRef.current}
+              setCurrentLogsGetter={setLogGetter}
+            />
+          ) : (
+            <TektonTaskRunLog
+              taskRun={taskRun}
+              setCurrentLogsGetter={setLogGetter}
+            />
+          )}
+        </>
       ) : (
-        <TektonTaskRunLog
-          taskRun={taskRun}
-          setCurrentLogsGetter={setLogGetter}
-        />
+        <span
+          className="odc-multi-stream-logs__taskName__loading-indicator"
+          data-testid="loading-indicator"
+        >
+          <LoadingInline />
+        </span>
       )}
     </div>
   );

@@ -12,7 +12,7 @@ const RunDetailsErrorLog: React.FC<RunDetailErrorLogProps> = ({
   logDetails,
   namespace,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   if (!logDetails) {
     return null;
   }

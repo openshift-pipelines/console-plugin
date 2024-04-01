@@ -514,5 +514,97 @@
     "flags": {
       "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TRIGGERS_NAV_OPTION"]
     }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "tasks-workspaces",
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Task"
+      },
+      "component": {
+        "$codeRef": "tasksComponent.WorkspaceDefinitionList"
+      },
+      "sortWeight": 1,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "tasks-workspaces",
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "Task"
+      },
+      "component": {
+        "$codeRef": "tasksComponent.WorkspaceDefinitionList"
+      },
+      "sortWeight": 1,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "clustertasks-workspaces",
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "ClusterTask"
+      },
+      "component": {
+        "$codeRef": "tasksComponent.WorkspaceDefinitionList"
+      },
+      "sortWeight": 1,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "clustertasks-workspaces",
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "ClusterTask"
+      },
+      "component": {
+        "$codeRef": "tasksComponent.WorkspaceDefinitionList"
+      },
+      "sortWeight": 1,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "TaskRun"
+      },
+      "component": { "$codeRef": "tasksComponent.TaskRunsDetailsPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKRUN_DETAILS"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "TaskRun"
+      },
+      "component": { "$codeRef": "tasksComponent.TaskRunsDetailsPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKRUN_DETAILS"]
+    }
   }
 ]

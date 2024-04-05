@@ -43,7 +43,7 @@ const RepositoriesList: React.FC<RepositoriesListProps> = ({
     namespace,
     optional: true,
   });
-  const [taskRuns] = useGetTaskRuns(namespace);
+  const [taskRuns, taskRunsLoaded] = useGetTaskRuns(namespace);
   const [staticData, filteredData, onFilterChange] =
     useListPageFilter(repositories);
 
@@ -72,6 +72,7 @@ const RepositoriesList: React.FC<RepositoriesListProps> = ({
         rowData={{
           taskRuns,
           pipelineRuns,
+          taskRunsLoaded,
         }}
         unfilteredData={staticData}
       />

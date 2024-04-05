@@ -52,7 +52,7 @@ const PipelinesList: React.FC<PipelineListProps> = ({
     pipelinesData,
     filters,
   );
-  const [taskRuns] = useGetTaskRuns(namespace);
+  const [taskRuns, taskRunsLoaded] = useGetTaskRuns(namespace);
   return (
     <ListPageBody>
       <ListPageFilter
@@ -85,6 +85,7 @@ const PipelinesList: React.FC<PipelineListProps> = ({
         Row={PipelineRow}
         rowData={{
           taskRuns,
+          taskRunsLoaded,
         }}
         unfilteredData={data}
       />

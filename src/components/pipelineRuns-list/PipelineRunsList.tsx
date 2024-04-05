@@ -2,16 +2,13 @@ import {
   ListPageBody,
   ListPageFilter,
   VirtualizedTable,
-  getGroupVersionKindForModel,
-  useK8sWatchResource,
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import usePipelineRunsColumns from './usePipelineRunsColumns';
 import { usePipelineRunsFilters } from './usePipelineRunsFilters';
 import { PipelineRunKind } from '../../types';
-import { PipelineRunModel } from '../../models';
-import { useGetTaskRuns } from '../hooks/useTektonResult';
+import { useGetPipelineRuns, useGetTaskRuns } from '../hooks/useTektonResult';
 import PipelineRunsRow from './PipelineRunsRow';
 import { useTranslation } from 'react-i18next';
 
@@ -32,18 +29,14 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
   namespace = namespace || ns;
   const columns = usePipelineRunsColumns(namespace);
   const filters = usePipelineRunsFilters();
+
   const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] =
-    useK8sWatchResource<PipelineRunKind[]>({
-      isList: true,
-      groupVersionKind: getGroupVersionKindForModel(PipelineRunModel),
-      namespace,
-      optional: true,
-    });
+    useGetPipelineRuns(namespace);
   const [data, filteredData, onFilterChange] = useListPageFilter(
     pipelineRuns,
     filters,
   );
-  const [taskRuns] = useGetTaskRuns(namespace);
+  const [taskRuns, taskRunsLoaded] = useGetTaskRuns(namespace);
   return (
     <ListPageBody>
       <ListPageFilter
@@ -76,6 +69,7 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
         Row={PipelineRunsRow}
         rowData={{
           taskRuns,
+          taskRunsLoaded,
         }}
         unfilteredData={data}
       />

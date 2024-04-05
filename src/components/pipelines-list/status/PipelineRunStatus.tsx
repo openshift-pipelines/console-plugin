@@ -14,12 +14,14 @@ type PipelineRunStatusProps = {
   pipelineRun: PipelineRunKind;
   title?: string;
   taskRuns: TaskRunKind[];
+  taskRunsLoaded: boolean;
 };
 const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({
   status,
   pipelineRun,
   title,
   taskRuns,
+  taskRunsLoaded,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const logPath = `/k8s/ns/${
@@ -27,6 +29,9 @@ const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({
   }/${getReferenceForModel(PipelineRunModel)}/${
     pipelineRun?.metadata.name
   }/logs`;
+  if (taskRunsLoaded && taskRuns.length === 0) {
+    return <>{'-'}</>;
+  }
   return pipelineRun ? (
     taskRuns.length > 0 ? (
       <PipelineResourceStatus status={status} title={title}>

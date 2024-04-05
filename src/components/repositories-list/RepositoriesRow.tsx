@@ -38,9 +38,17 @@ export const repositoriesTableColumnClasses = [
 const RepositoriesRow: React.FC<
   RowProps<
     RepositoryKind,
-    { taskRuns: TaskRunKind[]; pipelineRuns: PipelineRunKind[] }
+    {
+      taskRuns: TaskRunKind[];
+      pipelineRuns: PipelineRunKind[];
+      taskRunsLoaded: boolean;
+    }
   >
-> = ({ obj, activeColumnIDs, rowData: { taskRuns, pipelineRuns } }) => {
+> = ({
+  obj,
+  activeColumnIDs,
+  rowData: { taskRuns, pipelineRuns, taskRunsLoaded },
+}) => {
   const {
     metadata: { name, namespace },
   } = obj;
@@ -119,6 +127,7 @@ const RepositoriesRow: React.FC<
           <LinkedPipelineRunTaskStatus
             pipelineRun={latestRun}
             taskRuns={PLRTaskRuns}
+            taskRunsLoaded={taskRunsLoaded}
           />
         ) : (
           '-'
@@ -135,6 +144,7 @@ const RepositoriesRow: React.FC<
             title={pipelineRunTitleFilterReducer(latestRun)}
             pipelineRun={latestRun}
             taskRuns={PLRTaskRuns}
+            taskRunsLoaded={taskRunsLoaded}
           />
         }
       </TableData>

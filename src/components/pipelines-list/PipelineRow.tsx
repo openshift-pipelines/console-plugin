@@ -29,22 +29,31 @@ export const tableColumnClasses = [
 type PipelineStatusProps = {
   obj: PipelineWithLatest;
   taskRuns: TaskRunKind[];
+  taskRunsLoaded: boolean;
 };
 
-const PipelineStatus: React.FC<PipelineStatusProps> = ({ obj, taskRuns }) => {
+const PipelineStatus: React.FC<PipelineStatusProps> = ({
+  obj,
+  taskRuns,
+  taskRunsLoaded,
+}) => {
   return (
     <PipelineRunStatus
       status={pipelineFilterReducer(obj)}
       title={pipelineTitleFilterReducer(obj)}
       pipelineRun={obj.latestRun}
       taskRuns={taskRuns}
+      taskRunsLoaded={taskRunsLoaded}
     />
   );
 };
 
 const PipelineRow: React.FC<
-  RowProps<PipelineWithLatest, { taskRuns: TaskRunKind[] }>
-> = ({ obj, activeColumnIDs, rowData: { taskRuns } }) => {
+  RowProps<
+    PipelineWithLatest,
+    { taskRuns: TaskRunKind[]; taskRunsLoaded: boolean }
+  >
+> = ({ obj, activeColumnIDs, rowData: { taskRuns, taskRunsLoaded } }) => {
   const PLRTaskRuns = getTaskRunsOfPipelineRun(
     taskRuns,
     obj?.latestRun?.metadata?.name,
@@ -93,6 +102,7 @@ const PipelineRow: React.FC<
           <LinkedPipelineRunTaskStatus
             pipelineRun={obj.latestRun}
             taskRuns={PLRTaskRuns}
+            taskRunsLoaded={taskRunsLoaded}
           />
         ) : (
           '-'
@@ -103,7 +113,11 @@ const PipelineRow: React.FC<
         id="last-run-status"
         activeColumnIDs={activeColumnIDs}
       >
-        <PipelineStatus obj={obj} taskRuns={PLRTaskRuns} />
+        <PipelineStatus
+          obj={obj}
+          taskRuns={PLRTaskRuns}
+          taskRunsLoaded={taskRunsLoaded}
+        />
       </TableData>
       <TableData
         className={tableColumnClasses[5]}

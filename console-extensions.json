@@ -70,6 +70,34 @@
     }
   },
   {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "PipelineRun"
+      },
+      "color": "#38812f",
+      "label": "%PipelineRun%",
+      "labelPlural": "%PipelineRuns%",
+      "abbr": "PLR"
+    }
+  },
+  {
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "PipelineRun"
+      },
+      "color": "#38812f",
+      "label": "%PipelineRun%",
+      "labelPlural": "%PipelineRuns%",
+      "abbr": "PLR"
+    }
+  },
+  {
     "type": "console.page/route",
     "properties": {
       "exact": true,

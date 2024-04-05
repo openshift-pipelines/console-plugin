@@ -1,4 +1,5 @@
 import {
+  getGroupVersionKindForModel,
   K8sResourceCommon,
   Selector,
   useK8sWatchResource,
@@ -10,13 +11,14 @@ import {
   RepositoryLabels,
   TektonResourceLabel,
 } from '../../consts';
+import { PipelineRunModel } from '../../models';
 import { PipelineRunKind, TaskRunKind } from '../../types';
 import {
-  RecordsList,
-  TektonResultsOptions,
   getPipelineRuns,
   getTaskRunLog,
   getTaskRuns,
+  RecordsList,
+  TektonResultsOptions,
 } from '../utils/tekton-results';
 import { useTaskRuns } from './useTaskRuns';
 
@@ -126,7 +128,7 @@ export const useTRTaskRuns = (
 export const useGetPipelineRuns = (
   ns: string,
   options?: { name: string; kind: string },
-) => {
+): [PipelineRunKind[], boolean, unknown, GetNextPage] => {
   let selector: Selector;
 
   if (options?.kind === 'Pipeline') {
@@ -139,18 +141,17 @@ export const useGetPipelineRuns = (
       },
     };
   }
-  const [resultPlrs, resultPlrsLoaded, resultPlrsLoadError, getNextPage] =
-    useTRPipelineRuns(
-      ns,
-      options && {
-        selector,
-      },
-    );
+  const [resultPlrs, resultPlrsLoaded, , getNextPage] = useTRPipelineRuns(
+    ns,
+    options && {
+      selector,
+    },
+  );
   const [k8sPlrs, k8sPlrsLoaded, k8sPlrsLoadError] = useK8sWatchResource<
     PipelineRunKind[]
   >({
     isList: true,
-    kind: 'PipelineRun',
+    groupVersionKind: getGroupVersionKindForModel(PipelineRunModel),
     namespace: ns,
     ...(options ? { selector } : {}),
   });
@@ -158,12 +159,7 @@ export const useGetPipelineRuns = (
     (resultPlrsLoaded || k8sPlrsLoaded) && !k8sPlrsLoadError
       ? uniqBy([...k8sPlrs, ...resultPlrs], (r) => r.metadata.name)
       : [];
-  return [
-    mergedPlrs,
-    resultPlrsLoaded || k8sPlrsLoaded,
-    resultPlrsLoadError || k8sPlrsLoadError,
-    getNextPage,
-  ];
+  return [mergedPlrs, k8sPlrsLoaded, k8sPlrsLoadError, getNextPage];
 };
 
 export const useGetTaskRuns = (

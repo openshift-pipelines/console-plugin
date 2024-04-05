@@ -24,6 +24,10 @@ import {
   shouldHidePipelineRunCancel,
   shouldHidePipelineRunStop,
 } from '../utils/pipeline-augment';
+import {
+  isResourceLoadedFromTR,
+  tektonResultsFlag,
+} from '../utils/common-utils';
 
 type PipelineRunsKebabProps = {
   obj: PipelineRunKind;
@@ -35,7 +39,18 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
   taskRuns,
 }) => {
   const { t } = useTranslation();
-  const launchDeleteModal = useDeleteModal(obj);
+  const message = (
+    <p>
+      {t(
+        'This action will delete resource from k8s but still the resource can be fetched from Tekton Results',
+      )}
+    </p>
+  );
+
+  const launchDeleteModal =
+    !isResourceLoadedFromTR(obj) && tektonResultsFlag(obj)
+      ? useDeleteModal(obj, undefined, message)
+      : useDeleteModal(obj);
   const [isOpen, setIsOpen] = React.useState(false);
   const { name, namespace } = obj.metadata;
   const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, name);
@@ -174,7 +189,7 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
       key="delete"
       component="button"
       onClick={launchDeleteModal}
-      isDisabled={!canDeleteResource}
+      isDisabled={!canDeleteResource || isResourceLoadedFromTR(obj)}
       data-test-action="delete-pipelineRun"
     >
       {t('Delete PipelineRun')}

@@ -30,10 +30,10 @@ import { pipelineRunDuration } from '../utils/pipelines-utils';
 import PipelineRunsKebab from './PipelineRunsKebab';
 
 export const tableColumnClasses = {
-  name: '',
+  name: 'pf-m-width-20',
   namespace: '',
   vulnerabilities: 'pf-m-hidden pf-m-visible-on-md',
-  status: 'pf-m-hidden pf-m-visible-on-sm',
+  status: 'pf-m-hidden pf-m-visible-on-sm pf-m-width-10',
   taskStatus: 'pf-m-hidden pf-m-visible-on-lg',
   started: 'pf-m-hidden pf-m-visible-on-lg',
   duration: 'pf-m-hidden pf-m-visible-on-xl',
@@ -43,22 +43,31 @@ export const tableColumnClasses = {
 type PLRStatusProps = {
   obj: PipelineRunKind;
   taskRuns: TaskRunKind[];
+  taskRunsLoaded: boolean;
 };
 
-const PLRStatus: React.FC<PLRStatusProps> = ({ obj, taskRuns }) => {
+const PLRStatus: React.FC<PLRStatusProps> = ({
+  obj,
+  taskRuns,
+  taskRunsLoaded,
+}) => {
   return (
     <PipelineRunStatus
       status={pipelineRunFilterReducer(obj)}
       title={pipelineRunTitleFilterReducer(obj)}
       pipelineRun={obj}
       taskRuns={taskRuns}
+      taskRunsLoaded={taskRunsLoaded}
     />
   );
 };
 
 const PipelineRunsRow: React.FC<
-  RowProps<PipelineRunKind, { taskRuns: TaskRunKind[] }>
-> = ({ obj, activeColumnIDs, rowData: { taskRuns } }) => {
+  RowProps<
+    PipelineRunKind,
+    { taskRuns: TaskRunKind[]; taskRunsLoaded: boolean }
+  >
+> = ({ obj, activeColumnIDs, rowData: { taskRuns, taskRunsLoaded } }) => {
   const { t } = useTranslation();
   const PLRTaskRuns = getTaskRunsOfPipelineRun(taskRuns, obj?.metadata?.name);
   return (
@@ -119,14 +128,22 @@ const PipelineRunsRow: React.FC<
         id="status"
         activeColumnIDs={activeColumnIDs}
       >
-        <PLRStatus obj={obj} taskRuns={PLRTaskRuns} />
+        <PLRStatus
+          obj={obj}
+          taskRuns={PLRTaskRuns}
+          taskRunsLoaded={taskRunsLoaded}
+        />
       </TableData>
       <TableData
         className={tableColumnClasses.taskStatus}
         id="task-status"
         activeColumnIDs={activeColumnIDs}
       >
-        <LinkedPipelineRunTaskStatus pipelineRun={obj} taskRuns={PLRTaskRuns} />
+        <LinkedPipelineRunTaskStatus
+          pipelineRun={obj}
+          taskRuns={PLRTaskRuns}
+          taskRunsLoaded={taskRunsLoaded}
+        />
       </TableData>
       <TableData
         className={tableColumnClasses.started}

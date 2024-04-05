@@ -33,7 +33,6 @@ export const resourcePathFromModel = (
   if (namespaced) {
     url += namespace ? `ns/${namespace}/` : 'all-namespaces/';
   }
-
   if (crd) {
     url += getGroupVersionKindForModel(model);
   } else if (plural) {

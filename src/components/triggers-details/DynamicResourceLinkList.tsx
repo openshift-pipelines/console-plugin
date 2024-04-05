@@ -25,7 +25,7 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
   removeSpaceBelow,
 }) => {
   if (links.length === 0) {
-    return <>{'-'}</>;
+    return null;
   }
   return (
     <div

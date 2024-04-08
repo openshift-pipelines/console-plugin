@@ -767,5 +767,91 @@
     "flags": {
       "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAILS"]
     }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "repository-url",
+      "model": {
+        "group": "pipelinesascode.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "Repository"
+      },
+      "title": "%Repository%",
+      "path": "spec.url",
+      "component": {
+        "$codeRef": "repositoryDetails.RepositoryURL"
+      },
+      "sortWeight": 0,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "repository-username",
+      "model": {
+        "group": "pipelinesascode.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "Repository"
+      },
+      "title": "%Username%",
+      "path": "spec.git_provider.user",
+      "sortWeight": 1,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "repository-access-token",
+      "model": {
+        "group": "pipelinesascode.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "Repository"
+      },
+      "title": "%Git access token%",
+      "path": "spec.git_provider.secret.name",
+      "component": {
+        "$codeRef": "repositoryDetails.RepositoryGitAccessToken"
+      },
+      "sortWeight": 2,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "repository-webhook-url",
+      "model": {
+        "group": "pipelinesascode.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "Repository"
+      },
+      "title": "%Webhook URL%",
+      "component": {
+        "$codeRef": "repositoryDetails.RepositoryWebhookURL"
+      },
+      "sortWeight": 3,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "repository-webhook-secret",
+      "model": {
+        "group": "pipelinesascode.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "Repository"
+      },
+      "title": "%Webhook secret%",
+      "path": "spec.git_provider.webhook_secret.name",
+      "component": {
+        "$codeRef": "repositoryDetails.RepositoryWebhookSecret"
+      },
+      "sortWeight": 4,
+      "column": "right"
+    }
   }
 ]

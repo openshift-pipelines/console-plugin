@@ -120,3 +120,5 @@ export const DELETED_RESOURCE_IN_K8S_ANNOTATION = 'resource.deleted.in.k8s';
 export const chainsSignedAnnotation = 'chains.tekton.dev/signed';
 export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';
 export const FLAG_OPENSHIFT_PIPELINE_AS_CODE = 'OPENSHIFT_PIPELINE_AS_CODE';
+export const PAC_INFO = 'pipelines-as-code-info';
+export const PIPELINE_NAMESPACE = 'openshift-pipelines';

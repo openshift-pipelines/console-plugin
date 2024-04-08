@@ -113,7 +113,8 @@
       "tasksComponent": "./components/pipelines-tasks",
       "triggersDetails": "./components/triggers-details",
       "triggersList": "./components/triggers-list",
-      "pipelinesDetails": "./components/pipelines-details"
+      "pipelinesDetails": "./components/pipelines-details",
+      "repositoryDetails": "./components/repository-details"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

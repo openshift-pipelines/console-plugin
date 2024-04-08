@@ -72,7 +72,7 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
   resetText,
   reset,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const onCancelClick = (e) => {
     e.stopPropagation();
     cancel(e);
@@ -89,9 +89,9 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
       variant="secondary"
       data-test-id="modal-cancel-action"
       onClick={onCancelClick}
-      aria-label={t('public~Cancel')}
+      aria-label={t('Cancel')}
     >
-      {cancelText || t('public~Cancel')}
+      {cancelText || t('Cancel')}
     </Button>
   );
 
@@ -103,13 +103,13 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
       type="submit"
       variant={submitDanger ? 'danger' : 'primary'}
     >
-      {submitText || t('public~Submit')}
+      {submitText || t('Submit')}
     </Button>
   );
 
   const resetButton = (
     <Button variant="link" isInline onClick={onResetClick} id="reset-action">
-      {resetText || t('public~Reset')}
+      {resetText || t('Reset')}
     </Button>
   );
 

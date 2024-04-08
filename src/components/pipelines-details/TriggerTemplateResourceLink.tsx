@@ -15,7 +15,7 @@ type TriggerTemplateResourceLinkProps = {
 const TriggerTemplateResourceLink: React.FC<
   TriggerTemplateResourceLinkProps
 > = ({ links = [], namespace, model }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const title = t(model.labelPluralKey);
   const kind = getReferenceForModel(model);
 

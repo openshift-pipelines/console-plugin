@@ -7,11 +7,17 @@ export interface MultiColumnFieldHeaderProps {
   spans: gridItemSpanValueShape[];
 }
 
-const MultiColumnFieldHeader: React.FC<MultiColumnFieldHeaderProps> = ({ headers, spans }) => (
+const MultiColumnFieldHeader: React.FC<MultiColumnFieldHeaderProps> = ({
+  headers,
+  spans,
+}) => (
   <div className="odc-multi-column-field__header">
     <Grid>
       {headers.map((header, i) => (
-        <GridItem span={spans[i]} key={typeof header === 'string' ? header : header.name}>
+        <GridItem
+          span={spans[i]}
+          key={typeof header === 'string' ? header : header.name}
+        >
           <div className="odc-multi-column-field__col">
             {typeof header === 'string' ? (
               header

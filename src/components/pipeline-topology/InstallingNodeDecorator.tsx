@@ -10,7 +10,11 @@ type InstallingNodeDecoratorProps = {
   x: number;
   y: number;
 };
-const InstallingNodeDecorator: React.FC<InstallingNodeDecoratorProps> = ({ content, x, y }) => {
+const InstallingNodeDecorator: React.FC<InstallingNodeDecoratorProps> = ({
+  content,
+  x,
+  y,
+}) => {
   const iconRef = React.useRef();
   return (
     <Tooltip triggerRef={iconRef} content={content}>

@@ -14,7 +14,7 @@ import { MultiTabListPage } from '../multi-tab-list';
 import { NamespaceBar, NavPage } from '@openshift-console/dynamic-plugin-sdk';
 
 const TriggersTabbedPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const menuActions = {
     eventListener: { model: EventListenerModel },
     triggerTemplate: { model: TriggerTemplateModel },

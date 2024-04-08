@@ -74,8 +74,8 @@ const ApprovalTaskComponent: React.FC<ApprovalTaskComponentProps> = ({
   height,
   customTask,
 }) => {
-  const { t } = useTranslation();
-  const showStatusState: boolean = !!pipelineRunName;
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const showStatusState = !!pipelineRunName;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
   const nameRef = React.useRef();
   const pillRef = React.useRef();

@@ -6,7 +6,8 @@ type DoubleDraw = (p1: Point, p2: Point) => string;
 type TripleDraw = (p1: Point, p2: Point, p3: Point) => string;
 type DetermineDirection = (p1: Point, p2: Point) => boolean;
 
-const join = (...segments: string[]) => segments.filter((seg) => !!seg).join(' ');
+const join = (...segments: string[]) =>
+  segments.filter((seg) => !!seg).join(' ');
 
 const leftRight: DetermineDirection = (p1, p2) => p1.x < p2.x;
 const topDown: DetermineDirection = (p1, p2) => p1.y < p2.y;
@@ -23,8 +24,10 @@ const CURVE_SIZE = { x: 8, y: 10 };
 const curve: TripleDraw = (fromPoint, cornerPoint, toPoint) => {
   const topToBottom = topDown(fromPoint, toPoint);
   if (topToBottom) {
-    const rightAndDown = leftRight(fromPoint, cornerPoint) && topDown(cornerPoint, toPoint);
-    const downAndRight = topDown(fromPoint, cornerPoint) && leftRight(cornerPoint, toPoint);
+    const rightAndDown =
+      leftRight(fromPoint, cornerPoint) && topDown(cornerPoint, toPoint);
+    const downAndRight =
+      topDown(fromPoint, cornerPoint) && leftRight(cornerPoint, toPoint);
     if (rightAndDown) {
       return join(
         lineTo(cornerPoint.clone().translate(-CURVE_SIZE.x, 0)),
@@ -38,8 +41,10 @@ const curve: TripleDraw = (fromPoint, cornerPoint, toPoint) => {
       );
     }
   } else {
-    const rightAndUp = leftRight(fromPoint, cornerPoint) && bottomUp(cornerPoint, toPoint);
-    const upAndRight = bottomUp(fromPoint, cornerPoint) && leftRight(cornerPoint, toPoint);
+    const rightAndUp =
+      leftRight(fromPoint, cornerPoint) && bottomUp(cornerPoint, toPoint);
+    const upAndRight =
+      bottomUp(fromPoint, cornerPoint) && leftRight(cornerPoint, toPoint);
     if (rightAndUp) {
       return join(
         lineTo(cornerPoint.clone().translate(-CURVE_SIZE.x, 0)),
@@ -57,7 +62,8 @@ const curve: TripleDraw = (fromPoint, cornerPoint, toPoint) => {
   return '';
 };
 
-export const straightPath: DoubleDraw = (start, finish) => join(moveTo(start), lineTo(finish));
+export const straightPath: DoubleDraw = (start, finish) =>
+  join(moveTo(start), lineTo(finish));
 
 export const integralShapePath: DoubleDraw = (start, finish) => {
   // Integral shape: ∫

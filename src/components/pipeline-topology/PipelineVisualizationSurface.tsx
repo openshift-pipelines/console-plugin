@@ -34,7 +34,9 @@ type PipelineVisualizationSurfaceProps = {
   noScrollbar?: boolean;
 };
 
-const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> = ({
+const PipelineVisualizationSurface: React.FC<
+  PipelineVisualizationSurfaceProps
+> = ({
   model,
   componentFactory,
   showControlBar = false,
@@ -51,18 +53,26 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
     (nodes: Node[]) => {
       const nodeBounds = nodes.map((node) => node.getBounds());
       const maxWidth = Math.floor(
-        nodeBounds.map((bounds) => bounds.width).reduce((w1, w2) => Math.max(w1, w2), 0),
+        nodeBounds
+          .map((bounds) => bounds.width)
+          .reduce((w1, w2) => Math.max(w1, w2), 0),
       );
       const maxHeight = Math.floor(
-        nodeBounds.map((bounds) => bounds.height).reduce((h1, h2) => Math.max(h1, h2), 0),
+        nodeBounds
+          .map((bounds) => bounds.height)
+          .reduce((h1, h2) => Math.max(h1, h2), 0),
       );
       const maxObject = nodeBounds.find((nb) => nb.height === maxHeight);
 
       const maxX = Math.floor(
-        nodeBounds.map((bounds) => bounds.x).reduce((x1, x2) => Math.max(x1, x2), 0),
+        nodeBounds
+          .map((bounds) => bounds.x)
+          .reduce((x1, x2) => Math.max(x1, x2), 0),
       );
       const maxY = Math.floor(
-        nodeBounds.map((bounds) => bounds.y).reduce((y1, y2) => Math.max(y1, y2), 0),
+        nodeBounds
+          .map((bounds) => bounds.y)
+          .reduce((y1, y2) => Math.max(y1, y2), 0),
       );
 
       let horizontalMargin = 0;
@@ -71,8 +81,10 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
         horizontalMargin = getLayoutData(layout).marginx || 0;
         verticalMargin = getLayoutData(layout).marginy || 0;
       }
-      const finallyTaskHeight = maxObject.y + maxHeight + DROP_SHADOW_SPACING + verticalMargin * 2;
-      const regularTaskHeight = maxY + NODE_HEIGHT + DROP_SHADOW_SPACING + verticalMargin * 2;
+      const finallyTaskHeight =
+        maxObject.y + maxHeight + DROP_SHADOW_SPACING + verticalMargin * 2;
+      const regularTaskHeight =
+        maxY + NODE_HEIGHT + DROP_SHADOW_SPACING + verticalMargin * 2;
 
       setMaxSize({
         height: Math.max(finallyTaskHeight, regularTaskHeight) + TOOLBAR_HEIGHT,
@@ -116,7 +128,6 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
       }
       vis.fromModel(model);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model, vis]);
 
   if (!vis) return null;
@@ -156,8 +167,13 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
             style={{
               height: noScrollbar
                 ? maxSize?.height
-                : Math.min((GRAPH_MAX_HEIGHT_PERCENT / 100) * window.innerHeight, maxSize?.height),
-              width: noScrollbar ? maxSize?.width : Math.min(maxSize?.width, width),
+                : Math.min(
+                    (GRAPH_MAX_HEIGHT_PERCENT / 100) * window.innerHeight,
+                    maxSize?.height,
+                  ),
+              width: noScrollbar
+                ? maxSize?.width
+                : Math.min(maxSize?.width, width),
             }}
           >
             <VisualizationProvider controller={vis}>

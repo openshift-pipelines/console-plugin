@@ -6,7 +6,7 @@ import {
 import { ListFilterId, ListFilterLabels } from '../utils/pipeline-utils';
 
 export const usePipelineRunsFilters = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return [
     {
       filterGroupName: t('Status'),

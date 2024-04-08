@@ -16,8 +16,14 @@ const DEFAULT_OPTIONS: TruncateOptions = {
 // is greater than the `maxLength` + `minTruncateChars` values.
 // By default the middle is truncated, set the options.truncateEnd to true to truncate at the end.
 // Truncated text is replaced with the provided omission option (ellipsis character by default);
-export const truncateMiddle = (text: string, options: TruncateOptions = {}): string => {
-  const { length, truncateEnd, omission, minTruncateChars } = { ...DEFAULT_OPTIONS, ...options };
+export const truncateMiddle = (
+  text: string,
+  options: TruncateOptions = {},
+): string => {
+  const { length, truncateEnd, omission, minTruncateChars } = {
+    ...DEFAULT_OPTIONS,
+    ...options,
+  };
   if (!text) {
     return text;
   }
@@ -42,7 +48,10 @@ export const truncateMiddle = (text: string, options: TruncateOptions = {}): str
   return `${startFragment}${omission}${endFragment}`;
 };
 
-export const shouldTruncate = (text, options: TruncateOptions = {}): boolean => {
+export const shouldTruncate = (
+  text,
+  options: TruncateOptions = {},
+): boolean => {
   const { length, minTruncateChars } = { ...DEFAULT_OPTIONS, ...options };
 
   return text.length > length + minTruncateChars;

@@ -19,6 +19,11 @@ plugins:
 rules:
   prettier/prettier:
     - error
+  react/prop-types: off
+  '@typescript-eslint/no-empty-function': off
+  '@typescript-eslint/ban-types': off
+  '@typescript-eslint/no-explicit-any': off
+  'react/display-name': 0
 settings:
   react:
     version: detect

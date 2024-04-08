@@ -13,7 +13,7 @@ type InvalidTaskListNodeProps = {
 const InvalidTaskListNode: React.FC<InvalidTaskListNodeProps> = ({
   element,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
     task: { name },
   } = element.getData();

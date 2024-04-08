@@ -10,7 +10,10 @@ type TaskListNodeProps = {
   unselectedText?: string;
 };
 
-const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) => {
+const TaskListNode: React.FC<TaskListNodeProps> = ({
+  element,
+  unselectedText,
+}) => {
   const { height = 30, width = 120 } = {};
   const {
     clusterTaskList = [],

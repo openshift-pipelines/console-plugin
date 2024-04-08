@@ -138,6 +138,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
     />
   ) : null;
 
+  // eslint-disable-next-line no-unsafe-optional-chaining
   const { name: plrName, namespace } = pipelineRun?.metadata;
   const path = plrName
     ? `${resourcePathFromModel(

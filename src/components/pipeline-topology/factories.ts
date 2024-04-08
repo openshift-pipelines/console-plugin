@@ -25,7 +25,10 @@ import TaskListNode from './TaskListNode';
 import TaskNode from './TaskNode';
 import { getLayoutData } from './utils';
 
-export const builderComponentsFactory: ComponentFactory = (kind: ModelKind, type: string) => {
+export const builderComponentsFactory: ComponentFactory = (
+  kind: ModelKind,
+  type: string,
+) => {
   switch (kind) {
     case ModelKind.graph:
       return GraphComponent;
@@ -57,7 +60,10 @@ export const builderComponentsFactory: ComponentFactory = (kind: ModelKind, type
   }
 };
 
-export const dagreViewerComponentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
+export const dagreViewerComponentFactory: ComponentFactory = (
+  kind: ModelKind,
+  type: string,
+) => {
   switch (kind) {
     case ModelKind.graph:
       return withPanZoom()(GraphComponent);

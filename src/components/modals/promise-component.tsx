@@ -6,7 +6,7 @@ export const withHandlePromise: WithHandlePromise = (Component) => (props) => {
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   const handlePromise = (promise, onFulfill, onError) => {
     setInProgress(true);
@@ -18,7 +18,7 @@ export const withHandlePromise: WithHandlePromise = (Component) => (props) => {
       },
       (error) => {
         const errorMsg =
-          error.message || t('public~An error occurred. Please try again.');
+          error.message || t('An error occurred. Please try again.');
         setInProgress(false);
         setErrorMessage(errorMsg);
         onError
@@ -76,7 +76,7 @@ export class PromiseComponent<
 
   private catch(error) {
     const errorMessage =
-      error.message || t('public~An error occurred. Please try again.');
+      error.message || t('An error occurred. Please try again.');
     this.setState({
       inProgress: false,
       errorMessage,

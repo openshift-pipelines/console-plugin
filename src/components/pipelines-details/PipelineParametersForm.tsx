@@ -26,7 +26,7 @@ const PipelineParametersForm: React.FC<PipelineParametersFormProps> = ({
     namespace,
     verb: 'update',
   });
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const disableSubmit =
     !dirty || !_.isEmpty(_.compact(getIn(errors, 'parameters')));
   return (

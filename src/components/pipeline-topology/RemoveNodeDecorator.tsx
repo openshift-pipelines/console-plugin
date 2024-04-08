@@ -32,7 +32,12 @@ const RemoveNodeDecorator: React.FC<RemoveNodeDecoratorProps> = ({
         }}
         data-id="delete-task"
       >
-        <circle cx={0} cy={0} r={BUILDER_NODE_DECORATOR_RADIUS} fill={greyColor.value} />
+        <circle
+          cx={0}
+          cy={0}
+          r={BUILDER_NODE_DECORATOR_RADIUS}
+          fill={greyColor.value}
+        />
         <g transform="translate(-6, -6)">
           <TrashIcon color="white" />
         </g>

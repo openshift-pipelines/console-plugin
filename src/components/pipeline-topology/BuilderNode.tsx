@@ -23,7 +23,7 @@ type BuilderNodeProps = {
 };
 
 const BuilderNode: React.FC<BuilderNodeProps> = ({ element }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [showAdd, hoverRef] = useHover();
   const { width, height } = element.getBounds();
   const data = element.getData();

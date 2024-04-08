@@ -52,7 +52,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
   showAlert,
   sticky,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [scrollContainer, footerElementRef] = useScrollContainer();
   const shadowPosition = useScrollShadows(sticky ? scrollContainer : null);
   return (
@@ -77,13 +77,11 @@ const FormFooter: React.FC<FormFooterProps> = ({
             isInline
             className="co-alert"
             variant="info"
-            title={
-              infoTitle || t('console-shared~You made changes to this page.')
-            }
+            title={infoTitle || t('You made changes to this page.')}
           >
             {infoMessage ||
               t(
-                'console-shared~Click {{submit}} to save changes or {{reset}} to cancel changes.',
+                'Click {{submit}} to save changes or {{reset}} to cancel changes.',
                 {
                   submit: submitLabel,
                   reset: resetLabel,
@@ -101,7 +99,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
               data-test-id="submit-button"
               data-test="save-changes"
             >
-              {submitLabel || t('console-shared~Save')}
+              {submitLabel || t('Save')}
             </Button>
           )}
           {handleReset && (
@@ -111,7 +109,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
               variant={ButtonVariant.secondary}
               onClick={handleReset}
             >
-              {resetLabel || t('console-shared~Reload')}
+              {resetLabel || t('Reload')}
             </Button>
           )}
           {handleCancel && (
@@ -121,7 +119,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
               variant={ButtonVariant.secondary}
               onClick={handleCancel}
             >
-              {cancelLabel || t('console-shared~Cancel')}
+              {cancelLabel || t('Cancel')}
             </Button>
           )}
           {handleDownload && (
@@ -133,7 +131,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
               onClick={handleDownload}
               icon={<DownloadIcon />}
             >
-              {t('console-shared~Download')}
+              {t('Download')}
             </Button>
           )}
         </ActionGroup>

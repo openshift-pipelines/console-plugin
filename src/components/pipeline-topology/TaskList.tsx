@@ -48,7 +48,7 @@ const TaskList: React.FC<any> = ({
   onNewTask,
   onTaskSearch,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const triggerRef = React.useRef(null);
   const textRef = React.useRef();
   const [hover, hoverRef] = useHover();

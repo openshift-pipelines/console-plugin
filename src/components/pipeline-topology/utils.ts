@@ -409,7 +409,7 @@ export const getTopologyNodesEdges = (
 
 export const getTextWidth = (
   text: string,
-  font: string = '0.8rem RedHatText',
+  font = '0.8rem RedHatText',
 ): number => {
   if (!text || text.length === 0) {
     return 0;

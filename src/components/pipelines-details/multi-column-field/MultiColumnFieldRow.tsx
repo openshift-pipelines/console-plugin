@@ -21,7 +21,8 @@ export interface RowRendererProps {
   tooltipDeleteRow?: string;
   onDelete: () => void;
 }
-export interface MultiColumnFieldRowProps extends Omit<RowRendererProps, 'fieldName'> {
+export interface MultiColumnFieldRowProps
+  extends Omit<RowRendererProps, 'fieldName'> {
   name: string;
   rowIndex: number;
   children?: React.ReactNode;
@@ -38,7 +39,7 @@ const DEFAULT_ROW_RENDERER = ({
   tooltipDeleteRow,
   onDelete,
 }): React.ReactNode => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <div className="odc-multi-column-field__row" data-test={`row ${fieldName}`}>
       <Grid>
@@ -47,7 +48,10 @@ const DEFAULT_ROW_RENDERER = ({
           if (complexFields[i]) {
             newProps = { ...newProps, namePrefix: fieldName };
           } else {
-            newProps = { ...newProps, name: `${fieldName}.${child.props.name}` };
+            newProps = {
+              ...newProps,
+              name: `${fieldName}.${child.props.name}`,
+            };
           }
           return (
             <GridItem span={spans[i]} key={fieldName}>
@@ -60,10 +64,10 @@ const DEFAULT_ROW_RENDERER = ({
       </Grid>
       {!isReadOnly && (
         <div className={'odc-multi-column-field__col--button'}>
-          <Tooltip content={tooltipDeleteRow || t('console-shared~Remove')}>
+          <Tooltip content={tooltipDeleteRow || t('Remove')}>
             <Button
               data-test="delete-row"
-              aria-label={tooltipDeleteRow || t('console-shared~Remove')}
+              aria-label={tooltipDeleteRow || t('Remove')}
               variant={ButtonVariant.plain}
               type={ButtonType.button}
               isInline

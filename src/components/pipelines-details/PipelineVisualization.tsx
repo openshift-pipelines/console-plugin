@@ -19,7 +19,7 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
   pipelineRun,
   taskRuns,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   let content: React.ReactElement;
   const model = getGraphDataModel(pipeline, pipelineRun, taskRuns);
 

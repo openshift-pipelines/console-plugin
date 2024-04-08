@@ -18,13 +18,13 @@ const injectDisabled = (children, disabled) => {
 };
 
 const ErrorMessage = ({ message }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <Alert
       isInline
       className="co-alert co-alert--scrollable"
       variant="danger"
-      title={t('public~An error occurred')}
+      title={t('An error occurred')}
       data-test="alert-error"
     >
       <div className="co-pre-line">{message}</div>

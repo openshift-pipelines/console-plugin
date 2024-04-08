@@ -33,7 +33,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
   menuActions,
   telemetryPrefix,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { ns } = useParams();
   const history = useHistory();
 

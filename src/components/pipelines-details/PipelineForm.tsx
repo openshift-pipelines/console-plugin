@@ -22,7 +22,7 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
   validationSchema,
   obj,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const initialValues = {
     parameters: _.get(obj.spec, 'params', []),
     resources: _.get(obj.spec, 'resources', []),

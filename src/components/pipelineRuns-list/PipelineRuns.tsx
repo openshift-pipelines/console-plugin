@@ -7,37 +7,32 @@ import {
 import * as React from 'react';
 
 import { PipelineKind, PipelineRunKind } from '../../types';
-import { useGetTaskRuns } from '../hooks/useTektonResult';
+import { useGetPipelineRuns, useGetTaskRuns } from '../hooks/useTektonResult';
 import { useTranslation } from 'react-i18next';
 
 import './PipelineRunsList.scss';
 import PipelineRunsRow from './PipelineRunsRow';
 import usePipelineRunsColumns from './usePipelineRunsColumns';
 import { usePipelineRunsFilters } from './usePipelineRunsFilters';
-import { usePipelineRuns } from '../hooks/useTaskRuns';
 
 type PipelineRunsListProps = {
   obj: PipelineKind;
 };
 
 const PipelineRuns: React.FC<PipelineRunsListProps> = ({ obj }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const columns = usePipelineRunsColumns(obj.metadata.namespace);
   const filters = usePipelineRunsFilters();
-  const selector = React.useMemo(() => {
-    return {
-      matchLabels: { 'tekton.dev/pipeline': obj.metadata.name },
-    };
-  }, [obj.metadata.name]);
   const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] =
-    usePipelineRuns(obj.metadata.namespace, {
-      selector,
+    useGetPipelineRuns(obj.metadata.namespace, {
+      name: obj.metadata.name,
+      kind: 'Pipeline',
     });
   const [data, filteredData, onFilterChange] = useListPageFilter(
     pipelineRuns,
     filters,
   );
-  const [taskRuns] = useGetTaskRuns(obj.metadata.namespace);
+  const [taskRuns, taskRunsLoaded] = useGetTaskRuns(obj.metadata.namespace);
   return (
     <ListPageBody>
       <ListPageFilter
@@ -69,6 +64,7 @@ const PipelineRuns: React.FC<PipelineRunsListProps> = ({ obj }) => {
         Row={PipelineRunsRow}
         rowData={{
           taskRuns,
+          taskRunsLoaded,
         }}
         unfilteredData={data}
       />

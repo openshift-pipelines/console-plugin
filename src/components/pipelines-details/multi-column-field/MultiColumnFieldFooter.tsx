@@ -16,7 +16,7 @@ const MultiColumnFieldFooter: React.FC<MultiColumnFieldFooterProps> = ({
   tooltipAddRow,
   onAdd,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const button = (
     <Button
       data-test={'add-action'}
@@ -26,10 +26,14 @@ const MultiColumnFieldFooter: React.FC<MultiColumnFieldFooterProps> = ({
       icon={<PlusCircleIcon />}
       isInline
     >
-      {addLabel || t('console-shared~Add values')}
+      {addLabel || t('Add values')}
     </Button>
   );
-  return tooltipAddRow ? <Tooltip content={tooltipAddRow}>{button}</Tooltip> : button;
+  return tooltipAddRow ? (
+    <Tooltip content={tooltipAddRow}>{button}</Tooltip>
+  ) : (
+    button
+  );
 };
 
 export default MultiColumnFieldFooter;

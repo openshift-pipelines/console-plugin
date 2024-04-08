@@ -33,28 +33,30 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
         'odc-dynamic-resource-link-list--addSpaceBelow': !removeSpaceBelow,
       })}
     >
-      {title && <div>{title}</div>}
-      <div>
-        {links.map(
-          ({ name, resourceKind, qualifier = '', disableLink = false }) => {
-            let linkName = qualifier;
-            if (qualifier?.length > 0 && name !== qualifier) {
-              linkName += ` (${name})`;
-            }
-            return (
-              <div key={`${resourceKind}/${linkName}`}>
-                <PipelineResourceRef
-                  resourceKind={resourceKind}
-                  resourceName={name}
-                  displayName={linkName}
-                  namespace={namespace}
-                  disableLink={disableLink}
-                />
-              </div>
-            );
-          },
-        )}
-      </div>
+      <dl>
+        {title && <dt>{title}</dt>}
+        <dd>
+          {links.map(
+            ({ name, resourceKind, qualifier = '', disableLink = false }) => {
+              let linkName = qualifier;
+              if (qualifier?.length > 0 && name !== qualifier) {
+                linkName += ` (${name})`;
+              }
+              return (
+                <div key={`${resourceKind}/${linkName}`}>
+                  <PipelineResourceRef
+                    resourceKind={resourceKind}
+                    resourceName={name}
+                    displayName={linkName}
+                    namespace={namespace}
+                    disableLink={disableLink}
+                  />
+                </div>
+              );
+            },
+          )}
+        </dd>
+      </dl>
     </div>
   );
 };

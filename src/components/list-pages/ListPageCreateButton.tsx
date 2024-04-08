@@ -36,7 +36,7 @@ const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = ({
   namespace,
   hideTitle,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <div
       className={classNames({

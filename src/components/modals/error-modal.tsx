@@ -11,9 +11,9 @@ import {
 import { HandlePromiseProps, withHandlePromise } from './promise-component';
 
 export const ModalErrorContent = withHandlePromise<ErrorModalProps>((props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { error, title, cancel } = props;
-  const titleText = title || t('public~Error');
+  const titleText = title || t('Error');
   return (
     <div className="modal-content">
       <ModalTitle>
@@ -24,7 +24,7 @@ export const ModalErrorContent = withHandlePromise<ErrorModalProps>((props) => {
       <ModalFooter inProgress={false} errorMessage="">
         <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right pf-v5-c-form__group--no-top-margin">
           <Button type="button" variant="primary" onClick={cancel}>
-            {t('public~OK')}
+            {t('OK')}
           </Button>
         </ActionGroup>
       </ModalFooter>

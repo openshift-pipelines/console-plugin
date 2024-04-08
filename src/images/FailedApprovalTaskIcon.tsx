@@ -1,9 +1,17 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 
-const FailedApprovalTaskIcon: React.FC<SVGProps<SVGSVGElement>> = (props): React.ReactElement => {
+const FailedApprovalTaskIcon: React.FC<SVGProps<SVGSVGElement>> = (
+  props,
+): React.ReactElement => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="none" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="2em"
+      height="2em"
+      fill="none"
+      {...props}
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"

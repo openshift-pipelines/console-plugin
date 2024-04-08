@@ -13,7 +13,7 @@ type TriggerBindingsListPageProps = {
 const TriggerBindingsListPage: React.FC<TriggerBindingsListPageProps> = (
   props,
 ) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { namespace, hideNameLabelFilters } = props;
   return (
     <>

@@ -89,7 +89,9 @@ export class DAG {
 
     const checkCycle = (vertex: Vertex, path: string[]) => {
       if (vertex.name === target) {
-        throw new Error(`cycle detected: ${path.reverse().join(' --> ')} --> ${target}`);
+        throw new Error(
+          `cycle detected: ${path.reverse().join(' --> ')} --> ${target}`,
+        );
       } else {
         vertex.level = path.length;
       }
@@ -100,7 +102,12 @@ export class DAG {
     toNode.dependancyNames.push(source);
   }
 
-  addEdges(name: string, data: any, before: string | string[], after: string | string[]): void {
+  addEdges(
+    name: string,
+    data: any,
+    before: string | string[],
+    after: string | string[],
+  ): void {
     this.map(name, data);
 
     if (before) {

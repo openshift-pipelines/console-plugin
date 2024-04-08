@@ -15,7 +15,7 @@ import { usePipelineTriggerTemplateNames } from '../utils/triggers';
 const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({
   obj: pipeline,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const templateNames =
     usePipelineTriggerTemplateNames(
       pipeline?.metadata?.name,

@@ -27,7 +27,7 @@ type BuilderFinallyNodeProps = {
 };
 
 const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { width, height } = element.getBounds();
   const {
     clusterTaskList = [],

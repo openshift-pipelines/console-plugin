@@ -131,7 +131,6 @@ const useRuns = <Kind extends K8sResourceCommon>(
       name: optionsMemo?.name,
     };
   }, [groupVersionKind, namespace, optionsMemo, isList]);
-  console.log('1111----watchOptions----', watchOptions);
   const [resources, loaded, error] = useK8sWatchResource(watchOptions);
 
   // if a pipeline run was removed from etcd, we want to still include it in the return value without re-querying tekton-results

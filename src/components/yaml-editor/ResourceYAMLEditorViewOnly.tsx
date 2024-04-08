@@ -11,8 +11,7 @@ export interface ResourceYAMLEditorViewOnlyProps {
 const ResourceYAMLEditorViewOnly: React.FC<ResourceYAMLEditorViewOnlyProps> = ({
   obj,
 }) => {
-  /* eslint-disable-next-line @typescript-eslint/no-empty-function */
-  return <ResourceYAMLEditor initialResource={obj} onSave={() => {}} />;
+  return <ResourceYAMLEditor initialResource={obj} readOnly />;
 };
 
 export default ResourceYAMLEditorViewOnly;

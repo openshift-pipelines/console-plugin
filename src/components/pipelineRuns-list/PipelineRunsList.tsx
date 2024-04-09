@@ -8,7 +8,7 @@ import * as React from 'react';
 import usePipelineRunsColumns from './usePipelineRunsColumns';
 import { usePipelineRunsFilters } from './usePipelineRunsFilters';
 import { PipelineRunKind } from '../../types';
-import { useGetPipelineRuns, useGetTaskRuns } from '../hooks/useTektonResult';
+import { useGetPipelineRuns } from '../hooks/useTektonResult';
 import PipelineRunsRow from './PipelineRunsRow';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
@@ -42,7 +42,6 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
     pipelineRuns,
     filters,
   );
-  const [taskRuns, taskRunsLoaded] = useGetTaskRuns(namespace);
   return (
     <ListPageBody>
       <ListPageFilter
@@ -73,11 +72,6 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
         loaded={pipelineRunsLoaded}
         loadError={pipelineRunsLoadError}
         Row={PipelineRunsRow}
-        rowData={{
-          taskRuns,
-          taskRunsLoaded,
-          repositoryPLRs,
-        }}
         unfilteredData={data}
       />
     </ListPageBody>

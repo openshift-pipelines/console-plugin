@@ -59,3 +59,22 @@ export const getGitProviderIcon = (url: string) => {
     }
   }
 };
+
+export const sanitizeBranchName = (branchName: string): string => {
+  if (branchName.startsWith('refs/heads/')) {
+    return branchName.replace('refs/heads/', '');
+  }
+
+  if (branchName.startsWith('refs-heads-')) {
+    return branchName.replace('refs-heads-', '');
+  }
+
+  if (branchName.startsWith('refs/tags/')) {
+    return branchName.replace('refs/tags/', '');
+  }
+
+  if (branchName.startsWith('refs-tags-')) {
+    return branchName.replace('refs-tags-', '');
+  }
+  return branchName;
+};

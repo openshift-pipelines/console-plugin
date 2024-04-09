@@ -11,27 +11,33 @@ import { PipelineRunKind } from '../../types';
 import { useGetPipelineRuns, useGetTaskRuns } from '../hooks/useTektonResult';
 import PipelineRunsRow from './PipelineRunsRow';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 
 import './PipelineRunsList.scss';
-import { useParams } from 'react-router-dom-v5-compat';
 
 type PipelineRunsListProps = {
   namespace?: string;
   hideTextFilter?: boolean;
+  repositoryPLRs?: boolean;
+  PLRsForName?: string;
+  PLRsForKind?: string;
 };
 
 const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
   namespace,
   hideTextFilter,
+  repositoryPLRs,
+  PLRsForName,
+  PLRsForKind,
 }) => {
   const { t } = useTranslation();
   const { ns } = useParams();
   namespace = namespace || ns;
-  const columns = usePipelineRunsColumns(namespace);
+  const columns = usePipelineRunsColumns(namespace, repositoryPLRs);
   const filters = usePipelineRunsFilters();
 
   const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] =
-    useGetPipelineRuns(namespace);
+    useGetPipelineRuns(namespace, { name: PLRsForName, kind: PLRsForKind });
   const [data, filteredData, onFilterChange] = useListPageFilter(
     pipelineRuns,
     filters,
@@ -70,6 +76,7 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
         rowData={{
           taskRuns,
           taskRunsLoaded,
+          repositoryPLRs,
         }}
         unfilteredData={data}
       />

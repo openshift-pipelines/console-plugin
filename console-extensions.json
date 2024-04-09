@@ -853,5 +853,22 @@
       "sortWeight": 4,
       "column": "right"
     }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "pipelinesascode.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "Repository"
+      },
+      "page": {
+        "name": "%PipelineRuns%",
+        "href": "Runs"
+      },
+      "component": {
+        "$codeRef": "repositoryDetails.RepositoryPipelineRunsList"
+      }
+    }
   }
 ]

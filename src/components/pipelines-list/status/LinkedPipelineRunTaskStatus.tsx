@@ -10,6 +10,7 @@ import { getReferenceForModel } from '../../pipelines-overview/utils';
 export interface LinkedPipelineRunTaskStatusProps {
   pipelineRun: PipelineRunKind;
   taskRuns: TaskRunKind[];
+  taskRunsLoaded: boolean;
 }
 
 /**
@@ -18,8 +19,11 @@ export interface LinkedPipelineRunTaskStatusProps {
  */
 const LinkedPipelineRunTaskStatus: React.FC<
   LinkedPipelineRunTaskStatusProps
-> = ({ pipelineRun, taskRuns }) => {
+> = ({ pipelineRun, taskRuns, taskRunsLoaded }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  if (taskRunsLoaded && taskRuns.length === 0) {
+    return <>{'-'}</>;
+  }
   const pipelineStatus =
     taskRuns.length > 0 ? (
       <PipelineBars

@@ -1,0 +1,17 @@
+.opp-pipeline-run-list {
+  &__signed-indicator {
+    display: inline-block;
+    --pf-c-table--cell--Color: var(
+      --pf-global--BackgroundColor--dark-transparent-100
+    );
+    margin-left: var(--pf-global--spacer--xs);
+    vertical-align: middle;
+  }
+  &__results-indicator {
+    display: inline-block;
+    margin-left: var(--pf-global--spacer--xs);
+    > svg {
+      color: var(--pf-global--Color--400);
+    }
+  }
+}

@@ -4,6 +4,7 @@ import { TOptions } from 'i18next';
 import _ from 'lodash';
 import React from 'react';
 import { getI18n } from 'react-i18next';
+import { RESOURCE_LOADED_FROM_RESULTS_ANNOTATION } from '../../consts';
 import { Options, resourceURL } from './k8s-utils';
 
 export const t = (value: string, options?: TOptions) =>
@@ -33,3 +34,11 @@ export const watchURL = (kind: K8sKind, options: Options): string => {
   opts.queryParams.watch = 'true';
   return resourceURL(kind, opts);
 };
+
+export const tektonResultsFlag = (obj) =>
+  obj?.metadata?.annotations?.['results.tekton.dev/log'] ||
+  obj?.metadata?.annotations?.['results.tekton.dev/record'] ||
+  obj?.metadata?.annotations?.['results.tekton.dev/result'];
+
+export const isResourceLoadedFromTR = (obj) =>
+  obj?.metadata?.annotations?.[RESOURCE_LOADED_FROM_RESULTS_ANNOTATION];

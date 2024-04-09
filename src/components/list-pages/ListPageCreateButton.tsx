@@ -15,6 +15,22 @@ type ListPageCreateButtonProps = {
   hideTitle: boolean;
 };
 
+const getCreateLink = (model: K8sKind, namespace: string) => {
+  if (model.kind === 'Pipeline') {
+    return `/k8s/ns/${namespace || 'default'}/${getReferenceForModel(
+      model,
+    )}/~new/builder`;
+  }
+  if (model.kind === 'Repository') {
+    return `/k8s/ns/${namespace || 'default'}/${getReferenceForModel(
+      model,
+    )}/~new/form`;
+  }
+  return `/k8s${
+    namespace ? `/ns/${namespace}` : `/cluster`
+  }/${getReferenceForModel(model)}/~new`;
+};
+
 const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = ({
   model,
   namespace,
@@ -32,9 +48,7 @@ const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = ({
           groupVersionKind: getGroupVersionKindForModel(model),
           namespace,
         }}
-        to={`/k8s${
-          namespace ? `/ns/${namespace}` : `/cluster`
-        }/${getReferenceForModel(model)}/~new`}
+        to={getCreateLink(model, namespace)}
       >
         {t('Create {{name}}', { name: model.label })}
       </ListPageCreateLink>

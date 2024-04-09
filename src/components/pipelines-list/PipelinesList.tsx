@@ -15,12 +15,21 @@ import { useGetTaskRuns } from '../hooks/useTektonResult';
 import { PipelineModel, PipelineRunModel } from '../../models';
 import { PropPipelineData, augmentRunsToData } from '../utils/pipeline-augment';
 import { PipelineRunKind } from '../../types';
+import { useParams } from 'react-router-dom-v5-compat';
+import { useTranslation } from 'react-i18next';
 
 type PipelineListProps = {
-  namespace: string;
+  namespace?: string;
+  hideTextFilter?: boolean;
 };
 
-const PipelinesList: React.FC<PipelineListProps> = ({ namespace }) => {
+const PipelinesList: React.FC<PipelineListProps> = ({
+  namespace,
+  hideTextFilter,
+}) => {
+  const { t } = useTranslation();
+  const { ns } = useParams();
+  namespace = namespace || ns;
   const columns = usePipelinesColumns(namespace);
   const filters = usePipelinesFilters();
   const [pipelines, pipelinesLoaded, pipelinesLoadError] = useK8sWatchResource<
@@ -43,7 +52,7 @@ const PipelinesList: React.FC<PipelineListProps> = ({ namespace }) => {
     pipelinesData,
     filters,
   );
-  const [taskRuns] = useGetTaskRuns(namespace);
+  const [taskRuns, taskRunsLoaded] = useGetTaskRuns(namespace);
   return (
     <ListPageBody>
       <ListPageFilter
@@ -58,11 +67,15 @@ const PipelinesList: React.FC<PipelineListProps> = ({ namespace }) => {
         data={data}
         loaded={pipelinesLoaded && pipelineRunsLoaded}
         hideColumnManagement
+        hideNameLabelFilters={hideTextFilter}
       />
       <VirtualizedTable<K8sResourceCommon>
         EmptyMsg={() => (
-          <div className="pf-u-text-align-center" id="no-templates-msg">
-            No Pipelines found
+          <div
+            className="pf-u-text-align-center virtualized-table-empty-msg"
+            id="no-templates-msg"
+          >
+            {t('No Pipelines found')}
           </div>
         )}
         columns={columns}
@@ -72,6 +85,7 @@ const PipelinesList: React.FC<PipelineListProps> = ({ namespace }) => {
         Row={PipelineRow}
         rowData={{
           taskRuns,
+          taskRunsLoaded,
         }}
         unfilteredData={data}
       />

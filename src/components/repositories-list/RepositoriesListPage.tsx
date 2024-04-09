@@ -1,41 +1,41 @@
 import { ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PipelineModel } from '../../models';
-import PipelinesList from './PipelinesList';
+import { RepositoryModel } from '../../models';
+import RepositoriesList from './RepositoriesList';
 import ListPageCreateButton from '../list-pages/ListPageCreateButton';
 
-type PipelineListPageProps = {
+type RepositoriesListPageProps = {
   namespace?: string;
   hideTextFilter?: boolean;
 };
 
-const PipelineListPage: React.FC<PipelineListPageProps> = (props) => {
-  const { t } = useTranslation('plugin__pipelines-console-plugin');
+const RepositoriesListPage: React.FC<RepositoriesListPageProps> = (props) => {
+  const { t } = useTranslation();
   const { namespace, hideTextFilter } = props;
   return (
     <>
       {hideTextFilter ? (
         <>
           <ListPageCreateButton
-            model={PipelineModel}
+            model={RepositoryModel}
             namespace={namespace}
             hideTitle={hideTextFilter}
           />
-          <PipelinesList {...props} />
+          <RepositoriesList {...props} />
         </>
       ) : (
-        <ListPageHeader title={t('Pipeline')}>
+        <ListPageHeader title={t('Repositories')}>
           <ListPageCreateButton
-            model={PipelineModel}
+            model={RepositoryModel}
             namespace={namespace}
             hideTitle={hideTextFilter}
           />
-          <PipelinesList {...props} />
+          <RepositoriesList {...props} />
         </ListPageHeader>
       )}
     </>
   );
 };
 
-export default PipelineListPage;
+export default RepositoriesListPage;

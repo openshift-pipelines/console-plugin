@@ -38,6 +38,10 @@ import TaskRunStatus from './TaskRunStatus';
 import { ResourceLinkWithIcon } from '../utils/resource-link';
 
 import './TasksNavigationPage.scss';
+import {
+  isResourceLoadedFromTR,
+  tektonResultsFlag,
+} from '../utils/common-utils';
 
 const taskRunsReference = getReferenceForModel(TaskRunModel);
 const pipelineReference = getReferenceForModel(PipelineModel);
@@ -58,15 +62,8 @@ const TaskRunKebab: React.FC<TaskRunKebabProps> = ({ obj }) => {
     </p>
   );
 
-  const tektonResultsFlag =
-    obj?.metadata?.annotations?.['results.tekton.dev/log'] ||
-    obj?.metadata?.annotations?.['results.tekton.dev/record'] ||
-    obj?.metadata?.annotations?.['results.tekton.dev/result'];
-  const isResourceLoadedFromTR =
-    obj?.metadata?.annotations?.[RESOURCE_LOADED_FROM_RESULTS_ANNOTATION];
-
   const launchDeleteModal =
-    !isResourceLoadedFromTR && tektonResultsFlag
+    !isResourceLoadedFromTR(obj) && tektonResultsFlag(obj)
       ? useDeleteModal(obj, undefined, message)
       : useDeleteModal(obj);
   const { name, namespace } = obj.metadata;

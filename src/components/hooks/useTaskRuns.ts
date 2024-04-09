@@ -9,7 +9,7 @@ import { differenceBy, uniqBy } from 'lodash-es';
 import * as React from 'react';
 import { TektonResourceLabel } from '../../consts';
 import { PipelineRunModel, TaskRunModel } from '../../models';
-import { TaskRunKind } from '../../types';
+import { PipelineRunKind, TaskRunKind } from '../../types';
 import { useDeepCompareMemoize } from '../utils/common-utils';
 import { EQ } from '../utils/tekton-results';
 import {
@@ -33,6 +33,7 @@ export const useTaskRuns = (
   namespace: string,
   pipelineRunName?: string,
   taskName?: string,
+  cacheKey?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] => {
   const selector: Selector = React.useMemo(() => {
     if (pipelineRunName) {
@@ -50,6 +51,7 @@ export const useTaskRuns = (
     selector && {
       selector,
     },
+    cacheKey,
   );
 
   const sortedTaskRuns = React.useMemo(
@@ -81,9 +83,24 @@ export const useTaskRuns2 = (
     selector?: Selector;
     limit?: number;
   },
+  cacheKey?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] =>
   useRuns<TaskRunKind>(
     getGroupVersionKindForModel(TaskRunModel),
+    namespace,
+    options,
+    cacheKey,
+  );
+
+export const usePipelineRuns = (
+  namespace: string,
+  options?: {
+    selector?: Selector;
+    limit?: number;
+  },
+): [PipelineRunKind[], boolean, unknown, GetNextPage] =>
+  useRuns<PipelineRunKind>(
+    getGroupVersionKindForModel(PipelineRunModel),
     namespace,
     options,
   );
@@ -96,6 +113,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
     limit?: number;
     name?: string;
   },
+  cacheKey?: string,
 ): [Kind[], boolean, unknown, GetNextPage] => {
   const etcdRunsRef = React.useRef<Kind[]>([]);
   const optionsMemo = useDeepCompareMemoize(options);
@@ -113,7 +131,6 @@ const useRuns = <Kind extends K8sResourceCommon>(
       name: optionsMemo?.name,
     };
   }, [groupVersionKind, namespace, optionsMemo, isList]);
-
   const [resources, loaded, error] = useK8sWatchResource(watchOptions);
 
   // if a pipeline run was removed from etcd, we want to still include it in the return value without re-querying tekton-results
@@ -176,7 +193,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
     groupVersionKind === getGroupVersionKindForModel(PipelineRunModel)
       ? useTRPipelineRuns
       : useTRTaskRuns
-  )(queryTr ? namespace : null, trOptions) as [
+  )(queryTr ? namespace : null, trOptions, cacheKey) as [
     [],
     boolean,
     unknown,

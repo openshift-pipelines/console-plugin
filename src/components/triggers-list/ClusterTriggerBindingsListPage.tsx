@@ -13,7 +13,7 @@ type ClusterTriggerBindingsListPageProps = {
 const ClusterTriggerBindingsListPage: React.FC<
   ClusterTriggerBindingsListPageProps
 > = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { namespace, hideNameLabelFilters } = props;
   return (
     <>

@@ -13,7 +13,7 @@ type TriggerTemplatesListPageProps = {
 const TriggerTemplatesListPage: React.FC<TriggerTemplatesListPageProps> = (
   props,
 ) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { hideNameLabelFilters, namespace } = props;
   return (
     <>

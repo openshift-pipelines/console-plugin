@@ -68,7 +68,7 @@ const PipelineRunsRow: React.FC<
     { taskRuns: TaskRunKind[]; taskRunsLoaded: boolean }
   >
 > = ({ obj, activeColumnIDs, rowData: { taskRuns, taskRunsLoaded } }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const PLRTaskRuns = getTaskRunsOfPipelineRun(taskRuns, obj?.metadata?.name);
   return (
     <>

@@ -37,7 +37,7 @@ export interface PropPipelineData {
   latestRun?: PipelineRunKind;
 }
 
-interface StatusMessage {
+export interface StatusMessage {
   message: string;
   pftoken: { name: string; value: string; var: string };
 }

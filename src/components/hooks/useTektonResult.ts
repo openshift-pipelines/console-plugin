@@ -157,7 +157,7 @@ export const useGetPipelineRuns = (
   });
   const mergedPlrs =
     (resultPlrsLoaded || k8sPlrsLoaded) && !k8sPlrsLoadError
-      ? uniqBy([...k8sPlrs, ...resultPlrs], (r) => r.metadata.name)
+      ? uniqBy([...k8sPlrs, ...resultPlrs], (r) => r.metadata.uid)
       : [];
   return [mergedPlrs, k8sPlrsLoaded, k8sPlrsLoadError, getNextPage];
 };
@@ -191,7 +191,7 @@ export const useGetTaskRuns = (
   );
   const mergedTaskRuns =
     resultTaskRunsLoaded || k8sTaskRunsLoaded
-      ? uniqBy([...k8sTaskRuns, ...resultTaskRuns], (r) => r.metadata.name)
+      ? uniqBy([...k8sTaskRuns, ...resultTaskRuns], (r) => r.metadata.uid)
       : [];
   return [
     mergedTaskRuns,

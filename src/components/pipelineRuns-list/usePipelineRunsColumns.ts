@@ -5,7 +5,7 @@ import { PipelineRunKind } from '../../types';
 import { tableColumnClasses } from './PipelineRunsRow';
 
 const usePipelineRunsColumns = (namespace): TableColumn<PipelineRunKind>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const columns = [
     {
       id: 'name',

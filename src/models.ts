@@ -390,3 +390,39 @@ export const SecretModel: K8sKind = {
   // t('Secrets')
   labelPluralKey: 'Secrets',
 };
+
+export const ApprovalTaskModel: K8sKind = {
+  apiGroup: 'openshift-pipelines.org',
+  apiVersion: 'v1alpha1',
+  label: 'ApprovalTask',
+  // t('ApprovalTask')
+  labelKey: 'ApprovalTask',
+  // t('ApprovalTasks')
+  labelPluralKey: 'ApprovalTasks',
+  plural: 'approvaltasks',
+  abbr: 'AT',
+  namespaced: true,
+  kind: 'ApprovalTask',
+  id: 'approvaltask',
+  labelPlural: 'ApprovalTasks',
+  crd: true,
+  color,
+};
+
+export const CustomRunModelV1Beta1: K8sKind = {
+  apiGroup: 'tekton.dev',
+  apiVersion: 'v1beta1',
+  label: 'CustomRun',
+  // t('CustomRun')
+  labelKey: 'CustomRun',
+  // t('CustomRuns')
+  labelPluralKey: 'CustomRuns',
+  plural: 'customruns',
+  abbr: 'CR',
+  namespaced: true,
+  kind: 'CustomRun',
+  id: 'customrun',
+  labelPlural: 'CustomRuns',
+  crd: true,
+  color,
+};

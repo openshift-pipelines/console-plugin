@@ -28,6 +28,7 @@ import {
   isResourceLoadedFromTR,
   tektonResultsFlag,
 } from '../utils/common-utils';
+import { errorModal } from '../modals/error-modal';
 
 type PipelineRunsKebabProps = {
   obj: PipelineRunKind;
@@ -38,7 +39,7 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
   obj,
   taskRuns,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const message = (
     <p>
       {t(
@@ -93,14 +94,11 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
         data: getPipelineRunData(null, obj),
       });
     } else {
-      // errorModal({
-      //   error: i18n.t(
-      //     'pipelines-plugin~Invalid PipelineRun configuration, unable to start Pipeline.',
-      //   ),
-      // });
-      console.log(
-        'Invalid PipelineRun configuration, unable to start Pipeline.',
-      );
+      errorModal({
+        error: t(
+          'Invalid PipelineRun configuration, unable to start Pipeline.',
+        ),
+      });
     }
   };
 

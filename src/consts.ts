@@ -92,6 +92,12 @@ export enum RepositoryFields {
   EVENT_TYPE = 'EventType',
 }
 
+export enum RepoAnnotationFields {
+  SHA_MESSAGE = 'sha_message',
+  SHA_URL = 'sha_url',
+  REPO_URL = 'repo_url',
+}
+
 export const RepositoryLabels: Record<RepositoryFields, string> = {
   [RepositoryFields.REPOSITORY]: 'pipelinesascode.tekton.dev/repository',
   [RepositoryFields.BRANCH]: 'pipelinesascode.tekton.dev/branch',
@@ -99,6 +105,12 @@ export const RepositoryLabels: Record<RepositoryFields, string> = {
   [RepositoryFields.URL_ORG]: 'pipelinesascode.tekton.dev/url-org',
   [RepositoryFields.SHA]: 'pipelinesascode.tekton.dev/sha',
   [RepositoryFields.EVENT_TYPE]: 'pipelinesascode.tekton.dev/event-type',
+};
+
+export const RepositoryAnnotations: Record<RepoAnnotationFields, string> = {
+  [RepoAnnotationFields.SHA_MESSAGE]: 'pipelinesascode.tekton.dev/sha-title',
+  [RepoAnnotationFields.SHA_URL]: 'pipelinesascode.tekton.dev/sha-url',
+  [RepoAnnotationFields.REPO_URL]: 'pipelinesascode.tekton.dev/repo-url',
 };
 
 export enum VolumeTypes {
@@ -120,3 +132,5 @@ export const DELETED_RESOURCE_IN_K8S_ANNOTATION = 'resource.deleted.in.k8s';
 export const chainsSignedAnnotation = 'chains.tekton.dev/signed';
 export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';
 export const FLAG_OPENSHIFT_PIPELINE_AS_CODE = 'OPENSHIFT_PIPELINE_AS_CODE';
+export const PAC_INFO = 'pipelines-as-code-info';
+export const PIPELINE_NAMESPACE = 'openshift-pipelines';

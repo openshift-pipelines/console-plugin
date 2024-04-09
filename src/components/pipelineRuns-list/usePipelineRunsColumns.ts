@@ -1,10 +1,14 @@
 import { TableColumn } from '@openshift-console/dynamic-plugin-sdk';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import { RepositoryFields, RepositoryLabels } from '../../consts';
 import { PipelineRunKind } from '../../types';
 import { tableColumnClasses } from './PipelineRunsRow';
 
-const usePipelineRunsColumns = (namespace): TableColumn<PipelineRunKind>[] => {
+const usePipelineRunsColumns = (
+  namespace: string,
+  repositoryPLRs?: boolean,
+): TableColumn<PipelineRunKind>[] => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const columns = [
     {
@@ -14,6 +18,17 @@ const usePipelineRunsColumns = (namespace): TableColumn<PipelineRunKind>[] => {
       transforms: [sortable],
       props: { className: tableColumnClasses.name },
     },
+    ...(repositoryPLRs
+      ? [
+          {
+            id: 'commit-id',
+            title: t('Commit id'),
+            sort: `metadata.labels.${RepositoryLabels[RepositoryFields.SHA]}`,
+            transforms: [sortable],
+            props: { className: tableColumnClasses.commit },
+          },
+        ]
+      : []),
     ...(!namespace
       ? [
           {
@@ -60,6 +75,19 @@ const usePipelineRunsColumns = (namespace): TableColumn<PipelineRunKind>[] => {
       transforms: [sortable],
       props: { className: tableColumnClasses.duration },
     },
+    ...(repositoryPLRs
+      ? [
+          {
+            id: 'branch-tag',
+            title: t('Branch/Tag'),
+            sort: `metadata.labels.${
+              RepositoryLabels[RepositoryFields.BRANCH]
+            }`,
+            transforms: [sortable],
+            props: { className: tableColumnClasses.branch },
+          },
+        ]
+      : []),
     {
       id: 'kebab-menu',
       title: '',

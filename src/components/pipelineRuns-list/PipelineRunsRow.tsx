@@ -14,6 +14,10 @@ import { Tooltip } from '@patternfly/react-core';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
+  RepoAnnotationFields,
+  RepositoryAnnotations,
+  RepositoryFields,
+  RepositoryLabels,
   chainsSignedAnnotation,
 } from '../../consts';
 import { useTranslation } from 'react-i18next';
@@ -28,15 +32,20 @@ import {
 import LinkedPipelineRunTaskStatus from '../pipelines-list/status/LinkedPipelineRunTaskStatus';
 import { pipelineRunDuration } from '../utils/pipelines-utils';
 import PipelineRunsKebab from './PipelineRunsKebab';
+import { ExternalLink } from '../utils/link';
+import { truncateMiddle } from '../utils/common-utils';
+import { sanitizeBranchName } from '../utils/repository-utils';
 
 export const tableColumnClasses = {
   name: 'pf-m-width-20',
+  commit: 'pf-m-hidden pf-m-visible-on-sm pf-m-width-10',
   namespace: '',
   vulnerabilities: 'pf-m-hidden pf-m-visible-on-md',
   status: 'pf-m-hidden pf-m-visible-on-sm pf-m-width-10',
   taskStatus: 'pf-m-hidden pf-m-visible-on-lg',
   started: 'pf-m-hidden pf-m-visible-on-lg',
   duration: 'pf-m-hidden pf-m-visible-on-xl',
+  branch: 'pf-m-hidden pf-m-visible-on-xl pf-m-width-5',
   actions: 'dropdown-kebab-pf pf-v5-c-table__action',
 };
 
@@ -65,10 +74,20 @@ const PLRStatus: React.FC<PLRStatusProps> = ({
 const PipelineRunsRow: React.FC<
   RowProps<
     PipelineRunKind,
-    { taskRuns: TaskRunKind[]; taskRunsLoaded: boolean }
+    {
+      taskRuns: TaskRunKind[];
+      taskRunsLoaded: boolean;
+      repositoryPLRs: boolean;
+    }
   >
-> = ({ obj, activeColumnIDs, rowData: { taskRuns, taskRunsLoaded } }) => {
+> = ({
+  obj,
+  activeColumnIDs,
+  rowData: { taskRuns, taskRunsLoaded, repositoryPLRs },
+}) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const plrLabels = obj.metadata.labels;
+  const plrAnnotations = obj.metadata.annotations;
   const PLRTaskRuns = getTaskRunsOfPipelineRun(taskRuns, obj?.metadata?.name);
   return (
     <>
@@ -109,6 +128,41 @@ const PipelineRunsRow: React.FC<
           }
         />
       </TableData>
+      {repositoryPLRs && (
+        <TableData
+          id="commit-id"
+          className={tableColumnClasses.commit}
+          activeColumnIDs={activeColumnIDs}
+        >
+          <Tooltip
+            data-test="tooltip-msg"
+            content={
+              <>
+                {plrAnnotations?.[
+                  RepositoryAnnotations[RepoAnnotationFields.SHA_MESSAGE]
+                ] ?? plrLabels?.[RepositoryLabels[RepositoryFields.SHA]]}
+              </>
+            }
+          >
+            <ExternalLink
+              href={
+                plrAnnotations?.[
+                  RepositoryAnnotations[RepoAnnotationFields.SHA_URL]
+                ]
+              }
+            >
+              {truncateMiddle(
+                plrLabels[RepositoryLabels[RepositoryFields.SHA]],
+                {
+                  length: 7,
+                  truncateEnd: true,
+                  omission: '',
+                },
+              )}
+            </ExternalLink>
+          </Tooltip>
+        </TableData>
+      )}
       <TableData
         className={tableColumnClasses.namespace}
         id="namespace"
@@ -159,6 +213,17 @@ const PipelineRunsRow: React.FC<
       >
         {pipelineRunDuration(obj)}
       </TableData>
+      {repositoryPLRs && (
+        <TableData
+          id="branch-tag"
+          className={tableColumnClasses.branch}
+          activeColumnIDs={activeColumnIDs}
+        >
+          {sanitizeBranchName(
+            plrLabels?.[RepositoryLabels[RepositoryFields.BRANCH]],
+          )}
+        </TableData>
+      )}
       <TableData
         className={tableColumnClasses.actions}
         id="kebab-menu"

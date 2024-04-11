@@ -243,6 +243,7 @@ const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
           key: 'delete-pipelineRun',
           label: t('Delete PipelineRun'),
           onClick: () => launchDeleteModal(),
+          isDisabled: isResourceLoadedFromTR(pipelineRun),
         },
       ]}
     />

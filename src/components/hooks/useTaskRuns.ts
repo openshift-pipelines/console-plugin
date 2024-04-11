@@ -105,6 +105,27 @@ export const usePipelineRuns = (
     options,
   );
 
+export const usePipelineRun = (
+  namespace: string,
+  pipelineRunName: string,
+): [PipelineRunKind, boolean, string] => {
+  const result = usePipelineRuns(
+    namespace,
+    React.useMemo(
+      () => ({
+        name: pipelineRunName,
+        limit: 1,
+      }),
+      [pipelineRunName],
+    ),
+  ) as unknown as [PipelineRunKind[], boolean, string];
+
+  return React.useMemo(
+    () => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]],
+    [result],
+  );
+};
+
 const useRuns = <Kind extends K8sResourceCommon>(
   groupVersionKind: K8sGroupVersionKind,
   namespace: string,
@@ -190,7 +211,8 @@ const useRuns = <Kind extends K8sResourceCommon>(
   // tekton-results includes items in etcd, therefore options must use the same limit
   // these duplicates will later be de-duped
   const [trResources, trLoaded, trError, trGetNextPage] = (
-    groupVersionKind === getGroupVersionKindForModel(PipelineRunModel)
+    groupVersionKind?.kind ===
+      getGroupVersionKindForModel(PipelineRunModel)?.kind
       ? useTRPipelineRuns
       : useTRTaskRuns
   )(queryTr ? namespace : null, trOptions, cacheKey) as [

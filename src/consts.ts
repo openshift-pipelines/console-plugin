@@ -56,6 +56,8 @@ export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTRIGGERSBINDING_DETAILS =
   'HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTRIGGERSBINDING_DETAILS';
 export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_CONDITIONS_DETAILS =
   'HIDE_STATIC_PIPELINE_PLUGIN_CONDITIONS_DETAILS';
+export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB =
+  'HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB';
 
 export const RESOURCE_LOADED_FROM_RESULTS_ANNOTATION =
   'resource.loaded.from.tektonResults';
@@ -134,3 +136,7 @@ export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';
 export const FLAG_OPENSHIFT_PIPELINE_AS_CODE = 'OPENSHIFT_PIPELINE_AS_CODE';
 export const PAC_INFO = 'pipelines-as-code-info';
 export const PIPELINE_NAMESPACE = 'openshift-pipelines';
+
+export enum StartedByLabel {
+  triggers = 'triggers.tekton.dev/eventlistener',
+}

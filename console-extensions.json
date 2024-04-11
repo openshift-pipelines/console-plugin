@@ -388,7 +388,7 @@
         "name": "%TaskRuns%",
         "href": "task-runs"
       },
-      "component": { "$codeRef": "tasksComponent.TaskRunsListPage" }
+      "component": { "$codeRef": "tasksComponent.TaskRunsList" }
     },
     "flags": {
       "required": [
@@ -408,7 +408,7 @@
         "name": "%TaskRuns%",
         "href": "task-runs"
       },
-      "component": { "$codeRef": "tasksComponent.TaskRunsListPage" }
+      "component": { "$codeRef": "tasksComponent.TaskRunsList" }
     },
     "flags": {
       "required": [
@@ -869,6 +869,75 @@
       "component": {
         "$codeRef": "repositoryDetails.RepositoryPipelineRunsList"
       }
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "PipelineRun"
+      },
+      "component": { "$codeRef": "pipelineRunDetails.PipelineRunDetailsPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAILS"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "PipelineRun"
+      },
+      "component": { "$codeRef": "pipelineRunDetails.PipelineRunDetailsPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAILS"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "id": "Output",
+      "name": "Output",
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "PipelineRun"
+      },
+      "page": {
+        "name": "%Output%",
+        "href": "output"
+      },
+      "component": { "$codeRef": "outputsComponent.OutputTab" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "id": "Output",
+      "name": "Output",
+
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "PipelineRun"
+      },
+      "page": {
+        "name": "%Output%",
+        "href": "output"
+      },
+      "component": { "$codeRef": "outputsComponent.OutputTab" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB"]
     }
   }
 ]

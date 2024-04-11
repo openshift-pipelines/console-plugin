@@ -6,8 +6,8 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { TektonResourceLabel } from '../../../../consts';
-import { PodModel, TaskRunModel } from '../../../../models';
-import { TaskRunKind } from '../../../../types';
+import { PipelineRunModel, PodModel, TaskRunModel } from '../../../../models';
+import { PipelineRunKind, TaskRunKind } from '../../../../types';
 import { EventInvolvedObject } from '../../../../types/events';
 import { getReferenceForModel } from '../../../pipelines-overview/utils';
 
@@ -105,4 +105,33 @@ export const useTaskRunFilters = (
     );
   };
   return [isTaskRun, isPodMatched(pods)];
+};
+
+const isTaskRunMatched =
+  (taskruns): EventFilter =>
+  (taskRun: EventInvolvedObject): boolean =>
+    taskRun.kind === TaskRunModel.kind &&
+    taskruns.data.find((t) => t.metadata.uid === taskRun.uid);
+
+/**
+ * Custom hook to return the list of event filters to find the pipelinerun related resources.
+ * @param namespace
+ * @param pipelineRun
+ */
+export const usePipelineRunFilters = (
+  namespace: string,
+  pipelineRun: PipelineRunKind,
+): EventFilter[] => {
+  const { taskruns, pods } = usePipelineRunRelatedResources(
+    namespace,
+    pipelineRun.metadata.name,
+  );
+  const isPipelineRunMatched: EventFilter = (
+    plr: EventInvolvedObject,
+  ): boolean => {
+    return (
+      plr.kind === PipelineRunModel.kind && plr.uid === pipelineRun.metadata.uid
+    );
+  };
+  return [isPipelineRunMatched, isTaskRunMatched(taskruns), isPodMatched(pods)];
 };

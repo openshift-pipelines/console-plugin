@@ -78,3 +78,20 @@ export const sanitizeBranchName = (branchName: string): string => {
   }
   return branchName;
 };
+
+export const getLabelValue = (branchName: string): string => {
+  if (
+    branchName.startsWith('refs/heads/') ||
+    branchName.startsWith('refs-heads-')
+  ) {
+    return 'Branch';
+  }
+
+  if (
+    branchName.startsWith('refs/tags/') ||
+    branchName.startsWith('refs-tags-')
+  ) {
+    return 'Tag';
+  }
+  return 'Branch';
+};

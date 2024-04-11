@@ -388,7 +388,7 @@
         "name": "%TaskRuns%",
         "href": "task-runs"
       },
-      "component": { "$codeRef": "tasksComponent.TaskRunsListPage" }
+      "component": { "$codeRef": "tasksComponent.TaskRunsList" }
     },
     "flags": {
       "required": [
@@ -408,7 +408,7 @@
         "name": "%TaskRuns%",
         "href": "task-runs"
       },
-      "component": { "$codeRef": "tasksComponent.TaskRunsListPage" }
+      "component": { "$codeRef": "tasksComponent.TaskRunsList" }
     },
     "flags": {
       "required": [

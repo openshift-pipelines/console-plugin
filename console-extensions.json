@@ -898,5 +898,46 @@
     "flags": {
       "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAILS"]
     }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "id": "Output",
+      "name": "Output",
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "PipelineRun"
+      },
+      "page": {
+        "name": "%Output%",
+        "href": "output"
+      },
+      "component": { "$codeRef": "outputsComponent.OutputTab" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "id": "Output",
+      "name": "Output",
+
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "PipelineRun"
+      },
+      "page": {
+        "name": "%Output%",
+        "href": "output"
+      },
+      "component": { "$codeRef": "outputsComponent.OutputTab" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB"]
+    }
   }
 ]

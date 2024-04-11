@@ -115,7 +115,8 @@
       "triggersList": "./components/triggers-list",
       "pipelinesDetails": "./components/pipelines-details",
       "repositoryDetails": "./components/repository-details",
-      "pipelineRunDetails": "./components/pipelineRuns-details"
+      "pipelineRunDetails": "./components/pipelineRuns-details",
+      "outputsComponent": "./components/outputs"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

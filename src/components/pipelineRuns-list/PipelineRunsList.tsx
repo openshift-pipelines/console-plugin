@@ -73,6 +73,9 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
         loadError={pipelineRunsLoadError}
         Row={PipelineRunsRow}
         unfilteredData={data}
+        rowData={{
+          repositoryPLRs,
+        }}
       />
     </ListPageBody>
   );

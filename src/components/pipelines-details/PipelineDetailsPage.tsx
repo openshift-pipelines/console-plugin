@@ -21,7 +21,6 @@ import PipelineDetails from './PipelineDetails';
 import { PipelineKind } from '../../types';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import PipelineParamatersTab from './PipelineParamatersTab';
-import PipelineRuns from '../pipelineRuns-list/PipelineRuns';
 import { useLatestPipelineRun } from '../hooks/hooks';
 import { rerunPipelineAndRedirect } from '../utils/pipelines-actions';
 
@@ -95,11 +94,6 @@ const PipelineDetailsPage = () => {
       pages={[
         navFactory.details(PipelineDetails),
         navFactory.editYaml(ResourceYAMLEditorTab),
-        {
-          href: 'Runs',
-          name: t('PipelineRuns'),
-          component: PipelineRuns,
-        },
         {
           href: 'parameters',
           name: t('Parameters'),

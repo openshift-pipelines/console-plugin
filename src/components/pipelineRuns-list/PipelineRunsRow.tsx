@@ -326,7 +326,7 @@ const PipelineRunRow: React.FC<
   RowProps<
     PipelineRunKind,
     {
-      repositoryPLRs: boolean;
+      repositoryPLRs?: boolean;
     }
   >
 > = ({ obj, activeColumnIDs, rowData: { repositoryPLRs } }) => {

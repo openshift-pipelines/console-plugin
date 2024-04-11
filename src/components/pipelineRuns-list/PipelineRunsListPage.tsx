@@ -32,8 +32,8 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = (props) => {
               namespace={namespace}
               hideTitle={hideTextFilter}
             />
-            <PipelineRunsList {...props} />
           </ListPageHeader>
+          <PipelineRunsList {...props} />
         </>
       )}
     </>

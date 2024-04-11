@@ -47,8 +47,11 @@ import {
   shouldHidePipelineRunCancel,
   shouldHidePipelineRunStop,
 } from '../utils/pipeline-augment';
-import { useGetTaskRuns } from '../hooks/useTektonResult';
-import { getTaskRunsOfPipelineRun, usePipelineRun } from '../hooks/useTaskRuns';
+import {
+  getTaskRunsOfPipelineRun,
+  usePipelineRun,
+  useTaskRuns,
+} from '../hooks/useTaskRuns';
 
 type PipelineRunDetailsPageProps = {
   name: string;
@@ -62,7 +65,7 @@ const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const navigate = useNavigate();
   const [pipelineRun, pipelineRunLoaded] = usePipelineRun(namespace, name);
-  const [taskRuns] = useGetTaskRuns(namespace, name);
+  const [taskRuns] = useTaskRuns(namespace, name);
   const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, name);
   const reRunAction = () => {
     const { pipelineRef, pipelineSpec } = pipelineRun.spec;

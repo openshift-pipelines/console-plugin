@@ -211,7 +211,8 @@ const useRuns = <Kind extends K8sResourceCommon>(
   // tekton-results includes items in etcd, therefore options must use the same limit
   // these duplicates will later be de-duped
   const [trResources, trLoaded, trError, trGetNextPage] = (
-    groupVersionKind === getGroupVersionKindForModel(PipelineRunModel)
+    groupVersionKind?.kind ===
+      getGroupVersionKindForModel(PipelineRunModel)?.kind
       ? useTRPipelineRuns
       : useTRTaskRuns
   )(queryTr ? namespace : null, trOptions, cacheKey) as [

@@ -4,10 +4,11 @@ import { SVGProps } from 'react';
 const SignedBadgeIcon: React.FC<SVGProps<SVGSVGElement>> = (
   props,
 ): React.ReactElement => {
+  const { width = 16, height = 16 } = props;
   return (
     <svg
-      width="16"
-      height="16"
+      width={width}
+      height={height}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

@@ -105,6 +105,27 @@ export const usePipelineRuns = (
     options,
   );
 
+export const usePipelineRun = (
+  namespace: string,
+  pipelineRunName: string,
+): [PipelineRunKind, boolean, string] => {
+  const result = usePipelineRuns(
+    namespace,
+    React.useMemo(
+      () => ({
+        name: pipelineRunName,
+        limit: 1,
+      }),
+      [pipelineRunName],
+    ),
+  ) as unknown as [PipelineRunKind[], boolean, string];
+
+  return React.useMemo(
+    () => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]],
+    [result],
+  );
+};
+
 const useRuns = <Kind extends K8sResourceCommon>(
   groupVersionKind: K8sGroupVersionKind,
   namespace: string,

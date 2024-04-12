@@ -869,6 +869,9 @@
       "component": {
         "$codeRef": "repositoryDetails.RepositoryPipelineRunsList"
       }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_REPOSITORY_DETAILS"]
     }
   },
   {

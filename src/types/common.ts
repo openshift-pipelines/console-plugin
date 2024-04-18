@@ -2,6 +2,7 @@ import {
   K8sResourceCommon,
   ObjectMetadata,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { FormikValues } from 'formik';
 import { VolumeTypes } from '../consts';
 import { TektonParam, TektonWorkspace } from './coreTekton';
 import {
@@ -388,3 +389,9 @@ export enum FLAGS {
   CONSOLE_EXTERNAL_LOG_LINK = 'CONSOLE_EXTERNAL_LOG_LINK',
   CONSOLE_YAML_SAMPLE = 'CONSOLE_YAML_SAMPLE',
 }
+
+export type CommonPipelineModalFormikValues = FormikValues & {
+  namespace: string;
+  parameters: ModalParameter[];
+  workspaces: PipelineModalFormWorkspace[];
+};

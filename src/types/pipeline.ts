@@ -1,5 +1,5 @@
-import { RunStatus } from '@patternfly/react-topology';
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
+import { RunStatus } from '@patternfly/react-topology';
 import {
   TektonParam,
   TektonResource,
@@ -7,6 +7,7 @@ import {
   TektonTaskSpec,
   TektonWorkspace,
 } from './coreTekton';
+import { TaskKind } from './task';
 
 export type PipelineTaskRef = {
   kind?: string;
@@ -71,4 +72,20 @@ export type PipelineSpec = {
 
 export type PipelineKind = K8sResourceCommon & {
   spec: PipelineSpec;
+};
+
+export enum SecretType {
+  basicAuth = 'kubernetes.io/basic-auth',
+  dockercfg = 'kubernetes.io/dockercfg',
+  dockerconfigjson = 'kubernetes.io/dockerconfigjson',
+  opaque = 'Opaque',
+  serviceAccountToken = 'kubernetes.io/service-account-token',
+  sshAuth = 'kubernetes.io/ssh-auth',
+  tls = 'kubernetes.io/tls',
+}
+
+export type PipelineBuilderTaskResources = {
+  namespacedTasks: TaskKind[];
+  clusterTasks: TaskKind[];
+  tasksLoaded: boolean;
 };

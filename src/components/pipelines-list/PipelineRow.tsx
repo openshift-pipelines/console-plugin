@@ -16,6 +16,7 @@ import {
   pipelineTitleFilterReducer,
 } from '../utils/pipeline-filter-reducer';
 import { PipelineModel, PipelineRunModel } from '../../models';
+import PipelineKebab from './PipelineKebab';
 
 export const tableColumnClasses = [
   'pf-v5-u-w-16-on-xl pf-v5-u-w-25-on-lg pf-v5-u-w-33-on-xs', // name
@@ -134,8 +135,7 @@ const PipelineRow: React.FC<
         id=""
         activeColumnIDs={activeColumnIDs}
       >
-        {/* <PipelineRowKebabActions pipeline={obj} /> */}
-        {'-'}
+        <PipelineKebab pipeline={obj} />
       </TableData>
     </>
   );

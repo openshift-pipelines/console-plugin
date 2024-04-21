@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PipelineKind } from '../../types';
+import { PipelineKind, PipelineRunKind, PipelineWithLatest } from '../../types';
 import {
   Dropdown,
   DropdownItem,
@@ -8,24 +8,55 @@ import {
   MenuToggleElement,
 } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
-import { KEBAB_BUTTON_ID } from '../../consts';
+import {
+  KEBAB_ACTION_DELETE_ID,
+  KEBAB_ACTION_EDIT_ANNOTATIONS_ID,
+  KEBAB_ACTION_EDIT_ID,
+  KEBAB_ACTION_EDIT_LABELS_ID,
+  KEBAB_BUTTON_ID,
+} from '../../consts';
 import { useTranslation } from 'react-i18next';
 import {
+  k8sCreate,
   useAccessReview,
+  useAnnotationsModal,
+  useDeleteModal,
+  useLabelsModal,
   useModal,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { PipelineRunModel } from '../../models';
+import { PipelineModel, PipelineRunModel } from '../../models';
 import _ from 'lodash';
 import { startPipelineModal } from '../start-pipeline';
+import { resourcePathFromModel } from '../utils/pipelines-utils';
+import { useNavigate } from 'react-router-dom-v5-compat';
+import { errorModal } from '../modals/error-modal';
+import { getPipelineRunData } from '../start-pipeline/utils';
+import { useHistory } from 'react-router-dom';
+import { getReferenceForModel } from '../pipelines-overview/utils';
+import { rerunPipeline } from '../utils/pipelines-actions';
 
 type PipelineKebabProps = {
-  pipeline: PipelineKind;
+  pipeline: PipelineWithLatest;
+};
+
+export const triggerPipeline = (
+  pipeline: PipelineKind,
+  onSubmit?: (pipelineRun: PipelineRunKind) => void,
+) => {
+  k8sCreate({ model: PipelineRunModel, data: getPipelineRunData(pipeline) })
+    .then(onSubmit)
+    .catch((err) => errorModal({ error: err.message }));
 };
 
 const PipelineKebab: React.FC<PipelineKebabProps> = ({ pipeline }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { name, namespace } = pipeline.metadata;
+  const launchDeleteModal = useDeleteModal(pipeline);
+  const launchAnnotationsModal = useAnnotationsModal(pipeline);
+  const launchLabelsModal = useLabelsModal(pipeline);
   const launchModal = useModal();
+  const navigate = useNavigate();
+  const history = useHistory();
   const [isOpen, setIsOpen] = React.useState(false);
   const onToggle = () => {
     setIsOpen(!isOpen);
@@ -35,7 +66,7 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({ pipeline }) => {
     setIsOpen(false);
   };
 
-  const canCreateResource = useAccessReview({
+  const [canCreateResource] = useAccessReview({
     group: PipelineRunModel.apiGroup,
     resource: PipelineRunModel.plural,
     verb: 'create',
@@ -43,17 +74,56 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({ pipeline }) => {
     namespace,
   });
 
+  const [canEditResource] = useAccessReview({
+    group: PipelineModel.apiGroup,
+    resource: PipelineModel.plural,
+    verb: 'update',
+    name,
+    namespace,
+  });
+
+  const [canDeleteResource] = useAccessReview({
+    group: PipelineModel.apiGroup,
+    resource: PipelineModel.plural,
+    verb: 'delete',
+    name,
+    namespace,
+  });
+
+  const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
+    navigate(
+      resourcePathFromModel(
+        PipelineRunModel,
+        pipelineRun.metadata.name,
+        pipelineRun.metadata.namespace,
+      ),
+    );
+  };
+
   const startPipeline = () => {
     const params = _.get(pipeline, ['spec', 'params'], []);
     const resources = _.get(pipeline, ['spec', 'resources'], []);
     const workspaces = _.get(pipeline, ['spec', 'workspaces'], []);
 
     if (!_.isEmpty(params) || !_.isEmpty(resources) || !_.isEmpty(workspaces)) {
-      launchModal(startPipelineModal, { pipeline });
-    } //else {
-    //   triggerPipeline(pipeline, onSubmit);
-    // }
+      launchModal(startPipelineModal, {
+        pipeline,
+        onSubmit: handlePipelineRunSubmit,
+      });
+    } else {
+      triggerPipeline(pipeline, handlePipelineRunSubmit);
+    }
   };
+
+  const rerunPipelineAndRedirect = () => {
+    rerunPipeline(PipelineRunModel, pipeline.latestRun, launchModal, {
+      onComplete: handlePipelineRunSubmit,
+    });
+  };
+
+  const editURL = `/k8s/ns/${namespace}/${getReferenceForModel(
+    PipelineModel,
+  )}/${encodeURIComponent(name)}/builder`;
 
   const dropdownItems = [
     <DropdownItem
@@ -64,6 +134,55 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({ pipeline }) => {
       onClick={startPipeline}
     >
       {t('Start')}
+    </DropdownItem>,
+    ...(pipeline.latestRun
+      ? [
+          <DropdownItem
+            key="start-pipeline"
+            component="button"
+            isDisabled={!canCreateResource}
+            data-test-action="start-pipeline"
+            onClick={rerunPipelineAndRedirect}
+          >
+            {t('Start last run')}
+          </DropdownItem>,
+        ]
+      : []),
+    <DropdownItem
+      key={KEBAB_ACTION_EDIT_LABELS_ID}
+      component="button"
+      onClick={launchLabelsModal}
+      isDisabled={!canEditResource}
+      data-test-action={KEBAB_ACTION_EDIT_LABELS_ID}
+    >
+      {t('Edit labels')}
+    </DropdownItem>,
+    <DropdownItem
+      key={KEBAB_ACTION_EDIT_ANNOTATIONS_ID}
+      component="button"
+      onClick={() => launchAnnotationsModal()}
+      isDisabled={!canEditResource}
+      data-test-action={KEBAB_ACTION_EDIT_ANNOTATIONS_ID}
+    >
+      {t('Edit annotations')}
+    </DropdownItem>,
+    <DropdownItem
+      key={KEBAB_ACTION_EDIT_ID}
+      component="button"
+      onClick={() => history.push(editURL)}
+      isDisabled={!canEditResource}
+      data-test-action={KEBAB_ACTION_EDIT_ID}
+    >
+      {t('Edit Pipeline')}
+    </DropdownItem>,
+    <DropdownItem
+      key={KEBAB_ACTION_DELETE_ID}
+      component="button"
+      onClick={launchDeleteModal}
+      isDisabled={!canDeleteResource}
+      data-test-action={KEBAB_ACTION_DELETE_ID}
+    >
+      {t('Delete Pipeline')}
     </DropdownItem>,
   ];
   return (

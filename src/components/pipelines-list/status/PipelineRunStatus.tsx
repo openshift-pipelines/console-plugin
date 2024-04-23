@@ -29,11 +29,8 @@ const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({
   }/${getReferenceForModel(PipelineRunModel)}/${
     pipelineRun?.metadata.name
   }/logs`;
-  if (taskRunsLoaded && taskRuns.length === 0) {
-    return <>{'-'}</>;
-  }
   return pipelineRun ? (
-    taskRuns.length > 0 ? (
+    taskRunsLoaded ? (
       <PipelineResourceStatus status={status} title={title}>
         <StatusPopoverContent
           logDetails={getPLRLogSnippet(pipelineRun, taskRuns)}

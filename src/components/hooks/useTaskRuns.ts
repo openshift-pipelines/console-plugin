@@ -229,7 +229,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
         : runs || trResources;
     return [
       rResources,
-      !!rResources?.[0],
+      !!rResources?.[0] || (loaded && trLoaded),
       namespace
         ? queryTr
           ? isList

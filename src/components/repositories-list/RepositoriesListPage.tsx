@@ -25,14 +25,16 @@ const RepositoriesListPage: React.FC<RepositoriesListPageProps> = (props) => {
           <RepositoriesList {...props} />
         </>
       ) : (
-        <ListPageHeader title={t('Repositories')}>
-          <ListPageCreateButton
-            model={RepositoryModel}
-            namespace={namespace}
-            hideTitle={hideTextFilter}
-          />
+        <>
+          <ListPageHeader title={t('Repositories')}>
+            <ListPageCreateButton
+              model={RepositoryModel}
+              namespace={namespace}
+              hideTitle={hideTextFilter}
+            />
+          </ListPageHeader>
           <RepositoriesList {...props} />
-        </ListPageHeader>
+        </>
       )}
     </>
   );

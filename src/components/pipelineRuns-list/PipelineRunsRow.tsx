@@ -7,7 +7,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { ArchiveIcon } from '@patternfly/react-icons';
-import { PipelineRunKind, TaskRunKind } from '../../types';
+import { ComputedStatus, PipelineRunKind, TaskRunKind } from '../../types';
 import { ResourceLinkWithIcon } from '../utils/resource-link';
 import { PipelineRunModel } from '../../models';
 import { Tooltip } from '@patternfly/react-core';
@@ -24,9 +24,10 @@ import { useTranslation } from 'react-i18next';
 import SignedBadgeIcon from '../../images/SignedBadge';
 import PipelineRunVulnerabilities from '../pipelines-list/status/PipelineRunVulnerabilities';
 import PipelineRunStatus from '../pipelines-list/status/PipelineRunStatus';
-import { getTaskRunsOfPipelineRun } from '../hooks/useTaskRuns';
+import { useTaskRuns } from '../hooks/useTaskRuns';
 import {
   pipelineRunFilterReducer,
+  pipelineRunStatus,
   pipelineRunTitleFilterReducer,
 } from '../utils/pipeline-filter-reducer';
 import LinkedPipelineRunTaskStatus from '../pipelines-list/status/LinkedPipelineRunTaskStatus';
@@ -35,6 +36,8 @@ import PipelineRunsKebab from './PipelineRunsKebab';
 import { ExternalLink } from '../utils/link';
 import { truncateMiddle } from '../utils/common-utils';
 import { sanitizeBranchName } from '../utils/repository-utils';
+import { TaskStatus } from '../utils/pipeline-augment';
+import { getPipelineRunStatus } from '../utils/pipeline-utils';
 
 export const tableColumnClasses = {
   name: 'pf-m-width-20',
@@ -55,40 +58,47 @@ type PLRStatusProps = {
   taskRunsLoaded: boolean;
 };
 
-const PLRStatus: React.FC<PLRStatusProps> = ({
-  obj,
-  taskRuns,
-  taskRunsLoaded,
-}) => {
-  return (
-    <PipelineRunStatus
-      status={pipelineRunFilterReducer(obj)}
-      title={pipelineRunTitleFilterReducer(obj)}
-      pipelineRun={obj}
-      taskRuns={taskRuns}
-      taskRunsLoaded={taskRunsLoaded}
-    />
-  );
+type PipelineRunRowWithoutTaskRunsProps = {
+  obj: PipelineRunKind;
+  taskRunStatusObj: TaskStatus;
+  activeColumnIDs: Set<string>;
+  repositoryPLRs?: boolean;
 };
 
-const PipelineRunsRow: React.FC<
-  RowProps<
-    PipelineRunKind,
-    {
-      taskRuns: TaskRunKind[];
-      taskRunsLoaded: boolean;
-      repositoryPLRs: boolean;
-    }
-  >
-> = ({
+type PipelineRunRowWithTaskRunsProps = {
+  obj: PipelineRunKind;
+  activeColumnIDs: Set<string>;
+  repositoryPLRs?: boolean;
+};
+
+const TASKRUNSFORPLRCACHE: { [key: string]: TaskRunKind[] } = {};
+const InFlightStoreForTaskRunsForPLR: { [key: string]: boolean } = {};
+
+const PLRStatus: React.FC<PLRStatusProps> = React.memo(
+  ({ obj, taskRuns, taskRunsLoaded }) => {
+    return (
+      <PipelineRunStatus
+        status={pipelineRunFilterReducer(obj)}
+        title={pipelineRunTitleFilterReducer(obj)}
+        pipelineRun={obj}
+        taskRuns={taskRuns}
+        taskRunsLoaded={taskRunsLoaded}
+      />
+    );
+  },
+);
+
+const PipelineRunRowTable = ({
   obj,
+  PLRTaskRuns,
+  taskRunsLoaded,
+  taskRunStatusObj,
   activeColumnIDs,
-  rowData: { taskRuns, taskRunsLoaded, repositoryPLRs },
+  repositoryPLRs,
 }) => {
-  const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const { t } = useTranslation();
   const plrLabels = obj.metadata.labels;
   const plrAnnotations = obj.metadata.annotations;
-  const PLRTaskRuns = getTaskRunsOfPipelineRun(taskRuns, obj?.metadata?.name);
   return (
     <>
       <TableData
@@ -197,6 +207,7 @@ const PipelineRunsRow: React.FC<
           pipelineRun={obj}
           taskRuns={PLRTaskRuns}
           taskRunsLoaded={taskRunsLoaded}
+          taskRunStatusObj={taskRunStatusObj}
         />
       </TableData>
       <TableData
@@ -229,10 +240,119 @@ const PipelineRunsRow: React.FC<
         id="kebab-menu"
         activeColumnIDs={activeColumnIDs}
       >
-        <PipelineRunsKebab obj={obj} taskRuns={taskRuns} />
+        <PipelineRunsKebab
+          obj={obj}
+          taskRuns={PLRTaskRuns}
+          taskRunStatusObj={taskRunStatusObj}
+        />
       </TableData>
     </>
   );
 };
 
-export default PipelineRunsRow;
+const PipelineRunRowWithoutTaskRuns: React.FC<PipelineRunRowWithoutTaskRunsProps> =
+  React.memo(({ obj, taskRunStatusObj, activeColumnIDs, repositoryPLRs }) => {
+    return (
+      <PipelineRunRowTable
+        obj={obj}
+        PLRTaskRuns={[]}
+        taskRunsLoaded
+        taskRunStatusObj={taskRunStatusObj}
+        activeColumnIDs={activeColumnIDs}
+        repositoryPLRs={repositoryPLRs}
+      />
+    );
+  });
+
+const PipelineRunRowWithTaskRunsFetch: React.FC<PipelineRunRowWithTaskRunsProps> =
+  React.memo(({ obj, activeColumnIDs, repositoryPLRs }) => {
+    const cacheKey = `${obj.metadata.namespace}-${obj.metadata.name}`;
+    const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
+      obj.metadata.namespace,
+      obj.metadata.name,
+      undefined,
+      `${obj.metadata.namespace}-${obj.metadata.name}`,
+    );
+    InFlightStoreForTaskRunsForPLR[cacheKey] = false;
+    if (taskRunsLoaded) {
+      TASKRUNSFORPLRCACHE[cacheKey] = PLRTaskRuns;
+    }
+    return (
+      <PipelineRunRowTable
+        obj={obj}
+        PLRTaskRuns={PLRTaskRuns}
+        taskRunsLoaded={taskRunsLoaded}
+        taskRunStatusObj={undefined}
+        activeColumnIDs={activeColumnIDs}
+        repositoryPLRs={repositoryPLRs}
+      />
+    );
+  });
+
+const PipelineRunRowWithTaskRuns: React.FC<PipelineRunRowWithTaskRunsProps> =
+  React.memo(({ obj, activeColumnIDs, repositoryPLRs }) => {
+    let PLRTaskRuns: TaskRunKind[];
+    let taskRunsLoaded: boolean;
+    const cacheKey = `${obj.metadata.namespace}-${obj.metadata.name}`;
+    const result = TASKRUNSFORPLRCACHE[cacheKey];
+    if (result) {
+      PLRTaskRuns = result;
+      taskRunsLoaded = true;
+    } else if (InFlightStoreForTaskRunsForPLR[cacheKey]) {
+      PLRTaskRuns = [];
+      taskRunsLoaded = true;
+      InFlightStoreForTaskRunsForPLR[cacheKey] = true;
+    } else {
+      return (
+        <PipelineRunRowWithTaskRunsFetch
+          obj={obj}
+          activeColumnIDs={activeColumnIDs}
+        />
+      );
+    }
+    return (
+      <PipelineRunRowTable
+        obj={obj}
+        PLRTaskRuns={PLRTaskRuns}
+        taskRunsLoaded={taskRunsLoaded}
+        taskRunStatusObj={undefined}
+        activeColumnIDs={activeColumnIDs}
+        repositoryPLRs={repositoryPLRs}
+      />
+    );
+  });
+
+const PipelineRunRow: React.FC<
+  RowProps<
+    PipelineRunKind,
+    {
+      repositoryPLRs?: boolean;
+    }
+  >
+> = ({ obj, activeColumnIDs, rowData: { repositoryPLRs } }) => {
+  const plrStatus = pipelineRunStatus(obj);
+  if (
+    (plrStatus === ComputedStatus.Cancelled ||
+      plrStatus === ComputedStatus.Failed) &&
+    (obj?.status?.childReferences ?? []).length > 0
+  ) {
+    return (
+      <PipelineRunRowWithTaskRuns
+        obj={obj}
+        activeColumnIDs={activeColumnIDs}
+        repositoryPLRs={repositoryPLRs}
+      />
+    );
+  }
+  const taskRunStatusObj = getPipelineRunStatus(obj);
+  return (
+    <PipelineRunRowWithoutTaskRuns
+      obj={obj}
+      taskRunStatusObj={taskRunStatusObj}
+      activeColumnIDs={activeColumnIDs}
+      repositoryPLRs={repositoryPLRs}
+    />
+  );
+};
+
+export default PipelineRunRow;

@@ -56,7 +56,7 @@ import {
   getDuration,
 } from '../pipelines-overview/dateTime';
 import { t } from './common-utils';
-import { getLatestRun } from './pipeline-augment';
+import { TaskStatus, getLatestRun } from './pipeline-augment';
 import {
   SucceedConditionReason,
   pipelineRunFilterReducer,
@@ -654,3 +654,49 @@ export enum runStatus {
   TestFailed = 'Test Failures',
   Unknown = 'Unknown',
 }
+
+export type PipelineRunStatusType = {
+  Completed?: number;
+  Failed?: number;
+  Skipped?: number;
+  Cancelled?: number;
+  Incomplete?: number;
+  PipelineNotStarted?: number;
+  Pending?: number;
+  Running?: number;
+  Succeeded?: number;
+};
+
+export const getPipelineRunStatus = (
+  pipelineRun: PipelineRunKind,
+): TaskStatus => {
+  const conditionsMessage = pipelineRun?.status?.conditions?.find(
+    (condition) => condition?.type === 'Succeeded',
+  )?.message;
+
+  // Extracting key-value pairs using updated regular expression
+  const matches = conditionsMessage?.match(/(\w+)(?::\s*|\s+)(\d+)/g);
+  // Creating the object dynamically
+  const result: PipelineRunStatusType = {};
+  matches?.forEach((match) => {
+    const [key, value] = match.split(/(?::\s*|\s+)/);
+    result[key.trim()] = Number(value.trim());
+  });
+
+  const totalSucceeded =
+    (result?.Completed || 0) - (result?.Failed || 0) - (result?.Cancelled || 0);
+
+  const taskRunStatusObj: TaskStatus = {
+    Running: result?.Incomplete || 0,
+    Succeeded: totalSucceeded || 0,
+    Cancelled: result?.Cancelled || 0,
+    Failed: result?.Failed || 0,
+    Skipped: result?.Skipped || 0,
+    Completed: result?.Completed || 0,
+    Cancelling: result?.Cancelled || 0,
+    PipelineNotStarted: 0,
+    Pending: 0,
+  };
+
+  return taskRunStatusObj;
+};

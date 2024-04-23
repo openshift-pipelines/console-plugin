@@ -25,14 +25,16 @@ const PipelineListPage: React.FC<PipelineListPageProps> = (props) => {
           <PipelinesList {...props} />
         </>
       ) : (
-        <ListPageHeader title={t('Pipeline')}>
-          <ListPageCreateButton
-            model={PipelineModel}
-            namespace={namespace}
-            hideTitle={hideTextFilter}
-          />
+        <>
+          <ListPageHeader title={t('Pipeline')}>
+            <ListPageCreateButton
+              model={PipelineModel}
+              namespace={namespace}
+              hideTitle={hideTextFilter}
+            />
+          </ListPageHeader>
           <PipelinesList {...props} />
-        </ListPageHeader>
+        </>
       )}
     </>
   );

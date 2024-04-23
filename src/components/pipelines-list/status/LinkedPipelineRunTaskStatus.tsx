@@ -2,15 +2,17 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
-import { PipelineBars } from './PipelineBars';
+import { PipelineBars, PipelineBarsForTaskRunsStatus } from './PipelineBars';
 import { LoadingInline } from '../../Loading';
 import { PipelineRunModel } from '../../../models';
 import { getReferenceForModel } from '../../pipelines-overview/utils';
+import { TaskStatus } from '../../utils/pipeline-augment';
 
 export interface LinkedPipelineRunTaskStatusProps {
   pipelineRun: PipelineRunKind;
   taskRuns: TaskRunKind[];
   taskRunsLoaded: boolean;
+  taskRunStatusObj?: TaskStatus;
 }
 
 /**
@@ -19,18 +21,22 @@ export interface LinkedPipelineRunTaskStatusProps {
  */
 const LinkedPipelineRunTaskStatus: React.FC<
   LinkedPipelineRunTaskStatusProps
-> = ({ pipelineRun, taskRuns, taskRunsLoaded }) => {
+> = ({ pipelineRun, taskRuns, taskRunsLoaded, taskRunStatusObj }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  if (taskRunsLoaded && taskRuns.length === 0) {
-    return <>{'-'}</>;
-  }
   const pipelineStatus =
-    taskRuns.length > 0 ? (
+    taskRunStatusObj &&
+    Object.values(taskRunStatusObj)?.every((value) => value === 0) ? (
+      <>{'-'}</>
+    ) : taskRunStatusObj ? (
+      <PipelineBarsForTaskRunsStatus taskRunStatusObj={taskRunStatusObj} />
+    ) : taskRunsLoaded && taskRuns?.length > 0 ? (
       <PipelineBars
         key={pipelineRun.metadata?.name}
         pipelinerun={pipelineRun}
         taskRuns={taskRuns}
       />
+    ) : taskRunsLoaded && taskRuns?.length === 0 && !taskRunStatusObj ? (
+      <>{'-'}</>
     ) : (
       <LoadingInline />
     );

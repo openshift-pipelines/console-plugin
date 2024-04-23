@@ -21,8 +21,11 @@ import { returnValidPipelineRunModel } from '../utils/pipeline-utils';
 import { getPipelineRunData } from '../utils/utils';
 import { getTaskRunsOfPipelineRun } from '../hooks/useTaskRuns';
 import {
+  TaskStatus,
   shouldHidePipelineRunCancel,
+  shouldHidePipelineRunCancelForTaskRunStatus,
   shouldHidePipelineRunStop,
+  shouldHidePipelineRunStopForTaskRunStatus,
 } from '../utils/pipeline-augment';
 import {
   isResourceLoadedFromTR,
@@ -33,11 +36,13 @@ import { errorModal } from '../modals/error-modal';
 type PipelineRunsKebabProps = {
   obj: PipelineRunKind;
   taskRuns: TaskRunKind[];
+  taskRunStatusObj: TaskStatus;
 };
 
 const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
   obj,
   taskRuns,
+  taskRunStatusObj,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const message = (
@@ -55,6 +60,12 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
   const [isOpen, setIsOpen] = React.useState(false);
   const { name, namespace } = obj.metadata;
   const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, name);
+  const hidePLRCancel = taskRunStatusObj
+    ? shouldHidePipelineRunCancelForTaskRunStatus(obj, taskRunStatusObj)
+    : shouldHidePipelineRunCancel(obj, PLRTasks);
+  const hidePLRStop = taskRunStatusObj
+    ? shouldHidePipelineRunStopForTaskRunStatus(obj, taskRunStatusObj)
+    : shouldHidePipelineRunStop(obj, PLRTasks);
   const onToggle = () => {
     setIsOpen(!isOpen);
   };
@@ -147,7 +158,8 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
     >
       {t('Rerun')}
     </DropdownItem>,
-    ...(!shouldHidePipelineRunCancel(obj, PLRTasks)
+
+    ...(!hidePLRCancel
       ? [
           <DropdownItem
             key="cancel"
@@ -165,7 +177,7 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
           </DropdownItem>,
         ]
       : []),
-    ...(!shouldHidePipelineRunStop(obj, PLRTasks)
+    ...(!hidePLRStop
       ? [
           <DropdownItem
             key="stop"

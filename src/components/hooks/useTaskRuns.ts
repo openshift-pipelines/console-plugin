@@ -3,11 +3,15 @@ import {
   K8sResourceCommon,
   Selector,
   getGroupVersionKindForModel,
+  useFlag,
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { differenceBy, uniqBy } from 'lodash-es';
 import * as React from 'react';
-import { TektonResourceLabel } from '../../consts';
+import {
+  FLAG_PIPELINE_TEKTON_RESULT_INSTALLED,
+  TektonResourceLabel,
+} from '../../consts';
 import { PipelineRunModel, TaskRunModel } from '../../models';
 import { PipelineRunKind, TaskRunKind } from '../../types';
 import { useDeepCompareMemoize } from '../utils/common-utils';
@@ -138,6 +142,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
 ): [Kind[], boolean, unknown, GetNextPage] => {
   const etcdRunsRef = React.useRef<Kind[]>([]);
   const optionsMemo = useDeepCompareMemoize(options);
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
   const isList = !optionsMemo?.name;
   const limit = optionsMemo?.limit;
   // do not include the limit when querying etcd because result order is not sorted
@@ -193,9 +198,10 @@ const useRuns = <Kind extends K8sResourceCommon>(
 
   // Query tekton results if there's no limit or we received less items from etcd than the current limit
   const queryTr =
-    !limit ||
-    (namespace &&
-      ((runs && loaded && optionsMemo.limit > runs.length) || error));
+    isTektonResultEnabled &&
+    (!limit ||
+      (namespace &&
+        ((runs && loaded && optionsMemo.limit > runs.length) || error)));
 
   const trOptions: typeof optionsMemo = React.useMemo(() => {
     if (optionsMemo?.name) {
@@ -210,17 +216,18 @@ const useRuns = <Kind extends K8sResourceCommon>(
 
   // tekton-results includes items in etcd, therefore options must use the same limit
   // these duplicates will later be de-duped
-  const [trResources, trLoaded, trError, trGetNextPage] = (
-    groupVersionKind?.kind ===
-      getGroupVersionKindForModel(PipelineRunModel)?.kind
-      ? useTRPipelineRuns
-      : useTRTaskRuns
-  )(queryTr ? namespace : null, trOptions, cacheKey) as [
-    [],
-    boolean,
-    unknown,
-    GetNextPage,
-  ];
+
+  const [trResources, trLoaded, trError, trGetNextPage] = isTektonResultEnabled
+    ? ((groupVersionKind?.kind ===
+        getGroupVersionKindForModel(PipelineRunModel)?.kind
+        ? useTRPipelineRuns
+        : useTRTaskRuns)(queryTr ? namespace : null, trOptions, cacheKey) as [
+        [],
+        boolean,
+        unknown,
+        GetNextPage,
+      ])
+    : [[], true, undefined, undefined];
 
   return React.useMemo(() => {
     const rResources =

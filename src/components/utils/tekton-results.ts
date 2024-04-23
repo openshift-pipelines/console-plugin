@@ -25,6 +25,8 @@ import { consoleProxyFetch, consoleProxyFetchJSON } from './proxy';
 const MINIMUM_PAGE_SIZE = 5;
 const MAXIMUM_PAGE_SIZE = 10000;
 
+let cachedTektonResultsAPI: string = null;
+
 export type ResultRecord = {
   name: string;
   uid: string;
@@ -239,6 +241,28 @@ const InFlightStore: { [key: string]: boolean } = {};
 
 // const getTRUrlPrefix = (): string => URL_PREFIX;
 
+export const getTektonResultsAPIUrl = async () => {
+  if (cachedTektonResultsAPI) {
+    return cachedTektonResultsAPI;
+  } else {
+    const cachedTektonResult: K8sResourceKind = await k8sGet({
+      model: TektonResultModel,
+      name: 'result',
+    });
+    const targetNamespace = cachedTektonResult?.spec?.targetNamespace;
+    const serverPort = cachedTektonResult?.spec?.server_port ?? '8080';
+    const tlsHostname = cachedTektonResult?.spec?.tls_hostname_override;
+    if (tlsHostname) {
+      cachedTektonResultsAPI = `${tlsHostname}:${serverPort}`;
+    } else if (targetNamespace && serverPort) {
+      cachedTektonResultsAPI = `tekton-results-api-service.${targetNamespace}.svc.cluster.local:${serverPort}`;
+    } else {
+      cachedTektonResultsAPI = `tekton-results-api-service.openshift-pipelines.svc.cluster.local:${serverPort}`;
+    }
+    return cachedTektonResultsAPI;
+  }
+};
+
 export const createTektonResultsUrl = async (
   namespace: string,
   dataType: DataType,
@@ -246,21 +270,8 @@ export const createTektonResultsUrl = async (
   options?: TektonResultsOptions,
   nextPageToken?: string,
 ): Promise<string> => {
-  const tektonResult: K8sResourceKind = await k8sGet({
-    model: TektonResultModel,
-    name: 'result',
-  });
-  const targetNamespace = tektonResult?.spec?.targetNamespace;
-  const serverPort = tektonResult?.spec?.server_port ?? '8080';
-  const tlsHostname = tektonResult?.spec?.tls_hostname_override;
-  let tektonResultsAPI;
-  if (tlsHostname) {
-    tektonResultsAPI = `${tlsHostname}:${serverPort}`;
-  } else if (targetNamespace && serverPort) {
-    tektonResultsAPI = `tekton-results-api-service.${targetNamespace}.svc.cluster.local:${serverPort}`;
-  } else {
-    tektonResultsAPI = `tekton-results-api-service.openshift-pipelines.svc.cluster.local:${serverPort}`;
-  }
+  const tektonResultsAPI = await getTektonResultsAPIUrl();
+
   const namespaceToSearch =
     namespace && namespace !== ALL_NAMESPACES_KEY ? namespace : '-';
   const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespaceToSearch}/results/-/records?${new URLSearchParams(
@@ -410,21 +421,7 @@ export const createTektonResultsSummaryUrl = async (
   options?: TektonResultsOptions,
   nextPageToken?: string,
 ): Promise<string> => {
-  const tektonResult: K8sResourceKind = await k8sGet({
-    model: TektonResultModel,
-    name: 'result',
-  });
-  const targetNamespace = tektonResult?.spec?.targetNamespace;
-  const serverPort = tektonResult?.spec?.server_port ?? '8080';
-  const tlsHostname = tektonResult?.spec?.tls_hostname_override;
-  let tektonResultsAPI;
-  if (tlsHostname) {
-    tektonResultsAPI = `${tlsHostname}:${serverPort}`;
-  } else if (targetNamespace && serverPort) {
-    tektonResultsAPI = `tekton-results-api-service.${targetNamespace}.svc.cluster.local:${serverPort}`;
-  } else {
-    tektonResultsAPI = `tekton-results-api-service.openshift-pipelines.svc.cluster.local:${serverPort}`;
-  }
+  const tektonResultsAPI = await getTektonResultsAPIUrl();
   const namespaceToSearch =
     namespace && namespace !== ALL_NAMESPACES_KEY ? namespace : '-';
   const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespaceToSearch}/results/-/records/summary?${new URLSearchParams(
@@ -485,8 +482,8 @@ export const getTRURLHost = async () => {
 };
 
 const getLog = async (taskRunPath: string) => {
-  const tektonResultUrl = await getTRURLHost();
-  const url = `https://${tektonResultUrl}/apis/results.tekton.dev/v1alpha2/parents/${taskRunPath.replace(
+  const tektonResultsAPI = await getTektonResultsAPIUrl();
+  const url = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${taskRunPath.replace(
     '/records/',
     '/logs/',
   )}`;

@@ -2,11 +2,13 @@ import {
   getGroupVersionKindForModel,
   K8sResourceCommon,
   Selector,
+  useFlag,
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { uniqBy } from 'lodash';
 import * as React from 'react';
 import {
+  FLAG_PIPELINE_TEKTON_RESULT_INSTALLED,
   RepositoryFields,
   RepositoryLabels,
   TektonResourceLabel,
@@ -128,6 +130,7 @@ export const useGetPipelineRuns = (
   options?: { name: string; kind: string },
 ): [PipelineRunKind[], boolean, unknown, GetNextPage] => {
   let selector: Selector;
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
 
   if (options?.kind === 'Pipeline') {
     selector = { matchLabels: { 'tekton.dev/pipeline': options?.name } };
@@ -139,12 +142,16 @@ export const useGetPipelineRuns = (
       },
     };
   }
-  const [resultPlrs, resultPlrsLoaded, , getNextPage] = useTRPipelineRuns(
-    ns,
-    options && {
-      selector,
-    },
-  );
+
+  const [resultPlrs, resultPlrsLoaded, , getNextPage] = isTektonResultEnabled
+    ? useTRPipelineRuns(
+        ns,
+        options && {
+          selector,
+        },
+      )
+    : [[], true, undefined, undefined];
+
   const [k8sPlrs, k8sPlrsLoaded, k8sPlrsLoadError] = useK8sWatchResource<
     PipelineRunKind[]
   >({
@@ -165,6 +172,8 @@ export const useGetTaskRuns = (
   pipelineRunName?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] => {
   let selector: Selector;
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
+
   if (pipelineRunName) {
     selector = {
       matchLabels: {
@@ -181,12 +190,15 @@ export const useGetTaskRuns = (
     resultTaskRunsLoaded,
     resultTaskRunsLoadError,
     getNextPage,
-  ] = useTRTaskRuns(
-    ns,
-    pipelineRunName && {
-      selector,
-    },
-  );
+  ] = isTektonResultEnabled
+    ? useTRTaskRuns(
+        ns,
+        pipelineRunName && {
+          selector,
+        },
+      )
+    : [[], true, undefined, undefined];
+
   const mergedTaskRuns =
     resultTaskRunsLoaded || k8sTaskRunsLoaded
       ? uniqBy([...k8sTaskRuns, ...resultTaskRuns], (r) => r.metadata.uid)

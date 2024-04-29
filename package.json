@@ -114,14 +114,18 @@
       "pipelinesList": "./components/pipelines-list",
       "pipelineRunsList": "./components/pipelineRuns-list",
       "repositoriesList": "./components/repositories-list",
+      "approvalsList": "./components/approval-tasks",
       "metricsComponent": "./components/pipelines-metrics",
       "tasksComponent": "./components/pipelines-tasks",
       "triggersDetails": "./components/triggers-details",
+      "approvalsDetails": "./components/approval-tasks/approval-details",
       "triggersList": "./components/triggers-list",
       "pipelinesDetails": "./components/pipelines-details",
       "repositoryDetails": "./components/repository-details",
       "pipelineRunDetails": "./components/pipelineRuns-details",
-      "outputsComponent": "./components/outputs"
+      "outputsComponent": "./components/outputs",
+      "toastContext": "./components/toast",
+      "pipelineApprovalContext": "./components/approval-tasks/approval-notification"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

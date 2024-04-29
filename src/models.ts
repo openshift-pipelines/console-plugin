@@ -3,6 +3,20 @@ import { chart_color_green_400 as tektonGroupColor } from '@patternfly/react-tok
 
 const color = tektonGroupColor.value;
 
+export const NamespaceModel: K8sKind = {
+  apiVersion: 'v1',
+  label: 'Namespace',
+  // t('Namespace')
+  labelKey: 'Namespace',
+  plural: 'namespaces',
+  abbr: 'NS',
+  kind: 'Namespace',
+  id: 'namespace',
+  labelPlural: 'Namespaces',
+  // t('Namespaces')
+  labelPluralKey: 'Namespaces',
+};
+
 export const PipelineModel = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1',
@@ -413,7 +427,7 @@ export const ApprovalTaskModel: K8sKind = {
   // t('ApprovalTask')
   labelKey: 'ApprovalTask',
   // t('ApprovalTasks')
-  labelPluralKey: 'ApprovalTasks',
+  labelPluralKey: 'Approvals',
   plural: 'approvaltasks',
   abbr: 'AT',
   namespaced: true,

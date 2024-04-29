@@ -3,14 +3,14 @@ import { global_active_color_400 as partiallyApprovedColor } from '@patternfly/r
 import { global_palette_black_500 as waitColor } from '@patternfly/react-tokens/dist/js/global_palette_black_500';
 import { global_palette_green_500 as approveColor } from '@patternfly/react-tokens/dist/js/global_palette_green_500';
 import { global_palette_red_100 as rejectColor } from '@patternfly/react-tokens/dist/js/global_palette_red_100';
-
-import { ComputedStatus, PipelineRunKind } from '../../types';
+import { ApprovalFields, ApprovalLabels } from '../../consts';
 import {
   ApprovalStatus,
   ApprovalTaskKind,
-  CustomRunKind,
-  CustomRunStatus,
-} from '../pipeline-topology/types';
+  ApproverStatusResponse,
+  ComputedStatus,
+  PipelineRunKind,
+} from '../../types';
 import { t } from './common-utils';
 import { StatusMessage } from './pipeline-augment';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
@@ -63,15 +63,14 @@ export const getApprovalStatusInfo = (status: string): StatusMessage => {
 
 export const getApprovalStatus = (
   approvalTask: ApprovalTaskKind,
-  customRun: CustomRunKind,
   pipelineRun: PipelineRunKind,
 ): ApprovalStatus => {
   const pipelineRunStatus =
     pipelineRun && pipelineRunFilterReducer(pipelineRun);
 
-  const approvalsRequired = approvalTask?.spec?.approvalsRequired;
-  const currentApprovals = approvalTask?.status?.approvedBy?.length;
-  const approvalState = approvalTask?.status?.approvalState;
+  const approvalsRequired = approvalTask?.spec?.numberOfApprovalsRequired;
+  const currentApprovals = approvalTask?.status?.approversResponse?.length;
+  const approvalState = approvalTask?.status?.state;
   const approvalPercentage = (currentApprovals / approvalsRequired) * 100;
 
   if (pipelineRunStatus === ComputedStatus.Running) {
@@ -88,14 +87,14 @@ export const getApprovalStatus = (
     }
   }
 
-  if (approvalState === ApprovalStatus.Accepted) {
+  if (approvalState === ApproverStatusResponse.Accepted) {
     return ApprovalStatus.Accepted;
   }
-  if (approvalState === ApprovalStatus.Rejected) {
+  if (approvalState === ApproverStatusResponse.Rejected) {
     return ApprovalStatus.Rejected;
   }
 
-  if (customRun?.spec?.status === CustomRunStatus.RunCancelled) {
+  if (approvalState === ApproverStatusResponse.Timedout) {
     return ApprovalStatus.TimedOut;
   }
 
@@ -109,17 +108,14 @@ export const getPipelineRunOfApprovalTask = (
   if (!pipelineRuns || !pipelineRuns.length) {
     return null;
   }
-  let pipelineRunName = '';
 
-  if (approvalTask?.metadata?.labels?.['tekton.dev/pipelineRun']) {
-    pipelineRunName =
-      approvalTask?.metadata?.labels?.['tekton.dev/pipelineRun'];
-  } else {
-    pipelineRunName = approvalTask.metadata.name
-      ?.split('-')
-      ?.slice(0, -1)
-      ?.join('-');
-  }
-
-  return pipelineRuns.find((pr) => pr.metadata.name === pipelineRunName);
+  return (
+    pipelineRuns?.find(
+      (pr) =>
+        pr.metadata.name ===
+        approvalTask?.metadata?.labels?.[
+          ApprovalLabels[ApprovalFields.PIPELINE_RUN]
+        ],
+    ) || null
+  );
 };

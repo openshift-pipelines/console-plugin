@@ -18,6 +18,8 @@ export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUNS_LIST =
   'HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUNS_LIST';
 export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_REPOSITORIES_LIST =
   'HIDE_STATIC_PIPELINE_PLUGIN_REPOSITORIES_LIST';
+export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_APPROVALS_LIST =
+  'HIDE_STATIC_PIPELINE_PLUGIN_APPROVALS_LIST';
 export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_TASKS_LIST =
   'HIDE_STATIC_PIPELINE_PLUGIN_TASKS_LIST';
 export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_TASKRUNS_LIST =
@@ -54,6 +56,8 @@ export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTRIGGERSBINDING_DETAILS =
   'HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTRIGGERSBINDING_DETAILS';
 export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB =
   'HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_OUTPUT_TAB';
+export const FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_APPROVALS_TAB =
+  'HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_APPROVALS_TAB';
 
 export const RESOURCE_LOADED_FROM_RESULTS_ANNOTATION =
   'resource.loaded.from.tektonResults';
@@ -111,6 +115,20 @@ export const RepositoryAnnotations: Record<RepoAnnotationFields, string> = {
   [RepoAnnotationFields.REPO_URL]: 'pipelinesascode.tekton.dev/repo-url',
 };
 
+export enum ApprovalFields {
+  PIPELINE = 'Pipeline',
+  PIPELINE_RUN = 'PipelineRun',
+  APPROVAL_TASK = 'ApprovalTask',
+  CUSTOM_RUN = 'CustomRun',
+}
+
+export const ApprovalLabels: Record<string, string> = {
+  [ApprovalFields.PIPELINE]: 'tekton.dev/pipeline',
+  [ApprovalFields.PIPELINE_RUN]: 'tekton.dev/pipelineRun',
+  [ApprovalFields.APPROVAL_TASK]: 'tekton.dev/pipelineTask',
+  [ApprovalFields.CUSTOM_RUN]: 'tekton.dev/customRun',
+};
+
 export enum VolumeTypes {
   NoWorkspace = 'noWorkspace',
   EmptyDirectory = 'emptyDirectory',
@@ -130,6 +148,8 @@ export const DELETED_RESOURCE_IN_K8S_ANNOTATION = 'resource.deleted.in.k8s';
 export const chainsSignedAnnotation = 'chains.tekton.dev/signed';
 export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';
 export const FLAG_OPENSHIFT_PIPELINE_AS_CODE = 'OPENSHIFT_PIPELINE_AS_CODE';
+export const FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK =
+  'OPENSHIFT_PIPELINE_APPROVAL_TASK';
 export const PAC_INFO = 'pipelines-as-code-info';
 export const PIPELINE_NAMESPACE = 'openshift-pipelines';
 

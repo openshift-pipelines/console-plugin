@@ -9,11 +9,17 @@ import {
 import { differenceBy, uniqBy } from 'lodash-es';
 import * as React from 'react';
 import {
+  ApprovalFields,
+  ApprovalLabels,
   FLAG_PIPELINE_TEKTON_RESULT_INSTALLED,
   TektonResourceLabel,
 } from '../../consts';
-import { PipelineRunModel, TaskRunModel } from '../../models';
-import { PipelineRunKind, TaskRunKind } from '../../types';
+import {
+  ApprovalTaskModel,
+  PipelineRunModel,
+  TaskRunModel,
+} from '../../models';
+import { ApprovalTaskKind, PipelineRunKind, TaskRunKind } from '../../types';
 import { useDeepCompareMemoize } from '../utils/common-utils';
 import { EQ } from '../utils/tekton-results';
 import {
@@ -95,6 +101,38 @@ export const useTaskRuns2 = (
     options,
     cacheKey,
   );
+
+export const useApprovalTasks = (
+  namespace: string,
+  pipelineRunName?: string,
+): [ApprovalTaskKind[], boolean, any] => {
+  const selector: Selector = React.useMemo(() => {
+    if (pipelineRunName) {
+      return {
+        matchLabels: {
+          [ApprovalLabels[ApprovalFields.PIPELINE_RUN]]: pipelineRunName,
+        },
+      };
+    }
+    return undefined;
+  }, [pipelineRunName]);
+  const watchedResource = React.useMemo(
+    () => ({
+      isList: true,
+      groupVersionKind: {
+        group: ApprovalTaskModel.apiGroup,
+        kind: ApprovalTaskModel.kind,
+        version: ApprovalTaskModel.apiVersion,
+      },
+      namespace,
+      namespaced: true,
+      ...(selector && { selector }),
+    }),
+    [namespace],
+  );
+
+  return useK8sWatchResource<ApprovalTaskKind[]>(watchedResource);
+};
 
 export const usePipelineRuns = (
   namespace: string,

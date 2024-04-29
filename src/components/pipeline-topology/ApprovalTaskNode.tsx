@@ -1,4 +1,8 @@
 import * as React from 'react';
+import * as cx from 'classnames';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom-v5-compat';
 import { Tooltip } from '@patternfly/react-core';
 import {
   observer,
@@ -7,21 +11,13 @@ import {
   useHover,
   createSvgIdUrl,
 } from '@patternfly/react-topology';
-import * as cx from 'classnames';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
-
 import {
   ApprovalStatus,
   ApprovalTaskKind,
   CustomRunKind,
-  TaskNodeModelData,
-} from './types';
-
-import './CustomTaskNode.scss';
-import { K8sResourceKind, TaskKind } from '../../types';
-import { resourcePathFromModel } from '../utils/pipelines-utils';
+  K8sResourceKind,
+  TaskKind,
+} from '../../types';
 import { ApprovalTaskModel, CustomRunModelV1Beta1 } from '../../models';
 import {
   getApprovalStatus,
@@ -35,6 +31,9 @@ import {
   useK8sWatchResources,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { ApprovalStatusIcon } from './StatusIcons';
+import { TaskNodeModelData } from './types';
+
+import './CustomTaskNode.scss';
 
 type ApprovalTaskNodeProps = {
   element: Node<NodeModel, TaskNodeModelData>;
@@ -80,11 +79,9 @@ const ApprovalTaskComponent: React.FC<ApprovalTaskComponentProps> = ({
   const nameRef = React.useRef();
   const pillRef = React.useRef();
 
-  const path = `${resourcePathFromModel(
-    ApprovalTaskModel,
-    customTask?.metadata?.name,
-    namespace,
-  )}`;
+  const path = customTask?.metadata?.name
+    ? `/dev-pipelines/ns/${namespace}/approvals?name=${customTask?.metadata?.name}`
+    : undefined;
 
   const enableLogLink = status !== ApprovalStatus.Idle && !!path;
   const taskStatusColor = status
@@ -211,7 +208,6 @@ const ApprovalTaskNode: React.FC<ApprovalTaskNodeProps> = ({
 
   const approvalStatus = getApprovalStatus(
     resourcesData.approvalTask?.data,
-    resourcesData.customRun?.data,
     pipelineRun,
   );
 

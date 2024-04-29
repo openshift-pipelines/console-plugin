@@ -14,6 +14,7 @@ export type Status = components['schemas']['Status'];
 
 export type RecordType = components['schemas']['RecordType'];
 
+export * from './approvals';
 export * from './common';
 export * from './coreTekton';
 export * from './openshift';

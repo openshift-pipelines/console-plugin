@@ -5,11 +5,19 @@ import {
   NavPage,
   useFlag,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { PipelineModel, PipelineRunModel, RepositoryModel } from '../../models';
+import {
+  ApprovalTaskModel,
+  PipelineModel,
+  PipelineRunModel,
+  RepositoryModel,
+} from '../../models';
 import { RepositoriesList } from '../repositories-list';
 import { PipelinesList } from '../pipelines-list';
 import { PipelineRunsList } from '../pipelineRuns-list';
-import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '../../consts';
+import {
+  FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK,
+  FLAG_OPENSHIFT_PIPELINE_AS_CODE,
+} from '../../consts';
 import {
   MenuAction,
   MenuActions,
@@ -17,6 +25,7 @@ import {
 import { MultiTabListPage } from '../multi-tab-list';
 import AllProjectsPage from '../projects-list/AllProjectsPage';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
+import { ApprovalTasksList } from '../approval-tasks';
 
 type PageContentsProps = {
   namespace: string;
@@ -29,6 +38,8 @@ export const PageContents: React.FC<PageContentsProps> = ({
 }) => {
   const { t } = useTranslation();
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
+  const isApprovalTaskEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK);
+
   const menuActions: MenuActions = {
     pipeline: {
       model: PipelineModel,
@@ -62,6 +73,16 @@ export const PageContents: React.FC<PageContentsProps> = ({
             // t(RepositoryModel.labelPluralKey)
             name: RepositoryModel.labelPluralKey,
             component: RepositoriesList,
+          },
+        ]
+      : []),
+    ...(isApprovalTaskEnabled
+      ? [
+          {
+            href: 'approvals',
+            // t(ApprovalTaskModel.labelPluralKey)
+            name: ApprovalTaskModel.labelPluralKey,
+            component: ApprovalTasksList,
           },
         ]
       : []),

@@ -11,7 +11,7 @@ import { TaskKind } from './task';
 
 export type PipelineTaskRef = {
   kind?: string;
-  name: string;
+  name?: string;
 };
 
 export type PipelineTaskWorkspace = {

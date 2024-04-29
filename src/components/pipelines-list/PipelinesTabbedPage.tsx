@@ -5,20 +5,30 @@ import {
   NavPage,
   useFlag,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { PipelineModel, PipelineRunModel, RepositoryModel } from '../../models';
+import {
+  ApprovalTaskModel,
+  PipelineModel,
+  PipelineRunModel,
+  RepositoryModel,
+} from '../../models';
 import { RepositoriesList } from '../repositories-list';
 import { PipelinesList } from '../pipelines-list';
 import { PipelineRunsList } from '../pipelineRuns-list';
-import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '../../consts';
+import {
+  FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK,
+  FLAG_OPENSHIFT_PIPELINE_AS_CODE,
+} from '../../consts';
 import {
   MenuAction,
   MenuActions,
 } from '../multi-tab-list/multi-tab-list-page-types';
 import { MultiTabListPage } from '../multi-tab-list';
+import { ApprovalTasksList } from '../approval-tasks';
 
 export const PageContents: React.FC = () => {
   const { t } = useTranslation();
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
+  const isApprovalTaskEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK);
 
   const menuActions: MenuActions = {
     pipeline: {
@@ -53,6 +63,16 @@ export const PageContents: React.FC = () => {
             // t(RepositoryModel.labelPluralKey)
             name: RepositoryModel.labelPluralKey,
             component: RepositoriesList,
+          },
+        ]
+      : []),
+    ...(isApprovalTaskEnabled
+      ? [
+          {
+            href: 'approvals',
+            // t(ApprovalTaskModel.labelPluralKey)
+            name: ApprovalTaskModel.labelPluralKey,
+            component: ApprovalTasksList,
           },
         ]
       : []),

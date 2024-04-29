@@ -1,9 +1,11 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ActionGroup,
   Button,
+  Modal,
   Text,
   TextContent,
   TextVariants,
@@ -144,6 +146,91 @@ export const ModalSubmitFooter: React.FC<ModalSubmitFooterProps> = ({
   );
 };
 
+export const createModal: CreateModal = (getModalElement) => {
+  const containerElement = document.getElementById('modal-container');
+  const result = new Promise<void>((resolve) => {
+    const closeModal = (e?: React.SyntheticEvent) => {
+      if (e && e.stopPropagation) {
+        e.stopPropagation();
+      }
+      ReactDOM.unmountComponentAtNode(containerElement);
+      resolve();
+    };
+    containerElement &&
+      ReactDOM.render(getModalElement(closeModal), containerElement);
+  });
+  return { result };
+};
+
+export const ModalWrapper: React.FC<ModalWrapperProps> = ({
+  className,
+  children,
+}) => {
+  return (
+    <Modal className={classNames('modal-dialog', className)} isOpen>
+      {children}
+    </Modal>
+  );
+};
+
+export const createModalLauncher: CreateModalLauncher =
+  (Component, modalWrapper = true) =>
+  ({ blocking, modalClassName, close, cancel, ...props }) => {
+    const getModalContainer: GetModalContainer = (onClose) => {
+      const handleClose = (e: React.SyntheticEvent) => {
+        onClose?.(e);
+        close?.();
+      };
+      const handleCancel = (e: React.SyntheticEvent) => {
+        cancel?.();
+        handleClose(e);
+      };
+
+      return (
+        <>
+          {modalWrapper ? (
+            <ModalWrapper
+              blocking={blocking}
+              className={modalClassName}
+              onClose={handleClose}
+            >
+              <Component
+                {...(props as any)}
+                cancel={handleCancel}
+                close={handleClose}
+              />
+            </ModalWrapper>
+          ) : (
+            <Component
+              {...(props as any)}
+              cancel={handleCancel}
+              close={handleClose}
+            />
+          )}
+        </>
+      );
+    };
+    return createModal(getModalContainer);
+  };
+
+export type CreateModalLauncherProps = {
+  blocking?: boolean;
+  modalClassName?: string;
+};
+
+export type ModalWrapperProps = {
+  blocking?: boolean;
+  className?: string;
+  onClose?: (event?: React.SyntheticEvent) => void;
+};
+
+export type GetModalContainer = (
+  onClose: (e?: React.SyntheticEvent) => void,
+) => React.ReactElement;
+
+type CreateModal = (getModalContainer: GetModalContainer) => {
+  result: Promise<any>;
+};
 export type ModalComponentProps = {
   cancel?: () => void;
   close?: () => void;
@@ -179,3 +266,8 @@ export type ModalSubmitFooterProps = {
   submitDanger?: boolean;
   buttonAlignment?: 'left' | 'right';
 };
+
+export type CreateModalLauncher = <P extends ModalComponentProps>(
+  C: React.ComponentType<P>,
+  modalWrapper?: boolean,
+) => (props: P & CreateModalLauncherProps) => { result: Promise<{}> };

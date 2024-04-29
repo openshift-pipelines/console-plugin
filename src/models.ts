@@ -398,7 +398,7 @@ export const ApprovalTaskModel: K8sKind = {
   // t('ApprovalTask')
   labelKey: 'ApprovalTask',
   // t('ApprovalTasks')
-  labelPluralKey: 'ApprovalTasks',
+  labelPluralKey: 'Approvals',
   plural: 'approvaltasks',
   abbr: 'AT',
   namespaced: true,

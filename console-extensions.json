@@ -98,6 +98,17 @@
     }
   },
   {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "openshift-pipelines.org",
+        "version": "v1alpha1",
+        "kind": "ApprovalTask"
+      },
+      "flag": "OPENSHIFT_PIPELINE_APPROVAL_TASK"
+    }
+  },
+  {
     "type": "console.page/route",
     "properties": {
       "exact": true,
@@ -290,6 +301,20 @@
     },
     "flags": {
       "required": ["HIDE_STATIC_PIPELINE_PLUGIN_REPOSITORIES_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "openshift-pipelines.org",
+        "version": "v1alpha1",
+        "kind": "ApprovalTask"
+      },
+      "component": { "$codeRef": "approvalsList.ApprovalTasksListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_APPROVALS_LIST"]
     }
   },
   {
@@ -498,6 +523,35 @@
         "$codeRef": "triggersDetails.TriggerBindingEventListeners"
       },
       "sortWeight": 0,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "approval-task-description",
+      "model": {
+        "group": "openshift-pipelines.org",
+        "version": "v1alpha1",
+        "kind": "ApprovalTask"
+      },
+      "component": { "$codeRef": "approvalsDetails.TaskDescription" },
+      "sortWeight": 1,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "approval-task-approvers",
+      "model": {
+        "group": "openshift-pipelines.org",
+        "version": "v1alpha1",
+        "kind": "ApprovalTask"
+      },
+      "component": { "$codeRef": "approvalsDetails.ApproverList" },
+      "title": "%Approvers%",
+      "sortWeight": 1,
       "column": "right"
     }
   },

@@ -1,4 +1,8 @@
 import * as React from 'react';
+import * as cx from 'classnames';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom-v5-compat';
 import { Tooltip } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import { global_palette_black_500 as customTaskColor } from '@patternfly/react-tokens/dist/js/global_palette_black_500';
@@ -9,25 +13,20 @@ import {
   useHover,
   createSvgIdUrl,
 } from '@patternfly/react-topology';
-import * as cx from 'classnames';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
-
-import { CustomRunKind, TaskNodeModelData } from './types';
-
-import './CustomTaskNode.scss';
 import {
   K8sResourceKind,
   WatchK8sResults,
   getGroupVersionKindForModel,
   useK8sWatchResources,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { TaskKind } from '../../types';
+import { CustomRunKind, TaskKind } from '../../types';
 import { resourcePathFromModel } from '../utils/pipelines-utils';
 import { truncateMiddle } from './truncate-middle';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
 import { CustomRunModelV1Beta1 } from '../../models';
+import { TaskNodeModelData } from './types';
+
+import './CustomTaskNode.scss';
 
 type CustomTaskNodeProps = {
   element: Node<NodeModel, TaskNodeModelData>;

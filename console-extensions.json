@@ -222,6 +222,24 @@
     }
   },
   {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "toastContext.ToastProvider" },
+      "useValueHook": { "$codeRef": "toastContext.useApprovalToast" }
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": {
+        "$codeRef": "pipelineApprovalContext.PipelineApprovalContextProvider"
+      },
+      "useValueHook": {
+        "$codeRef": "pipelineApprovalContext.usePipelineApprovalToast"
+      }
+    }
+  },
+  {
     "type": "console.flag/hookProvider",
     "properties": {
       "handler": { "$codeRef": "hookProvider.useFlagHookProvider" }

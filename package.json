@@ -104,6 +104,8 @@
     "displayName": "Pipelines console plugin",
     "description": "OpenShift Pipelines UI plugin for OpenShift web console",
     "exposedModules": {
+      "toastContext": "./components/toast",
+      "pipelineApprovalContext": "./components/approval-tasks/approval-notification",
       "hookProvider": "./components/hooks",
       "pipelinesComponent": "./components/pipelines-overview",
       "pipelinesList": "./components/pipelines-list",

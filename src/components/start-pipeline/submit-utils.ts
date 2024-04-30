@@ -86,19 +86,20 @@ export const submitTrigger = async (
     [triggerBinding.resource],
     triggerTemplate,
   );
-
   let resources: K8sResourceKind[];
   try {
     // Validates the modal contents, should be done first
     const ttResource = await k8sCreate({
       model: TriggerTemplateModel,
       data: triggerTemplate,
+      ns: thisNamespace,
     });
 
     // Creates the linkages and will provide the link to non-trigger resources created
     const elResource = await k8sCreate({
       model: EventListenerModel,
       data: eventListener,
+      ns: thisNamespace,
     });
 
     // Capture all related resources

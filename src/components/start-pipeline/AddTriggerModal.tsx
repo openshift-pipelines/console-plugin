@@ -41,7 +41,7 @@ const AddTriggerModal: ModalComponent<AddTriggerModalProps> = ({
   const handleSubmit = (values: AddTriggerFormValues, actions) => {
     return submitTrigger(pipeline, values)
       .then(() => {
-        close();
+        closeModal();
       })
       .catch((error) => {
         actions.setStatus({

@@ -459,6 +459,7 @@ export const exposeRoute = async (
         await k8sCreate({
           model: RouteModel,
           data: createEventListenerRoute(elResource),
+          ns,
         });
       }
       return;
@@ -478,7 +479,7 @@ export const exposeRoute = async (
       serviceGeneratedName,
       servicePort,
     );
-    await k8sCreate({ model: RouteModel, data: route });
+    await k8sCreate({ model: RouteModel, data: route, ns });
   } catch (e) {
     errorModal({
       title: 'Error Exposing Route',

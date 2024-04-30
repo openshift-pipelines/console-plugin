@@ -60,7 +60,7 @@ const TriggerBindingSelector: React.FC<TriggerBindingSelectorProps> = (
     if (selectedResource) {
       onChange && onChange(selectedResource);
     }
-    setFieldValue('triggerBinding.name', value);
+    setFieldValue('triggerBinding.name', key);
     setFieldTouched('triggerBinding.name', true);
   };
 

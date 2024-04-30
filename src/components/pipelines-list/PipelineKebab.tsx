@@ -14,6 +14,7 @@ import {
   KEBAB_ACTION_EDIT_ID,
   KEBAB_ACTION_EDIT_LABELS_ID,
   KEBAB_BUTTON_ID,
+  StartedByAnnotation,
 } from '../../consts';
 import { useTranslation } from 'react-i18next';
 import {
@@ -26,7 +27,11 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { PipelineModel, PipelineRunModel } from '../../models';
 import _ from 'lodash';
-import { startPipelineModal } from '../start-pipeline';
+import {
+  AddTriggerModal,
+  RemoveTriggerModal,
+  startPipelineModal,
+} from '../start-pipeline';
 import { resourcePathFromModel } from '../utils/pipelines-utils';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { errorModal } from '../modals/error-modal';
@@ -34,6 +39,7 @@ import { getPipelineRunData } from '../start-pipeline/utils';
 import { useHistory } from 'react-router-dom';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { rerunPipeline } from '../utils/pipelines-actions';
+import { usePipelineTriggerTemplateNames } from '../utils/triggers';
 
 type PipelineKebabProps = {
   pipeline: PipelineWithLatest;
@@ -58,6 +64,7 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({ pipeline }) => {
   const navigate = useNavigate();
   const history = useHistory();
   const [isOpen, setIsOpen] = React.useState(false);
+  const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
   const onToggle = () => {
     setIsOpen(!isOpen);
   };
@@ -121,6 +128,23 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({ pipeline }) => {
     });
   };
 
+  const addTrigger = () => {
+    const cleanPipeline: PipelineKind = {
+      ...pipeline,
+      metadata: {
+        ...pipeline.metadata,
+        annotations: _.omit(pipeline.metadata.annotations, [
+          StartedByAnnotation.user,
+        ]),
+      },
+    };
+    launchModal(AddTriggerModal, { pipeline: cleanPipeline });
+  };
+
+  const removeTrigger = () => {
+    launchModal(RemoveTriggerModal, { pipeline });
+  };
+
   const editURL = `/k8s/ns/${namespace}/${getReferenceForModel(
     PipelineModel,
   )}/${encodeURIComponent(name)}/builder`;
@@ -145,6 +169,28 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({ pipeline }) => {
             onClick={rerunPipelineAndRedirect}
           >
             {t('Start last run')}
+          </DropdownItem>,
+        ]
+      : []),
+    <DropdownItem
+      key="add-trigger"
+      component="button"
+      isDisabled={!canCreateResource}
+      data-test-action="add-trigger"
+      onClick={addTrigger}
+    >
+      {t('Add Trigger')}
+    </DropdownItem>,
+    ...(templateNames.length > 0
+      ? [
+          <DropdownItem
+            key="remove-trigger"
+            component="button"
+            isDisabled={!canDeleteResource}
+            data-test-action="remove-trigger"
+            onClick={removeTrigger}
+          >
+            {t('Remove Trigger')}
           </DropdownItem>,
         ]
       : []),

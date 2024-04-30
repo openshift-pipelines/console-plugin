@@ -1,14 +1,29 @@
+import {
+  getAPIVersionForModel,
+  k8sCreate,
+  k8sGet,
+  K8sResourceKind,
+} from '@openshift-console/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
+  PIPELINE_SERVICE_ACCOUNT,
   preferredNameAnnotation,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
   TektonResourceLabel,
   VolumeTypes,
 } from '../../consts';
-import { PipelineRunModel } from '../../models';
+import {
+  EventListenerModel,
+  PipelineRunModel,
+  RouteModel,
+  ServiceModel,
+  TriggerTemplateModel,
+} from '../../models';
 import {
   CommonPipelineModalFormikValues,
+  EventListenerKind,
+  EventListenerKindBindingReference,
   PipelineKind,
   PipelineModalFormResource,
   PipelineModalFormWorkspace,
@@ -19,9 +34,14 @@ import {
   PipelineRunParam,
   PipelineRunReferenceResource,
   PipelineRunResource,
+  RouteKind,
   TektonWorkspace,
+  TriggerBindingKind,
+  TriggerTemplateKind,
+  TriggerTemplateKindParam,
   VolumeClaimTemplateType,
 } from '../../types';
+import { errorModal } from '../modals/error-modal';
 import {
   getPipelineRunParams,
   getPipelineRunWorkspaces,
@@ -329,4 +349,140 @@ export const getPipelineRunFromForm = (
     },
   };
   return getPipelineRunData(pipeline, pipelineRunData, options);
+};
+
+export const createTriggerTemplate = (
+  pipeline: PipelineKind,
+  pipelineRun: PipelineRunKind,
+  params: TriggerTemplateKindParam[],
+): TriggerTemplateKind => {
+  return {
+    apiVersion: getAPIVersionForModel(TriggerTemplateModel),
+    kind: TriggerTemplateModel.kind,
+    metadata: {
+      name: `trigger-template-${pipeline.metadata.name}-${getRandomChars()}`,
+    },
+    spec: {
+      params,
+      resourcetemplates: [pipelineRun],
+    },
+  };
+};
+
+export const createEventListener = (
+  triggerBindings: TriggerBindingKind[],
+  triggerTemplate: TriggerTemplateKind,
+): EventListenerKind => {
+  const mapTriggerBindings: (
+    triggerBinding: TriggerBindingKind,
+  ) => EventListenerKindBindingReference = (
+    triggerBinding: TriggerBindingKind,
+  ) => {
+    return {
+      kind: triggerBinding.kind,
+      ref: triggerBinding.metadata.name,
+    };
+  };
+  const getTriggerTemplate = (name: string) => {
+    return { ref: name };
+  };
+
+  return {
+    apiVersion: getAPIVersionForModel(EventListenerModel),
+    kind: EventListenerModel.kind,
+    metadata: {
+      name: `event-listener-${getRandomChars()}`,
+    },
+    spec: {
+      serviceAccountName: PIPELINE_SERVICE_ACCOUNT,
+      triggers: [
+        {
+          bindings: triggerBindings.map(mapTriggerBindings),
+          template: getTriggerTemplate(triggerTemplate.metadata.name),
+        },
+      ],
+    },
+  };
+};
+
+export const createEventListenerRoute = (
+  eventListener: EventListenerKind,
+  generatedName?: string,
+  targetPort = 8080,
+): RouteKind => {
+  const eventListenerName = eventListener.metadata.name;
+  // Not ideal, but if all else fails, we can do our best guess
+  const referenceName = generatedName || `el-${eventListenerName}`;
+
+  return {
+    apiVersion: getAPIVersionForModel(RouteModel),
+    kind: RouteModel.kind,
+    metadata: {
+      name: referenceName,
+      labels: {
+        'app.kubernetes.io/managed-by': EventListenerModel.kind,
+        'app.kubernetes.io/part-of': 'Triggers',
+        eventlistener: eventListenerName,
+      },
+    },
+    spec: {
+      port: {
+        targetPort,
+      },
+      to: {
+        kind: 'Service',
+        name: referenceName,
+        weight: 100,
+      },
+    },
+  };
+};
+
+export const exposeRoute = async (
+  elName: string,
+  ns: string,
+  iteration = 0,
+) => {
+  const elResource: EventListenerKind = await k8sGet({
+    model: EventListenerModel,
+    name: elName,
+    ns,
+  });
+  const serviceGeneratedName = elResource?.status?.configuration.generatedName;
+
+  try {
+    if (!serviceGeneratedName) {
+      if (iteration < 3) {
+        setTimeout(() => exposeRoute(elName, ns, iteration + 1), 500);
+      } else {
+        // Unable to deterministically create the route; create a default one
+        await k8sCreate({
+          model: RouteModel,
+          data: createEventListenerRoute(elResource),
+        });
+      }
+      return;
+    }
+
+    // Get the service, find out what port we are exposed on
+    const serviceResource: K8sResourceKind = await k8sGet({
+      model: ServiceModel,
+      name: serviceGeneratedName,
+      ns,
+    });
+    const servicePort = serviceResource.spec?.ports?.[0]?.name;
+
+    // Build the exposed route on the correct port
+    const route: RouteKind = createEventListenerRoute(
+      elResource,
+      serviceGeneratedName,
+      servicePort,
+    );
+    await k8sCreate({ model: RouteModel, data: route });
+  } catch (e) {
+    errorModal({
+      title: 'Error Exposing Route',
+      error: e.message || 'Unknown error exposing the Webhook route',
+    });
+  }
 };

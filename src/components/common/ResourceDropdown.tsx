@@ -8,7 +8,7 @@ import {
   getGroupVersionKindForResource,
   K8sResourceCommon,
   K8sResourceKind,
-  ResourceLink,
+  ResourceIcon,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { LoadingInline } from '../Loading';
 import { Dropdown } from './dropdown';
@@ -26,13 +26,13 @@ const DropdownItem: React.FC<DropdownItemProps> = ({
 }) => {
   return (
     <span className="co-resource-item">
-      <ResourceLink
-        linkTo={false}
-        groupVersionKind={getGroupVersionKindForResource(resource)}
-        name={name}
-        namespace={namespace}
-      />
+      <span className="co-resource-icon--fixed-width">
+        <ResourceIcon
+          groupVersionKind={getGroupVersionKindForResource(resource)}
+        />
+      </span>
       <span className="co-resource-item__resource-name">
+        <span>{name}</span>
         {namespace && (
           <div className="text-muted co-truncate co-nowrap small co-resource-item__resource-namespace">
             {namespace}

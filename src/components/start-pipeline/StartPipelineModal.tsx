@@ -25,7 +25,7 @@ export interface StartPipelineModalProps {
 const StartPipelineModal: ModalComponent<
   StartPipelineModalProps & ModalComponentProps
 > = ({ pipeline, closeModal, onSubmit }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const userStartedAnnotation = useUserAnnotationForManualStart();
   const [pipelinePVC, pipelinePVCLoaded] = usePipelinePVC(
     pipeline.metadata?.name,

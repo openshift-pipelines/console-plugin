@@ -176,6 +176,21 @@ export const ServiceAccountModel: K8sKind = {
   labelPluralKey: 'ServiceAccounts',
 };
 
+export const ServiceModel: K8sKind = {
+  apiVersion: 'v1',
+  label: 'Service',
+  // t('Service')
+  labelKey: 'Service',
+  plural: 'services',
+  abbr: 'S',
+  namespaced: true,
+  kind: 'Service',
+  id: 'service',
+  labelPlural: 'Services',
+  // t('Services')
+  labelPluralKey: 'Services',
+};
+
 export const TaskModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1',

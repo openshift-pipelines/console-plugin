@@ -140,3 +140,5 @@ export const PIPELINE_NAMESPACE = 'openshift-pipelines';
 export enum StartedByLabel {
   triggers = 'triggers.tekton.dev/eventlistener',
 }
+
+export const TRIGGER_BINDING_EMPTY = '#empty-trigger-binding#';

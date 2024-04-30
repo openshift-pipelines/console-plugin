@@ -170,3 +170,23 @@ export const advancedSectionValidationSchema = () =>
       value: yup.string().required(t('Required')),
     }),
   });
+
+export const addTriggerSchema = () =>
+  commonPipelineSchema().shape({
+    triggerBinding: yup.object().shape({
+      name: yup.string().required(t('Required')),
+      resource: yup
+        .object()
+        .shape({
+          metadata: yup.object().shape({
+            name: yup.string().required(t('Required')),
+          }),
+        })
+        .required(t('Required')),
+    }),
+  });
+
+export const removeTriggerSchema = () =>
+  yup.object().shape({
+    selectedTrigger: yup.string().required(t('Required')),
+  });

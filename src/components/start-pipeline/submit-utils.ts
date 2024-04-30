@@ -1,9 +1,28 @@
-import { k8sCreate } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  k8sCreate,
+  K8sResourceKind,
+} from '@openshift-console/dynamic-plugin-sdk';
 import { VolumeTypes } from '../../consts';
-import { PipelineRunModel } from '../../models';
-import { PipelineKind, PipelineRunKind } from '../../types';
+import {
+  EventListenerModel,
+  PipelineRunModel,
+  TriggerTemplateModel,
+} from '../../models';
+import {
+  AddTriggerFormValues,
+  EventListenerKind,
+  PipelineKind,
+  PipelineRunKind,
+  TriggerTemplateKind,
+  TriggerTemplateKindParam,
+} from '../../types';
 import { StartPipelineFormValues } from './types';
-import { getPipelineRunFromForm } from './utils';
+import {
+  createEventListener,
+  createTriggerTemplate,
+  exposeRoute,
+  getPipelineRunFromForm,
+} from './utils';
 
 const processWorkspaces = (
   values: StartPipelineFormValues,
@@ -35,4 +54,60 @@ export const submitStartPipeline = async (
   });
 
   return Promise.resolve(pipelineRunResource);
+};
+
+export const submitTrigger = async (
+  pipeline: PipelineKind,
+  formValues: AddTriggerFormValues,
+): Promise<K8sResourceKind[]> => {
+  const { triggerBinding } = formValues;
+  const thisNamespace = pipeline.metadata.namespace;
+
+  const pipelineRun: PipelineRunKind = getPipelineRunFromForm(
+    pipeline,
+    formValues,
+    null,
+    null,
+    {
+      generateName: true,
+    },
+  );
+  const triggerTemplateParams: TriggerTemplateKindParam[] =
+    triggerBinding.resource.spec.params.map(
+      ({ name }) => ({ name } as TriggerTemplateKindParam),
+    );
+  const triggerTemplate: TriggerTemplateKind = createTriggerTemplate(
+    pipeline,
+    pipelineRun,
+    triggerTemplateParams,
+  );
+
+  const eventListener: EventListenerKind = createEventListener(
+    [triggerBinding.resource],
+    triggerTemplate,
+  );
+
+  let resources: K8sResourceKind[];
+  try {
+    // Validates the modal contents, should be done first
+    const ttResource = await k8sCreate({
+      model: TriggerTemplateModel,
+      data: triggerTemplate,
+    });
+
+    // Creates the linkages and will provide the link to non-trigger resources created
+    const elResource = await k8sCreate({
+      model: EventListenerModel,
+      data: eventListener,
+    });
+
+    // Capture all related resources
+    resources = [ttResource, elResource];
+  } catch (err) {
+    return Promise.reject(err);
+  }
+
+  exposeRoute(eventListener.metadata.name, thisNamespace);
+
+  return Promise.resolve(resources);
 };

@@ -1,4 +1,5 @@
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
+import { FormikValues } from 'formik';
 import {
   CommonPipelineModalFormikValues,
   K8sResourceKind,
@@ -119,4 +120,8 @@ export type AddTriggerFormValues = CommonPipelineModalFormikValues & {
     name: string;
     resource: TriggerBindingKind;
   };
+};
+
+export type RemoveTriggerFormValues = FormikValues & {
+  selectedTrigger: string;
 };

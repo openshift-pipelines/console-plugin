@@ -2,6 +2,10 @@ import {
   WatchK8sResource,
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { SDKStoreState } from '@openshift-console/dynamic-plugin-sdk/lib/app/redux-types';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { useSelector } from 'react-redux';
 import { StartedByAnnotation, TektonResourceLabel } from '../../consts';
 import { PersistentVolumeClaimModel, PipelineRunModel } from '../../models';
 import { PersistentVolumeClaimKind, PipelineRunKind } from '../../types';
@@ -47,13 +51,12 @@ export const usePipelinePVC = (
 };
 
 export const useUserAnnotationForManualStart = () => {
-  // const user = useSelector(getUser);
-
-  // if (!user?.metadata?.name) {
-  //   return {};
-  // }
+  const user = useSelector((state: SDKStoreState) => state.sdkCore.user);
+  if (!user?.username) {
+    return {};
+  }
 
   return {
-    [StartedByAnnotation.user]: 'kube:admin', // user.metadata.name,
+    [StartedByAnnotation.user]: user.username,
   };
 };

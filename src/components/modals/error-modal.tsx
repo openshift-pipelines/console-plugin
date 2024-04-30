@@ -3,6 +3,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { YellowExclamationTriangleIcon } from '@openshift-console/dynamic-plugin-sdk';
 import {
+  createModalLauncher,
   ModalBody,
   ModalComponentProps,
   ModalFooter,
@@ -32,7 +33,7 @@ export const ModalErrorContent = withHandlePromise<ErrorModalProps>((props) => {
   );
 });
 
-export const errorModal = ModalErrorContent;
+export const errorModal = createModalLauncher(ModalErrorContent);
 
 export type ErrorModalProps = {
   error: string;

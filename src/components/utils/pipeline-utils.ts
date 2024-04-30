@@ -51,6 +51,7 @@ import {
   TektonParam,
   TriggerTemplateKind,
 } from '../../types';
+import { errorModal } from '../modals/error-modal';
 import {
   formatPrometheusDuration,
   getDuration,
@@ -445,7 +446,7 @@ export const associateServiceAccountToSecret = (
       }
     })
     .catch((err) => {
-      console.error('error:', err.message);
+      errorModal({ error: err.message });
     });
 };
 

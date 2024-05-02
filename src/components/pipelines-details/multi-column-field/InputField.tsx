@@ -5,9 +5,9 @@ import {
   TextInputTypes,
 } from '@patternfly/react-core';
 import BaseInputField from './BaseInputField';
+import { BaseInputFieldProps } from './types';
 
 import './InputField.scss';
-import { BaseInputFieldProps } from './types';
 
 // const InputField: React.FC<BaseInputFieldProps> = (
 //   { type = TextInputTypes.text, ...baseProps },

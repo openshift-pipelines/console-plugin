@@ -49,7 +49,7 @@ export const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
   );
 };
 
-const rerunPipeline: KebabAction = (
+export const rerunPipeline: KebabAction = (
   kind: K8sKind,
   pipelineRun: PipelineRunKind,
   modal?: any,

@@ -11,6 +11,8 @@ import {
   PodKind,
   TaskRunKind,
 } from '../../types';
+import { errorModal } from '../modals/error-modal';
+import { t } from '../utils/common-utils';
 import { resourceURL } from '../utils/k8s-utils';
 import { containerToLogSourceStatus } from '../utils/pipeline-utils';
 import { getTaskRunLog } from '../utils/tekton-results';
@@ -66,11 +68,9 @@ const getOrderedStepsFromPod = (
       );
     })
     .catch((err) => {
-      console.error('error: ', err.message);
-      // errorModal({
-      //   error:
-      //     err.message || i18next.t('Error downloading logs.'),
-      // });
+      errorModal({
+        error: err.message || t('Error downloading logs.'),
+      });
       return [];
     });
 };

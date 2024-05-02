@@ -15,11 +15,20 @@ import {
   MenuActions,
 } from '../multi-tab-list/multi-tab-list-page-types';
 import { MultiTabListPage } from '../multi-tab-list';
+import AllProjectsPage from '../projects-list/AllProjectsPage';
+import { useLocation, useParams } from 'react-router-dom-v5-compat';
 
-export const PageContents: React.FC = () => {
+type PageContentsProps = {
+  namespace: string;
+  perspective: string;
+};
+
+export const PageContents: React.FC<PageContentsProps> = ({
+  namespace,
+  perspective,
+}) => {
   const { t } = useTranslation();
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
-
   const menuActions: MenuActions = {
     pipeline: {
       model: PipelineModel,
@@ -58,24 +67,18 @@ export const PageContents: React.FC = () => {
       : []),
   ];
 
-  //   return namespace ? (
-  //     <MultiTabListPage
-  //       pages={pages}
-  //       title={t('pipelines-plugin~Pipelines')}
-  //       menuActions={menuActions}
-  //       telemetryPrefix="Pipelines"
-  //     />
-  //   ) : (
-  //     <CreateProjectListPage title={t('pipelines-plugin~Pipelines')}>
-  //       {(openProjectModal) => (
-  //         <Trans t={t} ns="pipelines-plugin">
-  //           Select a Project to view its details
-  //           <CreateAProjectButton openProjectModal={openProjectModal} />.
-  //         </Trans>
-  //       )}
-  //     </CreateProjectListPage>
-  //   );
-  return (
+  return perspective === 'dev' ? (
+    namespace ? (
+      <MultiTabListPage
+        pages={pages}
+        title={t('Pipelines')}
+        menuActions={menuActions}
+        telemetryPrefix="Pipelines"
+      />
+    ) : (
+      <AllProjectsPage />
+    )
+  ) : (
     <MultiTabListPage
       pages={pages}
       title={t('Pipelines')}
@@ -85,13 +88,16 @@ export const PageContents: React.FC = () => {
   );
 };
 
-// const PageContentsWithStartGuide = withStartGuide(PageContents);
-
-const PipelinesTabbedPage: React.FC = (props) => {
+const PipelinesTabbedPage: React.FC = () => {
+  const { ns } = useParams();
+  const location = useLocation();
+  const perspective = location?.pathname.includes('dev-pipelines')
+    ? 'dev'
+    : 'admin';
   return (
     <>
       <NamespaceBar />
-      <PageContents {...props} />
+      <PageContents namespace={ns} perspective={perspective} />
     </>
   );
 };

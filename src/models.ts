@@ -441,3 +441,18 @@ export const CustomRunModelV1Beta1: K8sKind = {
   crd: true,
   color,
 };
+
+export const ProjectModel: K8sKind = {
+  apiVersion: 'v1',
+  apiGroup: 'project.openshift.io',
+  label: 'Project',
+  // t('Project')
+  labelKey: 'Project',
+  plural: 'projects',
+  abbr: 'PR',
+  kind: 'Project',
+  id: 'project',
+  labelPlural: 'Projects',
+  // t('Projects')
+  labelPluralKey: 'Projects',
+};

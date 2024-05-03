@@ -17,13 +17,13 @@ import {
 import { useTaskRuns } from '../hooks/useTaskRuns';
 import TaskRunsRow from './TaskRunsRow';
 import { TaskRunModel } from '../../models';
-import { ListFilterId, ListFilterLabels } from '../utils/pipelines-utils';
 import {
   pipelineRunFilterReducer,
   pipelineRunStatusFilter,
 } from '../utils/pipeline-filter-reducer';
 import { ALL_NAMESPACES_KEY, TektonResourceLabel } from '../../consts';
 import { getReferenceForModel } from '../pipelines-overview/utils';
+import { ListFilterId, ListFilterLabels } from '../utils/pipeline-utils';
 
 interface TaskRunsListPageProps {
   showTitle?: boolean;

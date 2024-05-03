@@ -17,10 +17,7 @@ import {
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { Link } from 'react-router-dom-v5-compat';
-
 import { NodeType } from './const';
-
-import './PipelineTaskNode.scss';
 import { ClusterTaskModel, PipelineRunModel, TaskModel } from '../../models';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
@@ -30,8 +27,9 @@ import {
   createStepStatus,
   StepStatus,
 } from '../pipelines-details/pipeline-step-utils';
-import { resourcePathFromModel } from '../utils/pipelines-utils';
 import { PipelineVisualizationStepList } from '../pipelines-details/PipelineVisualizationStepList';
+import { resourcePathFromModel } from '../utils/utils';
+import './PipelineTaskNode.scss';
 
 type PipelineTaskNodeProps = {
   element: Node;

@@ -23,7 +23,6 @@ import { getReferenceForModel } from '../pipelines-overview/utils';
 import PipelineParamatersTab from './PipelineParamatersTab';
 import { useLatestPipelineRun } from '../hooks/hooks';
 import { rerunPipeline } from '../utils/pipelines-actions';
-import { resourcePathFromModel } from '../utils/pipelines-utils';
 import _ from 'lodash';
 import {
   AddTriggerModal,
@@ -33,6 +32,7 @@ import {
 import { triggerPipeline } from '../pipelines-list/PipelineKebab';
 import { StartedByAnnotation } from '../../consts';
 import { usePipelineTriggerTemplateNames } from '../utils/triggers';
+import { resourcePathFromModel } from '../utils/utils';
 
 const PipelineDetailsPage = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

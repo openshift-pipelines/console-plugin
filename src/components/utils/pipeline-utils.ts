@@ -1,4 +1,5 @@
 import {
+  GroupVersionKind,
   K8sKind,
   K8sModel,
   K8sResourceCommon,
@@ -701,3 +702,6 @@ export const getPipelineRunStatus = (
 
   return taskRunStatusObj;
 };
+
+export const apiGroupForReference = (ref: GroupVersionKind) =>
+  ref.split('~')[0];

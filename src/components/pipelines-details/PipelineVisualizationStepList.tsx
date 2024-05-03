@@ -3,11 +3,9 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { StepStatus } from './pipeline-step-utils';
 import { StatusIcon } from './StatusIcon';
-
-import './PipelineVisualizationStepList.scss';
 import { getRunStatusColor } from '../utils/pipeline-augment';
 import { ComputedStatus } from '../../types';
-import { t } from '../utils/common-utils';
+import './PipelineVisualizationStepList.scss';
 
 export interface PipelineVisualizationStepListProps {
   isSpecOverview: boolean;
@@ -18,6 +16,7 @@ export interface PipelineVisualizationStepListProps {
 }
 
 const TooltipColoredStatusIcon = ({ status }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const size = 18;
   const sharedProps = {
     height: size,

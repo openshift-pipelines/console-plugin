@@ -1,7 +1,4 @@
-import {
-  getGroupVersionKindForModel,
-  K8sModel,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { K8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import _ from 'lodash';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
@@ -15,6 +12,7 @@ import {
   RouteIngress,
   RouteKind,
 } from '../../types';
+import { getReferenceForModel } from '../pipelines-overview/utils';
 import { getPipelineRunParams } from './pipeline-utils';
 
 export const resourcePathFromModel = (
@@ -34,7 +32,7 @@ export const resourcePathFromModel = (
     url += namespace ? `ns/${namespace}/` : 'all-namespaces/';
   }
   if (crd) {
-    url += getGroupVersionKindForModel(model);
+    url += getReferenceForModel(model);
   } else if (plural) {
     url += plural;
   }

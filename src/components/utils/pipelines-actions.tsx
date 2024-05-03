@@ -1,13 +1,12 @@
 import { K8sKind, k8sCreate } from '@openshift-console/dynamic-plugin-sdk';
 import { K8sResourceKind, PipelineRunKind } from '../../types';
 import { AccessReviewResourceAttributes } from '../pipeline-topology/types';
-import { getPipelineRunData } from './utils';
+import { getPipelineRunData, resourcePathFromModel } from './utils';
 import _ from 'lodash';
 import { returnValidPipelineRunModel } from './pipeline-utils';
 import { PipelineRunModel } from '../../models';
 import { history } from './router';
 import { ModalErrorContent } from '../modals/error-modal';
-import { resourcePathFromModel } from './pipelines-utils';
 
 type RerunPipelineData = {
   onComplete?: (pipelineRun: PipelineRunKind) => void;

@@ -1,52 +1,9 @@
 import { RowFilter } from '@openshift-console/dynamic-plugin-sdk';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-export enum ListFilterId {
-  Running = 'Running',
-  Failed = 'Failed',
-  Succeeded = 'Succeeded',
-  Cancelled = 'Cancelled',
-  Other = '-',
-}
-
-export const ListFilterLabels = {
-  [ListFilterId.Running]: 'Running',
-  [ListFilterId.Failed]: 'Failed',
-  [ListFilterId.Succeeded]: 'Succeeded',
-  [ListFilterId.Cancelled]: 'Cancelled',
-  [ListFilterId.Other]: 'Other',
-};
-
-export enum ComputedStatus {
-  Cancelling = 'Cancelling',
-  Succeeded = 'Succeeded',
-  Failed = 'Failed',
-  Running = 'Running',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  'In Progress' = 'In Progress',
-  FailedToStart = 'FailedToStart',
-  PipelineNotStarted = 'PipelineNotStarted',
-  Skipped = 'Skipped',
-  Cancelled = 'Cancelled',
-  Pending = 'Pending',
-  Idle = 'Idle',
-  Other = '-',
-}
-
-export enum SucceedConditionReason {
-  PipelineRunCancelled = 'StoppedRunFinally',
-  PipelineRunStopped = 'CancelledRunFinally',
-  TaskRunCancelled = 'TaskRunCancelled',
-  Cancelled = 'Cancelled',
-  PipelineRunStopping = 'PipelineRunStopping',
-  PipelineRunPending = 'PipelineRunPending',
-  TaskRunStopping = 'TaskRunStopping',
-  CreateContainerConfigError = 'CreateContainerConfigError',
-  ExceededNodeResources = 'ExceededNodeResources',
-  ExceededResourceQuota = 'ExceededResourceQuota',
-  ConditionCheckFailed = 'ConditionCheckFailed',
-}
+import { ComputedStatus } from '../../types';
+import { SucceedConditionReason } from '../utils/pipeline-filter-reducer';
+import { ListFilterId, ListFilterLabels } from '../utils/pipeline-utils';
 
 export const pipelineRunStatus = (pipelineRun): ComputedStatus => {
   const conditions = _.get(pipelineRun, ['status', 'conditions'], []);

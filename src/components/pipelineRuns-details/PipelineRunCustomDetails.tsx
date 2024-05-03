@@ -19,8 +19,8 @@ import {
   getSbomLink,
   getSbomTaskRun,
   hasExternalLink,
+  pipelineRunDuration,
 } from '../utils/pipeline-utils';
-import { pipelineRunDuration } from '../utils/pipelines-utils';
 import { convertBackingPipelineToPipelineResourceRefProps } from './utils';
 import RepositoryLinkList from './RepositoryLinkList';
 import PipelineRunVulnerabilities from '../pipelines-list/status/PipelineRunVulnerabilities';

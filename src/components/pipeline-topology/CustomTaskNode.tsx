@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import cx from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -20,11 +20,11 @@ import {
   useK8sWatchResources,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { CustomRunKind, TaskKind } from '../../types';
-import { resourcePathFromModel } from '../utils/pipelines-utils';
 import { truncateMiddle } from './truncate-middle';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
 import { CustomRunModelV1Beta1 } from '../../models';
 import { TaskNodeModelData } from './types';
+import { resourcePathFromModel } from '../utils/utils';
 
 import './CustomTaskNode.scss';
 

@@ -35,14 +35,13 @@ import PipelineRunParametersForm from './PipelineRunParametersForm';
 import { PipelineRunLogsWithActiveTask } from './PipelineRunLogs';
 import PipelineRunEvents from './PipelineRunEvents';
 import { returnValidPipelineRunModel } from '../utils/pipeline-utils';
-import { getPipelineRunData } from '../utils/utils';
+import { getPipelineRunData, resourcePathFromModel } from '../utils/utils';
 import { errorModal } from '../modals/error-modal';
 import {
   isResourceLoadedFromTR,
   tektonResultsFlag,
 } from '../utils/common-utils';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { resourcePathFromModel } from '../utils/resource-link';
 import {
   shouldHidePipelineRunCancel,
   shouldHidePipelineRunStop,

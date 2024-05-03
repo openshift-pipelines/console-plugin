@@ -162,10 +162,10 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({ pipeline }) => {
     ...(pipeline.latestRun
       ? [
           <DropdownItem
-            key="start-pipeline"
+            key="start-last-run"
             component="button"
             isDisabled={!canCreateResource}
-            data-test-action="start-pipeline"
+            data-test-action="start-last-run"
             onClick={rerunPipelineAndRedirect}
           >
             {t('Start last run')}

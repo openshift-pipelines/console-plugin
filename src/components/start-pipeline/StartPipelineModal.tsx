@@ -15,8 +15,8 @@ import {
   useUserAnnotationForManualStart,
 } from '../hooks/hooks';
 import { ModalComponent } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/ModalProvider';
-import { LoadingInline } from '../Loading';
 import './StartPipelineModal.scss';
+import LoadingModal from '../modals/LoadingModal';
 
 export interface StartPipelineModalProps {
   pipeline: PipelineKind;
@@ -33,7 +33,7 @@ const StartPipelineModal: ModalComponent<
   );
 
   if (!pipelinePVCLoaded) {
-    return <LoadingInline />;
+    return <LoadingModal onClose={closeModal} />;
   }
 
   const initialValues: StartPipelineFormValues = {

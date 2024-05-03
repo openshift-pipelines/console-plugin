@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import {
   K8sResourceCommon,
   ListPageBody,
@@ -14,7 +15,6 @@ import { TaskModel } from '../../models';
 import TaskRow from './TasksRow';
 import { useDefaultColumns } from '../list-pages/default-resources';
 import { getReferenceForModel } from '../pipelines-overview/utils';
-import { useParams } from 'react-router-dom-v5-compat';
 
 interface TaskListProps {
   showTitle?: boolean;

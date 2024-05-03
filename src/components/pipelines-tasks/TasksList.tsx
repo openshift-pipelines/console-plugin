@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import {
   K8sResourceCommon,
   ListPageBody,
@@ -31,6 +32,8 @@ const TasksList: React.FC<TaskListProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const columns = useDefaultColumns();
+  const { ns } = useParams();
+  namespace = namespace || ns;
   const [data, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>({
     groupVersionKind: getGroupVersionKindForModel(TaskModel),
     isList: true,

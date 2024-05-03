@@ -14,6 +14,7 @@ import { TaskModel } from '../../models';
 import TaskRow from './TasksRow';
 import { useDefaultColumns } from '../list-pages/default-resources';
 import { getReferenceForModel } from '../pipelines-overview/utils';
+import { useParams } from 'react-router-dom-v5-compat';
 
 interface TaskListProps {
   showTitle?: boolean;
@@ -31,6 +32,8 @@ const TasksList: React.FC<TaskListProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const columns = useDefaultColumns();
+  const { ns } = useParams();
+  namespace = namespace || ns;
   const [data, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>({
     groupVersionKind: getGroupVersionKindForModel(TaskModel),
     isList: true,

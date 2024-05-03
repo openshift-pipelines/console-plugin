@@ -18,6 +18,7 @@ import { MultiStreamLogs } from './MultiStreamLogs';
 import { TektonTaskRunLog } from './TektonTaskRunLog';
 import { useFullscreen } from './fullscreen';
 import { LoadingInline } from '../Loading';
+import { TektonResourceLabel } from '../../consts';
 
 type LogsWrapperComponentProps = {
   taskRun: TaskRunKind;
@@ -43,7 +44,10 @@ const LogsWrapperComponent: React.FC<
   const [downloadAllStatus, setDownloadAllStatus] = React.useState(false);
   const currentLogGetterRef = React.useRef<() => string>();
 
-  const taskName = taskRun?.spec.taskRef?.name ?? taskRun?.metadata.name;
+  const taskName =
+    taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] ||
+    taskRun?.spec.taskRef?.name ||
+    '-';
 
   if (loaded && !error && resource.name === obj.metadata.name) {
     resourceRef.current = obj;
@@ -129,29 +133,18 @@ const LogsWrapperComponent: React.FC<
           </FlexItem>
         )}
       </Flex>
-      {loaded || error ? (
-        <>
-          {!error ? (
-            <MultiStreamLogs
-              {...props}
-              taskName={taskName}
-              resource={resourceRef.current}
-              setCurrentLogsGetter={setLogGetter}
-            />
-          ) : (
-            <TektonTaskRunLog
-              taskRun={taskRun}
-              setCurrentLogsGetter={setLogGetter}
-            />
-          )}
-        </>
+      {!error ? (
+        <MultiStreamLogs
+          {...props}
+          taskName={taskName}
+          resource={resourceRef.current}
+          setCurrentLogsGetter={setLogGetter}
+        />
       ) : (
-        <span
-          className="odc-multi-stream-logs__taskName__loading-indicator"
-          data-testid="loading-indicator"
-        >
-          <LoadingInline />
-        </span>
+        <TektonTaskRunLog
+          taskRun={taskRun}
+          setCurrentLogsGetter={setLogGetter}
+        />
       )}
     </div>
   );

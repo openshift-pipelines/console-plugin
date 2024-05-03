@@ -3,7 +3,6 @@ import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { AddTriggerFormValues, PipelineKind } from '../../types';
 import { ModalComponentProps, ModalWrapper } from '../modals/modal';
-import { LoadingInline } from '../status/status-box';
 import { convertPipelineToModalData } from './utils';
 import ModalStructure from '../modals/ModalStructure';
 import { ModalComponent } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/ModalProvider';
@@ -12,6 +11,7 @@ import { TRIGGER_BINDING_EMPTY } from '../../consts';
 import AddTriggerForm from './AddTriggerForm';
 import { submitTrigger } from './submit-utils';
 import { addTriggerSchema } from './validation-utils';
+import LoadingModal from '../modals/LoadingModal';
 
 type AddTriggerModalProps = ModalComponentProps & {
   pipeline: PipelineKind;
@@ -28,7 +28,7 @@ const AddTriggerModal: ModalComponent<AddTriggerModalProps> = ({
   );
 
   if (!pipelinePVCLoaded) {
-    return <LoadingInline />;
+    return <LoadingModal onClose={closeModal} />;
   }
   const initialValues: AddTriggerFormValues = {
     ...convertPipelineToModalData(pipeline, pipelinePVC?.metadata?.name),

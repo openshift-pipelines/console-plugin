@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { ComputedStatus } from '../../types';
 import { t } from './common-utils';
 
@@ -14,6 +14,7 @@ export enum SucceedConditionReason {
   ExceededNodeResources = 'ExceededNodeResources',
   ExceededResourceQuota = 'ExceededResourceQuota',
   ConditionCheckFailed = 'ConditionCheckFailed',
+  PipelineRunTimeout = 'PipelineRunTimeout',
 }
 
 export const pipelineRunStatus = (pipelineRun): ComputedStatus => {
@@ -53,6 +54,7 @@ export const pipelineRunStatus = (pipelineRun): ComputedStatus => {
         return ComputedStatus.Cancelled;
       case SucceedConditionReason.PipelineRunStopping:
       case SucceedConditionReason.TaskRunStopping:
+      case SucceedConditionReason.PipelineRunTimeout:
         return ComputedStatus.Failed;
       case SucceedConditionReason.CreateContainerConfigError:
       case SucceedConditionReason.ExceededNodeResources:

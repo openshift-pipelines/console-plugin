@@ -575,7 +575,7 @@ export const getGraphDataModel = (
       (t) => t.name === task.name,
     );
     const getNodeType = (taskKind: string) => {
-      if (taskKind === 'Task' || taskKind === 'ClusterTask') {
+      if (!taskKind || taskKind === 'Task' || taskKind === 'ClusterTask') {
         return NodeType.TASK_NODE;
       }
       if (taskKind === 'ApprovalTask') {

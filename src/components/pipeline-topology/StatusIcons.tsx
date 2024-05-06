@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as cx from 'classnames';
 import { AngleDoubleRightIcon } from '@patternfly/react-icons/dist/esm/icons/angle-double-right-icon';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { CircleIcon } from '@patternfly/react-icons/dist/esm/icons/circle-icon';
@@ -10,8 +11,7 @@ import { ResourcesAlmostEmptyIcon } from '@patternfly/react-icons/dist/esm/icons
 import { ResourcesAlmostFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-full-icon';
 import { ResourcesEmptyIcon } from '@patternfly/react-icons/dist/esm/icons/resources-empty-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
-import * as cx from 'classnames';
-import { ApprovalStatus } from './types';
+import { ApprovalStatus, ApproverStatusResponse } from '../../types';
 import { getRunStatusColor } from '../utils/pipeline-augment';
 import { t } from '../utils/common-utils';
 import { ComputedStatus } from '../pipelines-list/usePipelinesFilters';
@@ -68,14 +68,17 @@ export const ApprovalStatusIcon: React.FC<StatusIconProps> = ({
     case ApprovalStatus.Idle:
       return <NewProcessIcon {...others} />;
     case ApprovalStatus.RequestSent:
+    case ApproverStatusResponse.Pending:
       return <ResourcesEmptyIcon {...others} />;
     case ApprovalStatus.PartiallyApproved:
       return <ResourcesAlmostEmptyIcon {...others} />;
     case ApprovalStatus.AlmostApproved:
       return <ResourcesAlmostFullIcon {...others} />;
     case ApprovalStatus.Accepted:
+    case ApproverStatusResponse.Accepted:
       return <SuccessApprovalTaskIcon {...others} />;
     case ApprovalStatus.Rejected:
+    case ApproverStatusResponse.Rejected:
       return <FailedApprovalTaskIcon {...others} />;
     case ApprovalStatus.TimedOut:
       return <TimeoutApprovalTaskIcon {...others} />;

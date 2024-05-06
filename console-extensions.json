@@ -1,5 +1,16 @@
 [
   {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "openshift-pipelines.org",
+        "version": "v1alpha1",
+        "kind": "ApprovalTask"
+      },
+      "flag": "OPENSHIFT_PIPELINE_APPROVAL_TASK"
+    }
+  },
+  {
     "type": "console.model-metadata",
     "properties": {
       "model": {
@@ -95,6 +106,27 @@
       "label": "%PipelineRun%",
       "labelPlural": "%PipelineRuns%",
       "abbr": "PLR"
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": {
+        "$codeRef": "pipelineApprovalContext.PipelineApprovalContextProvider"
+      },
+      "useValueHook": {
+        "$codeRef": "pipelineApprovalContext.usePipelineApprovalToast"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE_APPROVAL_TASK"]
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "toastContext.ToastProvider" },
+      "useValueHook": { "$codeRef": "toastContext.useToast" }
     }
   },
   {
@@ -296,6 +328,20 @@
     "type": "console.page/resource/list",
     "properties": {
       "model": {
+        "group": "openshift-pipelines.org",
+        "version": "v1alpha1",
+        "kind": "ApprovalTask"
+      },
+      "component": { "$codeRef": "approvalsList.ApprovalTasksListPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_APPROVALS_LIST"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
         "group": "tekton.dev",
         "version": "v1beta1",
         "kind": "Task"
@@ -413,6 +459,46 @@
     "flags": {
       "required": [
         "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_TASKRUNS_TAB"
+      ]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "PipelineRun"
+      },
+      "page": {
+        "name": "%ApprovalTasks%",
+        "href": "approval-tasks"
+      },
+      "component": { "$codeRef": "approvalsList.ApprovalTasksList" }
+    },
+    "flags": {
+      "required": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_APPROVALS_TAB"
+      ]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "PipelineRun"
+      },
+      "page": {
+        "name": "%ApprovalTasks%",
+        "href": "approval-tasks"
+      },
+      "component": { "$codeRef": "approvalsList.ApprovalTasksList" }
+    },
+    "flags": {
+      "required": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_APPROVALS_TAB"
       ]
     }
   },
@@ -498,6 +584,35 @@
         "$codeRef": "triggersDetails.TriggerBindingEventListeners"
       },
       "sortWeight": 0,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "approval-task-description",
+      "model": {
+        "group": "openshift-pipelines.org",
+        "version": "v1alpha1",
+        "kind": "ApprovalTask"
+      },
+      "component": { "$codeRef": "approvalsDetails.TaskDescription" },
+      "sortWeight": 1,
+      "column": "right"
+    }
+  },
+  {
+    "type": "console.resource/details-item",
+    "properties": {
+      "id": "approval-task-approvers",
+      "model": {
+        "group": "openshift-pipelines.org",
+        "version": "v1alpha1",
+        "kind": "ApprovalTask"
+      },
+      "component": { "$codeRef": "approvalsDetails.ApproverList" },
+      "title": "%Approvers%",
+      "sortWeight": 1,
       "column": "right"
     }
   },

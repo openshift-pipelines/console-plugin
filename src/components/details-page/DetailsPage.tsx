@@ -141,7 +141,7 @@ const DetailsPage: React.FC<React.PropsWithChildren<DetailsPageProps>> = ({
                 )}
                 isOpen={isOpen}
               >
-                <DropdownList className={'action-menu-dropdown'}>
+                <DropdownList className="action-menu-dropdown">
                   {dropdownItems}
                 </DropdownList>
               </Dropdown>

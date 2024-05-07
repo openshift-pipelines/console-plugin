@@ -74,7 +74,7 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
 };
 
 const PipelineWorkspacesSection: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { setFieldValue } = useFormikContext<FormikValues>();
   const [{ value: workspaces }] =
     useField<PipelineModalFormWorkspace[]>('workspaces');

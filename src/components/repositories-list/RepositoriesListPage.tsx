@@ -11,7 +11,7 @@ type RepositoriesListPageProps = {
 };
 
 const RepositoriesListPage: React.FC<RepositoriesListPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { namespace, hideTextFilter } = props;
   return (
     <>

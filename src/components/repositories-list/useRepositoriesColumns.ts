@@ -5,7 +5,7 @@ import { RepositoryKind } from '../../types';
 import { repositoriesTableColumnClasses } from './RepositoriesRow';
 
 const useRepositoriesColumns = (namespace): TableColumn<RepositoryKind>[] => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return [
     {
       id: 'name',

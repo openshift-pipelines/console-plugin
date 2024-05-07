@@ -96,7 +96,7 @@ const PipelineRunRowTable = ({
   activeColumnIDs,
   repositoryPLRs,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const plrLabels = obj.metadata.labels;
   const plrAnnotations = obj.metadata.annotations;
   return (

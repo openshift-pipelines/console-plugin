@@ -11,10 +11,9 @@ import * as React from 'react';
 import usePipelinesColumns from './usePipelinesColumns';
 import { usePipelinesFilters } from './usePipelinesFilters';
 import PipelineRow from './PipelineRow';
-import { useGetTaskRuns } from '../hooks/useTektonResult';
-import { PipelineModel, PipelineRunModel } from '../../models';
+import { useGetPipelineRuns, useGetTaskRuns } from '../hooks/useTektonResult';
+import { PipelineModel } from '../../models';
 import { PropPipelineData, augmentRunsToData } from '../utils/pipeline-augment';
-import { PipelineRunKind } from '../../types';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 
@@ -41,12 +40,7 @@ const PipelinesList: React.FC<PipelineListProps> = ({
     optional: true,
   });
   const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] =
-    useK8sWatchResource<PipelineRunKind[]>({
-      isList: true,
-      groupVersionKind: getGroupVersionKindForModel(PipelineRunModel),
-      namespace,
-      optional: true,
-    });
+    useGetPipelineRuns(namespace);
   const pipelinesData = augmentRunsToData(pipelines, pipelineRuns);
   const [data, filteredData, onFilterChange] = useListPageFilter(
     pipelinesData,

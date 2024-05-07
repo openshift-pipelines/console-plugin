@@ -17,6 +17,6 @@
 .action-menu-dropdown {
   inset-inline-end: 0;
   position: absolute;
-  background: #fff;
-  box-shadow: 0 0.25rem 0.5rem 0rem rgba(3, 3, 3, 0.12), 0 0 0.25rem 0 rgba(3, 3, 3, 0.06);
+  background: var(--pf-v5-global--BackgroundColor--light-100);
+  box-shadow: var(--pf-v5-global--BoxShadow--md);
 }

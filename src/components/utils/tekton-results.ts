@@ -238,6 +238,7 @@ export const clearCache = () => {
   CACHE = {};
 };
 const InFlightStore: { [key: string]: boolean } = {};
+let FAILEDTEKTONRESULTCACHE: { [key: string]: boolean } = {};
 
 // const getTRUrlPrefix = (): string => URL_PREFIX;
 
@@ -321,6 +322,19 @@ export const getFilteredRecord = async <R extends K8sResourceCommon>(
       ];
     }
   }
+  const namespaceKey = `${namespace}-${dataType}`;
+  if (FAILEDTEKTONRESULTCACHE[namespaceKey]) {
+    return [
+      [],
+      {
+        nextPageToken: null,
+        records: [],
+      },
+      true,
+    ] as [R[], RecordsList, boolean];
+  } else {
+    FAILEDTEKTONRESULTCACHE = {};
+  }
   InFlightStore[cacheKey] = true;
   const value = await (async (): Promise<[R[], RecordsList]> => {
     try {
@@ -342,6 +356,7 @@ export const getFilteredRecord = async <R extends K8sResourceCommon>(
           records: list.records.slice(0, options.limit),
         };
       }
+      FAILEDTEKTONRESULTCACHE[namespaceKey] = false;
       return [
         list.records.map((result) => decodeValueJson(result.data.value)),
         list,
@@ -357,6 +372,7 @@ export const getFilteredRecord = async <R extends K8sResourceCommon>(
           },
         ] as [R[], RecordsList];
       }
+      FAILEDTEKTONRESULTCACHE[namespaceKey] = true;
       throw e;
     }
   })();

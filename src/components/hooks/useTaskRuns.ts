@@ -274,7 +274,7 @@ const useRuns = <Kind extends K8sResourceCommon>(
         : runs || trResources;
     return [
       rResources,
-      !!rResources?.[0] || (loaded && trLoaded),
+      !!rResources?.[0] || trError ? loaded : loaded && trLoaded,
       namespace
         ? queryTr
           ? isList

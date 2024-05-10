@@ -436,14 +436,16 @@ export const getGraphDataModel = (
     }
     if (task?.when) {
       task.when.forEach(({ input, values }) => {
-        depsFromContextVariables.push(
-          ...extractDepsFromContextVariables(input),
-        );
-        values.forEach((whenValue) => {
+        if (values) {
           depsFromContextVariables.push(
-            ...extractDepsFromContextVariables(whenValue),
+            ...extractDepsFromContextVariables(input),
           );
-        });
+          values.forEach((whenValue) => {
+            depsFromContextVariables.push(
+              ...extractDepsFromContextVariables(whenValue),
+            );
+          });
+        }
       });
     }
     const dependancies = _.uniq([...vertex.dependancyNames]);

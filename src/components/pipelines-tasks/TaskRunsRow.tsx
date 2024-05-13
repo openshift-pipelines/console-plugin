@@ -29,10 +29,6 @@ import {
   TektonResourceLabel,
 } from '../../consts';
 import { TaskRunKind } from '../../types';
-import {
-  getModelReferenceFromTaskKind,
-  pipelineRunDuration,
-} from '../utils/pipelines-utils';
 import { taskRunFilterReducer } from '../utils/pipeline-filter-reducer';
 import TaskRunStatus from './TaskRunStatus';
 import { ResourceLinkWithIcon } from '../utils/resource-link';
@@ -42,6 +38,8 @@ import {
   isResourceLoadedFromTR,
   tektonResultsFlag,
 } from '../utils/common-utils';
+import { getModelReferenceFromTaskKind } from '../utils/pipeline-augment';
+import { pipelineRunDuration } from '../utils/pipeline-utils';
 
 const taskRunsReference = getReferenceForModel(TaskRunModel);
 const pipelineReference = getReferenceForModel(PipelineModel);

@@ -24,7 +24,7 @@ const RepositoriesList: React.FC<RepositoriesListProps> = ({
   namespace,
   hideTextFilter,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { ns } = useParams();
   namespace = namespace || ns;
   const columns = useRepositoriesColumns(namespace);

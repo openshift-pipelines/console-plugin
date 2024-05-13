@@ -61,7 +61,7 @@ const TextColumnItemContent: React.FC<TextColumnItemContentProps> = ({
   dragRef,
   opacity,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   const mergeNewValue: MergeNewValueUtil = (newValue) => {
     const values: string[] = [...rowValues];

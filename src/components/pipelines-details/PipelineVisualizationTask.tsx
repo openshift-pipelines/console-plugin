@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
-import * as cx from 'classnames';
+import cx from 'classnames';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom-v5-compat';
 
@@ -17,20 +17,19 @@ import { StatusIcon } from './StatusIcon';
 import './PipelineVisualizationTask.scss';
 import { getRunStatusColor } from '../utils/pipeline-augment';
 import { t } from '../utils/common-utils';
-import { ComputedStatus } from '../pipelines-list/usePipelinesFilters';
 import {
+  ComputedStatus,
   PipelineTaskRef,
   TaskKind,
   TektonTaskSpec,
   WhenExpression,
 } from '../../types';
 import { PipelineRunModel } from '../../models';
-// import { getReferenceForModel } from '../pipelines-overview/utils';
-import { resourcePathFromModel } from '../utils/pipelines-utils';
 import { truncateMiddle } from '../pipeline-topology/truncate-middle';
 import SvgDropShadowFilter from '../pipeline-topology/SvgDropShadowFilter';
 import { WHEN_EXPRESSSION_DIAMOND_SIZE } from './const';
 import WhenExpressionDecorator from '../pipeline-topology/WhenExpressionDecorator';
+import { resourcePathFromModel } from '../utils/utils';
 
 type PipelineVisualizationTask = {
   name?: string;
@@ -128,26 +127,6 @@ export const PipelineVisualizationTask: React.FC<
     return taskComponent;
   }
 
-  // let resources;
-  // if (task.taskRef.kind === ClusterTaskModel.kind) {
-  //   resources = [
-  //     {
-  //       kind: getReferenceForModel(ClusterTaskModel),
-  //       name: task.taskRef.name,
-  //       prop: 'task',
-  //     },
-  //   ];
-  // } else {
-  //   resources = [
-  //     {
-  //       kind: getReferenceForModel(TaskModel),
-  //       name: task.taskRef.name,
-  //       namespace,
-  //       prop: 'task',
-  //     },
-  //   ];
-  // }
-  // return <Firehose resources={resources}>{taskComponent}</Firehose>;
   return taskComponent;
 };
 const TaskComponent: React.FC<TaskProps> = ({

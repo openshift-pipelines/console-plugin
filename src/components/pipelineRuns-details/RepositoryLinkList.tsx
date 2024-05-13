@@ -72,6 +72,7 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({
             {t(
               getLabelValue(
                 plrLabels[RepositoryLabels[RepositoryFields.BRANCH]],
+                t,
               ),
             )}
           </dt>

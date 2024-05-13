@@ -6,14 +6,14 @@ const color = tektonGroupColor.value;
 export const NamespaceModel: K8sKind = {
   apiVersion: 'v1',
   label: 'Namespace',
-  // t('Namespace')
+  // t('plugin__pipelines-console-plugin~Namespace')
   labelKey: 'Namespace',
   plural: 'namespaces',
   abbr: 'NS',
   kind: 'Namespace',
   id: 'namespace',
   labelPlural: 'Namespaces',
-  // t('Namespaces')
+  // t('plugin__pipelines-console-plugin~Namespaces')
   labelPluralKey: 'Namespaces',
 };
 
@@ -21,9 +21,9 @@ export const PipelineModel = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1',
   label: 'Pipeline',
-  // t('Pipeline')
+  // t('plugin__pipelines-console-plugin~Pipeline')
   labelKey: 'Pipeline',
-  // t('Pipelines')
+  // t('plugin__pipelines-console-plugin~Pipelines')
   labelPluralKey: 'Pipelines',
   plural: 'pipelines',
   abbr: 'PL',
@@ -39,9 +39,9 @@ export const PipelineModelV1Beta1 = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1beta1',
   label: 'Pipeline',
-  // t('Pipeline')
+  // t('plugin__pipelines-console-plugin~Pipeline')
   labelKey: 'Pipeline',
-  // t('Pipelines')
+  // t('plugin__pipelines-console-plugin~Pipelines')
   labelPluralKey: 'Pipelines',
   plural: 'pipelines',
   abbr: 'PL',
@@ -57,9 +57,9 @@ export const RepositoryModel = {
   apiGroup: 'pipelinesascode.tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Repository',
-  // t('Repository')
+  // t('plugin__pipelines-console-plugin~Repository')
   labelKey: 'Repository',
-  // t('Repositories')
+  // t('plugin__pipelines-console-plugin~Repositories')
   labelPluralKey: 'Repositories',
   plural: 'repositories',
   abbr: 'R',
@@ -77,10 +77,10 @@ export const TektonResultModel: K8sKind = {
   kind: 'TektonResult',
   plural: 'tektonresults',
   label: 'tektonresult',
-  // t('TektonResult')
+  // t('plugin__pipelines-console-plugin~TektonResult')
   labelKey: 'TektonResult',
   labelPlural: 'TektonResults',
-  // t('TektonResults')
+  // t('plugin__pipelines-console-plugin~TektonResults')
   labelPluralKey: 'TektonResults',
   id: 'tektonResult',
   abbr: 'TR',
@@ -90,10 +90,10 @@ export const TektonResultModel: K8sKind = {
 
 export const RouteModel: K8sKind = {
   label: 'Route',
-  // t('Route')
+  // t('plugin__pipelines-console-plugin~Route')
   labelKey: 'Route',
   labelPlural: 'Routes',
-  // t('Routes')
+  // t('plugin__pipelines-console-plugin~Routes')
   labelPluralKey: 'Routes',
   apiGroup: 'route.openshift.io',
   apiVersion: 'v1',
@@ -106,10 +106,10 @@ export const RouteModel: K8sKind = {
 
 export const ClusterVersionModel: K8sKind = {
   label: 'ClusterVersion',
-  // t('ClusterVersion')
+  // t('plugin__pipelines-console-plugin~ClusterVersion')
   labelKey: 'ClusterVersion',
   labelPlural: 'ClusterVersions',
-  // t('ClusterVersions')
+  // t('plugin__pipelines-console-plugin~ClusterVersions')
   labelPluralKey: 'ClusterVersions',
   apiVersion: 'v1',
   apiGroup: 'config.openshift.io',
@@ -125,9 +125,9 @@ export const TaskRunModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1',
   label: 'TaskRun',
-  // t('TaskRun')
+  // t('plugin__pipelines-console-plugin~TaskRun')
   labelKey: 'TaskRun',
-  // t('TaskRuns')
+  // t('plugin__pipelines-console-plugin~TaskRuns')
   labelPluralKey: 'TaskRuns',
   plural: 'taskruns',
   abbr: 'TR',
@@ -143,9 +143,9 @@ export const PipelineRunModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1',
   label: 'PipelineRun',
-  // t('PipelineRun')
+  // t('plugin__pipelines-console-plugin~PipelineRun')
   labelKey: 'PipelineRun',
-  // t('PipelineRuns')
+  // t('plugin__pipelines-console-plugin~PipelineRuns')
   labelPluralKey: 'PipelineRuns',
   plural: 'pipelineruns',
   abbr: 'PLR',
@@ -161,9 +161,9 @@ export const PipelineRunModelV1Beta1: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1beta1',
   label: 'PipelineRun',
-  // t('PipelineRun')
+  // t('plugin__pipelines-console-plugin~PipelineRun')
   labelKey: 'PipelineRun',
-  // t('PipelineRuns')
+  // t('plugin__pipelines-console-plugin~PipelineRuns')
   labelPluralKey: 'PipelineRuns',
   plural: 'pipelineruns',
   abbr: 'PLR',
@@ -178,7 +178,7 @@ export const PipelineRunModelV1Beta1: K8sKind = {
 export const ServiceAccountModel: K8sKind = {
   apiVersion: 'v1',
   label: 'ServiceAccount',
-  // t('ServiceAccount')
+  // t('plugin__pipelines-console-plugin~ServiceAccount')
   labelKey: 'ServiceAccount',
   plural: 'serviceaccounts',
   abbr: 'SA',
@@ -186,14 +186,14 @@ export const ServiceAccountModel: K8sKind = {
   kind: 'ServiceAccount',
   id: 'serviceaccount',
   labelPlural: 'ServiceAccounts',
-  // t('ServiceAccounts')
+  // t('plugin__pipelines-console-plugin~ServiceAccounts')
   labelPluralKey: 'ServiceAccounts',
 };
 
 export const ServiceModel: K8sKind = {
   apiVersion: 'v1',
   label: 'Service',
-  // t('Service')
+  // t('plugin__pipelines-console-plugin~Service')
   labelKey: 'Service',
   plural: 'services',
   abbr: 'S',
@@ -201,7 +201,7 @@ export const ServiceModel: K8sKind = {
   kind: 'Service',
   id: 'service',
   labelPlural: 'Services',
-  // t('Services')
+  // t('plugin__pipelines-console-plugin~Services')
   labelPluralKey: 'Services',
 };
 
@@ -209,9 +209,9 @@ export const TaskModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1',
   label: 'Task',
-  // t('Task')
+  // t('plugin__pipelines-console-plugin~Task')
   labelKey: 'Task',
-  // t('Tasks')
+  // t('plugin__pipelines-console-plugin~Tasks')
   labelPluralKey: 'Tasks',
   plural: 'tasks',
   abbr: 'T',
@@ -227,9 +227,9 @@ export const TaskModelV1Beta1: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1beta1',
   label: 'Task',
-  // t('Task')
+  // t('plugin__pipelines-console-plugin~Task')
   labelKey: 'Task',
-  // t('Tasks')
+  // t('plugin__pipelines-console-plugin~Tasks')
   labelPluralKey: 'Tasks',
   plural: 'tasks',
   abbr: 'T',
@@ -245,9 +245,9 @@ export const EventListenerModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1beta1',
   label: 'EventListener',
-  // t('EventListener')
+  // t('plugin__pipelines-console-plugin~EventListener')
   labelKey: 'EventListener',
-  // t('EventListeners')
+  // t('plugin__pipelines-console-plugin~EventListeners')
   labelPluralKey: 'EventListeners',
   plural: 'eventlisteners',
   abbr: 'EL',
@@ -263,9 +263,9 @@ export const ClusterTaskModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1beta1',
   label: 'ClusterTask',
-  // t('ClusterTask')
+  // t('plugin__pipelines-console-plugin~ClusterTask')
   labelKey: 'ClusterTask',
-  // t('ClusterTasks')
+  // t('plugin__pipelines-console-plugin~ClusterTasks')
   labelPluralKey: 'ClusterTasks',
   plural: 'clustertasks',
   abbr: 'CT',
@@ -281,9 +281,9 @@ export const TriggerTemplateModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1beta1',
   label: 'TriggerTemplate',
-  // t('TriggerTemplate')
+  // t('plugin__pipelines-console-plugin~TriggerTemplate')
   labelKey: 'TriggerTemplate',
-  // t('TriggerTemplates')
+  // t('plugin__pipelines-console-plugin~TriggerTemplates')
   labelPluralKey: 'TriggerTemplates',
   plural: 'triggertemplates',
   abbr: 'TT',
@@ -299,9 +299,9 @@ export const TriggerBindingModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1beta1',
   label: 'TriggerBinding',
-  // t('TriggerBinding')
+  // t('plugin__pipelines-console-plugin~TriggerBinding')
   labelKey: 'TriggerBinding',
-  // t('TriggerBindings')
+  // t('plugin__pipelines-console-plugin~TriggerBindings')
   labelPluralKey: 'TriggerBindings',
   plural: 'triggerbindings',
   abbr: 'TB',
@@ -317,9 +317,9 @@ export const ClusterTriggerBindingModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1beta1',
   label: 'ClusterTriggerBinding',
-  // t('ClusterTriggerBinding')
+  // t('plugin__pipelines-console-plugin~ClusterTriggerBinding')
   labelKey: 'ClusterTriggerBinding',
-  // t('ClusterTriggerBindings')
+  // t('plugin__pipelines-console-plugin~ClusterTriggerBindings')
   labelPluralKey: 'ClusterTriggerBindings',
   plural: 'clustertriggerbindings',
   abbr: 'CTB',
@@ -334,7 +334,7 @@ export const ClusterTriggerBindingModel: K8sKind = {
 export const PodModel = {
   apiVersion: 'v1',
   label: 'Pod',
-  // t('Pod')
+  // t('plugin__pipelines-console-plugin~Pod')
   labelKey: 'Pod',
   plural: 'pods',
   abbr: 'P',
@@ -342,28 +342,28 @@ export const PodModel = {
   kind: 'Pod',
   id: 'pod',
   labelPlural: 'Pods',
-  // t('Pods')
+  // t('plugin__pipelines-console-plugin~Pods')
   labelPluralKey: 'Pods',
 };
 
 export const NodeModel: K8sKind = {
   apiVersion: 'v1',
   label: 'Node',
-  // t('Node')
+  // t('plugin__pipelines-console-plugin~Node')
   labelKey: 'Node',
   plural: 'nodes',
   abbr: 'N',
   kind: 'Node',
   id: 'node',
   labelPlural: 'Nodes',
-  // t('Nodes')
+  // t('plugin__pipelines-console-plugin~Nodes')
   labelPluralKey: 'Nodes',
 };
 
 export const EventModel: K8sKind = {
   apiVersion: 'v1',
   label: 'Event',
-  // t('Event')
+  // t('plugin__pipelines-console-plugin~Event')
   labelKey: 'Event',
   plural: 'events',
   abbr: 'E',
@@ -371,13 +371,13 @@ export const EventModel: K8sKind = {
   kind: 'Event',
   id: 'event',
   labelPlural: 'Events',
-  // t('Events')
+  // t('plugin__pipelines-console-plugin~Events')
   labelPluralKey: 'Events',
 };
 
 export const PersistentVolumeClaimModel: K8sKind = {
   label: 'PersistentVolumeClaim',
-  // t('PersistentVolumeClaim')
+  // t('plugin__pipelines-console-plugin~PersistentVolumeClaim')
   labelKey: 'PersistentVolumeClaim',
   apiVersion: 'v1',
   plural: 'persistentvolumeclaims',
@@ -386,14 +386,14 @@ export const PersistentVolumeClaimModel: K8sKind = {
   kind: 'PersistentVolumeClaim',
   id: 'persistentvolumeclaim',
   labelPlural: 'PersistentVolumeClaims',
-  // t('PersistentVolumeClaims')
+  // t('plugin__pipelines-console-plugin~PersistentVolumeClaims')
   labelPluralKey: 'PersistentVolumeClaims',
 };
 
 export const ConfigMapModel: K8sKind = {
   apiVersion: 'v1',
   label: 'ConfigMap',
-  // t('ConfigMap')
+  // t('plugin__pipelines-console-plugin~ConfigMap')
   labelKey: 'ConfigMap',
   plural: 'configmaps',
   abbr: 'CM',
@@ -401,14 +401,14 @@ export const ConfigMapModel: K8sKind = {
   kind: 'ConfigMap',
   id: 'configmap',
   labelPlural: 'ConfigMaps',
-  // t('ConfigMaps')
+  // t('plugin__pipelines-console-plugin~ConfigMaps')
   labelPluralKey: 'ConfigMaps',
 };
 
 export const SecretModel: K8sKind = {
   apiVersion: 'v1',
   label: 'Secret',
-  // t('Secret')
+  // t('plugin__pipelines-console-plugin~Secret')
   labelKey: 'Secret',
   plural: 'secrets',
   abbr: 'S',
@@ -416,7 +416,7 @@ export const SecretModel: K8sKind = {
   kind: 'Secret',
   id: 'secret',
   labelPlural: 'Secrets',
-  // t('Secrets')
+  // t('plugin__pipelines-console-plugin~Secrets')
   labelPluralKey: 'Secrets',
 };
 
@@ -424,9 +424,9 @@ export const ApprovalTaskModel: K8sKind = {
   apiGroup: 'openshift-pipelines.org',
   apiVersion: 'v1alpha1',
   label: 'ApprovalTask',
-  // t('ApprovalTask')
+  // t('plugin__pipelines-console-plugin~ApprovalTask')
   labelKey: 'ApprovalTask',
-  // t('ApprovalTasks')
+  // t('plugin__pipelines-console-plugin~ApprovalTasks')
   labelPluralKey: 'Approvals',
   plural: 'approvaltasks',
   abbr: 'AT',
@@ -442,9 +442,9 @@ export const CustomRunModelV1Beta1: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1beta1',
   label: 'CustomRun',
-  // t('CustomRun')
+  // t('plugin__pipelines-console-plugin~CustomRun')
   labelKey: 'CustomRun',
-  // t('CustomRuns')
+  // t('plugin__pipelines-console-plugin~CustomRuns')
   labelPluralKey: 'CustomRuns',
   plural: 'customruns',
   abbr: 'CR',
@@ -460,13 +460,13 @@ export const ProjectModel: K8sKind = {
   apiVersion: 'v1',
   apiGroup: 'project.openshift.io',
   label: 'Project',
-  // t('Project')
+  // t('plugin__pipelines-console-plugin~Project')
   labelKey: 'Project',
   plural: 'projects',
   abbr: 'PR',
   kind: 'Project',
   id: 'project',
   labelPlural: 'Projects',
-  // t('Projects')
+  // t('plugin__pipelines-console-plugin~Projects')
   labelPluralKey: 'Projects',
 };

@@ -30,8 +30,8 @@
         "kind": "Pipeline"
       },
       "color": "#38812f",
-      "label": "%Pipeline%",
-      "labelPlural": "%Pipelines%",
+      "label": "%plugin__pipelines-console-plugin~Pipeline%",
+      "labelPlural": "%plugin__pipelines-console-plugin~Pipelines%",
       "abbr": "PL"
     }
   },
@@ -44,8 +44,8 @@
         "kind": "Pipeline"
       },
       "color": "#38812f",
-      "label": "%Pipeline%",
-      "labelPlural": "%Pipelines%",
+      "label": "%plugin__pipelines-console-plugin~Pipeline%",
+      "labelPlural": "%plugin__pipelines-console-plugin~Pipelines%",
       "abbr": "PL"
     }
   },
@@ -100,8 +100,8 @@
         "kind": "PipelineRun"
       },
       "color": "#38812f",
-      "label": "%PipelineRun%",
-      "labelPlural": "%PipelineRuns%",
+      "label": "%plugin__pipelines-console-plugin~PipelineRun%",
+      "labelPlural": "%plugin__pipelines-console-plugin~PipelineRuns%",
       "abbr": "PLR"
     }
   },
@@ -114,8 +114,8 @@
         "kind": "PipelineRun"
       },
       "color": "#38812f",
-      "label": "%PipelineRun%",
-      "labelPlural": "%PipelineRuns%",
+      "label": "%plugin__pipelines-console-plugin~PipelineRun%",
+      "labelPlural": "%plugin__pipelines-console-plugin~PipelineRuns%",
       "abbr": "PLR"
     }
   },
@@ -163,7 +163,7 @@
       "perspective": "admin",
       "section": "pipelines",
       "insertBefore": "pipelines",
-      "name": "%Overview%",
+      "name": "Overview",
       "href": "/pipelines-overview",
       "namespaced": true
     },
@@ -180,7 +180,7 @@
         "kind": "Pipeline"
       },
       "page": {
-        "name": "%Metrics%",
+        "name": "%plugin__pipelines-console-plugin~Metrics%",
         "href": "metrics"
       },
       "component": { "$codeRef": "metricsComponent.PipelinesMetricsPage" }
@@ -198,7 +198,7 @@
         "kind": "Pipeline"
       },
       "page": {
-        "name": "%Metrics%",
+        "name": "%plugin__pipelines-console-plugin~Metrics%",
         "href": "metrics"
       },
       "component": { "$codeRef": "metricsComponent.PipelinesMetricsPage" }
@@ -216,7 +216,7 @@
         "kind": "Repository"
       },
       "page": {
-        "name": "%Metrics%",
+        "name": "%plugin__pipelines-console-plugin~Metrics%",
         "href": "metrics"
       },
       "component": { "$codeRef": "metricsComponent.PipelinesMetricsPage" }
@@ -245,7 +245,7 @@
       "perspective": "admin",
       "section": "pipelines",
       "insertAfter": "pipelines",
-      "name": "%Tasks%",
+      "name": "Tasks",
       "href": "/tasks",
       "namespaced": true
     },
@@ -445,7 +445,7 @@
         "kind": "PipelineRun"
       },
       "page": {
-        "name": "%TaskRuns%",
+        "name": "%plugin__pipelines-console-plugin~TaskRuns%",
         "href": "task-runs"
       },
       "component": { "$codeRef": "tasksComponent.TaskRunsList" }
@@ -465,7 +465,7 @@
         "kind": "PipelineRun"
       },
       "page": {
-        "name": "%TaskRuns%",
+        "name": "%plugin__pipelines-console-plugin~TaskRuns%",
         "href": "task-runs"
       },
       "component": { "$codeRef": "tasksComponent.TaskRunsList" }
@@ -485,7 +485,7 @@
         "kind": "PipelineRun"
       },
       "page": {
-        "name": "%ApprovalTasks%",
+        "name": "%plugin__pipelines-console-plugin~ApprovalTasks%",
         "href": "approval-tasks"
       },
       "component": { "$codeRef": "approvalsList.ApprovalTasksList" }
@@ -505,7 +505,7 @@
         "kind": "PipelineRun"
       },
       "page": {
-        "name": "%ApprovalTasks%",
+        "name": "%plugin__pipelines-console-plugin~ApprovalTasks%",
         "href": "approval-tasks"
       },
       "component": { "$codeRef": "approvalsList.ApprovalTasksList" }
@@ -525,7 +525,7 @@
         "version": "v1beta1",
         "kind": "EventListener"
       },
-      "title": "%URL%",
+      "title": "%plugin__pipelines-console-plugin~URL%",
       "component": {
         "$codeRef": "triggersDetails.EventListenerURL"
       },
@@ -542,7 +542,7 @@
         "version": "v1beta1",
         "kind": "EventListener"
       },
-      "title": "%Triggers%",
+      "title": "%plugin__pipelines-console-plugin~Triggers%",
       "component": {
         "$codeRef": "triggersDetails.EventListenerTriggers"
       },
@@ -559,7 +559,7 @@
         "version": "v1beta1",
         "kind": "TriggerTemplate"
       },
-      "title": "%Pipelines%",
+      "title": "%plugin__pipelines-console-plugin~Pipelines%",
       "component": {
         "$codeRef": "triggersDetails.TriggerTemplatePipelines"
       },
@@ -576,7 +576,7 @@
         "version": "v1beta1",
         "kind": "TriggerTemplate"
       },
-      "title": "%EventListeners%",
+      "title": "%plugin__pipelines-console-plugin~EventListeners%",
       "component": {
         "$codeRef": "triggersDetails.TriggerTemplateEventListeners"
       },
@@ -593,7 +593,7 @@
         "version": "v1beta1",
         "kind": "TriggerBinding"
       },
-      "title": "%EventListeners%",
+      "title": "%plugin__pipelines-console-plugin~EventListeners%",
       "component": {
         "$codeRef": "triggersDetails.TriggerBindingEventListeners"
       },
@@ -732,7 +732,7 @@
       "perspective": "admin",
       "section": "pipelines",
       "insertAfter": "pipeline-tasks",
-      "name": "%Triggers%",
+      "name": "Triggers",
       "href": "/triggers",
       "namespaced": true
     },
@@ -841,7 +841,7 @@
       "id": "pipelines",
       "perspective": "admin",
       "section": "pipelines",
-      "name": "%Pipelines%",
+      "name": "Pipelines",
       "href": "/pipelines",
       "insertBefore": "pipeline-tasks",
       "namespaced": true,
@@ -863,7 +863,7 @@
       "perspective": "dev",
       "section": "resources",
       "insertAfter": "builds",
-      "name": "%Pipelines%",
+      "name": "Pipelines",
       "href": "/dev-pipelines",
       "namespaced": true,
       "dataAttributes": {
@@ -915,7 +915,7 @@
         "version": "v1alpha1",
         "kind": "Repository"
       },
-      "title": "%Repository%",
+      "title": "%plugin__pipelines-console-plugin~Repository%",
       "path": "spec.url",
       "component": {
         "$codeRef": "repositoryDetails.RepositoryURL"
@@ -933,7 +933,7 @@
         "version": "v1alpha1",
         "kind": "Repository"
       },
-      "title": "%Username%",
+      "title": "%plugin__pipelines-console-plugin~Username%",
       "path": "spec.git_provider.user",
       "sortWeight": 1,
       "column": "right"
@@ -948,7 +948,7 @@
         "version": "v1alpha1",
         "kind": "Repository"
       },
-      "title": "%Git access token%",
+      "title": "%plugin__pipelines-console-plugin~Git access token%",
       "path": "spec.git_provider.secret.name",
       "component": {
         "$codeRef": "repositoryDetails.RepositoryGitAccessToken"
@@ -966,7 +966,7 @@
         "version": "v1alpha1",
         "kind": "Repository"
       },
-      "title": "%Webhook URL%",
+      "title": "%plugin__pipelines-console-plugin~Webhook URL%",
       "component": {
         "$codeRef": "repositoryDetails.RepositoryWebhookURL"
       },
@@ -983,7 +983,7 @@
         "version": "v1alpha1",
         "kind": "Repository"
       },
-      "title": "%Webhook secret%",
+      "title": "%plugin__pipelines-console-plugin~Webhook secret%",
       "path": "spec.git_provider.webhook_secret.name",
       "component": {
         "$codeRef": "repositoryDetails.RepositoryWebhookSecret"
@@ -1001,7 +1001,7 @@
         "kind": "Repository"
       },
       "page": {
-        "name": "%PipelineRuns%",
+        "name": "%plugin__pipelines-console-plugin~PipelineRuns%",
         "href": "Runs"
       },
       "component": {
@@ -1051,7 +1051,7 @@
         "kind": "PipelineRun"
       },
       "page": {
-        "name": "%Output%",
+        "name": "%plugin__pipelines-console-plugin~Output%",
         "href": "output"
       },
       "component": { "$codeRef": "outputsComponent.OutputTab" }
@@ -1072,7 +1072,7 @@
         "kind": "PipelineRun"
       },
       "page": {
-        "name": "%Output%",
+        "name": "%plugin__pipelines-console-plugin~Output%",
         "href": "output"
       },
       "component": { "$codeRef": "outputsComponent.OutputTab" }
@@ -1090,7 +1090,7 @@
         "kind": "Pipeline"
       },
       "page": {
-        "name": "%PipelineRuns%",
+        "name": "%plugin__pipelines-console-plugin~PipelineRuns%",
         "href": "Runs"
       },
       "component": {
@@ -1110,7 +1110,7 @@
         "kind": "Pipeline"
       },
       "page": {
-        "name": "%PipelineRuns%",
+        "name": "%plugin__pipelines-console-plugin~PipelineRuns%",
         "href": "Runs"
       },
       "component": {

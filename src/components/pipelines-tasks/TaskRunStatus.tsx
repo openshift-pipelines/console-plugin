@@ -5,9 +5,9 @@ import { TaskRunKind } from '../../types';
 import PipelineResourceStatus from '../status/PipelineResourceStatus';
 import { taskRunFilterTitleReducer } from '../utils/pipeline-filter-reducer';
 import { TaskRunModel } from '../../models';
-import { resourcePathFromModel } from '../utils/pipelines-utils';
 import StatusPopoverContent from '../status/StatusPopoverContent';
 import { getTRLogSnippet } from './taskRunLogSnippet';
+import { resourcePathFromModel } from '../utils/utils';
 
 type TaskRunStatusProps = {
   status: string;

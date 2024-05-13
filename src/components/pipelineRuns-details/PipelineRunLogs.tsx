@@ -17,12 +17,12 @@ import { ErrorDetailsWithStaticLog } from '../logs/log-snippet-types';
 import { getDownloadAllLogsCallback } from '../logs/logs-utils';
 import LogsWrapperComponent from '../logs/LogsWrapperComponent';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
-import './PipelineRunLogs.scss';
 import { taskRunStatus } from '../utils/pipeline-utils';
 import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
 import { WatchK8sResource } from '@openshift-console/dynamic-plugin-sdk';
-import { resourcePathFromModel } from '../utils/resource-link';
 import { ColoredStatusIcon } from '../pipeline-topology/StatusIcons';
+import { resourcePathFromModel } from '../utils/utils';
+import './PipelineRunLogs.scss';
 
 interface PipelineRunLogsProps {
   obj: PipelineRunKind;

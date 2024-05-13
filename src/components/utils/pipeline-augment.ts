@@ -1,4 +1,7 @@
-import { K8sKind } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  GroupVersionKind,
+  K8sKind,
+} from '@openshift-console/dynamic-plugin-sdk';
 import { chart_color_black_400 as skippedColor } from '@patternfly/react-tokens/dist/js/chart_color_black_400';
 import { chart_color_black_500 as cancelledColor } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { chart_color_blue_100 as pendingColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
@@ -22,6 +25,7 @@ import {
   PipelineTask,
   TaskRunKind,
 } from '../../types';
+import { getReferenceForModel } from '../pipelines-overview/utils';
 import {
   SucceedConditionReason,
   pipelineRunFilterReducer,
@@ -339,12 +343,12 @@ export const getResourceModelFromTask = (task: PipelineTask): K8sKind => {
 export const pipelineRefExists = (pipelineRun: PipelineRunKind): boolean =>
   !!pipelineRun.spec.pipelineRef?.name;
 
-// export const getModelReferenceFromTaskKind = (
-//   kind: string,
-// ): GroupVersionKind => {
-//   const model = getResourceModelFromTaskKind(kind);
-//   return getGroupVersionKindForModel(model);
-// };
+export const getModelReferenceFromTaskKind = (
+  kind: string,
+): GroupVersionKind => {
+  const model = getResourceModelFromTaskKind(kind);
+  return getReferenceForModel(model);
+};
 
 export const countRunningTasks = (
   pipelineRun: PipelineRunKind,

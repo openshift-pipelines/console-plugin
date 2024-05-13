@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
-import {
-  getReference,
-  getReferenceForModel,
-} from '../pipelines-overview/utils';
+import cx from 'classnames';
+import { getReference } from '../pipelines-overview/utils';
 import {
   K8sGroupVersionKind,
   K8sModel,
   K8sResourceKindReference,
   ResourceIcon,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { resourcePathFromModel } from './utils';
 
 export type ResourceLinkProps = {
   /** @deprecated Use groupVersionKind instead. The kind property will be removed in a future release. */
@@ -30,38 +28,6 @@ export type ResourceLinkProps = {
   nameSuffix?: React.ReactNode;
   children?: React.ReactNode;
   model?: K8sModel;
-};
-
-export const resourcePathFromModel = (
-  model: K8sModel,
-  name?: string,
-  namespace?: string,
-) => {
-  const { plural, namespaced, crd } = model;
-
-  let url = '/k8s/';
-
-  if (!namespaced) {
-    url += 'cluster/';
-  }
-
-  if (namespaced) {
-    url += namespace ? `ns/${namespace}/` : 'all-namespaces/';
-  }
-
-  if (crd) {
-    url += getReferenceForModel(model);
-  } else if (plural) {
-    url += plural;
-  }
-
-  if (name) {
-    // Some resources have a name that needs to be encoded. For instance,
-    // Users can have special characters in the name like `#`.
-    url += `/${encodeURIComponent(name)}`;
-  }
-
-  return url;
 };
 
 /**
@@ -101,7 +67,7 @@ export const ResourceLinkWithIcon: React.FC<ResourceLinkProps> = ({
     : kind;
   const path = linkTo ? resourcePath(model, name, namespace) : undefined;
   const value = displayName ? displayName : name;
-  const classes = classNames('co-resource-item', className, {
+  const classes = cx('co-resource-item', className, {
     'co-resource-item--inline': inline,
     'co-resource-item--truncate': truncate,
   });

@@ -656,7 +656,7 @@ const containerLabel = (container) => (
 );
 
 export const ContainerDropdown = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   const getSpacer = (container) => {
     const spacerBefore = new Set();

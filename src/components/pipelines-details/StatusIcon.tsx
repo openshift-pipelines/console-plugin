@@ -5,11 +5,11 @@ import { CircleIcon } from '@patternfly/react-icons/dist/esm/icons/circle-icon';
 import { ExclamationCircleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import { HourglassHalfIcon } from '@patternfly/react-icons/dist/esm/icons/hourglass-half-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
-import * as cx from 'classnames';
+import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { ComputedStatus } from '../../types';
 import { YellowExclamationTriangleIcon } from '@openshift-console/dynamic-plugin-sdk';
 import { getRunStatusColor } from '../utils/pipeline-augment';
-import { t } from '../utils/common-utils';
 
 interface StatusIconProps {
   status: string;
@@ -55,6 +55,7 @@ export const ColoredStatusIcon: React.FC<StatusIconProps> = ({
   status,
   ...others
 }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <div
       style={{

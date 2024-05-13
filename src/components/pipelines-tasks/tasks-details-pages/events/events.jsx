@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define, tsdoc/syntax */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
@@ -13,16 +12,14 @@ import {
 import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import { ResourceLink, Timestamp } from '@openshift-console/dynamic-plugin-sdk';
 import { WSFactory } from '@openshift-console/dynamic-plugin-sdk/lib/utils/k8s/ws-factory';
-import {
-  apiGroupForReference,
-  resourcePathFromModel,
-} from '../../../utils/pipelines-utils';
+import { apiGroupForReference } from '../../../utils/pipeline-utils';
 import { Box, Loading } from '../../../status/status-box';
 import { EventModel, NodeModel } from '../../../../models';
 import { FLAGS } from '../../../../types';
 import { TogglePlay } from './toggle-play';
 import { EventStreamList } from './event-stream';
 import { watchURL } from '../../../utils/common-utils';
+import { resourcePathFromModel } from '../../../utils/utils';
 import { namespaceProptype } from './propTypes';
 
 const maxMessages = 500;

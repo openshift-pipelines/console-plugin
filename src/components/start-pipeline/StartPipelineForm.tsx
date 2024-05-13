@@ -11,7 +11,7 @@ import PipelineSecretSection from '../common/PipelineSecretSection';
 const StartPipelineForm: React.FC<
   FormikProps<StartPipelineFormValues>
 > = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <>
       <PipelineParameterSection />

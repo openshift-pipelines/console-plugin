@@ -32,7 +32,6 @@ import {
   RemoveTriggerModal,
   startPipelineModal,
 } from '../start-pipeline';
-import { resourcePathFromModel } from '../utils/pipelines-utils';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { errorModal } from '../modals/error-modal';
 import { getPipelineRunData } from '../start-pipeline/utils';
@@ -40,6 +39,7 @@ import { useHistory } from 'react-router-dom';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { rerunPipeline } from '../utils/pipelines-actions';
 import { usePipelineTriggerTemplateNames } from '../utils/triggers';
+import { resourcePathFromModel } from '../utils/utils';
 
 type PipelineKebabProps = {
   pipeline: PipelineWithLatest;

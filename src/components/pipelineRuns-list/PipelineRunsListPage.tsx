@@ -11,7 +11,7 @@ type PipelineRunsListPageProps = {
 };
 
 const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { namespace, hideTextFilter } = props;
   return (
     <>

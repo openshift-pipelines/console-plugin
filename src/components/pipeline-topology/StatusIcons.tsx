@@ -1,5 +1,6 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { AngleDoubleRightIcon } from '@patternfly/react-icons/dist/esm/icons/angle-double-right-icon';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { CircleIcon } from '@patternfly/react-icons/dist/esm/icons/circle-icon';
@@ -11,10 +12,12 @@ import { ResourcesAlmostEmptyIcon } from '@patternfly/react-icons/dist/esm/icons
 import { ResourcesAlmostFullIcon } from '@patternfly/react-icons/dist/esm/icons/resources-almost-full-icon';
 import { ResourcesEmptyIcon } from '@patternfly/react-icons/dist/esm/icons/resources-empty-icon';
 import { SyncAltIcon } from '@patternfly/react-icons/dist/esm/icons/sync-alt-icon';
-import { ApprovalStatus, ApproverStatusResponse } from '../../types';
+import {
+  ApprovalStatus,
+  ApproverStatusResponse,
+  ComputedStatus,
+} from '../../types';
 import { getRunStatusColor } from '../utils/pipeline-augment';
-import { t } from '../utils/common-utils';
-import { ComputedStatus } from '../pipelines-list/usePipelinesFilters';
 import { YellowExclamationTriangleIcon } from '@openshift-console/dynamic-plugin-sdk';
 import TimeoutApprovalTaskIcon from '../../images/TimeoutApprovalTaskIcon';
 import FailedApprovalTaskIcon from '../../images/FailedApprovalTaskIcon';
@@ -92,6 +95,7 @@ export const ColoredStatusIcon: React.FC<StatusIconProps> = ({
   status,
   ...others
 }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <div
       style={{

@@ -25,7 +25,6 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const initialValues = {
     parameters: _.get(obj.spec, 'params', []),
-    resources: _.get(obj.spec, 'resources', []),
   };
 
   const handleSubmit = (values, actions) => {
@@ -36,7 +35,6 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
         spec: {
           ...obj.spec,
           params: sanitizePipelineParams(values.parameters),
-          resources: values.resources,
         },
       },
       ns: obj.metadata.namespace,
@@ -46,7 +44,6 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
         actions.resetForm({
           values: {
             parameters: _.get(newObj.spec, 'params', []),
-            resources: _.get(newObj.spec, 'resources', []),
           },
           status: {
             success: t('Successfully updated the pipeline {{formName}}.', {

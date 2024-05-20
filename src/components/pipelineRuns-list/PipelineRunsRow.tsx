@@ -23,7 +23,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import SignedBadgeIcon from '../../images/SignedBadge';
 import PipelineRunVulnerabilities from '../pipelines-list/status/PipelineRunVulnerabilities';
-import PipelineRunStatus from '../pipelines-list/status/PipelineRunStatus';
 import { useTaskRuns } from '../hooks/useTaskRuns';
 import {
   pipelineRunFilterReducer,
@@ -40,6 +39,7 @@ import {
   getPipelineRunStatus,
   pipelineRunDuration,
 } from '../utils/pipeline-utils';
+import PipelineRunStatusContent from '../status/PipelineRunStatusContent';
 
 export const tableColumnClasses = {
   name: 'pf-m-width-20',
@@ -56,8 +56,6 @@ export const tableColumnClasses = {
 
 type PLRStatusProps = {
   obj: PipelineRunKind;
-  taskRuns: TaskRunKind[];
-  taskRunsLoaded: boolean;
 };
 
 type PipelineRunRowWithoutTaskRunsProps = {
@@ -76,19 +74,15 @@ type PipelineRunRowWithTaskRunsProps = {
 const TASKRUNSFORPLRCACHE: { [key: string]: TaskRunKind[] } = {};
 const InFlightStoreForTaskRunsForPLR: { [key: string]: boolean } = {};
 
-const PLRStatus: React.FC<PLRStatusProps> = React.memo(
-  ({ obj, taskRuns, taskRunsLoaded }) => {
-    return (
-      <PipelineRunStatus
-        status={pipelineRunFilterReducer(obj)}
-        title={pipelineRunTitleFilterReducer(obj)}
-        pipelineRun={obj}
-        taskRuns={taskRuns}
-        taskRunsLoaded={taskRunsLoaded}
-      />
-    );
-  },
-);
+const PLRStatus: React.FC<PLRStatusProps> = React.memo(({ obj }) => {
+  return (
+    <PipelineRunStatusContent
+      status={pipelineRunFilterReducer(obj)}
+      title={pipelineRunTitleFilterReducer(obj)}
+      pipelineRun={obj}
+    />
+  );
+});
 
 const PipelineRunRowTable = ({
   obj,
@@ -194,11 +188,7 @@ const PipelineRunRowTable = ({
         id="status"
         activeColumnIDs={activeColumnIDs}
       >
-        <PLRStatus
-          obj={obj}
-          taskRuns={PLRTaskRuns}
-          taskRunsLoaded={taskRunsLoaded}
-        />
+        <PLRStatus obj={obj} />
       </TableData>
       <TableData
         className={tableColumnClasses.taskStatus}
@@ -334,8 +324,7 @@ const PipelineRunRow: React.FC<
 > = ({ obj, activeColumnIDs, rowData: { repositoryPLRs } }) => {
   const plrStatus = pipelineRunStatus(obj);
   if (
-    (plrStatus === ComputedStatus.Cancelled ||
-      plrStatus === ComputedStatus.Failed) &&
+    plrStatus === ComputedStatus.Cancelled &&
     (obj?.status?.childReferences ?? []).length > 0
   ) {
     return (

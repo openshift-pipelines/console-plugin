@@ -7,16 +7,19 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { PipelineWithLatest } from '../../types/pipelineRun';
-import { TaskRunKind } from 'src/types';
-import { getTaskRunsOfPipelineRun } from '../hooks/useTaskRuns';
+import { ComputedStatus, TaskRunKind } from '../../types';
+import { useTaskRuns } from '../hooks/useTaskRuns';
 import LinkedPipelineRunTaskStatus from './status/LinkedPipelineRunTaskStatus';
-import PipelineRunStatus from './status/PipelineRunStatus';
 import {
   pipelineFilterReducer,
+  pipelineRunStatus,
   pipelineTitleFilterReducer,
 } from '../utils/pipeline-filter-reducer';
 import { PipelineModel, PipelineRunModel } from '../../models';
 import PipelineKebab from './PipelineKebab';
+import { getPipelineRunStatus } from '../utils/pipeline-utils';
+import { TaskStatus } from '../utils/pipeline-augment';
+import PipelineRunStatusContent from '../status/PipelineRunStatusContent';
 
 export const tableColumnClasses = [
   'pf-v5-u-w-16-on-xl pf-v5-u-w-25-on-lg pf-v5-u-w-33-on-xs', // name
@@ -29,36 +32,39 @@ export const tableColumnClasses = [
 
 type PipelineStatusProps = {
   obj: PipelineWithLatest;
-  taskRuns: TaskRunKind[];
-  taskRunsLoaded: boolean;
 };
 
-const PipelineStatus: React.FC<PipelineStatusProps> = ({
-  obj,
-  taskRuns,
-  taskRunsLoaded,
-}) => {
+type PipelineRowWithoutTaskRunsProps = {
+  obj: PipelineWithLatest;
+  taskRunStatusObj: TaskStatus;
+  activeColumnIDs: Set<string>;
+};
+
+type PipelineRowWithTaskRunsProps = {
+  obj: PipelineWithLatest;
+  activeColumnIDs: Set<string>;
+};
+
+const TASKRUNSFORPLRCACHE: { [key: string]: TaskRunKind[] } = {};
+const InFlightStoreForTaskRunsForPLR: { [key: string]: boolean } = {};
+
+const PipelineStatus: React.FC<PipelineStatusProps> = ({ obj }) => {
   return (
-    <PipelineRunStatus
+    <PipelineRunStatusContent
       status={pipelineFilterReducer(obj)}
       title={pipelineTitleFilterReducer(obj)}
       pipelineRun={obj.latestRun}
-      taskRuns={taskRuns}
-      taskRunsLoaded={taskRunsLoaded}
     />
   );
 };
 
-const PipelineRow: React.FC<
-  RowProps<
-    PipelineWithLatest,
-    { taskRuns: TaskRunKind[]; taskRunsLoaded: boolean }
-  >
-> = ({ obj, activeColumnIDs, rowData: { taskRuns, taskRunsLoaded } }) => {
-  const PLRTaskRuns = getTaskRunsOfPipelineRun(
-    taskRuns,
-    obj?.latestRun?.metadata?.name,
-  );
+const PipelineRowTable = ({
+  obj,
+  PLRTaskRuns,
+  taskRunsLoaded,
+  taskRunStatusObj,
+  activeColumnIDs,
+}) => {
   return (
     <>
       <TableData
@@ -104,6 +110,7 @@ const PipelineRow: React.FC<
             pipelineRun={obj.latestRun}
             taskRuns={PLRTaskRuns}
             taskRunsLoaded={taskRunsLoaded}
+            taskRunStatusObj={taskRunStatusObj}
           />
         ) : (
           '-'
@@ -114,11 +121,7 @@ const PipelineRow: React.FC<
         id="last-run-status"
         activeColumnIDs={activeColumnIDs}
       >
-        <PipelineStatus
-          obj={obj}
-          taskRuns={PLRTaskRuns}
-          taskRunsLoaded={taskRunsLoaded}
-        />
+        <PipelineStatus obj={obj} />
       </TableData>
       <TableData
         className={tableColumnClasses[5]}
@@ -138,6 +141,99 @@ const PipelineRow: React.FC<
         <PipelineKebab pipeline={obj} />
       </TableData>
     </>
+  );
+};
+
+const PipelineRowWithoutTaskRuns: React.FC<PipelineRowWithoutTaskRunsProps> =
+  React.memo(({ obj, taskRunStatusObj, activeColumnIDs }) => {
+    return (
+      <PipelineRowTable
+        obj={obj}
+        PLRTaskRuns={[]}
+        taskRunsLoaded
+        taskRunStatusObj={taskRunStatusObj}
+        activeColumnIDs={activeColumnIDs}
+      />
+    );
+  });
+
+const PipelineRowWithTaskRunsFetch: React.FC<PipelineRowWithTaskRunsProps> =
+  React.memo(({ obj, activeColumnIDs }) => {
+    const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
+    const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
+      obj.latestRun.metadata.namespace,
+      obj.latestRun.metadata.name,
+      undefined,
+      `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`,
+    );
+    InFlightStoreForTaskRunsForPLR[cacheKey] = false;
+    if (taskRunsLoaded) {
+      TASKRUNSFORPLRCACHE[cacheKey] = PLRTaskRuns;
+    }
+    return (
+      <PipelineRowTable
+        obj={obj}
+        PLRTaskRuns={PLRTaskRuns}
+        taskRunsLoaded={taskRunsLoaded}
+        taskRunStatusObj={undefined}
+        activeColumnIDs={activeColumnIDs}
+      />
+    );
+  });
+
+const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> =
+  React.memo(({ obj, activeColumnIDs }) => {
+    let PLRTaskRuns: TaskRunKind[];
+    let taskRunsLoaded: boolean;
+    const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
+    const result = TASKRUNSFORPLRCACHE[cacheKey];
+    if (result) {
+      PLRTaskRuns = result;
+      taskRunsLoaded = true;
+    } else if (InFlightStoreForTaskRunsForPLR[cacheKey]) {
+      PLRTaskRuns = [];
+      taskRunsLoaded = true;
+      InFlightStoreForTaskRunsForPLR[cacheKey] = true;
+    } else {
+      return (
+        <PipelineRowWithTaskRunsFetch
+          obj={obj}
+          activeColumnIDs={activeColumnIDs}
+        />
+      );
+    }
+    return (
+      <PipelineRowTable
+        obj={obj}
+        PLRTaskRuns={PLRTaskRuns}
+        taskRunsLoaded={taskRunsLoaded}
+        taskRunStatusObj={undefined}
+        activeColumnIDs={activeColumnIDs}
+      />
+    );
+  });
+
+const PipelineRow: React.FC<RowProps<PipelineWithLatest>> = ({
+  obj,
+  activeColumnIDs,
+}) => {
+  const plrStatus = pipelineRunStatus(obj.latestRun);
+  if (
+    plrStatus === ComputedStatus.Cancelled &&
+    (obj?.latestRun?.status?.childReferences ?? []).length > 0
+  ) {
+    return (
+      <PipelineRowWithTaskRuns obj={obj} activeColumnIDs={activeColumnIDs} />
+    );
+  }
+
+  const taskRunStatusObj = getPipelineRunStatus(obj.latestRun);
+  return (
+    <PipelineRowWithoutTaskRuns
+      obj={obj}
+      taskRunStatusObj={taskRunStatusObj}
+      activeColumnIDs={activeColumnIDs}
+    />
   );
 };
 

@@ -155,7 +155,7 @@ describe('Get Approval Status Info', () => {
     const status = ApprovalStatus.RequestSent;
     const result = getApprovalStatusInfo(status);
 
-    expect(result.message).toEqual(t('Waiting'));
+    expect(result.message).toEqual(t('Pending'));
   });
 
   it('should return the correct status message and color for PartiallyApproved status', () => {

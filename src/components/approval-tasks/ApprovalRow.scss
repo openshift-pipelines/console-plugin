@@ -1,6 +1,11 @@
 .pipelines-approval-status-icon {
   position: fixed;
   margin-left: -10px;
+
+  @-moz-document url-prefix() {
+    /* Firefox vertical-alignment fix */
+    top: var(--pf-v5-global--spacer--sm);
+  }
 }
 
 .pipelines-approval-status-info {

@@ -24,7 +24,7 @@ export const getApprovalStatusInfo = (status: string): StatusMessage => {
       };
     case ApprovalStatus.RequestSent:
       return {
-        message: t('Waiting'),
+        message: t('Pending'),
         pftoken: waitColor,
       };
     case ApprovalStatus.PartiallyApproved:

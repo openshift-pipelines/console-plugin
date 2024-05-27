@@ -3,7 +3,6 @@ import {
   K8sResourceCommon,
   Selector,
   useFlag,
-  useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { uniqBy } from 'lodash';
 import * as React from 'react';
@@ -22,7 +21,7 @@ import {
   RecordsList,
   TektonResultsOptions,
 } from '../utils/tekton-results';
-import { useTaskRuns } from './useTaskRuns';
+import { useRuns, useTaskRuns } from './useTaskRuns';
 
 export type GetNextPage = () => void | undefined;
 
@@ -130,7 +129,6 @@ export const useGetPipelineRuns = (
   options?: { name: string; kind: string },
 ): [PipelineRunKind[], boolean, unknown, GetNextPage] => {
   let selector: Selector;
-  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
 
   if (options?.kind === 'Pipeline') {
     selector = { matchLabels: { 'tekton.dev/pipeline': options?.name } };
@@ -143,29 +141,33 @@ export const useGetPipelineRuns = (
     };
   }
 
-  const [resultPlrs, resultPlrsLoaded, , getNextPage] = isTektonResultEnabled
-    ? useTRPipelineRuns(
-        ns,
-        options && {
-          selector,
-        },
-      )
-    : [[], true, undefined, undefined];
+  const [pipelineRuns, loaded, error, getNextPage] = usePipelineRuns2(
+    ns,
+    selector && {
+      selector,
+    },
+  );
 
-  const [k8sPlrs, k8sPlrsLoaded, k8sPlrsLoadError] = useK8sWatchResource<
-    PipelineRunKind[]
-  >({
-    isList: true,
-    groupVersionKind: getGroupVersionKindForModel(PipelineRunModel),
-    namespace: ns,
-    ...(options ? { selector } : {}),
-  });
-  const mergedPlrs =
-    (resultPlrsLoaded || k8sPlrsLoaded) && !k8sPlrsLoadError
-      ? uniqBy([...k8sPlrs, ...resultPlrs], (r) => r.metadata.uid)
-      : [];
-  return [mergedPlrs, k8sPlrsLoaded, k8sPlrsLoadError, getNextPage];
+  return React.useMemo(
+    () => [pipelineRuns, loaded, error, getNextPage],
+    [pipelineRuns, loaded, error, getNextPage],
+  );
 };
+
+export const usePipelineRuns2 = (
+  namespace: string,
+  options?: {
+    selector?: Selector;
+    limit?: number;
+  },
+  cacheKey?: string,
+): [PipelineRunKind[], boolean, unknown, GetNextPage] =>
+  useRuns<PipelineRunKind>(
+    getGroupVersionKindForModel(PipelineRunModel),
+    namespace,
+    options,
+    cacheKey,
+  );
 
 export const useGetTaskRuns = (
   ns: string,

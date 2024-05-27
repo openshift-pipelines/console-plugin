@@ -140,11 +140,13 @@ export const usePipelineRuns = (
     selector?: Selector;
     limit?: number;
   },
+  cacheKey?: string,
 ): [PipelineRunKind[], boolean, unknown, GetNextPage] =>
   useRuns<PipelineRunKind>(
     getGroupVersionKindForModel(PipelineRunModel),
     namespace,
     options,
+    cacheKey,
   );
 
 export const usePipelineRun = (

@@ -168,7 +168,7 @@ export const usePipelineRun = (
   );
 };
 
-const useRuns = <Kind extends K8sResourceCommon>(
+export const useRuns = <Kind extends K8sResourceCommon>(
   groupVersionKind: K8sGroupVersionKind,
   namespace: string,
   options?: {

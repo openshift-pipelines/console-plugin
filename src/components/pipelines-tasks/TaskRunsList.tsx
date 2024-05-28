@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { sortable } from '@patternfly/react-table';
 import {
@@ -7,7 +7,6 @@ import {
   ListPageBody,
   ListPageCreateLink,
   ListPageFilter,
-  RowFilter,
   TableColumn,
   VirtualizedTable,
   getGroupVersionKindForModel,
@@ -17,13 +16,9 @@ import {
 import { useTaskRuns } from '../hooks/useTaskRuns';
 import TaskRunsRow from './TaskRunsRow';
 import { TaskRunModel } from '../../models';
-import {
-  pipelineRunFilterReducer,
-  pipelineRunStatusFilter,
-} from '../utils/pipeline-filter-reducer';
 import { ALL_NAMESPACES_KEY, TektonResourceLabel } from '../../consts';
 import { getReferenceForModel } from '../pipelines-overview/utils';
-import { ListFilterId, ListFilterLabels } from '../utils/pipeline-utils';
+import { useTaskRunsFilters } from './useTaskRunsFilters';
 
 interface TaskRunsListPageProps {
   showTitle?: boolean;
@@ -34,35 +29,6 @@ interface TaskRunsListPageProps {
 }
 
 const taskRunModelRef = getReferenceForModel(TaskRunModel);
-
-export const runFilters = (t: TFunction): RowFilter[] => {
-  return [
-    {
-      filterGroupName: t('Status'),
-      type: 'pipelinerun-status',
-      reducer: pipelineRunFilterReducer,
-      items: [
-        {
-          id: ListFilterId.Succeeded,
-          title: ListFilterLabels[ListFilterId.Succeeded],
-        },
-        {
-          id: ListFilterId.Running,
-          title: ListFilterLabels[ListFilterId.Running],
-        },
-        {
-          id: ListFilterId.Failed,
-          title: ListFilterLabels[ListFilterId.Failed],
-        },
-        {
-          id: ListFilterId.Cancelled,
-          title: ListFilterLabels[ListFilterId.Cancelled],
-        },
-      ],
-      filter: pipelineRunStatusFilter,
-    },
-  ];
-};
 
 const useTaskColumns = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -149,7 +115,7 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
   const [taskRuns, loaded, loadError] = useTaskRuns(ns, parentName);
   const [staticData, filteredData, onFilterChange] = useListPageFilter(
     taskRuns,
-    runFilters(t),
+    useTaskRunsFilters(),
   );
   return (
     <>
@@ -183,7 +149,7 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
             selectedColumns: new Set(activeColumns?.map((col) => col?.id)),
             type: t('TaskRuns'),
           }}
-          rowFilters={runFilters(t)}
+          rowFilters={useTaskRunsFilters()}
           hideColumnManagement={hideColumnManagement}
           hideLabelFilter={hideNameLabelFilters}
           hideNameLabelFilters={hideNameLabelFilters}

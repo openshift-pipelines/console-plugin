@@ -11,7 +11,7 @@ import * as React from 'react';
 import usePipelinesColumns from './usePipelinesColumns';
 import { usePipelinesFilters } from './usePipelinesFilters';
 import PipelineRow from './PipelineRow';
-import { useGetPipelineRuns, useGetTaskRuns } from '../hooks/useTektonResult';
+import { useGetPipelineRuns } from '../hooks/useTektonResult';
 import { PipelineModel } from '../../models';
 import { PropPipelineData, augmentRunsToData } from '../utils/pipeline-augment';
 import { useParams } from 'react-router-dom-v5-compat';
@@ -46,7 +46,6 @@ const PipelinesList: React.FC<PipelineListProps> = ({
     pipelinesData,
     filters,
   );
-  const [taskRuns, taskRunsLoaded] = useGetTaskRuns(namespace);
   return (
     <ListPageBody>
       <ListPageFilter
@@ -77,10 +76,6 @@ const PipelinesList: React.FC<PipelineListProps> = ({
         loaded={pipelinesLoaded && pipelineRunsLoaded}
         loadError={pipelinesLoadError || pipelineRunsLoadError}
         Row={PipelineRow}
-        rowData={{
-          taskRuns,
-          taskRunsLoaded,
-        }}
         unfilteredData={data}
       />
     </ListPageBody>

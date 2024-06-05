@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
-import './PipelineVisualization.scss';
 import { PipelineKind, PipelineRunKind, TaskRunKind } from '../../types';
 import { getGraphDataModel } from './pipeline-visualization-utils';
 import { dagreViewerComponentFactory } from '../pipeline-topology/factories';
 import PipelineTopologyGraph from '../pipeline-topology/PipelineTopologyGraph';
+import './PipelineVisualization.scss';
 
 interface PipelineTopologyVisualizationProps {
   pipeline: PipelineKind;

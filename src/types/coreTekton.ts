@@ -18,7 +18,7 @@ export type TektonTaskSteps = {
   args?: string[];
   command?: string[];
   image?: string;
-  resources?: never[] | never;
+  resources?: {}[] | {};
   env?: { name: string; value: string }[];
   script?: string[];
 };

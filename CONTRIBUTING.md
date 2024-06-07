@@ -6,7 +6,7 @@
 
 Required tools:
 
-- [Node.js](https://nodejs.org/en/) v16 or newer and [yarn](https://yarnpkg.com) are required
+- [Node.js](https://nodejs.org/en/) v18 or newer and [yarn](https://yarnpkg.com) are required
   to build and run the example.
 - To run OpenShift console in a container, either
   [Docker](https://www.docker.com) or [podman 3.2.0+](https://podman.io) and

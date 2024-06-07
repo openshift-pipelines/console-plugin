@@ -1,0 +1,7 @@
+{
+    "stepDefinitions": [
+        "cypress/support/step-definitions/[filepath].ts",
+        "cypress/support/step-definitions/common/common.ts",
+        "cypress/support/step-definitions/common/pipelines.ts"
+    ]
+}

@@ -154,6 +154,11 @@ const commonPipelineSchema = () =>
         data: volumeTypeSchema(),
       }),
     ),
+    timeouts: yup.object().shape({
+      timeValue: yup
+        .number()
+        .min(0, t('Timeout must be greater than or equal to 0.')),
+    }),
   });
 
 export const startPipelineSchema = () =>

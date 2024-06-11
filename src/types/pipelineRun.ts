@@ -164,7 +164,11 @@ export type PipelineRunKind = K8sResourceCommon & {
     workspaces?: PipelineRunWorkspace[];
     resources?: PipelineRunResource[];
     serviceAccountName?: string;
-    timeout?: string;
+    timeouts?: {
+      pipeline?: string;
+      tasks?: string;
+      finally?: string;
+    };
     // Only used in a single case - cancelling a pipeline; should not be copied between PLRs
     status?: 'StoppedRunFinally' | 'PipelineRunPending' | 'CancelledRunFinally';
     // In tekton v1 ServiceAccountName is moved

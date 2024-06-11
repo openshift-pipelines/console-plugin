@@ -1,5 +1,4 @@
 import {
-  getGroupVersionKindForModel,
   K8sResourceCommon,
   Selector,
   useFlag,
@@ -12,16 +11,15 @@ import {
   RepositoryLabels,
   TektonResourceLabel,
 } from '../../consts';
-import { PipelineRunModel } from '../../models';
 import { PipelineRunKind, TaskRunKind } from '../../types';
 import {
+  RecordsList,
+  TektonResultsOptions,
   getPipelineRuns,
   getTaskRunLog,
   getTaskRuns,
-  RecordsList,
-  TektonResultsOptions,
 } from '../utils/tekton-results';
-import { useRuns, useTaskRuns } from './useTaskRuns';
+import { usePipelineRuns, useTaskRuns } from './useTaskRuns';
 
 export type GetNextPage = () => void | undefined;
 
@@ -141,7 +139,7 @@ export const useGetPipelineRuns = (
     };
   }
 
-  const [pipelineRuns, loaded, error, getNextPage] = usePipelineRuns2(
+  const [pipelineRuns, loaded, error, getNextPage] = usePipelineRuns(
     ns,
     selector && {
       selector,
@@ -153,21 +151,6 @@ export const useGetPipelineRuns = (
     [pipelineRuns, loaded, error, getNextPage],
   );
 };
-
-export const usePipelineRuns2 = (
-  namespace: string,
-  options?: {
-    selector?: Selector;
-    limit?: number;
-  },
-  cacheKey?: string,
-): [PipelineRunKind[], boolean, unknown, GetNextPage] =>
-  useRuns<PipelineRunKind>(
-    getGroupVersionKindForModel(PipelineRunModel),
-    namespace,
-    options,
-    cacheKey,
-  );
 
 export const useGetTaskRuns = (
   ns: string,

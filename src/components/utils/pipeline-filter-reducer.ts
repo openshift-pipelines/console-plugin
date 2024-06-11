@@ -146,6 +146,40 @@ export const pipelineRunFilterReducer = (pipelineRun): ComputedStatus => {
   return status || ComputedStatus.Other;
 };
 
+export const isPipelineRunLoadedFromTektonResults = (pipelineRun): boolean => {
+  return (
+    pipelineRun?.metadata?.annotations?.['resource.deleted.in.k8s'] &&
+    pipelineRun?.metadata?.annotations?.['resource.loaded.from.tektonResults']
+  );
+};
+
+export const pipelineRunDataSourceFilterReducer = (pipelineRun) => {
+  if (isPipelineRunLoadedFromTektonResults(pipelineRun)) {
+    return 'archived-data';
+  } else {
+    return 'cluster-data';
+  }
+};
+
+export const pipelineRunDataSourceFilter = (phases, pipelineRun) => {
+  if (!phases || !phases.selected || !phases.selected.length) {
+    return true;
+  }
+  if (
+    phases.selected.includes('cluster-data') &&
+    !phases.selected.includes('archived-data')
+  ) {
+    return !isPipelineRunLoadedFromTektonResults(pipelineRun);
+  }
+  if (
+    !phases.selected.includes('cluster-data') &&
+    phases.selected.includes('archived-data')
+  ) {
+    return isPipelineRunLoadedFromTektonResults(pipelineRun);
+  }
+  return true;
+};
+
 export const pipelineRunStatusFilter = (phases, pipeline) => {
   if (!phases || !phases.selected || !phases.selected.length) {
     return true;

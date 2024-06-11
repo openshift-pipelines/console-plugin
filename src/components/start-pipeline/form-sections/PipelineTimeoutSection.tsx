@@ -21,7 +21,7 @@ const PipelineTimeoutSection = () => {
     'timeouts.timeValue',
   );
   const [timeoutUnit, setTimeoutUnit] = React.useState('m');
-  const [timeoutValue, setTimeoutValue] = React.useState();
+  const [timeoutValue, setTimeoutValue] = React.useState(60);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const isValid = !(touched && !!error);
   const errorMessage = !isValid ? error : '';
@@ -45,6 +45,7 @@ const PipelineTimeoutSection = () => {
         inputID="timeout-input"
         data-test-id="timeout-input"
         minValue={0}
+        allowDecimalValue
       />
       <FormHelperText>
         <HelperText>

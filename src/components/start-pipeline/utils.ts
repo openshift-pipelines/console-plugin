@@ -332,7 +332,6 @@ export const getPipelineRunFromForm = (
   options?: { generateName: boolean },
 ) => {
   const { parameters, workspaces, timeouts } = formValues;
-  console.log(timeouts, '####');
   const pipelineRunData: PipelineRunKind = {
     metadata: {
       annotations,
@@ -346,9 +345,11 @@ export const getPipelineRunFromForm = (
         ({ name, value }): PipelineRunParam => ({ name, value }),
       ),
       workspaces: getPipelineRunWorkspaces(workspaces),
-      timeouts: {
-        pipeline: `${timeouts.timeValue}${timeouts.timeUnit}`,
-      },
+      ...(timeouts && {
+        timeouts: {
+          pipeline: `${timeouts.timeValue}${timeouts.timeUnit}`,
+        },
+      }),
     },
   };
   return getPipelineRunData(pipeline, pipelineRunData, options);

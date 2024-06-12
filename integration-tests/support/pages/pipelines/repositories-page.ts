@@ -22,6 +22,7 @@ export const repositoriesPage = {
   },
 
   verifyNameInRepositoriesTable: (repoName: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelinesPO.search).clear().type(repoName);
     cy.get('[title="Repository"]')
       .next('a')

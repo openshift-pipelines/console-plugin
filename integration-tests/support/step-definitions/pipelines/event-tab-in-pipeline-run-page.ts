@@ -34,6 +34,7 @@ When(
     tasksPage.togglePipelineSidebar();
     tasksPage.clickOnCreatePipeline();
     cy.get(pipelineBuilderPO.formView.switchToFormView).click();
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelineBuilderPO.formView.name).clear().type(pipelineName);
     cy.byTestID('task-list').click();
     cy.get(pipelineBuilderPO.formView.quickSearch).type('kn');

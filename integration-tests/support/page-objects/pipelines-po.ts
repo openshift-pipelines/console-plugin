@@ -2,8 +2,10 @@ export const pipelineBuilderPO = {
   title: '.odc-pipeline-builder-header h1',
   create: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
-  pipeline: '#pipeline-link',
-  repository: '#repository-link',
+  // pipeline: '#pipeline-link',
+  pipeline: '[data-test="list-page-create-dropdown-item-pipeline"]',
+  // repository: '#repository-link',
+  repository: '[data-test="list-page-create-dropdown-item-repository"]',
   configureVia: {
     pipelineBuilder: '#form-radiobutton-editorType-form-field',
     yamlView: '#form-radiobutton-editorType-yaml-field',

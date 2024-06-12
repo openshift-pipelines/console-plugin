@@ -38,10 +38,11 @@ export const installOperator = (operatorName: operators) => {
       app.waitForLoad();
 
       // workaround for https://bugzilla.redhat.com/show_bug.cgi?id=2059865
-      const waitForResult = (tries: number = 10) => {
+      const waitForResult = (tries = 10) => {
         if (tries < 1) {
           return;
         }
+        /* eslint-disable-next-line cypress/no-unnecessary-waiting */
         cy.wait(2000);
         cy.get('body').then((body) => {
           if (body.find(`[data-test="success-icon"]`).length > 0) {
@@ -73,8 +74,8 @@ export const installOperator = (operatorName: operators) => {
 // Needs to be done this way, beacuse the operators list is not updated quickly enough after filtering.
 const installIfNotInstalled = (
   operator: operators,
-  tries: number = 4,
-  polling: number = 500,
+  tries = 4,
+  polling = 500,
 ) => {
   if (tries === 0) {
     cy.log(`Operator ${operator} is already installed.`);
@@ -97,6 +98,7 @@ const installIfNotInstalled = (
 export const waitForCRDs = (operator: operators) => {
   cy.log(`Verify the CRD's for the "${operator}"`);
   operatorsPage.navigateToCustomResourceDefinitions();
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.byTestID('name-filter-input').clear().type('Pipeline');
   cy.get('tr[data-test-rows="resource-row"]', { timeout: 300000 }).should(
     'have.length.within',
@@ -112,16 +114,18 @@ export const waitForCRDs = (operator: operators) => {
   cy.get('[data-test-id="Pipeline"]', { timeout: 80000 }).should('be.visible');
 };
 
-const waitForPipelineTasks = (retries: number = 30) => {
+const waitForPipelineTasks = (retries = 30) => {
   if (retries === 0) {
     return;
   }
   cy.contains('h1', 'Pipeline builder').should('be.visible');
   cy.byTestID('loading-indicator').should('not.exist');
+  /* eslint-disable-next-line cypress/no-unnecessary-waiting */
   cy.wait(500);
   cy.get(pipelineBuilderPO.formView.switchToFormView).click();
   cy.get('body').then(($body) => {
     if ($body.find(`[data-id="pipeline-builder"]`).length === 0) {
+      /* eslint-disable-next-line cypress/no-unnecessary-waiting */
       cy.wait(10000);
       cy.reload();
       waitForPipelineTasks(retries - 1);

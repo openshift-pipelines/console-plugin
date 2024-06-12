@@ -259,6 +259,7 @@ Then('Add Parameters, Add Resources, Task should be displayed', () => {
 });
 
 Then('{string} is not displayed on Pipelines page', (pipelineName: string) => {
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.get(pipelinesPO.search).clear().type(pipelineName);
   cy.byTestID('empty-message').should('be.visible');
 });

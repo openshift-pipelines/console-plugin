@@ -35,8 +35,6 @@ const config: Configuration = {
     // },
     fallback: {
       fs: false,
-      child_process: false,
-      readline: false,
       tls: false,
       net: false,
       path: false,

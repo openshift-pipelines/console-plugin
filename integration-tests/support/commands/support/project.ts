@@ -17,12 +17,13 @@ declare global {
 
 // This will add to 'createProject(...)' to cy
 // ex: cy.createProject(name)
-Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false) => {
+Cypress.Commands.add('createProject', (name: string, devConsole = false) => {
   cy.log(`create project`);
   cy.visit(`/k8s/cluster/projects`);
   listPage.isCreateButtonVisible();
   listPage.clickCreateYAMLbutton();
   modal.shouldBeOpened();
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.byTestID('input-name').click().type(name);
   cy.testA11y('Create Project modal');
   modal.submit();
@@ -52,6 +53,9 @@ Cypress.Commands.add('deleteProject', (name: string) => {
   listPage.titleShouldHaveText('Projects');
 });
 
-Cypress.Commands.add('deleteProjectWithCLI', (name: string, timeout?: number) => {
-  cy.exec(`oc delete project ${name}`, { timeout });
-});
+Cypress.Commands.add(
+  'deleteProjectWithCLI',
+  (name: string, timeout?: number) => {
+    cy.exec(`oc delete project ${name}`, { timeout });
+  },
+);

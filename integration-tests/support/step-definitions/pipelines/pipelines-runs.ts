@@ -503,6 +503,7 @@ When('user clicks Start LastRun from topology side bar', () => {
 });
 
 When('user navigates to Workspaces section', () => {
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.get(pipelinesPO.startPipeline.sectionTitle)
     .contains('Workspaces')
     .scrollIntoView()
@@ -529,6 +530,7 @@ When(
 When(
   'user selects {string} option from workspace dropdown',
   (workspaceType: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelinesPO.startPipeline.sectionTitle)
       .contains('Workspaces')
       .scrollIntoView()

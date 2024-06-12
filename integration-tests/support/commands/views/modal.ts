@@ -5,11 +5,13 @@ export const modal = {
     cy.byLegacyTestID('modal-cancel-action', 20000).scrollIntoView();
     cy.byLegacyTestID('modal-cancel-action').should('be.visible');
   },
-  shouldBeClosed: () => cy.byLegacyTestID('modal-cancel-action').should('not.exist'),
+  shouldBeClosed: () =>
+    cy.byLegacyTestID('modal-cancel-action').should('not.exist'),
   submitShouldBeDisabled: () => cy.get(submitButton).should('be.disabled'),
   submitShouldBeEnabled: () => cy.get(submitButton).should('not.be.disabled'),
-  cancel: (force: boolean = false) => cy.byLegacyTestID('modal-cancel-action').click({ force }),
-  submit: (force: boolean = false) => cy.get(submitButton).click({ force }),
+  cancel: (force = false) =>
+    cy.byLegacyTestID('modal-cancel-action').click({ force }),
+  submit: (force = false) => cy.get(submitButton).click({ force }),
   modalTitleShouldContain: (modalTitle: string) =>
     cy.byLegacyTestID('modal-title').should('contain.text', modalTitle),
 };

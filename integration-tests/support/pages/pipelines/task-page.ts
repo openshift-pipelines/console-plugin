@@ -8,6 +8,7 @@ export const tasksPage = {
     yamlEditor.isLoaded();
   },
   clearYAMLEditor: () => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelineBuilderPO.yamlView.yamlEditor)
       .click()
       .focused()

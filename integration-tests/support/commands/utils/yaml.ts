@@ -1,7 +1,11 @@
 import { safeDump, safeLoad } from 'js-yaml';
 
 // Safely parse js obj to yaml. Returns fallback (emtpy string by default) on exception.
-export const safeJSToYAML = (js: any, fallback: string = '', options: any = {}): string => {
+export const safeJSToYAML = (
+  js: any,
+  fallback = '',
+  options: any = {},
+): string => {
   try {
     return safeDump(js, options);
   } catch {
@@ -10,7 +14,11 @@ export const safeJSToYAML = (js: any, fallback: string = '', options: any = {}):
 };
 
 // Safely parse yaml to js object. Returns fallback (empty object by default) on exception.
-export const safeYAMLToJS = (yaml: string, fallback: any = {}, options: any = {}): any => {
+export const safeYAMLToJS = (
+  yaml: string,
+  fallback: any = {},
+  options: any = {},
+): any => {
   try {
     return safeLoad(yaml, options);
   } catch {
@@ -29,7 +37,10 @@ export const asyncJSToYAML = (js: any, options: any = {}): Promise<string> => {
   });
 };
 
-export const asyncYAMLToJS = (yaml: string, options: any = {}): Promise<any> => {
+export const asyncYAMLToJS = (
+  yaml: string,
+  options: any = {},
+): Promise<any> => {
   return new Promise((resolve, reject) => {
     try {
       const js = safeLoad(yaml, options);

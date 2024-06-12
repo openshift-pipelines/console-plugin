@@ -4,6 +4,7 @@ export const listPage = {
   titleShouldHaveText: (title: string) =>
     cy.byLegacyTestID('resource-title').contains(title).should('exist'),
   clickCreateYAMLdropdownButton: () => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.byTestID('item-create')
       .click()
       .get('body')
@@ -19,7 +20,10 @@ export const listPage = {
   clickCreateYAMLbutton: () => {
     cy.byTestID('item-create').click({ force: true });
   },
-  createNamespacedResourceWithDefaultYAML: (resourceType: string, testName: string) => {
+  createNamespacedResourceWithDefaultYAML: (
+    resourceType: string,
+    testName: string,
+  ) => {
     cy.visit(`/k8s/ns/${testName}/${resourceType}`);
     listPage.clickCreateYAMLbutton();
     cy.byTestID('resource-sidebar').should('exist');
@@ -28,6 +32,7 @@ export const listPage = {
   },
   filter: {
     byName: (name: string) => {
+      /* eslint-disable-next-line cypress/unsafe-to-chain-command */
       cy.byTestID('name-filter-input').clear().type(name);
     },
     clickSearchByDropdown: () => {
@@ -64,10 +69,18 @@ export const listPage = {
       cy.get('[data-test-rows="resource-row"]').should('have.length', count);
     },
     countShouldBeWithin: (min: number, max: number) => {
-      cy.get('[data-test-rows="resource-row"]').should('have.length.within', min, max);
+      cy.get('[data-test-rows="resource-row"]').should(
+        'have.length.within',
+        min,
+        max,
+      );
     },
     clickFirstLinkInFirstRow: () => {
-      cy.get('[data-test-rows="resource-row"]').first().find('a').first().click({ force: true }); // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
+      cy.get('[data-test-rows="resource-row"]')
+        .first()
+        .find('a')
+        .first()
+        .click({ force: true }); // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
     },
     clickKebabAction: (resourceName: string, actionName: string) => {
       cy.get('[data-test-rows="resource-row"]')
@@ -97,7 +110,9 @@ export const listPage = {
     clickRowByName: (resourceName: string) =>
       cy.get(`a[data-test-id="${resourceName}"]`).click({ force: true }), // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
     shouldNotExist: (resourceName: string) =>
-      cy.get(`[data-test-id="${resourceName}"]`, { timeout: 90000 }).should('not.exist'),
+      cy
+        .get(`[data-test-id="${resourceName}"]`, { timeout: 90000 })
+        .should('not.exist'),
   },
 };
 

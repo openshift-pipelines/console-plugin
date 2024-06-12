@@ -133,14 +133,14 @@ Feature: Perform Actions on repository
                   | test-repo       |
 
 
-        @regression @odc-6460
+        @regression
         Scenario: Setup GitHub page: P-11-TC12
             Given user is at Pipelines tab in admin page
              When user clicks on Setup GitHub App button
              Then user can see "GitHub application name", "See GitHub permissions" and "View all steps in documentation"
 
 
-    @regression @manual @odc-6460
+    @regression @manual
     #This test case is manual as it navigates to github in between the process
         Scenario: Create and configure the GitHub Application to work with Pipelines as code: P-11-TC13
             Given user is at Pipelines tab in admin page
@@ -153,7 +153,7 @@ Feature: Perform Actions on repository
               And user will see App Name as "pac-app123", App Link as "https://github.com/apps/pac-app123" and Secret as "pipelines-as-code-secret" in "openshift-pipelines" namespace
 
 
-    @regression @odc-6461 @manual
+    @regression @manual
     # Manual test case as pipeline 1.8 is not yet available
         Scenario Outline: Add a Git repository to pipeline as code using webhook url: P-11-TC14
             Given user has installed OpenShift Pipelines Operator version 1.8 with catalog source "<catalog_yaml>" and image content policy "<image_content_policy_yaml>"
@@ -171,7 +171,7 @@ Feature: Perform Actions on repository
                   | testData/installPipelineOperator1.8.yaml | testData/imageContentPolicy1.8.yaml | https://github.com/testing/ | git-testing     |
 
 
-        @regression @odc-6461 @manual
+        @regression @manual
         Scenario Outline: Triggering a pipeline run in added Git repository to pipeline as code using webhook url: P-11-TC15
             Given user has installed OpenShift Pipelines Operator version 1.8 with catalog source "<catalog_yaml>" and image content policy "<image_content_policy_yaml>"
               And user has copied webhook url and webhook secret
@@ -195,7 +195,7 @@ Feature: Perform Actions on repository
              Then user will see pipeline run created on the repository details page
 
 
-        @regression @odc-6461 @manual
+        @regression @manual
         Scenario Outline: Add a Git repository to pipeline as code using GitHub App: P-11-TC16
             Given user has installed OpenShift Pipelines Operator version 1.8 with catalog source "<catalog_yaml>" and image content policy "<image_content_policy_yaml>"
               And user has setted up GitHub App "pipelines-ci-clustername1"

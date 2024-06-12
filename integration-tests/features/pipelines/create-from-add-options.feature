@@ -155,7 +155,7 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/sclorg/nginx-ex.git | Nginx         | There are no pipeline templates available for Nginx and Deployment combination. |
 
 
-        @regression @odc-6372
+        @regression
         Scenario Outline: Pipeline dropdown in add from git : P-01-TC11
             Given user is at Import from Git form
              When user enters Git Repo url in builder image as "<git_url>"
@@ -173,7 +173,7 @@ Feature: Create Pipeline from Add Options
                   | s2i-python            | https://github.com/sclorg/django-ex.git | django-ex-1      | Deployment Config |
 
 
-        @regression @manual @odc-6372
+        @regression @manual
         Scenario Outline: Pick a pipeline from git : P-01-TC12
             Given user has created a custom pipeline from yaml "<pipeline_yaml>" in namespace "openshift"
               And user is at Import from Git form
@@ -192,7 +192,7 @@ Feature: Create Pipeline from Add Options
                   | testData/customPythonDeploymentConfig.yaml | s2i-python-custom            | https://github.com/sclorg/django-ex.git | django-ex-1      | Deployment Config |
 
 
-        @regression @odc-7128
+        @regression
         Scenario Outline: Create a PAC Repository and other resources from git workload: P-01-TC13
             Given user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"

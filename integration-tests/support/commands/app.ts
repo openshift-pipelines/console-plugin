@@ -63,6 +63,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('verifyDropdownselected', (selector: string) => {
   cy.get(selector).should('be.visible');
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.get(selector).click().get('[role="menu"]').should('be.visible');
 });
 
@@ -89,6 +90,7 @@ Cypress.Commands.add('selectActionsMenuOption', (actionsMenuOption: string) => {
 });
 
 Cypress.Commands.add('dropdownSwitchTo', (dropdownMenuOption: string) => {
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.byLegacyTestID('dropdown-button')
     .click()
     .find('data-test-id="dropdown-menu"')
@@ -97,6 +99,7 @@ Cypress.Commands.add('dropdownSwitchTo', (dropdownMenuOption: string) => {
 });
 
 Cypress.Commands.add('isDropdownVisible', () => {
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.byLegacyTestID('dropdown-button')
     .should('be.visible')
     .click()
@@ -150,7 +153,7 @@ Cypress.Commands.add('checkErrors', () => {
 
 Cypress.Commands.add(
   'waitUntilEnabled',
-  (selector: string, timeout: number = 20000): any => {
+  (selector: string, timeout = 20000): any => {
     const start = new Date().getTime();
 
     return cy.get(selector).then(($el) => {

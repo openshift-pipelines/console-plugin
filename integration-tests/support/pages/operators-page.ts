@@ -44,6 +44,7 @@ export const operatorsPage = {
   },
 
   searchOperator: (operatorName: string | operators) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(operatorsPO.search).should('be.visible').clear().type(operatorName);
   },
 
@@ -53,6 +54,7 @@ export const operatorsPage = {
       if (
         $body.find(operatorsPO.installOperators.noOperatorsDetails).length === 0
       ) {
+        /* eslint-disable-next-line cypress/unsafe-to-chain-command */
         cy.get(operatorsPO.installOperators.search).clear().type(operatorName);
       } else {
         cy.log(
@@ -66,6 +68,7 @@ export const operatorsPage = {
     cy.get(operatorsPO.subscription.logo).should('have.text', operatorLogo),
 
   verifyInstalledOperator: (operatorName: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(operatorsPO.installOperators.search)
       .should('be.visible')
       .clear()
@@ -76,6 +79,7 @@ export const operatorsPage = {
   },
 
   verifyOperatorNotAvailable: (operatorName: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(operatorsPO.installOperators.search).clear().type(operatorName);
     cy.get(operatorsPO.installOperators.noOperatorFoundMessage).should(
       'have.text',

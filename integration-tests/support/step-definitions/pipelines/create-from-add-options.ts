@@ -275,6 +275,7 @@ When('user selects Import Strategy as Dockerfile', () => {
 });
 
 When('user enters Dockerfile path as {string}', (dockerfilePath: string) => {
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.get('#form-input-docker-dockerfilePath-field')
     .clear()
     .type(dockerfilePath);

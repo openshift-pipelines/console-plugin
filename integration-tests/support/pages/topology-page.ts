@@ -52,6 +52,7 @@ export const topologyPage = {
   // verifyWorkLoads: () =>
   //   cy.get(topologyPO.graph.workloads).should('be.visible'),
   search: (name: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(topologyPO.search).clear().type(name);
   },
   verifyWorkloadInTopologyPage: (
@@ -59,7 +60,6 @@ export const topologyPage = {
     options?: { timeout: number },
   ) => {
     topologyPage.search(appName);
-    // eslint-disable-next-line promise/catch-or-return
     cy.get('body').then(($body) => {
       if (
         $body.find(
@@ -495,8 +495,10 @@ export const topologyPage = {
   //     .and('include', runTimeIcon);
   // },
   deleteApplication: (appName: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(topologyPO.graph.deleteApplication).clear().type(appName);
     cy.get(topologyPO.graph.deleteWorkload).click();
+    /* eslint-disable-next-line cypress/no-unnecessary-waiting */
     cy.wait(15000);
   },
   // verifyApplicationGroupingSidepane: () => {

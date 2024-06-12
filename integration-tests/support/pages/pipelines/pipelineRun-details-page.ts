@@ -103,6 +103,7 @@ export const pipelineRunDetailsPage = {
     });
   },
   verifyDetailsFields: () => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get('.odc-pipeline-run-details__customDetails')
       .scrollIntoView()
       .within(() => {
@@ -180,6 +181,7 @@ export const pipelineRunDetailsPage = {
     }
   },
   verifyWorkspacesSection: () => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelineRunDetailsPO.details.workspacesSection)
       .scrollIntoView()
       .should('be.visible');
@@ -212,7 +214,7 @@ export const pipelineRunsPage = {
   },
   verifyPipelineRunsTableDisplay: () =>
     cy.get(pipelineRunsPO.pipelineRunsTable.table).should('be.visible'),
-  filterByStatus: (status: string = 'Succeeded') => {
+  filterByStatus: (status = 'Succeeded') => {
     cy.byLegacyTestID('filter-dropdown-toggle').find('button').click();
     switch (status) {
       case 'Succeeded': {

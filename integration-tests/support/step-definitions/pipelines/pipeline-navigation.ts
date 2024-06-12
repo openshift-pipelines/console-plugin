@@ -15,6 +15,7 @@ When('user navigates to Builds page', () => {
 });
 
 When('user enters git access token as {string}', (token: string) => {
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.get('[id="form-input-webhook-token-field"]')
     .clear()
     .type(token)
@@ -36,6 +37,7 @@ When('user will redirects to Add Git Repository page', () => {
 });
 
 When('user enter the GitRepo URL {string}', (GitRepoURL: string) => {
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.get('#form-input-gitUrl-field').clear().type(GitRepoURL);
 });
 

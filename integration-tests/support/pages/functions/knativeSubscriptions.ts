@@ -9,6 +9,7 @@ export const createKnativeServing = () => {
   projectNameSpace.selectProject('knative-serving');
   cy.get('body').then(($body) => {
     if ($body.find(operatorsPO.installOperators.search)) {
+      /* eslint-disable-next-line cypress/unsafe-to-chain-command */
       cy.get(operatorsPO.installOperators.search)
         .clear()
         .type(operators.ServerlessOperator);
@@ -44,6 +45,7 @@ export const createKnativeEventing = () => {
   projectNameSpace.selectProject('knative-eventing');
   cy.get('body').then(($body) => {
     if ($body.find(operatorsPO.installOperators.search)) {
+      /* eslint-disable-next-line cypress/unsafe-to-chain-command */
       cy.get(operatorsPO.installOperators.search)
         .clear()
         .type(operators.ServerlessOperator);
@@ -80,6 +82,7 @@ export const createKnativeKafka = () => {
   projectNameSpace.selectProject('knative-eventing');
   cy.get('body').then(($body) => {
     if ($body.find(operatorsPO.installOperators.search)) {
+      /* eslint-disable-next-line cypress/unsafe-to-chain-command */
       cy.get(operatorsPO.installOperators.search)
         .clear()
         .type(operators.ServerlessOperator);

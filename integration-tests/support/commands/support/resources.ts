@@ -30,7 +30,11 @@ const toCLIType = (type: K8sResourceKindReference | string): string => {
 
 Cypress.Commands.add(
   'resourceShouldBeDeleted',
-  (namespace: string, resource: K8sResourceKindReference | string, name: string): any =>
+  (
+    namespace: string,
+    resource: K8sResourceKindReference | string,
+    name: string,
+  ): any =>
     cy
       .exec(
         `oc get -n ${namespace} ${toCLIType(
@@ -43,7 +47,11 @@ Cypress.Commands.add(
           // if stderr === NotFound, means resource was succesfully deleted
           if (!result.stderr.includes('NotFound')) {
             // error other than 'NotFound', this typically would be a 'You must be logged in to the server (Unauthorized)'
-            assert.fail('', '', `Error during 'oc get ${resource}/${name}', ${result.stderr} `);
+            assert.fail(
+              '',
+              '',
+              `Error during 'oc get ${resource}/${name}', ${result.stderr} `,
+            );
           }
         } else {
           expect(result.stdout).not.toContain(`<no value>`);

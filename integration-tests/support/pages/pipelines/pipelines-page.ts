@@ -18,7 +18,7 @@ export const pipelinesPage = {
       if ($body.find(pipelinesPO.createPipeline).length > 0) {
         cy.get(pipelinesPO.createPipeline).click();
       } else {
-        cy.contains(`[data-test-id="dropdown-button"]`, 'Create').click();
+        cy.contains(`[data-test="item-create"]`, 'Create').click();
         cy.get(pipelineBuilderPO.pipeline).click();
       }
     });
@@ -28,8 +28,8 @@ export const pipelinesPage = {
     detailsPage.titleShouldContain(pageTitle.Pipelines);
     app.waitForLoad();
     cy.get('body').then(($body) => {
-      if ($body.find('[data-test-id="dropdown-button"]').length !== 0) {
-        cy.contains('[data-test-id="dropdown-button"]', 'Create').click();
+      if ($body.find('data-test="item-create"]').length !== 0) {
+        cy.contains('[data-test="item-create"]', 'Create').click();
         cy.get(pipelineBuilderPO.repository).click();
       } else {
         cy.get(pipelinesPO.createPipeline).click();
@@ -94,7 +94,7 @@ export const pipelinesPage = {
     cy.byTestActionID(action).click({ force: true });
   },
 
-  verifyDefaultPipelineColumnValues: (defaultValue: string = '-') => {
+  verifyDefaultPipelineColumnValues: (defaultValue = '-') => {
     cy.get(pipelinesPO.pipelinesTable.columnValues).as('colValues');
     cy.get('@colValues').eq(1).should('have.text', defaultValue);
     cy.get('@colValues').eq(2).should('have.text', defaultValue);
@@ -161,6 +161,7 @@ export const pipelinesPage = {
   },
 
   search: (name: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelinesPO.search).should('be.visible').clear().type(name);
     cy.get('tbody tr')
       .eq(0)
@@ -171,6 +172,7 @@ export const pipelinesPage = {
   },
 
   clearYAMLEditor: () => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelineBuilderPO.yamlView.yamlEditor)
       .click()
       .focused()
@@ -224,6 +226,7 @@ export const pipelinesPage = {
     cy.get(pipelinesPO.pipelinesTable.kebabMenu).should('be.visible'),
 
   verifyNameInPipelinesTable: (pipelineName: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelinesPO.search).should('be.visible').clear().type(pipelineName);
     cy.get('[title="Pipeline"]')
       .next('a')
@@ -257,7 +260,7 @@ export const pipelinesPage = {
     cy.byTestActionID(option).should('be.visible');
   },
 
-  addTrigger: (gitProviderType: string = 'github-pullreq') => {
+  addTrigger: (gitProviderType = 'github-pullreq') => {
     modal.modalTitleShouldContain('Add Trigger');
     cy.get(pipelinesPO.addTrigger.gitProviderType).click();
     cy.get(`[id$="${gitProviderType}-link"]`).click({ force: true });
@@ -314,7 +317,7 @@ export const startPipelineInPipelinesPage = {
       .should('be.visible')
       .type(revision);
   },
-  addGitResource: (gitUrl: string, revision: string = 'master') => {
+  addGitResource: (gitUrl: string, revision = 'master') => {
     modal.shouldBeOpened();
     cy.get('form').within(() => {
       app.waitForLoad();
@@ -350,8 +353,8 @@ export const startPipelineInPipelinesPage = {
     serverUrl: string,
     userName: string,
     password: string,
-    provider: string = 'Git Server',
-    authenticationType: string = 'Basic Authentication',
+    provider = 'Git Server',
+    authenticationType = 'Basic Authentication',
   ) => {
     cy.get(pipelinesPO.startPipeline.advancedOptions.secretName).type(
       secretName,
@@ -378,15 +381,19 @@ export const startPipelineInPipelinesPage = {
   },
   verifyFields: () => {
     cy.get(pipelinesPO.startPipeline.secretForm).within(() => {
+      /* eslint-disable-next-line cypress/unsafe-to-chain-command */
       cy.get(pipelinesPO.startPipeline.advancedOptions.secretName)
         .scrollIntoView()
         .should('be.visible');
+      /* eslint-disable-next-line cypress/unsafe-to-chain-command */
       cy.get(pipelinesPO.startPipeline.advancedOptions.accessTo)
         .scrollIntoView()
         .should('be.visible');
+      /* eslint-disable-next-line cypress/unsafe-to-chain-command */
       cy.get(pipelinesPO.startPipeline.advancedOptions.authenticationType)
         .scrollIntoView()
         .should('be.visible');
+      /* eslint-disable-next-line cypress/unsafe-to-chain-command */
       cy.get(pipelinesPO.startPipeline.advancedOptions.serverUrl)
         .scrollIntoView()
         .should('be.visible');

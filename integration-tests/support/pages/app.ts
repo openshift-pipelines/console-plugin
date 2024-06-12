@@ -25,7 +25,7 @@ export const app = {
   waitForDocumentLoad: () => {
     cy.document().its('readyState').should('eq', 'complete');
   },
-  waitForLoad: (timeout: number = 160000, skipInline = false) => {
+  waitForLoad: (timeout = 160000, skipInline = false) => {
     // observe dashboard contains lots of loaders that only disappear when scrolled into view
     // skip these, otherwise wait as normal
     cy.url().then((url) => {
@@ -90,6 +90,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
   switch (opt) {
     case devNavigationMenu.Add: {
       perspective.switchTo(switchPerspective.Developer);
+      /* eslint-disable-next-line cypress/unsafe-to-chain-command */
       cy.get(globalPO.addNavigation)
         .click()
         .then(() => {
@@ -423,6 +424,7 @@ export const yamlEditor = {
   },
 
   clearYAMLEditor: () => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelineBuilderPO.yamlView.editor)
       .click()
       .focused()
@@ -443,6 +445,7 @@ export const yamlEditor = {
 
 export const kebabMenu = {
   openKebabMenu: (name: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get('input[data-test-id="item-filter"]')
       .should('be.visible')
       .clear()

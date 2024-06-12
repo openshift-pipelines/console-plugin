@@ -60,6 +60,7 @@ export const addPage = {
       //   break;
       case 'Pipeline':
       case addOptions.Pipeline:
+        /* eslint-disable-next-line cypress/no-unnecessary-waiting */
         cy.wait(3000);
         cy.byTestID('item pipeline').click();
         cy.get('.odc-pipeline-builder-header__title').should(

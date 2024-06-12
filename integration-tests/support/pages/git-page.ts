@@ -61,6 +61,7 @@ export const gitPage = {
       }).as('getFuncJson');
     }
 
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(gitPO.gitRepoUrl).clear().type(gitUrl);
 
     if (repository) {
@@ -74,20 +75,24 @@ export const gitPage = {
     app.waitForDocumentLoad();
   },
   verifyPipelineOption: () => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(gitPO.pipeline.buildDropdown).scrollIntoView().click();
     cy.get(gitPO.pipeline.addPipeline).should('be.visible');
   },
   selectPipeline: (pipelineName: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(gitPO.pipeline.pipelineDropdown).scrollIntoView().click();
     cy.get(`#${pipelineName}-link`).should('be.visible').click();
   },
   enterAppName: (appName: string) => {
     cy.get('body').then(($body) => {
       if ($body.find('#form-input-application-name-field').length !== 0) {
+        /* eslint-disable-next-line cypress/unsafe-to-chain-command */
         cy.get('#form-input-application-name-field')
           .scrollIntoView()
           .clear()
           .should('not.have.value');
+        /* eslint-disable-next-line cypress/unsafe-to-chain-command */
         cy.get('#form-input-application-name-field')
           .type(appName)
           .should('have.value', appName);
@@ -102,6 +107,7 @@ export const gitPage = {
             cy.get(
               '[data-test-dropdown-menu="#CREATE_APPLICATION_KEY#"]',
             ).click();
+            /* eslint-disable-next-line cypress/unsafe-to-chain-command */
             cy.get('#form-input-application-name-field')
               .clear()
               .type(appName)
@@ -133,35 +139,43 @@ export const gitPage = {
   // },
   enterComponentName: (name: string) => {
     app.waitForLoad();
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(gitPO.nodeName)
       .scrollIntoView()
       .invoke('val')
       .should('not.be.empty');
+    /* eslint-disable-next-line cypress/no-unnecessary-waiting */
     cy.wait(2000);
     cy.get(gitPO.nodeName).clear();
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(gitPO.nodeName).type(name).should('have.value', name);
   },
   enterWorkloadName: (name: string) => {
     cy.get(gitPO.nodeName).clear();
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(gitPO.nodeName).type(name).should('have.value', name);
   },
   // verifyNodeName: (componentName: string) =>
   //   cy.get(gitPO.nodeName).should('have.value', componentName),
-  selectResource: (resource: string = 'deployment') => {
+  selectResource: (resource = 'deployment') => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(gitPO.resourcesDropdown).scrollIntoView().click();
     switch (resource) {
       case 'deployment':
       case 'Deployment':
+        /* eslint-disable-next-line cypress/unsafe-to-chain-command */
         cy.get(gitPO.resources.deployment).scrollIntoView().click();
         break;
       case 'deployment config':
       case 'Deployment Config':
       case 'DeploymentConfig':
+        /* eslint-disable-next-line cypress/unsafe-to-chain-command */
         cy.get(gitPO.resources.deploymentConfig).scrollIntoView().click();
         break;
       case 'Knative':
       case 'Knative Service':
       case 'Serverless Deployment':
+        /* eslint-disable-next-line cypress/unsafe-to-chain-command */
         cy.get(gitPO.resources.knative).scrollIntoView().click();
         break;
       default:
@@ -171,6 +185,7 @@ export const gitPage = {
     cy.log(`Resource type "${resource}" is selected`);
   },
   enterSecret: (secret: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get('#form-input-pac-repository-webhook-token-field')
       .clear()
       .type(secret);
@@ -210,10 +225,12 @@ export const gitPage = {
   //   }
   // },
   selectAddPipeline: () => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(gitPO.pipeline.buildDropdown).scrollIntoView().click();
     cy.get(gitPO.pipeline.addPipeline).should('be.visible').click();
   },
   clickCreate: () =>
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(gitPO.create).scrollIntoView().should('be.enabled').click(),
   clickCancel: () => cy.get(gitPO.cancel).should('be.enabled').click(),
   selectBuilderImageForGitUrl: (gitUrl: string) => {
@@ -407,9 +424,11 @@ export const gitPage = {
 
 export const dockerfilePage = {
   enterAppName: (appName: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.byLegacyTestID('application-form-app-input').clear().type(appName);
   },
   enterName: (name: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.byLegacyTestID('application-form-app-name').clear().type(name);
   },
 };

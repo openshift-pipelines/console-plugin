@@ -314,6 +314,7 @@ Then(
 );
 
 Then('user hovers over the commit id', () => {
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.get('.co-external-link').focus().trigger('mouseover');
 });
 

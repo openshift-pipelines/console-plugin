@@ -7,10 +7,12 @@ export const pipelineBuilderText = {
     Workspaces: 'Workspaces',
     sidePane: {
       ParameterUrlHelper: 'Repository URL to clone from.',
-      ParameterRevisionHelper: 'Revision to checkout. (branch, tag, sha, ref, etc...)',
+      ParameterRevisionHelper:
+        'Revision to checkout. (branch, tag, sha, ref, etc...)',
     },
     startPipeline: {
-      EmptyDirectoryInfoMessage: "Empty Directory doesn't support shared data between tasks.",
+      EmptyDirectoryInfoMessage:
+        "Empty Directory doesn't support shared data between tasks.",
     },
   },
 };

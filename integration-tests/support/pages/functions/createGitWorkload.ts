@@ -5,12 +5,12 @@ import { createForm } from '../app';
 import { gitPage } from '../git-page';
 
 export const createGitWorkload = (
-  gitUrl: string = 'https://github.com/sclorg/nodejs-ex.git',
-  componentName: string = 'nodejs-ex-git',
-  resourceType: string = 'Deployment',
-  appName: string = 'nodejs-ex-git-app',
-  isPipelineSelected: boolean = false,
-  isServerlessFunction: boolean = false,
+  gitUrl = 'https://github.com/sclorg/nodejs-ex.git',
+  componentName = 'nodejs-ex-git',
+  resourceType = 'Deployment',
+  appName = 'nodejs-ex-git-app',
+  isPipelineSelected = false,
+  isServerlessFunction = false,
 ) => {
   addPage.selectCardFromOptions(addOptions.ImportFromGit);
   gitPage.enterGitUrl(gitUrl);

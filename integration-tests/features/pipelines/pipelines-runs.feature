@@ -145,7 +145,7 @@ Feature: Pipeline Runs
              Then user is able to see expanded logs page
 
 
-        @regression @odc-4793
+        @regression
         Scenario: kebab menu options in pipeline Runs page: P-07-TC14
             Given user creates pipeline using git named "pipeline-aaa"
               And user is at the Pipeline Details page of pipeline "pipeline-aaa"
@@ -327,7 +327,7 @@ Feature: Pipeline Runs
               And user can see grey color associated with the diamond to represent condition not met
 
 
-        @regression @manual @odc-6303
+        @regression @manual
         Scenario: Show failed PipelineRun log snippet on the log page: P-07-TC33
     # petclinic-pipeline-all.yaml can be found here in /testData/petclinic-pipeline-all.yaml
             Given pipeline is 'petclinic-pipeline-all.yaml' present on Pipeline Details page
@@ -339,7 +339,7 @@ Feature: Pipeline Runs
               And user navigates to pipelineRun logs tab
              Then user is able to see log snippet for failure of "build-image" task
 
-        @regression @odc-4793
+        @regression
         Scenario: Pipeline Run details page with Parameters tab and no parameters: P-07-TC34
             Given pipeline run is displayed for "pipeline-run-no-parameters" without resource
               And user is at pipelines page
@@ -349,7 +349,7 @@ Feature: Pipeline Runs
               And user navigates to pipelineRun parameters tab
               And user is able to see No parameters are associated with this PipelineRun
 
-        @regression @odc-4793
+        @regression
         Scenario: Pipeline Run with parameters: P-07-TC35
             Given pipeline run is displayed for "pipeline-run-parameters" with parameters
               And user is at pipelines page
@@ -360,7 +360,7 @@ Feature: Pipeline Runs
               And user is able to see name "testName" and value "testValue" parameters value of pipelineRun
 
 
-        @regression @odc-4793
+        @regression
         Scenario: Status for the cancelled pipeline: P-07-TC36
             Given user creates pipeline using git named "pipeline-cancel"
               And user is at the Pipeline Details page of pipeline "pipeline-cancel"
@@ -369,7 +369,7 @@ Feature: Pipeline Runs
              Then status displays as "Cancelled" in pipeline run details page
 
 
-        @regression @odc-4793
+        @regression
         Scenario: Status for the stopped pipeline: P-07-TC37
             Given user creates pipeline using git named "pipeline-stop"
               And user is at the Pipeline Details page of pipeline "pipeline-stop"
@@ -377,20 +377,20 @@ Feature: Pipeline Runs
               And user selects option "Stop" from Actions menu drop down
              Then status displays as "Cancelled" in pipeline run details page
 
-        @regression @odc-7420
+        @regression
         Scenario: SBOM information on the pipelineRun detail page: P-07-TC38
             Given user has created a pipelineRun with sbom task "pipelinerun-with-sbom-link"
              When user navigates to PipelineRun Details page "pipelinerun-with-sbom-link"
              Then user can see Download SBOM and View SBOM section in PipelineRun details page
 
 
-        @regression @odc-7423
+        @regression
         Scenario: Output of the pipelinerun: P-07-TC39
             Given user has created a pipelineRun with sbom task "pipelinerun-with-sbom-link"
              When user navigates to output tab of pipelineRun details page "pipelinerun-with-sbom-link"
              Then user can see the results in the output tab
 
-        @regression @odc-7421
+        @regression
         Scenario: CVE information in the pipelinerun list and details page: P-07-TC40
             Given user has created a PipelineRun with scan task "pipelinerun-with-scan-task"
              When user navigates to PipelineRun list page
@@ -399,7 +399,7 @@ Feature: Pipeline Runs
               And user can see the vulnerabilities section in the details page "pipelinerun-with-scan-task"
 
 
-        @regression @odc-7421
+        @regression
         Scenario: View SBOM link in the pipelinerun list kebab action: P-07-TC41
             Given user has created a pipelineRun with sbom task "pipelinerun-with-sbom-link"
              When user navigates to PipelineRun list page

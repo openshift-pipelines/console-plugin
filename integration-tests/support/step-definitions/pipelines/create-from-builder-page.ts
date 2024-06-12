@@ -56,6 +56,7 @@ Given('user is at Pipeline Builder page', () => {
   navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.clickOnCreatePipeline();
   pipelineBuilderPage.verifyTitle();
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.get(pipelineBuilderPO.configureVia.pipelineBuilder)
     .check({ force: true })
     .should('be.checked');
@@ -273,6 +274,7 @@ Given('user has chain of 3 tasks created in series', () => {
   cy.fixture(
     `pipelines-workspaces/sum-and-multiply-pipeline/sum-and-multiply-pipeline.yaml`,
   ).then((yaml) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelineBuilderPO.yamlCreatePipeline.yamlEditor).click().focused();
     yamlEditor.setEditorContent(yaml);
   });
@@ -466,6 +468,7 @@ And('user enters url under Parameters section {string}', (url: string) => {
 And(
   'user adds {string} workspace as {string}',
   (workspace: string, wName: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(`[data-test="workspaces ${workspace}"]`)
       .scrollIntoView()
       .select(wName);
@@ -580,6 +583,7 @@ When(
     cy.fixture(
       `pipelines-workspaces/sum-and-multiply-pipeline/${yamlFile}`,
     ).then((yaml) => {
+      /* eslint-disable-next-line cypress/unsafe-to-chain-command */
       cy.get(pipelineBuilderPO.yamlCreatePipeline.yamlEditor).click().focused();
       yamlEditor.setEditorContent(yaml);
     });
@@ -654,6 +658,7 @@ When(
 
 When('user hovers over the newly added task', () => {
   cy.mouseHover('[data-test="task-list"]');
+  /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.get('[data-test="task-list"] .odc-task-list-node__trigger-underline')
     .trigger('mouseenter')
     .invoke('show');

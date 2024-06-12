@@ -2,8 +2,13 @@ export const nav = {
   sidenav: {
     switcher: {
       shouldHaveText: (text: string) =>
-        cy.byLegacyTestID('perspective-switcher-toggle').scrollIntoView().contains(text),
+        /* eslint-disable-next-line cypress/unsafe-to-chain-command */
+        cy
+          .byLegacyTestID('perspective-switcher-toggle')
+          .scrollIntoView()
+          .contains(text),
       changePerspectiveTo: (newPerspective: string) =>
+        /* eslint-disable-next-line cypress/unsafe-to-chain-command */
         cy
           .byLegacyTestID('perspective-switcher-toggle')
           .click()
@@ -12,8 +17,10 @@ export const nav = {
           .click(),
     },
     clusters: {
-      shouldHaveText: (text: string) => cy.byLegacyTestID('cluster-dropdown-toggle').contains(text),
+      shouldHaveText: (text: string) =>
+        cy.byLegacyTestID('cluster-dropdown-toggle').contains(text),
       changeClusterTo: (newCluster: string) =>
+        /* eslint-disable-next-line cypress/unsafe-to-chain-command */
         cy
           .byLegacyTestID('cluster-dropdown-toggle')
           .click()

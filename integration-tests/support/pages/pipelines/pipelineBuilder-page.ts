@@ -27,9 +27,7 @@ export const pipelineBuilderSidePane = {
     cy.get('[data-test="confirm-action"]').should('be.visible').click();
   },
 
-  enterParameterUrl: (
-    url: string = 'https://github.com/sclorg/golang-ex.git',
-  ) => {
+  enterParameterUrl: (url = 'https://github.com/sclorg/golang-ex.git') => {
     pipelineBuilderSidePane.verifyDialog();
     cy.get(pipelineBuilderPO.formView.sidePane.parameterUrlHelper).should(
       'contain.text',
@@ -51,6 +49,7 @@ export const pipelineBuilderSidePane = {
 
   selectWorkspace: (workspaceName: string) => {
     pipelineBuilderSidePane.verifyDialog();
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelineBuilderPO.formView.sidePane.workspaces)
       .scrollIntoView()
       .select(workspaceName);
@@ -70,9 +69,10 @@ export const pipelineBuilderPage = {
   ) =>
     cy.get(pipelineBuilderPO.formView.name).should('have.value', pipelineName),
   enterPipelineName: (pipelineName: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelineBuilderPO.formView.name).clear().type(pipelineName);
   },
-  AddTask: (taskName: string = 'kn') => {
+  AddTask: (taskName = 'kn') => {
     cy.get(pipelineBuilderPO.formView.quickSearch).type(taskName);
     cy.byTestID('task-cta').click();
   },
@@ -84,7 +84,7 @@ export const pipelineBuilderPage = {
   clickAddTask: () => {
     cy.get(pipelineBuilderPO.formView.taskDropdown).click();
   },
-  selectTask: (taskName: string = 'kn') => {
+  selectTask: (taskName = 'kn') => {
     pipelineBuilderPage.clickAddTask();
     pipelineBuilderPage.AddTask(taskName);
   },
@@ -114,8 +114,8 @@ export const pipelineBuilderPage = {
   clickOnAddResource: () => {},
   addParameters: (
     paramName: string,
-    description: string = 'description',
-    defaultValue: string = 'value1',
+    description = 'description',
+    defaultValue = 'value1',
   ) => {
     cy.byButtonText('Add parameter').click();
     cy.get(pipelineBuilderPO.formView.addParams.name).type(paramName);
@@ -151,16 +151,14 @@ export const pipelineBuilderPage = {
     cy.get(pipelineBuilderPO.configureVia.yamlView).click();
   },
   enterYaml: (yamlContent: string) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelineBuilderPO.yamlCreatePipeline.yamlEditor)
       .click()
       .focused()
       .type('{ctrl}a')
       .type(yamlContent);
   },
-  createPipelineFromBuilderPage: (
-    pipelineName: string,
-    taskName: string = 'kn',
-  ) => {
+  createPipelineFromBuilderPage: (pipelineName: string, taskName = 'kn') => {
     pipelineBuilderPage.enterPipelineName(pipelineName);
     pipelineBuilderPage.selectTask(taskName);
     pipelineBuilderPage.clickCreateButton();
@@ -171,9 +169,9 @@ export const pipelineBuilderPage = {
     cy.get(pipelineBuilderPO.create).click();
   },
   createPipelineWithGitResources: (
-    pipelineName: string = 'git-pipeline',
-    taskName: string = 'openshift-client',
-    resourceName: string = 'Git',
+    pipelineName = 'git-pipeline',
+    taskName = 'openshift-client',
+    resourceName = 'Git',
   ) => {
     pipelineBuilderPage.enterPipelineName(pipelineName);
     pipelineBuilderPage.selectTask(taskName);
@@ -184,9 +182,9 @@ export const pipelineBuilderPage = {
   },
 
   createPipelineWithWorkspaces: (
-    pipelineName: string = 'git-pipeline',
-    taskName: string = 'git-clone',
-    workspaceName: string = 'git',
+    pipelineName = 'git-pipeline',
+    taskName = 'git-clone',
+    workspaceName = 'git',
   ) => {
     cy.byTestID('form-view-input').check();
     pipelineBuilderPage.enterPipelineName(pipelineName);
@@ -204,10 +202,10 @@ export const pipelineBuilderPage = {
 
   createPipelineWithParameters: (
     pipelineName: string,
-    paramName: string = 'testName',
-    description: string = 'parameter description',
-    defaultValue: string = 'testValue',
-    taskName: string = 'kn',
+    paramName = 'testName',
+    description = 'parameter description',
+    defaultValue = 'testValue',
+    taskName = 'kn',
   ) => {
     pipelineBuilderPage.enterPipelineName(pipelineName);
     pipelineBuilderPage.selectTask(taskName);
@@ -227,7 +225,7 @@ export const pipelineBuilderPage = {
     });
   },
 
-  selectOptionalWorkspace: (optional: boolean = false) => {
+  selectOptionalWorkspace: (optional = false) => {
     if (optional === true) {
       cy.get(
         pipelineBuilderPO.formView.addWorkspaces.optionalWorkspace,
@@ -237,6 +235,7 @@ export const pipelineBuilderPage = {
   },
 
   addWorkspace: (workSpaceName: string, optional?: boolean) => {
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelineBuilderPO.formView.addWorkspaces.name)
       .scrollIntoView()
       .clear()

@@ -18,6 +18,7 @@ export const catalogPage = {
   },
   search: (keyword: string) => {
     cy.get('.skeleton-catalog--grid').should('not.exist');
+    /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(catalogPO.search).clear().type(keyword);
   },
   verifyDialog: () => cy.get(catalogPO.sidePane.dialog).should('be.visible'),

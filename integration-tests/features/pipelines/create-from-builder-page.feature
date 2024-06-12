@@ -315,7 +315,7 @@ Feature: Create the pipeline from builder page
              Then user will be able to see the output in sum and multiply task
 
 
-        @regression @manual @odc-6377
+        @regression @manual
         Scenario: Disable Tektonhub integration in the pipeline builder : P-02-TC22
             Given user is at Search page
               And user searches 'TektonConfig' in Resources dropdown
@@ -331,7 +331,7 @@ Feature: Create the pipeline from builder page
              Then user will see Task, clusterTask only
 
 
-        @regression @manual @odc-6236
+        @regression @manual
         Scenario: Pipeline builder to support local Tekton Hub instances : P-02-TC23
             Given user has setup tektonhub instance
         # Refer to document https://docs.google.com/document/d/1HImc2DdtFKMWgk5dTm8Ib-I3wgnVXxdHxzX8Cn0jrZA/edit?usp=sharing for setting up tektonhub insance
@@ -340,7 +340,7 @@ Feature: Create the pipeline from builder page
               And user searches a tasks that is available in the local tektonhub instance
              Then user will see the intended community task
 
-        @regression @odc-6696
+        @regression
         Scenario Outline: Start pipeline with parameter of type array: P-02-TC24
             Given user is at "YAML View" on Pipeline Builder page
              When user creates pipeline resource using YAML editor from "<pipeline_yaml>"
@@ -359,7 +359,7 @@ Feature: Create the pipeline from builder page
                   | testData/pipelineWithParameterTypeArray.yaml | pipeline-with-array-parameter |
 
         # Issue with install tasks provided by ArtifactHub
-        @regression @broken-test @odc-7246
+        @regression @broken-test
         Scenario: Install task provided by ArtifactHub and add create a Pipeline: P-02-TC25
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pl-task-from-artifacthub"

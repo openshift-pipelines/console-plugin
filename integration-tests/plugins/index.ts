@@ -2,27 +2,15 @@
 /* eslint-disable import/no-dynamic-require */
 // import * as wp from '@cypress/webpack-preprocessor';
 const fs = require('fs');
+const path = require('path');
 // const cucumber = require('cypress-cucumber-preprocessor').default;
 const webpack = require('@cypress/webpack-preprocessor');
 
 module.exports = (on, config) => {
   const options = {
     webpackOptions: {
-      resolve: {
-        extensions: ['.ts', '.tsx', '.js'],
-      },
-      node: {
-        fs: 'empty',
-        child_process: 'empty',
-        readline: 'empty',
-      },
       module: {
         rules: [
-          // {
-          //   test: /\.tsx?$/,
-          //   loader: 'ts-loader',
-          //   options: { happyPackMode: true, transpileOnly: true },
-          // },
           {
             test: /\.tsx?$/,
             loader: 'ts-loader',
@@ -47,6 +35,21 @@ module.exports = (on, config) => {
             ],
           },
         ],
+      },
+      output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'cypress-dist'),
+      },
+      resolve: {
+        extensions: ['.ts', '.js', '.tsx'],
+        fallback: {
+          dgram: false,
+          fs: false,
+          path: false,
+          net: false,
+          tls: false,
+          child_process: false,
+        },
       },
     },
   };

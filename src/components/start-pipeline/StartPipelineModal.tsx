@@ -15,8 +15,8 @@ import {
   useUserAnnotationForManualStart,
 } from '../hooks/hooks';
 import { ModalComponent } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/ModalProvider';
-import './StartPipelineModal.scss';
 import LoadingModal from '../modals/LoadingModal';
+import './StartPipelineModal.scss';
 
 export interface StartPipelineModalProps {
   pipeline: PipelineKind;

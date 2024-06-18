@@ -129,6 +129,12 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({
         </dd>
         <dt>{t('Duration')}</dt>
         <dd>{pipelineRunDuration(pipelineRun)}</dd>
+        {pipelineRun.spec?.timeouts && (
+          <>
+            <dt>{t('Timeouts')}</dt>
+            <dd>{pipelineRun.spec?.timeouts?.pipeline}</dd>
+          </>
+        )}
       </dl>
       <TriggeredBySection pipelineRun={pipelineRun} />
       <RepositoryLinkList pipelineRun={pipelineRun} />

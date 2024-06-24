@@ -43,7 +43,7 @@ const useTaskColumns = () => {
     {
       id: 'namespace',
       sort: 'metadata.namespace',
-      title: t('Namesapce'),
+      title: t('Namespace'),
       transforms: [sortable],
     },
     {

@@ -58,7 +58,7 @@ const plRun = {
   kind: 'PipelineRun',
   spec: {},
 };
-
+jest.mock('@openshift-console/dynamic-plugin-sdk');
 beforeAll(() => {
   jest
     .spyOn(k8sResourceModule, 'k8sUpdate')

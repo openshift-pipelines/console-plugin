@@ -9,6 +9,7 @@ import { testHook } from '../../../test-data/utils/hooks-utils';
 import { getPipelineFromPipelineRun } from '../../utils/pipeline-augment';
 import { usePipelineFromPipelineRun } from '../usePipelineFromPipelineRun';
 
+jest.mock('@openshift-console/dynamic-plugin-sdk');
 describe('usePipelineFromPipelineRun', () => {
   const pipelineData = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
   const pipelineRun = pipelineData.pipelineRuns[DataState.SUCCESS];

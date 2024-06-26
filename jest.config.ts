@@ -141,7 +141,7 @@ const config: Config.InitialOptions = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  testEnvironment: 'jest-environment-jsdom',
+  testEnvironment: 'jsdom',
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
@@ -169,9 +169,7 @@ const config: Config.InitialOptions = {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    '^.+\\.ts?$': 'ts-jest',
-    '^.+\\.js?$': 'ts-jest',
-    '^.+\\.(tsx|jsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx|js|jsx)?$': 'babel-jest',
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation

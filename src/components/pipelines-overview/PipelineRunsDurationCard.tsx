@@ -95,8 +95,8 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
               className="pipeline-overview__duration-card__value"
             >
               {loaded ? (
-                summaryData['avg_duration'] ? (
-                  formatTime(summaryData['avg_duration'])
+                summaryData?.['avg_duration'] ? (
+                  formatTime(summaryData?.['avg_duration'])
                 ) : (
                   '-'
                 )
@@ -117,8 +117,8 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
               className="pipeline-overview__duration-card__value"
             >
               {loaded ? (
-                summaryData['max_duration'] ? (
-                  formatTime(summaryData['max_duration'])
+                summaryData?.['max_duration'] ? (
+                  formatTime(summaryData?.['max_duration'])
                 ) : (
                   '-'
                 )
@@ -139,8 +139,8 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
               className="pipeline-overview__duration-card__value"
             >
               {loaded ? (
-                summaryData['total_duration'] ? (
-                  formatTime(summaryData['total_duration'])
+                summaryData?.['total_duration'] ? (
+                  formatTime(summaryData?.['total_duration'])
                 ) : (
                   '-'
                 )

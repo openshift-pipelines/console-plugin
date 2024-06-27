@@ -66,13 +66,9 @@ const PipelineDetailsPage = () => {
     namespace,
   });
 
-  const editURL = namespace
-    ? `/k8s/ns/${namespace}/${getReferenceForModel(
-        PipelineModel,
-      )}/${encodeURIComponent(name)}/yaml`
-    : `/k8s/cluster/${getReferenceForModel(PipelineModel)}/${encodeURIComponent(
-        name,
-      )}/yaml`;
+  const editURL = `/k8s/ns/${namespace}/${getReferenceForModel(
+    PipelineModel,
+  )}/${encodeURIComponent(name)}/builder`;
 
   const resourceTitleFunc = React.useMemo(() => {
     return (

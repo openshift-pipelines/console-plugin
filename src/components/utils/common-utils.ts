@@ -1,11 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { K8sKind } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  K8sKind,
+  k8sGet,
+  useK8sWatchResource,
+} from '@openshift-console/dynamic-plugin-sdk';
+import {
+  commonFetchJSON,
+  commonFetchText,
+} from '@openshift/dynamic-plugin-sdk-utils';
 import { TOptions } from 'i18next';
 import _ from 'lodash';
 import React from 'react';
 import { getI18n } from 'react-i18next';
 import { RESOURCE_LOADED_FROM_RESULTS_ANNOTATION } from '../../consts';
 import { Options, resourceURL } from './k8s-utils';
+import { consoleProxyFetchJSON, consoleProxyFetchLog } from './proxy';
 
 export const t = (value: string, options?: TOptions) =>
   getI18n().t(value, { ns: 'plugin__pipelines-console-plugin', ...options });
@@ -91,4 +100,17 @@ export const truncateMiddle = (
   const startFragment = text.substr(0, startLength);
   const endFragment = text.substr(text.length - endLength);
   return `${startFragment}${omission}${endFragment}`;
+};
+
+export const aonicFetchUtils = {
+  hooks: {
+    useK8sWatchResource,
+    k8sGet,
+  },
+  resourceFetchers: {
+    commonFetchText,
+    commonFetchJson: commonFetchJSON,
+    consoleProxyFetchJSON,
+    consoleProxyFetchLog,
+  },
 };

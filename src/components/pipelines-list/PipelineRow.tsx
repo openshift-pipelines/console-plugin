@@ -1,14 +1,15 @@
+import * as React from 'react';
 import {
   ResourceLink,
   RowProps,
   TableData,
   Timestamp,
   getGroupVersionKindForModel,
+  useFlag,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import { useTaskRunsForPipelineRunOrTask } from '@aonic-ui/pipelines';
 import { PipelineWithLatest } from '../../types/pipelineRun';
 import { ComputedStatus, TaskRunKind } from '../../types';
-import { useTaskRuns } from '../hooks/useTaskRuns';
 import LinkedPipelineRunTaskStatus from './status/LinkedPipelineRunTaskStatus';
 import {
   pipelineFilterReducer,
@@ -20,6 +21,8 @@ import PipelineKebab from './PipelineKebab';
 import { getPipelineRunStatus } from '../utils/pipeline-utils';
 import { TaskStatus } from '../utils/pipeline-augment';
 import PipelineRunStatusContent from '../status/PipelineRunStatusContent';
+import { FLAG_PIPELINE_TEKTON_RESULT_INSTALLED } from '../../consts';
+import { aonicFetchUtils } from '../utils/common-utils';
 
 export const tableColumnClasses = [
   'pf-v5-u-w-16-on-xl pf-v5-u-w-25-on-lg pf-v5-u-w-33-on-xs', // name
@@ -43,6 +46,7 @@ type PipelineRowWithoutTaskRunsProps = {
 type PipelineRowWithTaskRunsProps = {
   obj: PipelineWithLatest;
   activeColumnIDs: Set<string>;
+  isTektonResultEnabled?: boolean;
 };
 
 const TASKRUNSFORPLRCACHE: { [key: string]: TaskRunKind[] } = {};
@@ -158,10 +162,13 @@ const PipelineRowWithoutTaskRuns: React.FC<PipelineRowWithoutTaskRunsProps> =
   });
 
 const PipelineRowWithTaskRunsFetch: React.FC<PipelineRowWithTaskRunsProps> =
-  React.memo(({ obj, activeColumnIDs }) => {
+  React.memo(({ obj, activeColumnIDs, isTektonResultEnabled }) => {
     const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
-    const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
+    const [PLRTaskRuns, taskRunsLoaded] = useTaskRunsForPipelineRunOrTask(
+      aonicFetchUtils,
       obj.latestRun.metadata.namespace,
+      undefined,
+      isTektonResultEnabled,
       obj.latestRun.metadata.name,
       undefined,
       `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`,
@@ -182,7 +189,7 @@ const PipelineRowWithTaskRunsFetch: React.FC<PipelineRowWithTaskRunsProps> =
   });
 
 const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> =
-  React.memo(({ obj, activeColumnIDs }) => {
+  React.memo(({ obj, activeColumnIDs, isTektonResultEnabled }) => {
     let PLRTaskRuns: TaskRunKind[];
     let taskRunsLoaded: boolean;
     const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
@@ -199,6 +206,7 @@ const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> =
         <PipelineRowWithTaskRunsFetch
           obj={obj}
           activeColumnIDs={activeColumnIDs}
+          isTektonResultEnabled={isTektonResultEnabled}
         />
       );
     }
@@ -218,12 +226,17 @@ const PipelineRow: React.FC<RowProps<PipelineWithLatest>> = ({
   activeColumnIDs,
 }) => {
   const plrStatus = pipelineRunStatus(obj.latestRun);
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
   if (
     plrStatus === ComputedStatus.Cancelled &&
     (obj?.latestRun?.status?.childReferences ?? []).length > 0
   ) {
     return (
-      <PipelineRowWithTaskRuns obj={obj} activeColumnIDs={activeColumnIDs} />
+      <PipelineRowWithTaskRuns
+        obj={obj}
+        activeColumnIDs={activeColumnIDs}
+        isTektonResultEnabled={isTektonResultEnabled}
+      />
     );
   }
 

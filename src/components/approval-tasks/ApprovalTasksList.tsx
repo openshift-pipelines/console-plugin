@@ -6,19 +6,23 @@ import {
   ListPageFilter,
   RowFilter,
   VirtualizedTable,
+  useFlag,
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { ApprovalTaskKind } from 'src/types';
+import { usePipelineRuns } from '@aonic-ui/pipelines';
+import { ApprovalTaskKind } from '../../types';
 import {
   getApprovalStatus,
   getApprovalStatusInfo,
   getPipelineRunOfApprovalTask,
 } from '../utils/pipeline-approval-utils';
 import { ApprovalStatus } from '../../types';
-import { useApprovalTasks, usePipelineRuns } from '../hooks/useTaskRuns';
+import { useApprovalTasks } from '../hooks/useTaskRuns';
 import { useParams } from 'react-router-dom-v5-compat';
 import useApprovalsColumns from './useApprovalsColumns';
 import ApprovalRow from './ApprovalRow';
+import { FLAG_PIPELINE_TEKTON_RESULT_INSTALLED } from '../../consts';
+import { aonicFetchUtils } from '../utils/common-utils';
 
 type ApprovalTasksListProps = {
   namespace: string;
@@ -37,7 +41,13 @@ const ApprovalTasksList: React.FC<ApprovalTasksListProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { ns, name: pipelineRunName } = useParams();
   namespace = namespace || ns;
-  const [pipelineRuns, pipelineRunsLoaded] = usePipelineRuns(namespace);
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
+  const [pipelineRuns, pipelineRunsLoaded] = usePipelineRuns(
+    aonicFetchUtils,
+    ns,
+    undefined,
+    isTektonResultEnabled,
+  );
   const [approvalTasks, approvalTasksLoaded, approvalTasksLoadError] =
     useApprovalTasks(namespace, pipelineRunName);
   const columns = useApprovalsColumns(namespace);

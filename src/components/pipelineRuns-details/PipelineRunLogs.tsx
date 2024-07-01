@@ -4,6 +4,11 @@ import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom-v5-compat';
+import {
+  WatchK8sResource,
+  useFlag,
+} from '@openshift-console/dynamic-plugin-sdk';
+import { useTaskRunsForPipelineRunOrTask } from '@aonic-ui/pipelines';
 import { PipelineRunModel } from '../../models';
 import {
   ComputedStatus,
@@ -11,18 +16,20 @@ import {
   PipelineTask,
   TaskRunKind,
 } from '../../types';
-import { TektonResourceLabel } from '../../consts';
-import { useTaskRuns } from '../hooks/useTaskRuns';
+import {
+  FLAG_PIPELINE_TEKTON_RESULT_INSTALLED,
+  TektonResourceLabel,
+} from '../../consts';
 import { ErrorDetailsWithStaticLog } from '../logs/log-snippet-types';
 import { getDownloadAllLogsCallback } from '../logs/logs-utils';
 import LogsWrapperComponent from '../logs/LogsWrapperComponent';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import { taskRunStatus } from '../utils/pipeline-utils';
 import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
-import { WatchK8sResource } from '@openshift-console/dynamic-plugin-sdk';
 import { ColoredStatusIcon } from '../pipeline-topology/StatusIcons';
 import { resourcePathFromModel } from '../utils/utils';
 import './PipelineRunLogs.scss';
+import { aonicFetchUtils } from '../utils/common-utils';
 
 interface PipelineRunLogsProps {
   obj: PipelineRunKind;
@@ -267,10 +274,14 @@ export const PipelineRunLogsWithActiveTask: React.FC<
   PipelineRunLogsWithActiveTaskProps
 > = ({ obj }) => {
   const location = useLocation();
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
   const params = new URLSearchParams(location.search);
   const activeTask = params?.get('taskName');
-  const [taskRuns, taskRunsLoaded] = useTaskRuns(
+  const [taskRuns, taskRunsLoaded] = useTaskRunsForPipelineRunOrTask(
+    aonicFetchUtils,
     obj?.metadata?.namespace,
+    undefined,
+    isTektonResultEnabled,
     obj?.metadata?.name,
   );
 

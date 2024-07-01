@@ -29,14 +29,14 @@ export type PLRTaskRunData = {
   pipelineTaskName: string;
   status: {
     completionTime?: string;
-    conditions: Condition[];
+    conditions?: Condition[];
     /** Can be empty */
-    podName: string;
-    startTime: string;
+    podName?: string;
+    startTime?: string;
     steps?: PLRTaskRunStep[];
     taskSpec?: TektonTaskSpec;
-    taskResults?: { name: string; value: string }[]; // in tekton v1 taskResults is renamed to results
-    results?: { name: string; value: string }[];
+    taskResults?: TektonResultsRun[]; // in tekton v1 taskResults is renamed to results
+    results?: TektonResultsRun[];
   };
 };
 
@@ -88,9 +88,10 @@ export type VolumeTypeClaim = {
 export type Condition = {
   type: string;
   status: string;
-  reason?: string;
-  message?: string;
-  lastTransitionTime?: string;
+  reason?: string | undefined;
+  message?: string | undefined;
+  binding?: string | undefined;
+  lastTransitionTime?: string | undefined;
 };
 
 export type PipelineRunEmbeddedResourceParam = { name: string; value: string };

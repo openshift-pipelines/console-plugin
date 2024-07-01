@@ -2,13 +2,14 @@ import * as React from 'react';
 import { ClipboardCopy } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { Timestamp, useFlag } from '@openshift-console/dynamic-plugin-sdk';
+import { useTaskRunsForPipelineRunOrTask } from '@aonic-ui/pipelines';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import RunDetailsErrorLog from '../logs/RunDetailsErrorLog';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import Status from '../status/Status';
 import { ExternalLink } from '../utils/link';
 import { TaskRunModel } from '../../models';
-import { Timestamp } from '@openshift-console/dynamic-plugin-sdk';
 import { PipelineRunKind } from '../../types';
 import {
   pipelineRunFilterReducer,
@@ -24,10 +25,11 @@ import {
 import { convertBackingPipelineToPipelineResourceRefProps } from './utils';
 import RepositoryLinkList from './RepositoryLinkList';
 import PipelineRunVulnerabilities from '../pipelines-list/status/PipelineRunVulnerabilities';
-import { useTaskRuns } from '../hooks/useTaskRuns';
 import TriggeredBySection from './TriggeredBySection';
 import PipelineResourceRef from '../triggers-details/PipelineResourceRef';
 import WorkspaceResourceLinkList from '../workspaces/WorkspaceResourceLinkList';
+import { FLAG_PIPELINE_TEKTON_RESULT_INSTALLED } from '../../consts';
+import { aonicFetchUtils } from '../utils/common-utils';
 
 export type PipelineRunCustomDetailsProps = {
   pipelineRun: PipelineRunKind;
@@ -37,8 +39,12 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({
   pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [taskRuns, taskRunsLoaded] = useTaskRuns(
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
+  const [taskRuns, taskRunsLoaded] = useTaskRunsForPipelineRunOrTask(
+    aonicFetchUtils,
     pipelineRun?.metadata?.namespace,
+    undefined,
+    isTektonResultEnabled,
     pipelineRun?.metadata?.name,
   );
 

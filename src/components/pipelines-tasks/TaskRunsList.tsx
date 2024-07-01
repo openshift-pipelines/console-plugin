@@ -11,14 +11,20 @@ import {
   VirtualizedTable,
   getGroupVersionKindForModel,
   useActiveColumns,
+  useFlag,
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { useTaskRuns } from '../hooks/useTaskRuns';
+import { useTaskRunsForPipelineRunOrTask } from '@aonic-ui/pipelines';
 import TaskRunsRow from './TaskRunsRow';
 import { TaskRunModel } from '../../models';
-import { ALL_NAMESPACES_KEY, TektonResourceLabel } from '../../consts';
+import {
+  ALL_NAMESPACES_KEY,
+  FLAG_PIPELINE_TEKTON_RESULT_INSTALLED,
+  TektonResourceLabel,
+} from '../../consts';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useTaskRunsFilters } from './useTaskRunsFilters';
+import { aonicFetchUtils } from '../utils/common-utils';
 
 interface TaskRunsListPageProps {
   showTitle?: boolean;
@@ -109,10 +115,17 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [columns, activeColumns] = useTaskColumns();
   const params = useParams();
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
   const { ns: namespace } = params;
   const ns = namespace === ALL_NAMESPACES_KEY ? '-' : namespace;
   const parentName = props?.obj?.metadata?.name;
-  const [taskRuns, loaded, loadError] = useTaskRuns(ns, parentName);
+  const [taskRuns, loaded, loadError] = useTaskRunsForPipelineRunOrTask(
+    aonicFetchUtils,
+    ns,
+    undefined,
+    isTektonResultEnabled,
+    parentName,
+  );
   const [staticData, filteredData, onFilterChange] = useListPageFilter(
     taskRuns,
     useTaskRunsFilters(),

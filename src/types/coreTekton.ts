@@ -18,9 +18,10 @@ export type TektonTaskSteps = {
   args?: string[];
   command?: string[];
   image?: string;
+  computeResources?: {}[] | {};
   resources?: never[] | never;
   env?: { name: string; value: string }[];
-  script?: string[];
+  script?: string | string[];
 };
 
 export type TaskResult = {
@@ -35,6 +36,7 @@ export type TektonTaskSpec = {
   params?: TektonParam[];
   resources?: TektonResourceGroup<TektonResource>;
   results?: TaskResult[];
+  volumes?: {};
   workspaces?: TektonWorkspace[];
 };
 
@@ -61,6 +63,7 @@ export type TektonWorkspace = {
 export type TektonResultsRun = {
   name: string;
   value: string;
+  type?: string;
 };
 
 export interface Addon {

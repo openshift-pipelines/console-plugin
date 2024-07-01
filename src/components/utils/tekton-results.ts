@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  K8sResourceCommon,
   MatchExpression,
   MatchLabels,
   Selector,
@@ -12,10 +11,8 @@ import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
 } from '../../consts';
-import { RouteModel, TektonResultModel } from '../../models';
-import { PipelineRunKind, TaskRunKind } from '../../types';
+import { TektonResultModel } from '../../models';
 import { K8sResourceKind } from '../../types/openshift';
-import { consoleProxyFetch, consoleProxyFetchJSON } from './proxy';
 
 // REST API spec
 // https://github.com/tektoncd/results/blob/main/docs/api/rest-api-spec.md
@@ -61,20 +58,6 @@ export type TektonResultsOptions = {
   summary?: string;
   data_type?: DataType;
   groupBy?: string;
-};
-
-type ProxyRequest = {
-  allowInsecure?: boolean;
-  method: string;
-  url: string;
-  headers?: Record<string, string[]>;
-  queryparams?: Record<string, string[]>;
-  body?: string;
-};
-
-const throw404 = () => {
-  // eslint-disable-next-line no-throw-literal
-  throw { code: 404 };
 };
 
 // decoding result base64
@@ -229,18 +212,6 @@ export const selectorToFilter = (selector) => {
   return filter;
 };
 
-// Devs should be careful to not cache a response that may not be complete.
-// In most situtations, caching is unnecessary.
-// Only cache a response that returns a single complete record as lists can change over time.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let CACHE: { [key: string]: [any[], RecordsList] } = {};
-export const clearCache = () => {
-  CACHE = {};
-};
-const InFlightStore: { [key: string]: boolean } = {};
-
-// const getTRUrlPrefix = (): string => URL_PREFIX;
-
 export const getTektonResultsAPIUrl = async () => {
   if (cachedTektonResultsAPI) {
     return cachedTektonResultsAPI;
@@ -262,159 +233,6 @@ export const getTektonResultsAPIUrl = async () => {
     return cachedTektonResultsAPI;
   }
 };
-
-export const createTektonResultsUrl = async (
-  namespace: string,
-  dataType: DataType,
-  filter?: string,
-  options?: TektonResultsOptions,
-  nextPageToken?: string,
-): Promise<string> => {
-  const tektonResultsAPI = await getTektonResultsAPIUrl();
-
-  const namespaceToSearch =
-    namespace && namespace !== ALL_NAMESPACES_KEY ? namespace : '-';
-  const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespaceToSearch}/results/-/records?${new URLSearchParams(
-    {
-      // default sort should always be by `create_time desc`
-      // order_by: 'create_time desc', not supported yet
-      page_size: `${Math.max(
-        MINIMUM_PAGE_SIZE,
-        Math.min(
-          MAXIMUM_PAGE_SIZE,
-          options?.limit >= 0 ? options.limit : options?.pageSize ?? 30,
-        ),
-      )}`,
-      ...(nextPageToken ? { page_token: nextPageToken } : {}),
-      filter: AND(
-        EQ('data_type', dataType.toString()),
-        filter,
-        selectorToFilter(options?.selector),
-        options?.filter,
-      ),
-    },
-  ).toString()}`;
-  return URL;
-};
-
-export const getFilteredRecord = async <R extends K8sResourceCommon>(
-  namespace: string,
-  dataType: DataType,
-  filter?: string,
-  options?: TektonResultsOptions,
-  nextPageToken?: string,
-  cacheKey?: string,
-): Promise<[R[], RecordsList, boolean?]> => {
-  if (cacheKey) {
-    const result = CACHE[cacheKey];
-    if (result) {
-      return result;
-    }
-    if (InFlightStore[cacheKey]) {
-      return [
-        [],
-        {
-          nextPageToken: null,
-          records: [],
-        },
-        true,
-      ];
-    }
-  }
-  InFlightStore[cacheKey] = true;
-  const value = await (async (): Promise<[R[], RecordsList]> => {
-    try {
-      const url = await createTektonResultsUrl(
-        namespace,
-        dataType,
-        filter,
-        options,
-        nextPageToken,
-      );
-      let list: RecordsList = await consoleProxyFetchJSON({
-        url,
-        method: 'GET',
-        allowInsecure: true,
-      });
-      if (options?.limit >= 0) {
-        list = {
-          nextPageToken: null,
-          records: list.records.slice(0, options.limit),
-        };
-      }
-      return [
-        list.records.map((result) => decodeValueJson(result.data.value)),
-        list,
-      ];
-    } catch (e) {
-      // return an empty response if we get a 404 error
-      if (e?.code === 404) {
-        return [
-          [],
-          {
-            nextPageToken: null,
-            records: [],
-          },
-        ] as [R[], RecordsList];
-      }
-      throw e;
-    }
-  })();
-
-  if (cacheKey) {
-    InFlightStore[cacheKey] = false;
-    CACHE[cacheKey] = value;
-  }
-  return value;
-};
-
-const getFilteredPipelineRuns = (
-  namespace: string,
-  filter: string,
-  options?: TektonResultsOptions,
-  nextPageToken?: string,
-  cacheKey?: string,
-) =>
-  getFilteredRecord<PipelineRunKind>(
-    namespace,
-    DataType.PipelineRun,
-    filter,
-    options,
-    nextPageToken,
-    cacheKey,
-  );
-
-const getFilteredTaskRuns = (
-  namespace: string,
-  filter: string,
-  options?: TektonResultsOptions,
-  nextPageToken?: string,
-  cacheKey?: string,
-) =>
-  getFilteredRecord<TaskRunKind>(
-    namespace,
-    DataType.TaskRun,
-    filter,
-    options,
-    nextPageToken,
-    cacheKey,
-  );
-
-export const getPipelineRuns = (
-  namespace: string,
-  options?: TektonResultsOptions,
-  nextPageToken?: string,
-  // supply a cacheKey only if the PipelineRun is complete and response will never change in the future
-  cacheKey?: string,
-) => getFilteredPipelineRuns(namespace, '', options, nextPageToken, cacheKey);
-
-export const getTaskRuns = (
-  namespace: string,
-  options?: TektonResultsOptions,
-  nextPageToken?: string,
-  // supply a cacheKey only if the TaskRun is complete and response will never change in the future
-  cacheKey?: string,
-) => getFilteredTaskRuns(namespace, '', options, nextPageToken, cacheKey);
 
 export const createTektonResultsSummaryUrl = async (
   namespace: string,
@@ -447,65 +265,3 @@ export const createTektonResultsSummaryUrl = async (
   ).toString()}`;
   return URL;
 };
-
-const isJSONString = (str: string): boolean => {
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    return false;
-  }
-  return true;
-};
-
-export const consoleProxyFetchLog = <T>(
-  proxyRequest: ProxyRequest,
-): Promise<T> => {
-  return consoleProxyFetch(proxyRequest).then((response) => {
-    return isJSONString(response.body)
-      ? JSON.parse(response.body)
-      : response.body;
-  });
-};
-
-export const getTRURLHost = async () => {
-  const tektonResult: K8sResourceKind = await k8sGet({
-    model: TektonResultModel,
-    name: 'result',
-  });
-  const targetNamespace = tektonResult?.spec?.targetNamespace;
-  const route: K8sResourceKind = await k8sGet({
-    model: RouteModel,
-    name: 'tekton-results-api-service',
-    ns: targetNamespace,
-  });
-  return route?.spec.host;
-};
-
-const getLog = async (taskRunPath: string) => {
-  const tektonResultsAPI = await getTektonResultsAPIUrl();
-  const url = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${taskRunPath.replace(
-    '/records/',
-    '/logs/',
-  )}`;
-  return consoleProxyFetchLog({ url, method: 'GET', allowInsecure: true });
-};
-
-export const getTaskRunLog = (
-  namespace: string,
-  taskRunName: string,
-): Promise<string> =>
-  getFilteredRecord<any>(
-    namespace,
-    DataType.Log,
-    AND(
-      EQ(`data.spec.resource.kind`, 'TaskRun'),
-      EQ(`data.spec.resource.name`, taskRunName),
-    ),
-    { limit: 1 },
-  ).then((x) =>
-    x?.[1]?.records.length > 0
-      ? getLog(x?.[1]?.records[0].name).then((response: string) => {
-          return response;
-        })
-      : throw404(),
-  );

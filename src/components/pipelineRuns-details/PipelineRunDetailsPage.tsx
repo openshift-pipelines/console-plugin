@@ -1,13 +1,4 @@
-import {
-  k8sCreate,
-  k8sPatch,
-  ResourceStatus,
-  useDeleteModal,
-} from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
-import { PipelineRunModel } from '../../models';
-import { LoadingBox } from '../status/status-box';
-import DetailsPage from '../details-page/DetailsPage';
 import {
   BreadcrumbItem,
   Text,
@@ -16,12 +7,27 @@ import {
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import {
+  k8sCreate,
+  k8sPatch,
+  ResourceStatus,
+  useDeleteModal,
+  useFlag,
+} from '@openshift-console/dynamic-plugin-sdk';
+import {
+  usePipelineRun,
+  useTaskRunsForPipelineRunOrTask,
+} from '@aonic-ui/pipelines';
+import { PipelineRunModel } from '../../models';
+import { LoadingBox } from '../status/status-box';
+import DetailsPage from '../details-page/DetailsPage';
 import { navFactory } from '../utils/horizontal-nav';
 import PipelineRunDetails from './PipelineRunDetails';
 import ResourceYAMLEditorViewOnly from '../yaml-editor/ResourceYAMLEditorViewOnly';
 import {
   chainsSignedAnnotation,
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
+  FLAG_PIPELINE_TEKTON_RESULT_INSTALLED,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
 } from '../../consts';
 import { ArchiveIcon } from '@patternfly/react-icons';
@@ -38,6 +44,7 @@ import { returnValidPipelineRunModel } from '../utils/pipeline-utils';
 import { getPipelineRunData, resourcePathFromModel } from '../utils/utils';
 import { errorModal } from '../modals/error-modal';
 import {
+  aonicFetchUtils,
   isResourceLoadedFromTR,
   tektonResultsFlag,
 } from '../utils/common-utils';
@@ -46,11 +53,7 @@ import {
   shouldHidePipelineRunCancel,
   shouldHidePipelineRunStop,
 } from '../utils/pipeline-augment';
-import {
-  getTaskRunsOfPipelineRun,
-  usePipelineRun,
-  useTaskRuns,
-} from '../hooks/useTaskRuns';
+import { getTaskRunsOfPipelineRun } from '../hooks/useTaskRuns';
 
 type PipelineRunDetailsPageProps = {
   name: string;
@@ -63,8 +66,22 @@ const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const navigate = useNavigate();
-  const [pipelineRun, pipelineRunLoaded] = usePipelineRun(namespace, name);
-  const [taskRuns] = useTaskRuns(namespace, name);
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
+
+  const [pipelineRun, pipelineRunLoaded] = usePipelineRun(
+    aonicFetchUtils,
+    namespace,
+    name,
+    undefined,
+    isTektonResultEnabled,
+  );
+  const [taskRuns] = useTaskRunsForPipelineRunOrTask(
+    aonicFetchUtils,
+    namespace,
+    undefined,
+    isTektonResultEnabled,
+    name,
+  );
   const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, name);
   const reRunAction = () => {
     const { pipelineRef, pipelineSpec } = pipelineRun.spec;

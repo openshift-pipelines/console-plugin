@@ -1,18 +1,20 @@
+import * as React from 'react';
 import {
   ListPageBody,
   ListPageFilter,
   VirtualizedTable,
+  useFlag,
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import { usePipelineRunsForPipelineOrRepository } from '@aonic-ui/pipelines';
 import usePipelineRunsColumns from './usePipelineRunsColumns';
 import { usePipelineRunsFilters } from './usePipelineRunsFilters';
 import { PipelineRunKind } from '../../types';
-import { useGetPipelineRuns } from '../hooks/useTektonResult';
 import PipelineRunsRow from './PipelineRunsRow';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
-
+import { FLAG_PIPELINE_TEKTON_RESULT_INSTALLED } from '../../consts';
+import { aonicFetchUtils } from '../utils/common-utils';
 import './PipelineRunsList.scss';
 
 type PipelineRunsListProps = {
@@ -35,9 +37,16 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
   namespace = namespace || ns;
   const columns = usePipelineRunsColumns(namespace, repositoryPLRs);
   const filters = usePipelineRunsFilters();
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
 
   const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] =
-    useGetPipelineRuns(namespace, { name: PLRsForName, kind: PLRsForKind });
+    usePipelineRunsForPipelineOrRepository(
+      aonicFetchUtils,
+      namespace,
+      undefined,
+      isTektonResultEnabled,
+      { name: PLRsForName, kind: PLRsForKind },
+    );
   const [data, filteredData, onFilterChange] = useListPageFilter(
     pipelineRuns,
     filters,

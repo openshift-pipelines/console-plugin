@@ -1,14 +1,15 @@
+import * as React from 'react';
+import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 import {
   BreadcrumbItem,
   Text,
   TextVariants,
   Tooltip,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom';
-import * as React from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
 import { ArchiveIcon } from '@patternfly/react-icons';
-import { ResourceStatus } from '@openshift-console/dynamic-plugin-sdk';
+import { ResourceStatus, useFlag } from '@openshift-console/dynamic-plugin-sdk';
+import { useTaskRun } from '@aonic-ui/pipelines';
 import DetailsPage from '../../details-page/DetailsPage';
 import { getReferenceForModel } from '../../pipelines-overview/utils';
 import { TaskRunModel } from '../../../models';
@@ -16,22 +17,30 @@ import { useTranslation } from 'react-i18next';
 import TaskRunDetails from './TaskRunDetails';
 import TaskRunLogsTab from './TaskRunLogsTab';
 import TaskRunEvents from './events/TaskRunEvents';
-import { useTaskRun } from '../../hooks/useTaskRuns';
 import { navFactory } from '../../utils/horizontal-nav';
 import ResourceYAMLEditorViewOnly from '../../yaml-editor/ResourceYAMLEditorViewOnly';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
+  FLAG_PIPELINE_TEKTON_RESULT_INSTALLED,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
 } from '../../../consts';
 import { LoadingBox } from '../../status/status-box';
 import { taskRunStatus } from '../../utils/pipeline-utils';
 import Status from '../../status/Status';
+import { aonicFetchUtils } from '../../utils/common-utils';
 
 const TaskRunDetailsPage = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
   const params = useParams();
   const { name, ns: namespace } = params;
-  const [data, loaded] = useTaskRun(namespace, name);
+  const [data, loaded] = useTaskRun(
+    aonicFetchUtils,
+    namespace,
+    name,
+    undefined,
+    isTektonResultEnabled,
+  );
   const trStatus = React.useMemo(
     () => loaded && data && taskRunStatus(data),
     [loaded, data],

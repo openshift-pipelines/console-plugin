@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { HttpError } from '@openshift-console/dynamic-plugin-sdk/lib/utils/error/http-error';
+import { useTRTaskRunLog } from '@aonic-ui/pipelines';
 import { TaskRunKind } from '../../types';
 import { TektonResourceLabel } from '../../consts';
+import { LoadingInline } from '../Loading';
+import { aonicFetchUtils } from '../utils/common-utils';
 import './Logs.scss';
 import './MultiStreamLogs.scss';
-import { LoadingInline } from '../Loading';
-import { useTRTaskRunLog } from '../hooks/useTektonResult';
-
 type TektonTaskRunLogProps = {
   taskRun?: TaskRunKind;
   setCurrentLogsGetter: (getter: () => string) => void;
@@ -22,6 +22,8 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
   const [trResults, trLoaded, trError] = useTRTaskRunLog(
     taskRun.metadata.namespace,
     taskRun.metadata.name,
+    undefined,
+    aonicFetchUtils,
   );
 
   React.useEffect(() => {

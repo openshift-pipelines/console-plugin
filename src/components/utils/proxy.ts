@@ -1,5 +1,5 @@
-import { safeLoad } from 'js-yaml';
 import { consoleFetchJSON } from '@openshift-console/dynamic-plugin-sdk';
+import { safeLoad } from 'js-yaml';
 
 export const API_PROXY_URL = '/api/dev-console/proxy/internet';
 
@@ -60,5 +60,15 @@ export const consoleProxyFetchJSON = <T>(
     return isJSONString(response.body)
       ? JSON.parse(response.body)
       : safeLoad(response.body);
+  });
+};
+
+export const consoleProxyFetchLog = <T>(
+  proxyRequest: ProxyRequest,
+): Promise<T> => {
+  return consoleProxyFetch(proxyRequest).then((response) => {
+    return isJSONString(response.body)
+      ? JSON.parse(response.body)
+      : response.body;
   });
 };

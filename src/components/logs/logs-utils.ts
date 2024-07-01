@@ -1,3 +1,4 @@
+import { getTaskRunLog } from '@aonic-ui/pipelines';
 import {
   consoleFetchText,
   k8sGet,
@@ -12,10 +13,9 @@ import {
   TaskRunKind,
 } from '../../types';
 import { errorModal } from '../modals/error-modal';
-import { t } from '../utils/common-utils';
+import { aonicFetchUtils, t } from '../utils/common-utils';
 import { resourceURL } from '../utils/k8s-utils';
 import { containerToLogSourceStatus } from '../utils/pipeline-utils';
-import { getTaskRunLog } from '../utils/tekton-results';
 import { LineBuffer } from './line-buffer';
 
 const getSortedContainerStatus = (
@@ -166,9 +166,12 @@ export const getDownloadAllLogsCallback = (
         }
       } else {
         // eslint-disable-next-line no-await-in-loop
-        allLogs += await getTaskRunLog(namespace, currTask).then(
-          (log) => `${tasks[currTask].name.toUpperCase()}\n\n${log}\n\n`,
-        );
+        allLogs += await getTaskRunLog(
+          namespace,
+          currTask,
+          undefined,
+          aonicFetchUtils,
+        ).then((log) => `${tasks[currTask].name.toUpperCase()}\n\n${log}\n\n`);
       }
     }
     const buffer = new LineBuffer(null);

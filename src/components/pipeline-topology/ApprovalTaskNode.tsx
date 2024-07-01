@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -103,7 +103,7 @@ const ApprovalTaskComponent: React.FC<ApprovalTaskComponentProps> = ({
       ref={nameRef}
       x={showStatusState ? 30 : width / 2}
       y={height / 2 + 1}
-      className={cx('odc-pipeline-vis-task-text', {
+      className={classnames('odc-pipeline-vis-task-text', {
         'is-text-center': !pipelineRunName,
         'is-linked': enableLogLink,
       })}
@@ -120,7 +120,7 @@ const ApprovalTaskComponent: React.FC<ApprovalTaskComponentProps> = ({
         width={width}
         height={height}
         rx={5}
-        className={cx('odc-pipeline-vis-task', {
+        className={classnames('odc-pipeline-vis-task', {
           'is-selected': !!pipelineRunName && hover,
           'is-linked': !!pipelineRunName && enableLogLink,
         })}
@@ -169,7 +169,7 @@ const ApprovalTaskComponent: React.FC<ApprovalTaskComponentProps> = ({
   }
   return (
     <g
-      className={cx('odc-pipeline-topology__task-node', {
+      className={classnames('odc-pipeline-topology__task-node', {
         'is-link': enableLogLink,
       })}
     >

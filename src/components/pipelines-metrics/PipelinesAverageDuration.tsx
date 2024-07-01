@@ -1,6 +1,6 @@
 import * as React from 'react';
 import _ from 'lodash';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { DomainPropType, DomainTuple } from 'victory-core';
 import {

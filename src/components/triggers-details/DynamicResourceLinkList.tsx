@@ -1,8 +1,8 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
+import PipelineResourceRef from './PipelineResourceRef';
 
 import './DynamicResourceLinkList.scss';
-import PipelineResourceRef from './PipelineResourceRef';
 
 export type ResourceModelLink = {
   resourceKind: string;

@@ -1,14 +1,13 @@
 import * as React from 'react';
 import cx from 'classnames';
 import * as models from '../../models';
-
-import './PipelineResourceRef.scss';
 import {
   K8sKind,
   ResourceIcon,
   ResourceLink,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { getReferenceForModel } from '../pipelines-overview/utils';
+import './PipelineResourceRef.scss';
 
 const MODEL_KINDS = Object.values(models).reduce(
   (acc, model: K8sKind) => ({ ...acc, [model.kind]: model }),

@@ -6,7 +6,7 @@ import {
   ButtonVariant,
 } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons/dist/esm/icons/download-icon';
-import * as cx from 'classnames';
+import classnames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
 import './FormFooter.scss';
@@ -57,7 +57,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
   const shadowPosition = useScrollShadows(sticky ? scrollContainer : null);
   return (
     <div
-      className={cx('ocs-form-footer', {
+      className={classnames('ocs-form-footer', {
         'ocs-form-footer__sticky': sticky,
         'ocs-form-footer__shadow':
           sticky &&

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import {
   DEFAULT_LAYER,
@@ -29,6 +30,7 @@ import {
 } from '../pipelines-details/pipeline-step-utils';
 import { PipelineVisualizationStepList } from '../pipelines-details/PipelineVisualizationStepList';
 import { resourcePathFromModel } from '../utils/utils';
+import { getTooltipContent } from './utils';
 import './PipelineTaskNode.scss';
 
 type PipelineTaskNodeProps = {
@@ -42,6 +44,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   contextMenuOpen,
   ...rest
 }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const data = element.getData();
   const [hover, hoverRef] = useHover();
   const taskRef = React.useRef();
@@ -124,6 +127,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   }, [data]);
 
   const hasTaskIcon = !!(data.taskIconClass || data.taskIcon);
+  const tooltipContent = getTooltipContent(data.task?.status?.reason, t);
   const whenDecorator = data.whenStatus ? (
     <WhenDecorator
       element={element}
@@ -133,6 +137,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
           ? DEFAULT_WHEN_OFFSET + (element.getBounds().height - 4) * 0.75
           : DEFAULT_WHEN_OFFSET
       }
+      toolTip={tooltipContent}
     />
   ) : null;
 
@@ -189,8 +194,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
         ref={hoverRef}
       >
         <Tooltip
-          position="bottom"
-          enableFlip={false}
+          enableFlip={true}
           triggerRef={taskRef}
           content={
             <PipelineVisualizationStepList

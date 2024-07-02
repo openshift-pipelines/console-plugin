@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-topology';
 import * as dagre from 'dagre';
 import * as _ from 'lodash';
-
+import { TFunction } from 'react-i18next';
 import {
   ComputedStatus,
   PipelineKind,
@@ -732,4 +732,19 @@ export const getWhenExpressionDiamondState = (
       tooltipContent = t('When expression');
   }
   return { tooltipContent, diamondColor };
+};
+
+export const getTooltipContent = (
+  statusReason: ComputedStatus,
+  t: TFunction,
+): string => {
+  switch (statusReason) {
+    case ComputedStatus.Succeeded:
+    case ComputedStatus.Failed:
+      return t('When expression was met');
+    case ComputedStatus.Skipped:
+      return t('When expression was not met');
+    default:
+      return t('When expression');
+  }
 };

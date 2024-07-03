@@ -18,7 +18,7 @@ export const useDefaultColumns = () => {
     {
       id: 'namespace',
       sort: 'metadata.namespace',
-      title: t('Namesapce'),
+      title: t('Namespace'),
       transforms: [sortable],
     },
     {

@@ -1,3 +1,7 @@
+import * as React from 'react';
+import { useParams } from 'react-router-dom-v5-compat';
+import { useTranslation } from 'react-i18next';
+import { SortByDirection } from '@patternfly/react-table';
 import {
   K8sResourceCommon,
   ListPageBody,
@@ -7,15 +11,12 @@ import {
   useK8sWatchResource,
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
 import usePipelinesColumns from './usePipelinesColumns';
 import { usePipelinesFilters } from './usePipelinesFilters';
 import PipelineRow from './PipelineRow';
 import { useGetPipelineRuns } from '../hooks/useTektonResult';
 import { PipelineModel } from '../../models';
 import { PropPipelineData, augmentRunsToData } from '../utils/pipeline-augment';
-import { useParams } from 'react-router-dom-v5-compat';
-import { useTranslation } from 'react-i18next';
 
 type PipelineListProps = {
   namespace?: string;
@@ -31,6 +32,7 @@ const PipelinesList: React.FC<PipelineListProps> = ({
   namespace = namespace || ns;
   const columns = usePipelinesColumns(namespace);
   const filters = usePipelinesFilters();
+  const sortColumnIndex = !namespace ? 5 : 4;
   const [pipelines, pipelinesLoaded, pipelinesLoadError] = useK8sWatchResource<
     PropPipelineData[]
   >({
@@ -63,6 +65,7 @@ const PipelinesList: React.FC<PipelineListProps> = ({
         hideNameLabelFilters={hideTextFilter}
       />
       <VirtualizedTable<K8sResourceCommon>
+        key={sortColumnIndex}
         EmptyMsg={() => (
           <div
             className="pf-u-text-align-center virtualized-table-empty-msg"
@@ -77,6 +80,8 @@ const PipelinesList: React.FC<PipelineListProps> = ({
         loadError={pipelinesLoadError || pipelineRunsLoadError}
         Row={PipelineRow}
         unfilteredData={data}
+        sortColumnIndex={sortColumnIndex}
+        sortDirection={SortByDirection.desc}
       />
     </ListPageBody>
   );

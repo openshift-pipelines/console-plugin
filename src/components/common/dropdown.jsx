@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { useTranslation, withTranslation } from 'react-i18next';
 import { Divider } from '@patternfly/react-core';

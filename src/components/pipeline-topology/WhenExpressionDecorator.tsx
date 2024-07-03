@@ -64,6 +64,7 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
           x2={width * leftOffset}
           y2={diamondHeight / 2}
           stroke="var(--pf-v5-global--BorderColor--light-100)"
+          data-test="diamond-decorator-line"
         />
       )}
     </g>

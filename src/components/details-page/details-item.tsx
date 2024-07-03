@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import Linkify from 'react-linkify';
 import { useTranslation } from 'react-i18next';
-import * as classnames from 'classnames';
+import classnames from 'classnames';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
 import {
   Breadcrumb,

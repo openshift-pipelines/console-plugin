@@ -119,6 +119,7 @@ export const getDownloadAllLogsCallback = (
           queryParams: {
             container: name,
             follow: 'true',
+            timestamps: 'true',
           },
         };
         return {

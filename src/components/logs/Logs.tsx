@@ -83,6 +83,7 @@ const Logs: React.FC<LogsProps> = ({
       queryParams: {
         container: name,
         follow: 'true',
+        timestamps: 'true',
       },
     };
     const watchURL = resourceURL(PodModel, urlOpts);

@@ -1,7 +1,12 @@
 import { TableColumn } from '@openshift-console/dynamic-plugin-sdk';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { RepositoryFields, RepositoryLabels } from '../../consts';
+import {
+  RepoAnnotationFields,
+  RepositoryAnnotations,
+  RepositoryFields,
+  RepositoryLabels,
+} from '../../consts';
 import { PipelineRunKind } from '../../types';
 import { tableColumnClasses } from './PipelineRunsRow';
 
@@ -80,8 +85,8 @@ const usePipelineRunsColumns = (
           {
             id: 'branch-tag',
             title: t('Branch/Tag'),
-            sort: `metadata.labels.${
-              RepositoryLabels[RepositoryFields.BRANCH]
+            sort: `metadata.annotations.${
+              RepositoryAnnotations[RepoAnnotationFields.BRANCH]
             }`,
             transforms: [sortable],
             props: { className: tableColumnClasses.branch },

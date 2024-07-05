@@ -12,7 +12,6 @@ import { Link } from 'react-router-dom';
 import { PipelineRunModel, RepositoryModel } from '../../models';
 import { getLatestRun } from '../utils/pipeline-augment';
 import { getTaskRunsOfPipelineRun } from '../hooks/useTaskRuns';
-import { RepositoryFields, RepositoryLabels } from '../../consts';
 import { pipelineRunDuration } from '../utils/pipeline-utils';
 import PipelineRunStatus from '../pipelines-list/status/PipelineRunStatus';
 import {
@@ -22,6 +21,7 @@ import {
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import LinkedPipelineRunTaskStatus from '../pipelines-list/status/LinkedPipelineRunTaskStatus';
 import RepositoriesKebab from './RepositoriesKebab';
+import { RepositoryFields, RepositoryLabels } from '../../consts';
 
 export const repositoriesTableColumnClasses = [
   'pf-v5-u-w-16-on-xl pf-v5-u-w-25-on-lg pf-v5-u-w-33-on-xs', // name
@@ -62,7 +62,9 @@ const RepositoriesRow: React.FC<
 
   const latestPLREventType =
     latestRun &&
-    latestRun?.metadata?.labels[RepositoryLabels[RepositoryFields.EVENT_TYPE]];
+    latestRun?.metadata?.labels?.[
+      RepositoryLabels[RepositoryFields.EVENT_TYPE]
+    ];
 
   const PLRTaskRuns = getTaskRunsOfPipelineRun(
     taskRuns,

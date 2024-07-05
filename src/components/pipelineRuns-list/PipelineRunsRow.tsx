@@ -95,6 +95,9 @@ const PipelineRunRowTable = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const plrLabels = obj.metadata.labels;
   const plrAnnotations = obj.metadata.annotations;
+  const branchName =
+    plrLabels?.[RepositoryAnnotations[RepoAnnotationFields.BRANCH]] ||
+    plrAnnotations?.[RepositoryAnnotations[RepoAnnotationFields.BRANCH]];
   return (
     <>
       <TableData
@@ -222,9 +225,7 @@ const PipelineRunRowTable = ({
           className={tableColumnClasses.branch}
           activeColumnIDs={activeColumnIDs}
         >
-          {sanitizeBranchName(
-            plrLabels?.[RepositoryLabels[RepositoryFields.BRANCH]],
-          )}
+          {sanitizeBranchName(branchName)}
         </TableData>
       )}
       <TableData

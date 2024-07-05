@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
-import { sortable } from '@patternfly/react-table';
+import { SortByDirection, sortable } from '@patternfly/react-table';
 import {
   K8sResourceCommon,
   ListPageBody,
@@ -111,6 +111,7 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
   const params = useParams();
   const { ns: namespace } = params;
   const ns = namespace === ALL_NAMESPACES_KEY ? '-' : namespace;
+  const sortColumnIndex = !namespace ? 6 : 5;
   const parentName = props?.obj?.metadata?.name;
   const [taskRuns, loaded, loadError] = useTaskRuns(ns, parentName);
   const [staticData, filteredData, onFilterChange] = useListPageFilter(
@@ -155,6 +156,7 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
           hideNameLabelFilters={hideNameLabelFilters}
         />
         <VirtualizedTable
+          key={sortColumnIndex}
           columns={activeColumns.filter(
             (item) => !(item.id === 'pipeline' && !showPipelineColumn),
           )}
@@ -170,6 +172,8 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
               </div>
             </div>
           )}
+          sortColumnIndex={sortColumnIndex}
+          sortDirection={SortByDirection.desc}
         />
       </ListPageBody>
     </>

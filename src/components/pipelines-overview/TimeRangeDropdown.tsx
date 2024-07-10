@@ -8,8 +8,10 @@ import {
 } from '@patternfly/react-core';
 import { map } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import { formatPrometheusDuration, parsePrometheusDuration } from './dateTime';
-import { TimeRangeOptions } from './utils';
+import { TimeRangeOptions, TimeRangeOptionsK8s } from './utils';
+import { FLAG_PIPELINE_TEKTON_RESULT_INSTALLED } from '../../consts';
 
 interface TimeRangeDropdownProps {
   timespan: number;
@@ -28,7 +30,11 @@ const TimeRangeDropdown: React.FC<TimeRangeDropdownProps> = ({
     [setTimespan],
   );
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const timeRangeOptions = TimeRangeOptions();
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
+
+  const timeRangeOptions = isTektonResultEnabled
+    ? TimeRangeOptions()
+    : TimeRangeOptionsK8s();
   return (
     <div className="form-group">
       <label>{t('Time Range')}</label>

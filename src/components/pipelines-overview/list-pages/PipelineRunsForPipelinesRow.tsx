@@ -16,9 +16,14 @@ import { formatTime, formatTimeLastRunTime } from '../dateTime';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
 import { PipelineModel, PipelineModelV1Beta1 } from '../../../models';
 
-const PipelineRunsForPipelinesRow: React.FC<RowProps<SummaryProps>> = ({
-  obj,
-}) => {
+const PipelineRunsForPipelinesRow: React.FC<
+  RowProps<
+    SummaryProps,
+    {
+      hideLastRunTime?: boolean;
+    }
+  >
+> = ({ obj, rowData: { hideLastRunTime } }) => {
   const [activeNamespace] = useActiveNamespace();
   const [namespace, name] = obj.group_value.split('/');
   const clusterVersion = (window as any).SERVER_FLAGS?.releaseVersion;
@@ -58,9 +63,11 @@ const PipelineRunsForPipelinesRow: React.FC<RowProps<SummaryProps>> = ({
       <td className={tableColumnClasses[5]}>{`${Math.round(
         (100 * obj.succeeded) / obj.total,
       )}%`}</td>
-      <td className={tableColumnClasses[6]}>{`${formatTimeLastRunTime(
-        obj.last_runtime,
-      )}`}</td>
+      {!hideLastRunTime && (
+        <td className={tableColumnClasses[6]}>{`${formatTimeLastRunTime(
+          obj.last_runtime,
+        )}`}</td>
+      )}
     </>
   );
 };

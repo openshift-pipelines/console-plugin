@@ -21,11 +21,12 @@ type PipelineRunsForPipelinesListProps = {
   summaryData: SummaryProps[];
   summaryDataFiltered?: SummaryProps[];
   loaded: boolean;
+  hideLastRunTime?: boolean;
 };
 
 const PipelineRunsForPipelinesList: React.FC<
   PipelineRunsForPipelinesListProps
-> = ({ summaryData, summaryDataFiltered, loaded }) => {
+> = ({ summaryData, summaryDataFiltered, loaded, hideLastRunTime }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const EmptyMsg = () => (
     <EmptyState variant={EmptyStateVariant.lg}>
@@ -33,8 +34,8 @@ const PipelineRunsForPipelinesList: React.FC<
     </EmptyState>
   );
 
-  const plrColumns = React.useMemo<TableColumn<SummaryProps>[]>(
-    () => [
+  const plrColumns = React.useMemo<TableColumn<SummaryProps>[]>(() => {
+    const columns: TableColumn<SummaryProps>[] = [
       {
         id: 'pipelineName',
         title: t('Pipeline'),
@@ -98,17 +99,20 @@ const PipelineRunsForPipelinesList: React.FC<
           },
         },
       },
-      {
+    ];
+    if (!hideLastRunTime) {
+      columns.push({
         id: 'lastRunTime',
         title: t('Last run time'),
         sort: (summary, direction: 'asc' | 'desc') =>
           sortByTimestamp(summary, 'last_runtime', direction),
         transforms: [sortable],
         props: { className: tableColumnClasses[6] },
-      },
-    ],
-    [t],
-  );
+      });
+    }
+
+    return columns;
+  }, [t, hideLastRunTime]);
 
   const [columns] = useActiveColumns({
     columns: plrColumns,
@@ -125,6 +129,7 @@ const PipelineRunsForPipelinesList: React.FC<
       loadError={false}
       unfilteredData={summaryData}
       EmptyMsg={EmptyMsg}
+      rowData={{ hideLastRunTime }}
     />
   );
 };

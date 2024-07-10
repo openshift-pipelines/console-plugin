@@ -109,7 +109,7 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
             <GridItem span={6}>
               <span>
                 <InfoCircleIcon className="pipeline-overview__duration-card__info-icon" />
-                {t('Maximun')}
+                {t('Maximum')}
               </span>
             </GridItem>
             <GridItem

@@ -157,6 +157,23 @@
     }
   },
   {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": [
+        "/pipelines-overview/ns/:ns",
+        "/pipelines-overview/all-namespaces"
+      ],
+      "component": {
+        "$codeRef": "pipelinesComponent.PipelinesOverviewPageK8s"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"],
+      "disallowed": ["PIPELINE_TEKTON_RESULT_INSTALLED"]
+    }
+  },
+  {
     "type": "console.navigation/href",
     "properties": {
       "id": "pipelines-overview",
@@ -168,7 +185,7 @@
       "namespaced": true
     },
     "flags": {
-      "required": ["OPENSHIFT_PIPELINE", "PIPELINE_TEKTON_RESULT_INSTALLED"]
+      "required": ["OPENSHIFT_PIPELINE"]
     }
   },
   {
@@ -187,6 +204,42 @@
     },
     "flags": {
       "required": ["PIPELINE_TEKTON_RESULT_INSTALLED"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "Pipeline"
+      },
+      "page": {
+        "name": "%plugin__pipelines-console-plugin~Metrics%",
+        "href": "metrics"
+      },
+      "component": { "$codeRef": "metricsComponent.PipelinesMetricsPageK8s" }
+    },
+    "flags": {
+      "disallowed": ["PIPELINE_TEKTON_RESULT_INSTALLED"]
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
+      "page": {
+        "name": "%plugin__pipelines-console-plugin~Metrics%",
+        "href": "metrics"
+      },
+      "component": { "$codeRef": "metricsComponent.PipelinesMetricsPageK8s" }
+    },
+    "flags": {
+      "disallowed": ["PIPELINE_TEKTON_RESULT_INSTALLED"]
     }
   },
   {

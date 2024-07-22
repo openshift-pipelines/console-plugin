@@ -145,6 +145,15 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
       break;
   }
 
+  const max = Math.max(...chartData.map((yVal) => yVal.y));
+  const roundUp = (value, nearest) => {
+    return Math.ceil(value / nearest) * nearest;
+  };
+  const nearest = max > 10 ? 10 : 5;
+  const roundedMax = roundUp(max, nearest);
+  domainValue.y =
+    !isNaN(roundedMax) && roundedMax > 5 ? [0, roundedMax] : [0, 5];
+
   if (!domainY) {
     let minY: number = _.minBy(chartData, 'y')?.y ?? 0;
     let maxY: number = _.maxBy(chartData, 'y')?.y ?? 0;

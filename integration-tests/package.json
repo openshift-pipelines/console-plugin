@@ -1,0 +1,11 @@
+{
+  "name": "@console-plugin/integration-tests",
+  "version": "0.0.1",
+  "description": "Pipeline Cypress tests",
+  "private": true,
+  "scripts": {
+    "test-cypress": "../node_modules/.bin/cypress open --env openshift=true",
+    "test-cypress-nightly": "yarn run test-headless && yarn run cypress-merge && yarn run cypress-generate",
+    "posttest-cypress-headless": "yarn run cypress-merge && yarn run cypress-generate"
+  }
+}

@@ -1,16 +1,19 @@
 # OpenShift Console Plugin for Tekton CD / OpenShift Pipelines
 
-:construction: This is a WIP [dynamic plugin](https://github.com/openshift/console/tree/master/frontend/packages/console-dynamic-plugin-sdk) that extends the [OpenShift Console](https://github.com/openshift/console) by adding **Tekton CD / OpenShift Pipelines** specific features.
+This is a [dynamic plugin](https://github.com/openshift/console/tree/master/frontend/packages/console-dynamic-plugin-sdk) that extends the [OpenShift Console](https://github.com/openshift/console) by adding **Tekton CD / OpenShift Pipelines** specific features.
 
-It will be shipped and enabled automatically by the [Tekton CD / OpenShift Pipelines operator](https://github.com/tektoncd/operator).
+It is shipped and enabled automatically by the [Tekton CD / OpenShift Pipelines operator](https://github.com/tektoncd/operator).
 
-## Rough roadmap
+## Features
 
-- 2023 / v1: Adds a new **Dashboard** and **Metrics** tab to the Pipeline pages that shows aggregated PipelineRun stats from the [Tekton Results API](https://github.com/tektoncd/results)
-- 2024 / v2: Additional pages, like the Pipeline list and details pages are moved from the "static" [pipelines-plugin](https://github.com/openshift/console/tree/master/frontend/packages/pipelines-plugin) from the OpenShift Console into this project.
+- **Tekton CD `Pipeline`, `PipelineRun`, `Task`, `TaskRun`, and OpenShift `Repository` list and details pages**
+- It allows users to **start and re-run PipelineRuns directly from the UI**
+- It automatically extends the **Topology view to show the latest PipelineRun status**
+- **New: Dashboard and Metrics tabs** that shows statistics from the **[Tekton Results API](https://github.com/tektoncd/results)**
+- **Tech Preview: Support for [manual approvals with OpenShift Pipelines `ApprovalTasks`](https://docs.openshift.com/pipelines/latest/create/using-manual-approval.html)**
 
 ## Compatiblity
 
-This initial version of this plugin will be shipped with OpenShift Pipelines operator 1.1x and requires at least OpenShift 4.1x (TBD).
+This plugin will be shipped with OpenShift Pipelines operator and requires at least OpenShift 4.15+.
 
-See also the OpenShift Pipelines [Compatibility and support matrix](https://docs.openshift.com/pipelines/latest/about/op-release-notes.html#compatibility-support-matrix_op-release-notes).
+You might be also interessted in the [OpenShift Pipelines compatibility and support matrix](https://docs.openshift.com/pipelines/latest/about/op-release-notes.html#compatibility-support-matrix_op-release-notes).

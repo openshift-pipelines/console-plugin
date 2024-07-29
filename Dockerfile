@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 RUN yarn install --frozen-lockfile && \
     yarn build
 
-FROM registry.access.redhat.com/ubi8/nginx-120:latest
+FROM registry.access.redhat.com/ubi8/nginx-124:latest
 
 COPY --from=builder-ui /usr/src/app/dist /usr/share/nginx/html
 

@@ -299,6 +299,7 @@ export const StorageClassDropdown = (props) => {
     <StorageClassDropdownInner
       {...props}
       storageClass={storageClassResources.StorageClass}
+      loaded={storageClassResources.StorageClass.loaded}
     />
   );
 };

@@ -1,17 +1,19 @@
 approvers:
-- jerolimov
-- vdemeester
-- vikram-raj
-- pratap0007
-- Lucifergene
-- lokanandaprabhu
+  - jerolimov
+  - vdemeester
+  - vikram-raj
+  - pratap0007
+  - Lucifergene
+  - lokanandaprabhu
 options: {}
 reviewers:
-- jerolimov
-- vdemeester
-- vikram-raj
-- pratap0007
-- Lucifergene
-- lokanandaprabhu
-- saumeya
+  - jerolimov
+  - vdemeester
+  - vikram-raj
+  - pratap0007
+  - Lucifergene
+  - lokanandaprabhu
+  - sanketpathak
+  - saumeya
+  - The-Anton
 component: OpenShift Pipelines Console Plugin

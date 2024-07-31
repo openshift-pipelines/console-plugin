@@ -17,6 +17,7 @@ import PipelineRunsStatusCardK8s from '../pipelines-overview/PipelineRunsStatusC
 import PipelineRunsNumbersChartK8s from '../pipelines-overview/PipelineRunsNumbersChartK8s';
 import PipelineRunsDurationCardK8s from '../pipelines-overview/PipelineRunsDurationCardK8s';
 import PipelinesAverageDurationK8s from './PipelinesAverageDurationK8s';
+import { K8sDataLimitationAlert } from '../pipelines-overview/K8sDataLimitationAlert';
 
 type PipelinesMetricsPageProps = {
   obj: PipelineKind;
@@ -55,6 +56,9 @@ const PipelinesMetricsPageK8s: React.FC<PipelinesMetricsPageProps> = ({
 
   return (
     <>
+      <div className="k8s-overview-info-alert">
+        <K8sDataLimitationAlert />
+      </div>
       <Flex className="pipelines-metrix-dropdown">
         <FlexItem>
           <TimeRangeDropdown timespan={timespan} setTimespan={setTimespan} />

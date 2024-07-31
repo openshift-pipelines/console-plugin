@@ -12,6 +12,8 @@ import PipelineRunsNumbersChartK8s from './PipelineRunsNumbersChartK8s';
 import PipelineRunsTotalCardK8s from './PipelineRunsTotalCardK8s';
 import PipelineRunsDurationCardK8s from './PipelineRunsDurationCardK8s';
 import PipelineRunsListPageK8s from './list-pages/PipelineRunsListPageK8s';
+import { K8sDataLimitationAlert } from './K8sDataLimitationAlert';
+import './PipelinesOverview.scss';
 
 const PipelinesOverviewPageK8s: React.FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -51,6 +53,9 @@ const PipelinesOverviewPageK8s: React.FC = () => {
         <h1 className="co-m-pane__heading">
           <span>{t('Overview')}</span>
         </h1>
+      </div>
+      <div className="k8s-overview-info-alert">
+        <K8sDataLimitationAlert />
       </div>
       <Flex className="project-dropdown-label__flex">
         <FlexItem>

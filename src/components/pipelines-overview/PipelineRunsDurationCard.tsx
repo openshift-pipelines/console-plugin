@@ -87,7 +87,7 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
             <GridItem span={6}>
               <span>
                 <MonitoringIcon className="pipeline-overview__duration-card__icon" />
-                {t('Average Duration')}
+                {t('Average duration')}
               </span>
             </GridItem>
             <GridItem
@@ -109,7 +109,7 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
             <GridItem span={6}>
               <span>
                 <InfoCircleIcon className="pipeline-overview__duration-card__info-icon" />
-                {t('Maximun')}
+                {t('Maximum')}
               </span>
             </GridItem>
             <GridItem
@@ -131,7 +131,7 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
             <GridItem span={6}>
               <span>
                 <HistoryIcon className="pipeline-overview__duration-card__icon" />
-                {t('Total Duration')}
+                {t('Total duration')}
               </span>
             </GridItem>
             <GridItem

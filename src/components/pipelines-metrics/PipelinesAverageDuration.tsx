@@ -194,7 +194,7 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
         })}
       >
         <CardTitle className="pipeline-overview__number-of-plr-card__title">
-          <span>{t('Average Duration')}</span>
+          <span>{t('Average duration')}</span>
         </CardTitle>
         <CardBody className="pipeline-overview__number-of-plr-card__body">
           <div className="pipeline-overview__number-of-plr-card__bar-chart-div">

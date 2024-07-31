@@ -1,10 +1,11 @@
+import * as React from 'react';
+import { SortByDirection } from '@patternfly/react-table';
 import {
   ListPageBody,
   ListPageFilter,
   VirtualizedTable,
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
 import usePipelineRunsColumns from './usePipelineRunsColumns';
 import { usePipelineRunsFilters } from './usePipelineRunsFilters';
 import { PipelineRunKind } from '../../types';
@@ -35,6 +36,13 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
   namespace = namespace || ns;
   const columns = usePipelineRunsColumns(namespace, repositoryPLRs);
   const filters = usePipelineRunsFilters();
+  const sortColumnIndex = repositoryPLRs
+    ? !namespace
+      ? 6
+      : 5
+    : !namespace
+    ? 5
+    : 4;
 
   const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] =
     useGetPipelineRuns(namespace, { name: PLRsForName, kind: PLRsForKind });
@@ -59,6 +67,7 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
         hideNameLabelFilters={hideTextFilter}
       />
       <VirtualizedTable<PipelineRunKind>
+        key={sortColumnIndex}
         EmptyMsg={() => (
           <div
             className="pf-u-text-align-center virtualized-table-empty-msg"
@@ -76,6 +85,8 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
         rowData={{
           repositoryPLRs,
         }}
+        sortColumnIndex={sortColumnIndex}
+        sortDirection={SortByDirection.desc}
       />
     </ListPageBody>
   );

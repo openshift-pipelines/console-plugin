@@ -39,6 +39,9 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({
     plrAnnotations?.[RepositoryAnnotations[RepoAnnotationFields.REPO_URL]];
   const shaURL =
     plrAnnotations?.[RepositoryAnnotations[RepoAnnotationFields.SHA_URL]];
+  const branchName =
+    plrLabels?.[RepositoryAnnotations[RepoAnnotationFields.BRANCH]] ||
+    plrAnnotations?.[RepositoryAnnotations[RepoAnnotationFields.BRANCH]];
 
   if (!repoName) return null;
 
@@ -66,20 +69,11 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({
           </ExternalLink>
         )}
       </dd>
-      {plrLabels?.[RepositoryLabels[RepositoryFields.BRANCH]] && (
+      {branchName && (
         <>
-          <dt>
-            {t(
-              getLabelValue(
-                plrLabels[RepositoryLabels[RepositoryFields.BRANCH]],
-                t,
-              ),
-            )}
-          </dt>
+          <dt>{t(getLabelValue(branchName, t))}</dt>
           <dd data-test="pl-repository-branch">
-            {sanitizeBranchName(
-              plrLabels[RepositoryLabels[RepositoryFields.BRANCH]],
-            )}
+            {sanitizeBranchName(branchName)}
           </dd>
         </>
       )}

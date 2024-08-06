@@ -1,7 +1,7 @@
 import { Given, Then, When } from '@badeball/cypress-cucumber-preprocessor';
 import { detailsPage } from '../../../../../tests/views/details-page';
 import { modal } from '../../../../../tests/views/modal';
-import { pipelineActions } from '../../constants';
+import { addOptions, pipelineActions } from '../../constants';
 import { devNavigationMenu } from '../../constants/global';
 import { pageTitle } from '../../constants/pageTitle';
 import { pipelinesPO } from '../../page-objects';
@@ -11,14 +11,31 @@ import {
   pipelinesPage,
   startPipelineInPipelinesPage,
 } from '../../pages';
+import { addPage } from '../../pages/add-page';
 import { app, navigateTo } from '../../pages/app';
+import { gitPage } from '../../pages/git-page';
 import { topologyPage, topologySidePane } from '../../pages/topology-page';
 
 When(
   'user selects {string} option from kebab menu for pipeline {string}',
   (option: string, pipelineName: string) => {
-    pipelinesPage.search(pipelineName);
+    // pipelinesPage.search(pipelineName);
     pipelinesPage.selectActionForPipeline(pipelineName, option);
+  },
+);
+
+Given(
+  'user created workload {string} from add page with pipeline',
+  (pipelineName: string) => {
+    navigateTo(devNavigationMenu.Add);
+    addPage.selectCardFromOptions(addOptions.ImportFromGit);
+    gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
+    gitPage.verifyValidatedMessage('https://github.com/sclorg/nodejs-ex.git');
+    gitPage.enterComponentName(pipelineName);
+    gitPage.selectResource('deployment');
+    gitPage.selectAddPipeline();
+    gitPage.clickCreate();
+    topologyPage.verifyTopologyPage();
   },
 );
 
@@ -28,7 +45,7 @@ Given(
     pipelinesPage.clickOnCreatePipeline();
     cy.get('#form-radiobutton-editorType-form-field').click();
     pipelineBuilderPage.createPipelineWithGitResources(pipelineName);
-    cy.byLegacyTestID('breadcrumb-link-0').click();
+    cy.byTestID('breadcrumb-link').click();
     pipelinesPage.search(pipelineName);
     pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
     modal.modalTitleShouldContain('Start Pipeline');
@@ -52,7 +69,7 @@ Given(
       pipelineName,
       workspaceName,
     );
-    cy.byLegacyTestID('breadcrumb-link-0').click();
+    cy.byTestID('breadcrumb-link').click();
     pipelinesPage.search(pipelineName);
     pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
     modal.modalTitleShouldContain('Start Pipeline');
@@ -74,7 +91,7 @@ Given(
       'git-clone',
       workspaceName,
     );
-    cy.byLegacyTestID('breadcrumb-link-0').click();
+    cy.byTestID('breadcrumb-link').click();
     pipelinesPage.search(pipelineName);
   },
 );
@@ -88,7 +105,7 @@ Given(
       'git-clone',
       workspaceName,
     );
-    cy.byLegacyTestID('breadcrumb-link-0').click();
+    cy.byTestID('breadcrumb-link').click();
     pipelinesPage.search(pipelineName);
   },
 );

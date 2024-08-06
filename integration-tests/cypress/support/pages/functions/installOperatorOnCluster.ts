@@ -139,7 +139,7 @@ const waitForPipelineTasks = (retries = 30) => {
     });
 };
 
-export const waitForDynamicPlugin = (retries: number = 5) => {
+export const waitForDynamicPlugin = () => {
   operatorsPage.navigateToInstallOperatorsPage();
   operatorsPage.verifyInstalledOperator(operators.PipelinesOperator);
   cy.get('[data-test-operator-row="Red Hat OpenShift Pipelines"]')

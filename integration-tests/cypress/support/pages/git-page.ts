@@ -196,6 +196,10 @@ export const gitPage = {
     /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(gitPO.pipeline.buildDropdown).scrollIntoView().click();
     cy.get(gitPO.pipeline.addPipeline).should('be.visible').click();
+    cy.get(gitPO.pipeline.buildDropdown).should(
+      'contain.text',
+      'Build using pipelines',
+    );
   },
   clickCreate: () =>
     /* eslint-disable-next-line cypress/unsafe-to-chain-command */

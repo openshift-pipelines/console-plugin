@@ -54,6 +54,15 @@ When(
 );
 
 When(
+  'user enters timeout value as {string} and {string}',
+  (value: string, time: string) => {
+    modal.shouldBeOpened();
+    app.waitForLoad();
+    startPipelineInPipelinesPage.enterTimeoutValue(value, time);
+  },
+);
+
+When(
   'user enters revision as {string} in start pipeline modal',
   (revision: string) => {
     startPipelineInPipelinesPage.enterRevision(revision);
@@ -133,7 +142,7 @@ Given(
   (pipelineName: string) => {
     pipelinesPage.clickOnCreatePipeline();
     pipelineBuilderPage.createPipelineFromBuilderPage(pipelineName);
-    cy.byLegacyTestID('breadcrumb-link-0').click();
+    cy.byTestID('breadcrumb-link').click();
     pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
     pipelineRunDetailsPage.verifyTitle();
     navigateTo(devNavigationMenu.Pipelines);
@@ -142,31 +151,31 @@ Given(
   },
 );
 
-Given(
-  'pipeline run is displayed for {string} with resource',
-  (pipelineName: string) => {
-    pipelinesPage.clickOnCreatePipeline();
-    pipelineBuilderPage.createPipelineWithGitResources(pipelineName);
-    cy.byLegacyTestID('breadcrumb-link-0').click();
-    pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
-    modal.modalTitleShouldContain('Start Pipeline');
-    startPipelineInPipelinesPage.addGitResource(
-      'https://github.com/sclorg/nodejs-ex.git',
-    );
-    modal.submit();
-    pipelineRunDetailsPage.verifyTitle();
-    navigateTo(devNavigationMenu.Pipelines);
-    pipelinesPage.search(pipelineName);
-    cy.get(pipelinesPO.pipelinesTable.pipelineRunIcon).should('be.visible');
-  },
-);
+// Given(
+//   'pipeline run is displayed for {string} with resource',
+//   (pipelineName: string) => {
+//     pipelinesPage.clickOnCreatePipeline();
+//     pipelineBuilderPage.createPipelineWithGitResources(pipelineName);
+//     cy.byTestID('breadcrumb-link').click();
+//     pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
+//     modal.modalTitleShouldContain('Start Pipeline');
+//     startPipelineInPipelinesPage.addGitResource(
+//       'https://github.com/sclorg/nodejs-ex.git',
+//     );
+//     modal.submit();
+//     pipelineRunDetailsPage.verifyTitle();
+//     navigateTo(devNavigationMenu.Pipelines);
+//     pipelinesPage.search(pipelineName);
+//     cy.get(pipelinesPO.pipelinesTable.pipelineRunIcon).should('be.visible');
+//   },
+// );
 
 When('user clicks Last Run value of {string}', (pipelineName: string) => {
   pipelinesPage.selectPipelineRun(pipelineName);
 });
 
 When('user navigates to pipelineRuns page', () => {
-  cy.byLegacyTestID('breadcrumb-link-0').click();
+  cy.byTestID('breadcrumb-link').click();
   pipelineRunsPage.verifyTitle();
 });
 
@@ -174,6 +183,13 @@ When(
   'user selects the kebab menu in pipeline Runs page for pipeline {string}',
   (pipelineName: string) => {
     pipelineRunsPage.selectKebabMenu(pipelineName);
+  },
+);
+
+When(
+  'user selects option {string} from Actions menu drop down',
+  (action: string) => {
+    pipelineRunDetailsPage.selectFromActionsDropdown(action);
   },
 );
 
@@ -193,7 +209,7 @@ Then(
 );
 
 Then(
-  'Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created At, Owner, Status, Pipeline and Triggered by',
+  'Details tab is displayed with field names Name, Namespace, Labels, Annotations, Created At, Owner, Status and Pipeline',
   () => {
     pipelineRunDetailsPage.verifyFields();
   },
@@ -211,7 +227,9 @@ When(
   'user selects Rerun option from kebab menu of {string}',
   (pipelineName: string) => {
     pipelineRunsPage.selectKebabMenu(pipelineName);
-    cy.byTestActionID(pipelineActions.Rerun).click();
+    cy.get(
+      '[data-test-action="reRun-pipelineRun"] button[role="menuitem"]',
+    ).click();
   },
 );
 
@@ -261,7 +279,7 @@ Given(
 );
 
 When('user navigates to Pipeline runs page', () => {
-  cy.byLegacyTestID('breadcrumb-link-0').click();
+  cy.byTestID('breadcrumb-link').click();
 });
 
 When('user selects {string} option from Actions menu', (option: string) => {
@@ -338,7 +356,7 @@ Given('pipeline {string} is executed for 3 times', (pipelineName: string) => {
 });
 
 Given('user is at the Pipeline Runs page', () => {
-  cy.byLegacyTestID('breadcrumb-link-0').click();
+  cy.byTestID('breadcrumb-link').click();
   pipelineRunsPage.verifyTitle();
 });
 
@@ -347,7 +365,7 @@ When(
   (pipelineName: string, status: string) => {
     navigateTo(devNavigationMenu.Pipelines);
     pipelinesPage.selectPipelineRun(pipelineName);
-    cy.byLegacyTestID('breadcrumb-link-0').click();
+    cy.byTestID('breadcrumb-link').click();
     pipelineRunsPage.filterByStatus(status);
     cy.get('[aria-label="close"]').should('be.visible');
   },
@@ -400,8 +418,11 @@ When('user clicks Actions menu on the top right corner of the page', () => {
 When(
   'user is able to see Actions menu options {string}, {string}, {string}, {string} in pipeline run page',
   (el1, el2, el3, el4: string) => {
-    cy.byLegacyTestID('breadcrumb-link-0').contains('PipelineRun');
-    cy.byLegacyTestID('action-items')
+    cy.byTestID('breadcrumb-link').contains('PipelineRun');
+    cy.get('button[class*="menu-toggle"]')
+      .contains('Actions')
+      .click({ force: true });
+    cy.get('ul.action-menu-dropdown')
       .should('contain', el1)
       .and('contain', el2)
       .and('contain', el3)
@@ -429,10 +450,10 @@ Then('start button is enabled', () => {
 });
 
 Then(
-  'Actions menu display with the options {string}, {string}',
+  'Actions menu display with the options {string}, {string} PipelineRun',
   (option1: string, option2: string) => {
-    cy.byTestActionID(option1).should('be.visible');
-    cy.byTestActionID(option2).should('be.visible');
+    cy.byTestID(`${option1}-pipelineRun`).should('be.visible');
+    cy.byTestID(`${option2}-pipelineRun`).should('be.visible');
   },
 );
 
@@ -736,7 +757,7 @@ Given(
   (pipelineName: string) => {
     pipelinesPage.clickOnCreatePipeline();
     pipelineBuilderPage.createPipelineWithParameters(pipelineName);
-    cy.byLegacyTestID('breadcrumb-link-0').click();
+    cy.byTestID('breadcrumb-link').click();
     pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
     modal.modalTitleShouldContain('Start Pipeline');
     startPipelineInPipelinesPage.clickStart();
@@ -762,8 +783,8 @@ When(
     addPage.selectCardFromOptions(addOptions.ImportFromGit);
     gitPage.enterGitUrl('https://github.com/sclorg/golang-ex');
     devFilePage.verifyValidatedMessage('https://github.com/sclorg/golang-ex');
-    gitPage.selectAddPipeline();
     gitPage.enterWorkloadName(pipelineName);
+    gitPage.selectAddPipeline();
     gitPage.clickCreate();
     topologyPage.verifyTopologyPage();
   },
@@ -784,7 +805,7 @@ When(
   (pipelineName: string) => {
     pipelineDetailsPage.verifyTitle(pipelineName);
     cy.get(triggerTemplateDetailsPO.detailsTab).should('be.visible').click();
-    cy.byLegacyTestID('breadcrumb-link-0').click();
+    cy.byTestID('breadcrumb-link').click();
     pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
     modal.modalTitleShouldContain('Start Pipeline');
     startPipelineInPipelinesPage.clickStart();

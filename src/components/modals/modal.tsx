@@ -165,9 +165,14 @@ export const createModal: CreateModal = (getModalElement) => {
 export const ModalWrapper: React.FC<ModalWrapperProps> = ({
   className,
   children,
+  onClose,
 }) => {
   return (
-    <Modal className={classNames('modal-dialog', className)} isOpen>
+    <Modal
+      className={classNames('modal-dialog', className)}
+      isOpen
+      onClose={() => onClose()}
+    >
       {children}
     </Modal>
   );

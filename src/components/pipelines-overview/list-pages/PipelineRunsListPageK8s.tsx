@@ -1,9 +1,12 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
-import { PrometheusResponse } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  PrometheusResponse,
+  useK8sWatchResource,
+} from '@openshift-console/dynamic-plugin-sdk';
 import PipelineRunsForRepositoriesList from './PipelineRunsForRepositoriesList';
-import PipelineRunsForPipelinesList from './PipelineRunsForPipelinesList';
+import PipelineRunsForPipelinesListK8s from './PipelineRunsForPipelinesListK8s';
 import SearchInputField from '../SearchInput';
 import { isMatchingFirstTickValue, useQueryParams } from '../utils';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
@@ -16,6 +19,7 @@ import {
   PipelineQuery,
 } from '../../pipelines-metrics/utils';
 import { getXaxisValues, secondsToHms } from '../dateTime';
+import { Project } from '../../../types';
 
 type PipelineRunsListPageProps = {
   bordered?: boolean;
@@ -122,6 +126,11 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
   const [searchText, setSearchText] = React.useState('');
   const [tickValues, type] = getXaxisValues(timespan);
 
+  const [projects, projectsLoaded] = useK8sWatchResource<Project[]>({
+    isList: true,
+    kind: 'Project',
+    optional: true,
+  });
   const [pipelineRunsMetricsCountData] =
     namespace == ALL_NAMESPACES_KEY
       ? usePipelineMetricsForAllNamespacePoll({
@@ -240,11 +249,13 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
         <Grid hasGutter>
           <GridItem span={12}>
             {pageFlag === 1 ? (
-              <PipelineRunsForPipelinesList
+              <PipelineRunsForPipelinesListK8s
                 summaryData={summaryDataK8s}
                 summaryDataFiltered={summaryDataFiltered}
                 loaded={true}
                 hideLastRunTime={true}
+                projects={projects}
+                projectsLoaded={projectsLoaded}
               />
             ) : (
               <PipelineRunsForRepositoriesList

@@ -5,6 +5,7 @@ import {
   useK8sWatchResource,
   useActiveColumns,
   useActiveNamespace,
+  useFlag,
 } from '@openshift-console/dynamic-plugin-sdk';
 import PipelinesOverviewPage from '../PipelinesOverviewPage';
 import { getResultsSummary } from '../../utils/summary-api';
@@ -18,6 +19,7 @@ jest.mock('@openshift-console/dynamic-plugin-sdk', () => ({
   useActiveColumns: jest.fn(),
   VirtualizedTable: jest.fn(),
   k8sGet: jest.fn(),
+  useFlag: jest.fn(),
 }));
 jest.mock('../../utils/tekton-results', () => ({
   createTektonResultsSummaryUrl: jest.fn(),
@@ -37,6 +39,7 @@ const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const useActiveColumnsMock = useActiveColumns as jest.Mock;
 const getResultsSummaryMock = getResultsSummary as jest.Mock;
+const useFlagMock = useFlag as jest.Mock;
 
 describe('Pipeline Overview page', () => {
   beforeEach(() => {
@@ -48,6 +51,7 @@ describe('Pipeline Overview page', () => {
     useK8sWatchResourceMock.mockReturnValue([[], true]);
     useActiveColumnsMock.mockReturnValue([[]]);
     getResultsSummaryMock.mockReturnValue(Promise.resolve({}));
+    useFlagMock.mockReturnValue(true);
   });
 
   it('should render Pipeline Overview', async () => {

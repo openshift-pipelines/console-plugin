@@ -33,6 +33,7 @@ import { triggerPipeline } from '../pipelines-list/PipelineKebab';
 import { StartedByAnnotation } from '../../consts';
 import { usePipelineTriggerTemplateNames } from '../utils/triggers';
 import { resourcePathFromModel } from '../utils/utils';
+import { ErrorPage404 } from '../common/error';
 
 const PipelineDetailsPage = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -40,7 +41,7 @@ const PipelineDetailsPage = () => {
   const history = useHistory();
   const navigate = useNavigate();
   const { name, ns: namespace } = params;
-  const [pipeline, loaded] = useK8sWatchResource<PipelineKind>({
+  const [pipeline, loaded, loadError] = useK8sWatchResource<PipelineKind>({
     groupVersionKind: getGroupVersionKindForModel(PipelineModel),
     namespace,
     name,
@@ -125,7 +126,7 @@ const PipelineDetailsPage = () => {
   };
 
   if (!loaded) {
-    return <LoadingBox />;
+    return loadError ? <ErrorPage404 /> : <LoadingBox />;
   }
   return (
     <DetailsPage

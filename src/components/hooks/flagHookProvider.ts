@@ -85,6 +85,10 @@ export const useFlagHookProvider = (setFeatureFlag: SetFeatureFlag) => {
     FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_APPROVALS_TAB,
     true,
   );
+  setFeatureFlag(
+    FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAIL_METRICS_TAB,
+    true,
+  );
 };
 
 export const useTektonResultInstallProvider = (
@@ -106,8 +110,4 @@ export const useTektonResultInstallProvider = (
     fetch();
   }, []);
   setFeatureFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED, data ? true : false);
-  setFeatureFlag(
-    FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_DETAIL_METRICS_TAB,
-    data ? true : false,
-  );
 };

@@ -2,11 +2,13 @@ import {
   K8sGroupVersionKind,
   K8sModel,
   K8sResourceKindReference,
+  PrometheusResponse,
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { ALL_NAMESPACES_KEY } from '../../consts';
+import { adjustToStartOfWeek } from '../pipelines-metrics/utils';
 
 export const alphanumericCompare = (a: string, b: string): number => {
   return a.localeCompare(b, undefined, {
@@ -55,6 +57,16 @@ export const TimeRangeOptions = () => {
     '4w 2d': t('Last month'),
     '12w': t('Last quarter'),
     '52w': t('Last year'),
+  };
+};
+
+export const TimeRangeOptionsK8s = () => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
+  return {
+    '1d': t('Last day'),
+    '2w': t('Last weeks'),
+    '4w 2d': t('Last month'),
+    '12w': t('Last quarter'),
   };
 };
 
@@ -385,4 +397,155 @@ export const formatNamespaceRoute = (
   }
 
   return path;
+};
+
+export const isMatchingFirstTickValue = (
+  firstTickValue: number | Date,
+  firstPrometheusValue: number | Date,
+  type: string,
+) => {
+  const group_date = new Date(Number(firstPrometheusValue) * 1000);
+  const tickDate =
+    typeof firstTickValue === 'number'
+      ? new Date(firstTickValue * 1000)
+      : firstTickValue;
+  let isMatch = false;
+  if (type === 'hour') {
+    isMatch = group_date.getHours() === tickDate.getHours();
+  } else if (type === 'week') {
+    const adjustedGroupDate = adjustToStartOfWeek(new Date(group_date));
+    isMatch = adjustedGroupDate.toDateString() === tickDate.toDateString();
+  } else if (type === 'day') {
+    isMatch = group_date.toDateString() === tickDate.toDateString();
+  } else if (type === 'month') {
+    isMatch = group_date.getMonth() === tickDate.getMonth();
+  }
+  return isMatch;
+};
+
+export const getTotalPipelineRuns = (
+  prometheusResult: PrometheusResponse,
+  tickValues: number[] | Date[],
+  type: string,
+): number => {
+  let totalPLRCount = 0;
+
+  if (prometheusResult?.data?.result[0]?.values) {
+    const values = prometheusResult.data.result[0].values;
+    let lastValue = parseInt(values[0][1], 10);
+    let hasDecrement = false;
+    let sum = 0;
+
+    for (let i = 1; i < values.length; i++) {
+      const currentValue = parseInt(values[i][1], 10);
+      if (currentValue < lastValue) {
+        hasDecrement = true;
+        sum += lastValue;
+      }
+      lastValue = currentValue;
+    }
+
+    // If there's any decrement, add the last value to the sum
+    if (hasDecrement) {
+      sum += lastValue;
+      totalPLRCount = sum;
+    } else {
+      // If no decrement, just take the last value
+      totalPLRCount = lastValue;
+    }
+
+    // Check if the first tick element matches the first Prometheus value
+    const firstTickValue = tickValues[0];
+    const firstPrometheusValue = values[0];
+    const isMatch = isMatchingFirstTickValue(
+      firstTickValue,
+      firstPrometheusValue[0],
+      type,
+    );
+    if (isMatch) {
+      totalPLRCount -= parseInt(firstPrometheusValue[1], 10);
+    }
+  }
+
+  return totalPLRCount;
+};
+
+const formatDuration = (seconds: number): string => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+
+  let formatted = '';
+  if (hours > 0) {
+    formatted += `${hours}h `;
+  }
+  if (minutes > 0 || hours > 0) {
+    formatted += `${minutes}m `;
+  }
+  formatted += `${remainingSeconds}s`;
+
+  return formatted.trim();
+};
+
+export const getTotalPipelineRunsDuration = (
+  prometheusResult: PrometheusResponse,
+  tickValues: number[] | Date[],
+  type: string,
+): [string, number] => {
+  let totalPLRDuration = 0;
+
+  if (prometheusResult?.data?.result[0]?.values) {
+    const values = prometheusResult.data.result[0].values;
+
+    // Calculate total duration and check for decrements
+    let lastValue = parseFloat(values[0][1]);
+    let hasDecrement = false;
+    let sum = 0;
+
+    for (let i = 1; i < values.length; i++) {
+      const currentValue = parseFloat(values[i][1]);
+      if (currentValue < lastValue) {
+        hasDecrement = true;
+        sum += lastValue;
+      }
+      lastValue = currentValue;
+    }
+
+    // If there's any decrement, add the last value to the sum
+    if (hasDecrement) {
+      sum += lastValue;
+      totalPLRDuration = sum;
+    } else {
+      // If no decrement, just take the last value
+      totalPLRDuration = lastValue;
+    }
+
+    // Adjust total duration if the first tick element matches the first Prometheus value
+    const firstTickValue = tickValues[0];
+    const firstPrometheusValue = values[0];
+    const isMatch = isMatchingFirstTickValue(
+      firstTickValue,
+      firstPrometheusValue[0],
+      type,
+    );
+    if (isMatch) {
+      totalPLRDuration -= parseFloat(firstPrometheusValue[1]);
+    }
+  }
+
+  return [formatDuration(totalPLRDuration), totalPLRDuration];
+};
+
+export const getPipelineRunAverageDuration = (
+  totalDuration: number,
+  totalPLRRuns: number,
+): string => {
+  if (totalPLRRuns === 0) return '-';
+
+  const averageDuration = totalDuration / totalPLRRuns;
+  return formatDuration(averageDuration);
+};
+
+export const roundToNearestSecond = (timestamp) => {
+  return Math.round(timestamp);
 };

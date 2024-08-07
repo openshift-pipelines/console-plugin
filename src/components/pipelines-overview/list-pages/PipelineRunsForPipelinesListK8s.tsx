@@ -15,18 +15,28 @@ import {
   sortTimeStrings,
   listPageTableColumnClasses as tableColumnClasses,
 } from '../utils';
-import PipelineRunsForPipelinesRow from './PipelineRunsForPipelinesRow';
+import PipelineRunsForPipelinesRowK8s from './PipelineRunsForPipelinesRowK8s';
+import { Project } from '../../../types';
 
 type PipelineRunsForPipelinesListProps = {
   summaryData: SummaryProps[];
   summaryDataFiltered?: SummaryProps[];
   loaded: boolean;
   hideLastRunTime?: boolean;
+  projects?: Project[];
+  projectsLoaded?: boolean;
 };
 
-const PipelineRunsForPipelinesList: React.FC<
+const PipelineRunsForPipelinesListK8s: React.FC<
   PipelineRunsForPipelinesListProps
-> = ({ summaryData, summaryDataFiltered, loaded, hideLastRunTime }) => {
+> = ({
+  summaryData,
+  summaryDataFiltered,
+  loaded,
+  hideLastRunTime,
+  projects,
+  projectsLoaded,
+}) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const EmptyMsg = () => (
     <EmptyState variant={EmptyStateVariant.lg}>
@@ -123,15 +133,15 @@ const PipelineRunsForPipelinesList: React.FC<
   return (
     <VirtualizedTable
       columns={columns}
-      Row={PipelineRunsForPipelinesRow}
+      Row={PipelineRunsForPipelinesRowK8s}
       data={summaryDataFiltered || summaryData}
       loaded={loaded}
       loadError={false}
       unfilteredData={summaryData}
       EmptyMsg={EmptyMsg}
-      rowData={{ hideLastRunTime }}
+      rowData={{ hideLastRunTime, projects, projectsLoaded }}
     />
   );
 };
 
-export default PipelineRunsForPipelinesList;
+export default PipelineRunsForPipelinesListK8s;

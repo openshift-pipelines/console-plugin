@@ -23,6 +23,7 @@ import {
 } from '../../../test-data/taskrun-test-data';
 import { ComputedStatus, ContainerStatus } from '../../../types';
 import {
+  LatestPipelineRunStatus,
   appendPipelineRunStatus,
   containerToLogSourceStatus,
   getImageUrl,
@@ -35,7 +36,6 @@ import {
   getSbomTaskRun,
   getSecretAnnotations,
   hasExternalLink,
-  LatestPipelineRunStatus,
   pipelineRunDuration,
   updateServiceAccount,
 } from '../pipeline-utils';
@@ -62,7 +62,7 @@ jest.mock('@openshift-console/dynamic-plugin-sdk');
 beforeAll(() => {
   jest
     .spyOn(k8sResourceModule, 'k8sUpdate')
-    .mockImplementation(({ model, data }) => Promise.resolve(data));
+    .mockImplementation(({ data }) => Promise.resolve(data));
 });
 
 describe('pipeline-utils ', () => {

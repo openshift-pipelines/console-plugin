@@ -1,13 +1,67 @@
 import { guidedTour } from '../../../../../tests/views/guided-tour';
-import { globalPO } from '../../page-objects/global-po';
 import { app } from '../app';
 
 export const actionsDropdownMenu = {
-  verifyActionsMenu: () => cy.get(globalPO.actionsMenu).should('be.visible'),
-  clickActionMenu: () => cy.get(globalPO.actionsMenu).click(),
+  verifyActionsMenu: () =>
+    cy.get('button[class*=-menu-toggle]').should('be.visible'),
+  clickActionMenu: () =>
+    cy.get('button[class*=-menu-toggle]').contains('Actions').click(),
   selectAction: (action: string) => {
     actionsDropdownMenu.clickActionMenu();
-    cy.byTestActionID(action).click();
+    cy.get('ul[role="menu"]').should('be.visible');
+    switch (action) {
+      case 'Start': {
+        cy.get('[data-test="start-pipeline"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Start last run': {
+        cy.get('[data-test="start-last-run"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Add Trigger': {
+        cy.get('[data-test="add-trigger"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Remove Trigger': {
+        cy.get('[data-test="remove-trigger"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Edit labels': {
+        cy.get('[data-test="edit-labels"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Edit annotations': {
+        cy.get('[data-test="edit-annotations"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Edit Pipeline': {
+        cy.get('[data-test="edit"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Delete Pipeline': {
+        cy.get('[data-test="delete"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      default: {
+        throw new Error('action is not available');
+      }
+    }
   },
 };
 

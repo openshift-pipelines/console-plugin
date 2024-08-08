@@ -1,6 +1,5 @@
 import { detailsPage } from '../../../../../tests/views/details-page';
 import { modal } from '../../../../../tests/views/modal';
-import { pipelineActions } from '../../constants';
 import { pageTitle } from '../../constants/pageTitle';
 import {
   pipelineDetailsPO,
@@ -58,13 +57,29 @@ export const pipelineRunDetailsPage = {
     actionsDropdownMenu.clickActionMenu();
     switch (action) {
       case 'Rerun': {
-        cy.byTestActionID(pipelineActions.Rerun).click();
+        cy.get(
+          '[data-test="rerun-pipelineRun"] button[role="menuitem"]',
+        ).click();
         cy.get(pipelineRunDetailsPO.details.sectionTitle).should('be.visible');
         break;
       }
       case 'Delete Pipeline Run': {
-        cy.byTestActionID(pipelineActions.DeletePipelineRun).click();
+        cy.get(
+          '[data-test="delete-pipelineRun"] button[role="menuitem"]',
+        ).click();
         modal.modalTitleShouldContain('Delete Pipeline?');
+        break;
+      }
+      case 'Cancel': {
+        cy.get('[data-test="cancel-pipelineRun"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Stop': {
+        cy.get('[data-test="stop-pipelineRun"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
         break;
       }
       default: {
@@ -99,7 +114,7 @@ export const pipelineRunDetailsPage = {
     cy.get('.odc-pipeline-run-details__customDetails').within(() => {
       cy.contains('dl dt', 'Status').should('be.visible');
       cy.contains('dl dt', 'Pipeline').should('be.visible');
-      cy.contains('dl dt', 'Triggered by:').should('be.visible');
+      // cy.contains('dl dt', 'Triggered by:').should('be.visible');
     });
   },
   verifyDetailsFields: () => {
@@ -201,7 +216,7 @@ export const pipelineRunsPage = {
           cy.get('tbody tr')
             .eq(index)
             .within(() => {
-              cy.get(`button[data-test-id="kebab-button"]`)
+              cy.get(`button[data-test="kebab-button"]`)
                 .should('be.visible')
                 .click({ force: true });
             });

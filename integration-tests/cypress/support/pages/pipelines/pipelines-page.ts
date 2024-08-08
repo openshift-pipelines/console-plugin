@@ -76,15 +76,19 @@ export const pipelinesPage = {
         }
       });
     });
-    cy.get('[data-test-id="action-items"]').should('be.visible');
+    cy.get('[role="menu"]').should('be.visible');
   },
 
   selectActionForPipeline: (
     pipelineName: string,
     action: string | pipelineActions,
   ) => {
+    app.waitForDocumentLoad();
+    cy.get('[data-label="Name"] [type="button"] svg').click({ force: true });
     cy.get(pipelinesPO.pipelinesTable.table).within(() => {
       cy.get(pipelinesPO.pipelinesTable.pipelineName).each(($el, index) => {
+        /* eslint-disable-next-line cypress/no-unnecessary-waiting */
+        cy.wait(1000);
         if ($el.text().includes(pipelineName)) {
           cy.get('tbody tr')
             .eq(index)
@@ -96,8 +100,61 @@ export const pipelinesPage = {
         }
       });
     });
-    cy.byLegacyTestID('action-items').should('be.visible');
-    cy.byTestActionID(action).click({ force: true });
+    // cy.byLegacyTestID('action-items').should('be.visible');
+    cy.get('ul[role="menu"]').should('be.visible');
+    switch (action) {
+      case 'Start': {
+        cy.get('[data-test-action="start-pipeline"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Start last run': {
+        cy.get('[data-test-action="start-last-run"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Add Trigger': {
+        cy.get('[data-test-action="add-trigger"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Remove Trigger': {
+        cy.get('[data-test-action="remove-trigger"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Edit labels': {
+        cy.get('[data-test-action="edit-labels"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Edit annotations': {
+        cy.get('[data-test-action="edit-annotations"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Edit Pipeline': {
+        cy.get('[data-test-action="edit"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      case 'Delete Pipeline': {
+        cy.get('[data-test-action="delete"] button[role="menuitem"]')
+          .should('be.visible')
+          .click({ force: true });
+        break;
+      }
+      default: {
+        throw new Error('action is not available');
+      }
+    }
   },
 
   verifyDefaultPipelineColumnValues: (defaultValue = '-') => {
@@ -169,10 +226,21 @@ export const pipelinesPage = {
   search: (name: string) => {
     /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelinesPO.search).should('be.visible').clear().type(name);
-    // cy.get('tbody tr')
+    cy.get(pipelinesPO.pipelinesTable.pipelineName).each(($el, index) => {
+      if ($el.text().includes(name)) {
+        cy.get('tbody tr')
+          .eq(index)
+          .within(() => {
+            cy.get(`button${pipelinesPO.pipelinesTable.kebabMenu}`)
+              .should('be.visible')
+              .click({ force: true });
+          });
+      }
+      cy.byLegacyTestID(name);
+    });
     // .eq(0)
     // .within(() => {
-    cy.byLegacyTestID(name);
+    // cy.byLegacyTestID(name);
     // });
     cy.get(pipelinesPO.pipelinesTable.table).should('be.visible');
   },
@@ -347,6 +415,34 @@ export const startPipelineInPipelinesPage = {
           // startPipelineInPipelinesPage.enterGitUrl(gitUrl);
         }
       });
+    });
+  },
+  enterTimeoutValue: (value: string, time = 'min') => {
+    modal.shouldBeOpened();
+    cy.get('form').within(() => {
+      app.waitForLoad();
+      /* eslint-disable-next-line cypress/unsafe-to-chain-command */
+      cy.get('input[id="timeout-input"]').clear().type(value);
+      cy.get('button[aria-label="Number of Min"]').click();
+      switch (time) {
+        case 'hr':
+        case 'Hr':
+        case 'h':
+          cy.byTestDropDownMenu('h').click();
+          break;
+        case 'min':
+        case 'Min':
+        case 'm':
+          cy.byTestDropDownMenu('m').click();
+          break;
+        case 'sec':
+        case 'Sec':
+        case 's':
+          cy.byTestDropDownMenu('s').click();
+          break;
+        default:
+          break;
+      }
     });
   },
   clickStart: () => cy.get(pipelinesPO.startPipeline.start).click(),

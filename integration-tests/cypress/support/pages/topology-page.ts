@@ -129,7 +129,6 @@ export const topologyPage = {
   //   cy.get(topologyPO.addStorage.save).click();
   // },
   // },
-
   deleteApplication: (appName: string) => {
     /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(topologyPO.graph.deleteApplication).clear().type(appName);

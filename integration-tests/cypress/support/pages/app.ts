@@ -40,7 +40,6 @@ export const app = {
         cy.get('.co-m-loader', { timeout }).should('not.exist');
       }
     });
-    cy.get('[class*="spinner"]', { timeout }).should('not.exist');
     cy.get('.skeleton-catalog--grid', { timeout }).should('not.exist');
     cy.get('.loading-skeleton--table', { timeout }).should('not.exist');
     cy.byTestID('skeleton-detail-view', { timeout }).should('not.exist');

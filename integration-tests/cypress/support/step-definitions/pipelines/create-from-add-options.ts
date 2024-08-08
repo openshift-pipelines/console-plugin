@@ -175,21 +175,6 @@ Then(
   },
 );
 
-Given(
-  'user created workload {string} from add page with pipeline',
-  (pipelineName: string) => {
-    navigateTo(devNavigationMenu.Add);
-    addPage.selectCardFromOptions(addOptions.ImportFromGit);
-    gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
-    gitPage.verifyValidatedMessage('https://github.com/sclorg/nodejs-ex.git');
-    gitPage.enterComponentName(pipelineName);
-    gitPage.selectResource('deployment');
-    gitPage.selectAddPipeline();
-    gitPage.clickCreate();
-    topologyPage.verifyTopologyPage();
-  },
-);
-
 Given('user is at Developer Catalog form with builder images', () => {
   addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
 });

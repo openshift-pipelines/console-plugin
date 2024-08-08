@@ -279,7 +279,7 @@ export const pipelinesPO = {
     table: 'div[role="grid"]',
     pipelineName: 'tr td:nth-child(1)',
     pipelineRunName: 'tr td:nth-child(2)',
-    kebabMenu: '[data-test-id="kebab-button"]',
+    kebabMenu: '[data-test="kebab-button"]',
     columnValues: '[aria-label="Pipelines"] tbody tr td',
     columnNames: 'div[aria-label="Pipelines"] thead tr th',
     pipelineRunIcon: '[title="PipelineRun"]',
@@ -302,7 +302,7 @@ export const pipelinesPO = {
     remove: '#confirm-action',
   },
   startPipeline: {
-    sectionTitle: 'h2.odc-form-section__heading',
+    sectionTitle: '[class*="form__section-title"]',
     gitResourceDropdown: '[for="form-input-parameters-1-value-field"]', // '[id*="dropdown-resources-0"]',
     gitUrl: '#form-input-parameters-1-value-field',
     revision: '#form-input-parameters-2-value-field',

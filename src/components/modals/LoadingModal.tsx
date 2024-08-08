@@ -11,7 +11,7 @@ type LoadingModalProps = {
 const LoadingModal: React.FC<LoadingModalProps> = ({ onClose }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
-    <ModalWrapper>
+    <ModalWrapper onClose={onClose}>
       <LoadingBox />
       <ModalFooter inProgress={false}>
         <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right pf-v5-c-form__group--no-top-margin">

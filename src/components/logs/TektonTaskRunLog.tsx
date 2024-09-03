@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { LogViewer } from '@patternfly/react-log-viewer';
 import { HttpError } from '@openshift-console/dynamic-plugin-sdk/lib/utils/error/http-error';
 import { TaskRunKind } from '../../types';
 import { TektonResourceLabel } from '../../consts';
-import './Logs.scss';
-import './MultiStreamLogs.scss';
 import { LoadingInline } from '../Loading';
 import { useTRTaskRunLog } from '../hooks/useTektonResult';
+import './MultiStreamLogs.scss';
 
 type TektonTaskRunLogProps = {
   taskRun?: TaskRunKind;
@@ -16,7 +16,6 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
   taskRun,
   setCurrentLogsGetter,
 }) => {
-  const scrollPane = React.useRef<HTMLDivElement>();
   const taskName =
     taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] || '-';
   const [trResults, trLoaded, trError] = useTRTaskRunLog(
@@ -25,19 +24,23 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
   );
 
   React.useEffect(() => {
-    setCurrentLogsGetter(() => scrollPane.current?.innerText);
-  }, [setCurrentLogsGetter]);
-
-  React.useEffect(() => {
-    if (!trError && trLoaded && scrollPane.current && trResults) {
-      scrollPane.current.scrollTop = scrollPane.current.scrollHeight;
-    }
-  }, [trError, trLoaded, trResults]);
+    setCurrentLogsGetter(() => formattedResults);
+  }, [setCurrentLogsGetter, trResults]);
 
   const errorMessage =
     (trError as HttpError)?.code === 404
       ? `Logs are no longer accessible for ${taskName} task`
       : null;
+
+  // Format trResults to include taskName
+  const formattedResults = React.useMemo(() => {
+    if (!trResults) return '';
+    const formattedTaskName = `${taskName.toUpperCase()}`;
+
+    return `${formattedTaskName}\n${trResults}\n\n`;
+  }, [trResults, taskName]);
+  const lastRowIndex = trResults ? formattedResults.split('\n').length : 0;
+
   return (
     <>
       <div
@@ -55,36 +58,27 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
         )}
       </div>
       <div
-        className="odc-multi-stream-logs__container"
+        className="odc-multi-stream-logs__logviewer"
         data-test-id="tr-logs-task-container"
-        ref={scrollPane}
       >
-        <div
-          className="odc-multi-stream-logs__container__logs"
-          data-testid="tr-logs-container"
-        >
-          {errorMessage && (
-            <div
-              className="odc-pipeline-run-logs__logtext"
-              data-testid="tr-logs-error-message"
-            >
-              {errorMessage}
-            </div>
-          )}
-          {!errorMessage && trLoaded ? (
-            <div className="odc-logs" data-testid="tr-logs-container">
-              <p className="odc-logs__name">{taskName}</p>
-              <div>
-                <div
-                  className="odc-logs__content"
-                  data-testid="tr-logs-content"
-                >
-                  {trResults}
-                </div>
-              </div>
-            </div>
-          ) : null}
-        </div>
+        {errorMessage && (
+          <div
+            className="odc-pipeline-run-logs__logtext"
+            data-testid="tr-logs-error-message"
+          >
+            {errorMessage}
+          </div>
+        )}
+        {!errorMessage && trLoaded ? (
+          <LogViewer
+            hasLineNumbers={false}
+            isTextWrapped={false}
+            data={formattedResults}
+            theme="dark"
+            height="100%"
+            scrollToRow={lastRowIndex}
+          />
+        ) : null}
       </div>
     </>
   );

@@ -34,7 +34,7 @@ export type ResultRecord = {
   updateTime: string;
   etag: string;
   data: {
-    // tekton.dev/v1beta1.PipelineRun | tekton.dev/v1beta1.TaskRun | results.tekton.dev/v1alpha2.Log
+    // tekton.dev/v1.PipelineRun | tekton.dev/v1.TaskRun | results.tekton.dev/v1alpha2.Log
     type: string;
     value: string;
   };
@@ -122,8 +122,8 @@ export const NEQ = (left: string, right: string) =>
   EXP(left, `"${right}"`, '!=');
 
 export enum DataType {
-  PipelineRun = 'tekton.dev/v1beta1.PipelineRun',
-  TaskRun = 'tekton.dev/v1beta1.TaskRun',
+  PipelineRun = 'tekton.dev/v1.PipelineRun',
+  TaskRun = 'tekton.dev/v1.TaskRun',
   Log = 'results.tekton.dev/v1alpha2.Log',
 }
 

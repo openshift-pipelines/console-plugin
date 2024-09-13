@@ -124,7 +124,6 @@ export const NEQ = (left: string, right: string) =>
 export enum DataType {
   PipelineRun = 'tekton.dev/v1.PipelineRun',
   TaskRun = 'tekton.dev/v1.TaskRun',
-  Log = 'results.tekton.dev/v1alpha2.Log',
 }
 
 export const labelsToFilter = (labels?: MatchLabels): string =>
@@ -481,7 +480,10 @@ export const getTRURLHost = async () => {
   return route?.spec.host;
 };
 
-const getLog = async (taskRunPath: string) => {
+export const getTaskRunLog = async (taskRunPath: string): Promise<string> => {
+  if (!taskRunPath) {
+    throw404();
+  }
   const tektonResultsAPI = await getTektonResultsAPIUrl();
   const url = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${taskRunPath.replace(
     '/records/',
@@ -489,23 +491,3 @@ const getLog = async (taskRunPath: string) => {
   )}`;
   return consoleProxyFetchLog({ url, method: 'GET', allowInsecure: true });
 };
-
-export const getTaskRunLog = (
-  namespace: string,
-  taskRunName: string,
-): Promise<string> =>
-  getFilteredRecord<any>(
-    namespace,
-    DataType.Log,
-    AND(
-      EQ(`data.spec.resource.kind`, 'TaskRun'),
-      EQ(`data.spec.resource.name`, taskRunName),
-    ),
-    { limit: 1 },
-  ).then((x) =>
-    x?.[1]?.records.length > 0
-      ? getLog(x?.[1]?.records[0].name).then((response: string) => {
-          return response;
-        })
-      : throw404(),
-  );

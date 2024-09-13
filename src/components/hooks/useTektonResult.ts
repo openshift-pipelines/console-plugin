@@ -199,6 +199,7 @@ export const useGetTaskRuns = (
 export const useTRTaskRunLog = (
   namespace: string,
   taskRunName: string,
+  taskRunPath: string,
 ): [string, boolean, unknown] => {
   const [result, setResult] = React.useState<[string, boolean, unknown]>([
     null,
@@ -210,7 +211,7 @@ export const useTRTaskRunLog = (
     if (namespace && taskRunName) {
       (async () => {
         try {
-          const log = await getTaskRunLog(namespace, taskRunName);
+          const log = await getTaskRunLog(taskRunPath);
           if (!disposed) {
             setResult([log, true, undefined]);
           }

@@ -36,8 +36,10 @@ const ApprovalModal: React.FC<Props> = ({
   const dirty = type === 'reject' && _.isEmpty(values.reason);
   return (
     <Form className="modal-content" onSubmit={handleSubmit}>
-      <ModalTitle>{labelTitle}</ModalTitle>
-      <ModalBody>
+      <ModalTitle className="pipelines-approval-modal__title">
+        {labelTitle}
+      </ModalTitle>
+      <ModalBody className="pipelines-approval-modal__content">
         {labelDescription}
         <FormGroup label={t('Reason')} fieldId="reason">
           <TextArea
@@ -60,6 +62,7 @@ const ApprovalModal: React.FC<Props> = ({
         buttonAlignment="left"
         cancel={cancel}
         errorMessage={status?.error}
+        className="pipelines-approval-modal__footer"
       />
     </Form>
   );

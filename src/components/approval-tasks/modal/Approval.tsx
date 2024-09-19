@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { Link } from 'react-router-dom-v5-compat';
 import { ResourceIcon, k8sPatch } from '@openshift-console/dynamic-plugin-sdk';
@@ -78,32 +78,35 @@ const Approval: ModalComponent<ApprovalProps> = ({
 
   const labelTitle = type === 'approve' ? t('Approve') : t('Reject');
 
+  const approvalMessage =
+    type === 'approve'
+      ? t('Are you sure you want to approve')
+      : t('Please provide a reason for not approving');
+
+  const approvalEnding = type === 'approve' ? '?' : '.';
+
   const labelDescription = (
-    <Trans t={t} ns="plugin__pipelines-console-plugin">
-      <p>
-        {type === 'approve'
-          ? 'Are you sure you want to approve'
-          : 'Please provide a reason for not approving'}{' '}
-        <ResourceIcon kind={getReferenceForModel(ApprovalTaskModel)} />
-        <Link
-          to={`/k8s/ns/${namespace}/${getReferenceForModel(
-            ApprovalTaskModel,
-          )}/${name}`}
-        >
-          {name}
-        </Link>{' '}
-        {'in'} <br />
-        <ResourceIcon kind={getReferenceForModel(PipelineRunModel)} />
-        <Link
-          to={`/k8s/ns/${namespace}/${getReferenceForModel(
-            PipelineRunModel,
-          )}/${pipelineRunName}`}
-        >
-          {pipelineRunName}
-        </Link>
-        {type === 'approve' ? '?' : '.'}
-      </p>
-    </Trans>
+    <p>
+      {approvalMessage}{' '}
+      <ResourceIcon kind={getReferenceForModel(ApprovalTaskModel)} />
+      <Link
+        to={`/k8s/ns/${namespace}/${getReferenceForModel(
+          ApprovalTaskModel,
+        )}/${name}`}
+      >
+        {name}
+      </Link>{' '}
+      {t('in')} <br />
+      <ResourceIcon kind={getReferenceForModel(PipelineRunModel)} />
+      <Link
+        to={`/k8s/ns/${namespace}/${getReferenceForModel(
+          PipelineRunModel,
+        )}/${pipelineRunName}`}
+      >
+        {pipelineRunName}
+      </Link>
+      {approvalEnding}
+    </p>
   );
   return (
     <ModalWrapper className="pipelines-approval-modal" onClose={closeModal}>

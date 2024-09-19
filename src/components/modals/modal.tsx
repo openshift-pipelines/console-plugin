@@ -36,9 +36,12 @@ export const ModalTitle: React.FC<ModalTitleProps> = ({
   </div>
 );
 
-export const ModalBody: React.FC<ModalBodyProps> = ({ children }) => (
+export const ModalBody: React.FC<ModalBodyProps> = ({
+  children,
+  className = 'modal-body-content',
+}) => (
   <div className="modal-body">
-    <div className="modal-body-content">{children}</div>
+    <div className={className}>{children}</div>
   </div>
 );
 
@@ -47,10 +50,11 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
   errorMessage,
   inProgress,
   children,
+  className = 'modal-footer',
 }) => {
   return (
     <ButtonBar
-      className="modal-footer"
+      className={className}
       errorMessage={errorMessage}
       infoMessage={message}
       inProgress={inProgress}

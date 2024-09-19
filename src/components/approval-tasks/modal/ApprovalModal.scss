@@ -6,3 +6,19 @@
 .pipelines-approval-modal__text-box {
   height: 8rem !important;
 }
+
+.pipelines-approval-modal__title {
+  padding-bottom: 0 !important;
+  padding-left: var(--pf-v5-global--spacer--xl);
+  padding-top: var(--pf-v5-global--spacer--md);
+}
+
+.pipelines-approval-modal__content {
+  padding-bottom: 0 !important;
+  padding-left: var(--pf-v5-global--spacer--xl);
+}
+
+.pipelines-approval-modal__footer {
+  padding-top: 0 !important;
+  padding-left: var(--pf-v5-global--spacer--xl);
+}

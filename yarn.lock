@@ -2085,7 +2085,7 @@
     clsx "^2.0.0"
     react-jss "^10.10.0"
 
-"@patternfly/react-core@^5.1.1", "@patternfly/react-core@^5.2.1", "@patternfly/react-core@^5.3.4":
+"@patternfly/react-core@^5.0.0", "@patternfly/react-core@^5.1.1", "@patternfly/react-core@^5.2.1", "@patternfly/react-core@^5.3.4":
   version "5.3.4"
   resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-5.3.4.tgz#84f85d3528655134cf0bcdb096f82777f0dd69b6"
   integrity sha512-zr2yeilIoFp8MFOo0vNgI8XuM+P2466zHvy4smyRNRH2/but2WObqx7Wu4ftd/eBMYdNqmTeuXe6JeqqRqnPMQ==
@@ -2102,12 +2102,22 @@
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-5.2.1.tgz#c29e9fbecd13c33e772abe6089e31bb86b1ab2a8"
   integrity sha512-aeJ0X+U2NDe8UmI5eQiT0iuR/wmUq97UkDtx3HoZcpRb9T6eUBfysllxjRqHS8rOOspdU8OWq+CUhQ/E2ZDibg==
 
-"@patternfly/react-icons@^5.1.1", "@patternfly/react-icons@^5.2.1", "@patternfly/react-icons@^5.3.2":
+"@patternfly/react-icons@^5.0.0", "@patternfly/react-icons@^5.1.1", "@patternfly/react-icons@^5.2.1", "@patternfly/react-icons@^5.3.2":
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-5.3.2.tgz#f594ed67b0d39f486ea0f0367de058d4bd056605"
   integrity sha512-GEygYbl0H4zD8nZuTQy2dayKIrV2bMMeWKSOEZ16Y3EYNgYVUOUnN+J0naAEuEGH39Xb1DE9n+XUbE1PC4CxPA==
 
-"@patternfly/react-styles@^5.1.1", "@patternfly/react-styles@^5.2.1", "@patternfly/react-styles@^5.3.1":
+"@patternfly/react-log-viewer@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-log-viewer/-/react-log-viewer-5.3.0.tgz#4df3344d0983c45a1a23ce237d4faa5d7285ece0"
+  integrity sha512-6jzhxwJwllLdX3jpoGdzIhvhPTfYuC6B+KuN2Laf7Iuioeig8bOMzJZFh6VXg+aBGd9j4JGv2dYryDsbDsTLvw==
+  dependencies:
+    "@patternfly/react-core" "^5.0.0"
+    "@patternfly/react-icons" "^5.0.0"
+    "@patternfly/react-styles" "^5.0.0"
+    memoize-one "^5.1.0"
+
+"@patternfly/react-styles@^5.0.0", "@patternfly/react-styles@^5.1.1", "@patternfly/react-styles@^5.2.1", "@patternfly/react-styles@^5.3.1":
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-5.3.1.tgz#4bc42f98c48e117df5d956ee3f551d0f57ef1b35"
   integrity sha512-H6uBoFH3bJjD6PP75qZ4k+2TtF59vxf9sIVerPpwrGJcRgBZbvbMZCniSC3+S2LQ8DgXLnDvieq78jJzHz0hiA==
@@ -10260,6 +10270,11 @@ memfs@^4.6.0:
     "@jsonjoy.com/util" "^1.3.0"
     tree-dump "^1.0.1"
     tslib "^2.0.0"
+
+memoize-one@^5.1.0:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.2.1.tgz#8337aa3c4335581839ec01c3d594090cebe8f00e"
+  integrity sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==
 
 meow@^10.1.5:
   version "10.1.5"

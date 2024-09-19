@@ -170,87 +170,89 @@ class PipelineRunLogsWithTranslation extends React.Component<
     )}/logs`;
 
     return (
-      <div className="odc-pipeline-run-logs">
-        <div
-          className="odc-pipeline-run-logs__tasklist"
-          data-test-id="logs-tasklist"
-        >
-          {taskCount > 0 ? (
-            <Nav onSelect={this.onNavSelect} theme="light">
-              <NavList className="odc-pipeline-run-logs__nav">
-                {taskRunNames.map((taskRunName) => {
-                  const taskRun = tRuns.find(
-                    (tRun) => tRun.metadata.name === taskRunName,
-                  );
-                  return (
-                    <NavItem
-                      key={taskRunName}
-                      itemId={taskRunName}
-                      isActive={activeItem === taskRunName}
-                      className="odc-pipeline-run-logs__navitem"
-                    >
-                      <Link
-                        to={`${logsPath}?taskName=${
-                          taskRun?.metadata?.labels?.[
-                            TektonResourceLabel.pipelineTask
-                          ] || '-'
-                        }`}
+      <div className="odc-pipeline-run-logs-main-div">
+        <div className="odc-pipeline-run-logs">
+          <div
+            className="odc-pipeline-run-logs__tasklist"
+            data-test-id="logs-tasklist"
+          >
+            {taskCount > 0 ? (
+              <Nav onSelect={this.onNavSelect} theme="light">
+                <NavList className="odc-pipeline-run-logs__nav">
+                  {taskRunNames.map((taskRunName) => {
+                    const taskRun = tRuns.find(
+                      (tRun) => tRun.metadata.name === taskRunName,
+                    );
+                    return (
+                      <NavItem
+                        key={taskRunName}
+                        itemId={taskRunName}
+                        isActive={activeItem === taskRunName}
+                        className="odc-pipeline-run-logs__navitem"
                       >
-                        <ColoredStatusIcon status={taskRunStatus(taskRun)} />
-                        <span
-                          className="odc-pipeline-run-logs__namespan"
-                          ref={
-                            activeItem === taskRunName
-                              ? selectedItemRef
-                              : undefined
-                          }
+                        <Link
+                          to={`${logsPath}?taskName=${
+                            taskRun?.metadata?.labels?.[
+                              TektonResourceLabel.pipelineTask
+                            ] || '-'
+                          }`}
                         >
-                          {taskRun?.metadata?.labels?.[
-                            TektonResourceLabel.pipelineTask
-                          ] || '-'}
-                        </span>
-                      </Link>
-                    </NavItem>
-                  );
-                })}
-              </NavList>
-            </Nav>
-          ) : (
-            <div className="odc-pipeline-run-logs__nav">
-              {t('No task runs found')}
-            </div>
-          )}
-        </div>
-        <div className="odc-pipeline-run-logs__container">
-          {activeItem && resources ? (
-            <LogsWrapperComponent
-              key={taskName}
-              resource={resources}
-              downloadAllLabel={t('Download all task logs')}
-              onDownloadAll={downloadAllCallback}
-              taskRun={activeTaskRun}
-            />
-          ) : (
-            <div className="odc-pipeline-run-logs__log">
-              <div
-                className="odc-pipeline-run-logs__logtext"
-                data-test-id="task-logs-error"
-              >
-                {waitingForPods &&
-                  !pipelineRunFinished &&
-                  `Waiting for ${taskName} task to start `}
-                {!resources &&
-                  pipelineRunFinished &&
-                  !obj.status &&
-                  t('No logs found')}
-                {logDetails && (
-                  <div className="odc-pipeline-run-logs__logsnippet">
-                    {logDetails.staticMessage}
-                  </div>
-                )}
+                          <ColoredStatusIcon status={taskRunStatus(taskRun)} />
+                          <span
+                            className="odc-pipeline-run-logs__namespan"
+                            ref={
+                              activeItem === taskRunName
+                                ? selectedItemRef
+                                : undefined
+                            }
+                          >
+                            {taskRun?.metadata?.labels?.[
+                              TektonResourceLabel.pipelineTask
+                            ] || '-'}
+                          </span>
+                        </Link>
+                      </NavItem>
+                    );
+                  })}
+                </NavList>
+              </Nav>
+            ) : (
+              <div className="odc-pipeline-run-logs__nav">
+                {t('No task runs found')}
               </div>
-            </div>
-          )}
+            )}
+          </div>
+          <div className="odc-pipeline-run-logs__container">
+            {activeItem && resources ? (
+              <LogsWrapperComponent
+                key={taskName}
+                resource={resources}
+                downloadAllLabel={t('Download all task logs')}
+                onDownloadAll={downloadAllCallback}
+                taskRun={activeTaskRun}
+              />
+            ) : (
+              <div className="odc-pipeline-run-logs__log">
+                <div
+                  className="odc-pipeline-run-logs__logtext"
+                  data-test-id="task-logs-error"
+                >
+                  {waitingForPods &&
+                    !pipelineRunFinished &&
+                    `Waiting for ${taskName} task to start `}
+                  {!resources &&
+                    pipelineRunFinished &&
+                    !obj.status &&
+                    t('No logs found')}
+                  {logDetails && (
+                    <div className="odc-pipeline-run-logs__logsnippet">
+                      {logDetails.staticMessage}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );

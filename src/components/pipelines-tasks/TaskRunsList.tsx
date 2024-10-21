@@ -107,17 +107,39 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
   ...props
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
   const [columns, activeColumns] = useTaskColumns();
   const params = useParams();
   const { ns: namespace } = params;
   const ns = namespace === ALL_NAMESPACES_KEY ? '-' : namespace;
   const sortColumnIndex = !namespace ? 6 : 5;
   const parentName = props?.obj?.metadata?.name;
-  const [taskRuns, loaded, loadError] = useTaskRuns(ns, parentName);
+  const [taskRuns, loaded, loadError, nextPageToken] = useTaskRuns(
+    ns,
+    parentName,
+  );
   const [staticData, filteredData, onFilterChange] = useListPageFilter(
     taskRuns,
     useTaskRunsFilters(),
   );
+
+  // Once OCPBUGS-43538 ticket is closed, use onRowsRendered prop in VirtualizedTable for load more on scroll
+  React.useEffect(() => {
+    if (!loadMoreRef.current || !loaded) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry.isIntersecting && nextPageToken) {
+        nextPageToken();
+      }
+    });
+
+    observer.observe(loadMoreRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [nextPageToken, loaded]);
   return (
     <>
       <ListPageBody>
@@ -175,6 +197,7 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
           sortColumnIndex={sortColumnIndex}
           sortDirection={SortByDirection.desc}
         />
+        <div ref={loadMoreRef}></div>
       </ListPageBody>
     </>
   );

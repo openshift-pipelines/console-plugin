@@ -32,6 +32,7 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
   PLRsForKind,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
   const { ns } = useParams();
   namespace = namespace || ns;
   const columns = usePipelineRunsColumns(namespace, repositoryPLRs);
@@ -44,12 +45,35 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
     ? 5
     : 4;
 
-  const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] =
-    useGetPipelineRuns(namespace, { name: PLRsForName, kind: PLRsForKind });
+  const [
+    pipelineRuns,
+    pipelineRunsLoaded,
+    pipelineRunsLoadError,
+    nextPageToken,
+  ] = useGetPipelineRuns(namespace, { name: PLRsForName, kind: PLRsForKind });
   const [data, filteredData, onFilterChange] = useListPageFilter(
     pipelineRuns,
     filters,
   );
+
+  // Once OCPBUGS-43538 ticket is closed, use onRowsRendered prop in VirtualizedTable for load more on scroll
+  React.useEffect(() => {
+    if (!loadMoreRef.current || !pipelineRunsLoaded) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry.isIntersecting && nextPageToken) {
+        nextPageToken();
+      }
+    });
+
+    observer.observe(loadMoreRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [nextPageToken, pipelineRunsLoaded]);
+
   return (
     <ListPageBody>
       <ListPageFilter
@@ -88,6 +112,7 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
         sortColumnIndex={sortColumnIndex}
         sortDirection={SortByDirection.desc}
       />
+      <div ref={loadMoreRef}></div>
     </ListPageBody>
   );
 };

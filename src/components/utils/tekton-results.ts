@@ -281,7 +281,7 @@ export const createTektonResultsUrl = async (
         MINIMUM_PAGE_SIZE,
         Math.min(
           MAXIMUM_PAGE_SIZE,
-          options?.limit >= 0 ? options.limit : options?.pageSize ?? 30,
+          options?.limit >= 0 ? options.limit : options?.pageSize ?? 50,
         ),
       )}`,
       ...(nextPageToken ? { page_token: nextPageToken } : {}),

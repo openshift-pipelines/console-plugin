@@ -90,6 +90,7 @@
     "mocha-junit-reporter": "^2.2.0",
     "mochawesome": "^7.1.3",
     "mochawesome-merge": "^4.3.0",
+    "monaco-editor": "^0.28.1",
     "openapi-typescript": "^6.7.0",
     "pluralize": "^8.0.0",
     "popper.js": "^1.16.1",
@@ -103,6 +104,8 @@
     "react-helmet": "^6.1.0",
     "react-i18next": "^11.7.3",
     "react-linkify": "^0.2.2",
+    "react-monaco-editor": "0.46.x",
+    "react-rnd": "^10.3.4",
     "react-router": "5.3.x",
     "react-router-dom": "5.3.x",
     "react-router-dom-v5-compat": "^6.11.2",
@@ -129,6 +132,7 @@
     "displayName": "Pipelines console plugin",
     "description": "OpenShift Pipelines UI plugin for OpenShift web console",
     "exposedModules": {
+      "icons": "./images/icon.ts",
       "hookProvider": "./components/hooks",
       "pipelinesComponent": "./components/pipelines-overview",
       "pipelinesList": "./components/pipelines-list",
@@ -145,7 +149,9 @@
       "pipelineRunDetails": "./components/pipelineRuns-details",
       "outputsComponent": "./components/outputs",
       "toastContext": "./components/toast",
-      "pipelineApprovalContext": "./components/approval-tasks/approval-notification"
+      "pipelineApprovalContext": "./components/approval-tasks/approval-notification",
+      "pipelineBuilder": "./components/pipeline-builder",
+      "catalog": "./components/catalog"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

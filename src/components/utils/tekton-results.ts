@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  k8sGet,
   K8sResourceCommon,
   MatchExpression,
   MatchLabels,
   Selector,
-  k8sGet,
 } from '@openshift-console/dynamic-plugin-sdk';
 import _ from 'lodash';
 import {
@@ -15,7 +15,11 @@ import {
 import { RouteModel, TektonResultModel } from '../../models';
 import { PipelineRunKind, TaskRunKind } from '../../types';
 import { K8sResourceKind } from '../../types/openshift';
-import { consoleProxyFetch, consoleProxyFetchJSON } from './proxy';
+import {
+  consoleProxyFetch,
+  consoleProxyFetchJSON,
+  ProxyRequest,
+} from './proxy';
 
 // REST API spec
 // https://github.com/tektoncd/results/blob/main/docs/api/rest-api-spec.md
@@ -61,15 +65,6 @@ export type TektonResultsOptions = {
   summary?: string;
   data_type?: DataType;
   groupBy?: string;
-};
-
-type ProxyRequest = {
-  allowInsecure?: boolean;
-  method: string;
-  url: string;
-  headers?: Record<string, string[]>;
-  queryparams?: Record<string, string[]>;
-  body?: string;
 };
 
 const throw404 = () => {
@@ -334,6 +329,7 @@ export const getFilteredRecord = async <R extends K8sResourceCommon>(
         url,
         method: 'GET',
         allowInsecure: true,
+        allowAuthHeader: true,
       });
       if (options?.limit >= 0) {
         list = {
@@ -489,5 +485,10 @@ export const getTaskRunLog = async (taskRunPath: string): Promise<string> => {
     '/records/',
     '/logs/',
   )}`;
-  return consoleProxyFetchLog({ url, method: 'GET', allowInsecure: true });
+  return consoleProxyFetchLog({
+    url,
+    method: 'GET',
+    allowInsecure: true,
+    allowAuthHeader: true,
+  });
 };

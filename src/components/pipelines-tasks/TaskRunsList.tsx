@@ -19,6 +19,7 @@ import { TaskRunModel } from '../../models';
 import { ALL_NAMESPACES_KEY, TektonResourceLabel } from '../../consts';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useTaskRunsFilters } from './useTaskRunsFilters';
+import { useLoadMoreOnScroll } from '../utils/tekton-results';
 
 interface TaskRunsListPageProps {
   showTitle?: boolean;
@@ -123,23 +124,8 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
     useTaskRunsFilters(),
   );
 
-  // Once OCPBUGS-43538 ticket is closed, use onRowsRendered prop in VirtualizedTable for load more on scroll
-  React.useEffect(() => {
-    if (!loadMoreRef.current || !loaded) return;
+  useLoadMoreOnScroll(loadMoreRef, nextPageToken, loaded);
 
-    const observer = new IntersectionObserver((entries) => {
-      const entry = entries[0];
-      if (entry.isIntersecting && nextPageToken) {
-        nextPageToken();
-      }
-    });
-
-    observer.observe(loadMoreRef.current);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [nextPageToken, loaded]);
   return (
     <>
       <ListPageBody>

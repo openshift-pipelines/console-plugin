@@ -7,6 +7,7 @@ import {
   k8sGet,
 } from '@openshift-console/dynamic-plugin-sdk';
 import _ from 'lodash';
+import { RefObject, useEffect } from 'react';
 import {
   ALL_NAMESPACES_KEY,
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
@@ -490,4 +491,25 @@ export const getTaskRunLog = async (taskRunPath: string): Promise<string> => {
     '/logs/',
   )}`;
   return consoleProxyFetchLog({ url, method: 'GET', allowInsecure: true });
+};
+
+export const useLoadMoreOnScroll = (
+  loadMoreRef: RefObject<HTMLElement>,
+  nextPageToken: (() => void) | null,
+  loaded: boolean,
+) => {
+  useEffect(() => {
+    if (!loadMoreRef.current || !loaded) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry.isIntersecting && nextPageToken) {
+        nextPageToken();
+      }
+    });
+    observer.observe(loadMoreRef.current);
+    return () => {
+      observer.disconnect();
+    };
+  }, [nextPageToken, loaded, loadMoreRef]);
 };

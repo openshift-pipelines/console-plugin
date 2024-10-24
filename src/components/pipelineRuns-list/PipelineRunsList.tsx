@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import { SortByDirection } from '@patternfly/react-table';
 import {
   ListPageBody,
@@ -11,8 +13,7 @@ import { usePipelineRunsFilters } from './usePipelineRunsFilters';
 import { PipelineRunKind } from '../../types';
 import { useGetPipelineRuns } from '../hooks/useTektonResult';
 import PipelineRunsRow from './PipelineRunsRow';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useLoadMoreOnScroll } from '../utils/tekton-results';
 
 import './PipelineRunsList.scss';
 
@@ -56,23 +57,7 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
     filters,
   );
 
-  // Once OCPBUGS-43538 ticket is closed, use onRowsRendered prop in VirtualizedTable for load more on scroll
-  React.useEffect(() => {
-    if (!loadMoreRef.current || !pipelineRunsLoaded) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      const entry = entries[0];
-      if (entry.isIntersecting && nextPageToken) {
-        nextPageToken();
-      }
-    });
-
-    observer.observe(loadMoreRef.current);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [nextPageToken, pipelineRunsLoaded]);
+  useLoadMoreOnScroll(loadMoreRef, nextPageToken, pipelineRunsLoaded);
 
   return (
     <ListPageBody>

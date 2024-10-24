@@ -2,13 +2,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PipelineKind, TaskKind } from '../../../types';
 
-export type TektonWorkspace = {
-  name: string;
-  description?: string;
-  mountPath?: string;
-  readOnly?: boolean;
-  optional?: boolean;
-};
 export interface WorkspaceDefinitionListProps {
   obj: TaskKind | PipelineKind;
 }

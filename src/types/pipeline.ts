@@ -71,7 +71,7 @@ export type PipelineSpec = {
 };
 
 export type PipelineKind = K8sResourceCommon & {
-  spec: PipelineSpec;
+  spec?: PipelineSpec;
 };
 
 export enum SecretType {

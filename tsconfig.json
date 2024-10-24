@@ -22,5 +22,5 @@
     }
   },
   "exclude": [".yarn", "**/node_modules", "**/integration-tests"],
-  "include": ["src"]
+  "include": ["src", "custom.d.ts"]
 }

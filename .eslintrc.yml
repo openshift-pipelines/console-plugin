@@ -15,6 +15,7 @@ parserOptions:
 plugins:
   - prettier
   - react
+  - react-hooks
   - '@typescript-eslint'
 rules:
   prettier/prettier:

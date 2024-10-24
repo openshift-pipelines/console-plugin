@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom-v5-compat';
 import { SortByDirection } from '@patternfly/react-table';
 import {
   ListPageBody,
@@ -11,8 +13,7 @@ import { usePipelineRunsFilters } from './usePipelineRunsFilters';
 import { PipelineRunKind } from '../../types';
 import { useGetPipelineRuns } from '../hooks/useTektonResult';
 import PipelineRunsRow from './PipelineRunsRow';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useLoadMoreOnScroll } from '../utils/tekton-results';
 
 import './PipelineRunsList.scss';
 
@@ -32,6 +33,7 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
   PLRsForKind,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
   const { ns } = useParams();
   namespace = namespace || ns;
   const columns = usePipelineRunsColumns(namespace, repositoryPLRs);
@@ -44,12 +46,19 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
     ? 5
     : 4;
 
-  const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] =
-    useGetPipelineRuns(namespace, { name: PLRsForName, kind: PLRsForKind });
+  const [
+    pipelineRuns,
+    pipelineRunsLoaded,
+    pipelineRunsLoadError,
+    nextPageToken,
+  ] = useGetPipelineRuns(namespace, { name: PLRsForName, kind: PLRsForKind });
   const [data, filteredData, onFilterChange] = useListPageFilter(
     pipelineRuns,
     filters,
   );
+
+  useLoadMoreOnScroll(loadMoreRef, nextPageToken, pipelineRunsLoaded);
+
   return (
     <ListPageBody>
       <ListPageFilter
@@ -88,6 +97,7 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
         sortColumnIndex={sortColumnIndex}
         sortDirection={SortByDirection.desc}
       />
+      <div ref={loadMoreRef}></div>
     </ListPageBody>
   );
 };

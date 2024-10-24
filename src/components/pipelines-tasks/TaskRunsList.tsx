@@ -19,6 +19,7 @@ import { TaskRunModel } from '../../models';
 import { ALL_NAMESPACES_KEY, TektonResourceLabel } from '../../consts';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useTaskRunsFilters } from './useTaskRunsFilters';
+import { useLoadMoreOnScroll } from '../utils/tekton-results';
 
 interface TaskRunsListPageProps {
   showTitle?: boolean;
@@ -107,17 +108,24 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
   ...props
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
   const [columns, activeColumns] = useTaskColumns();
   const params = useParams();
   const { ns: namespace } = params;
   const ns = namespace === ALL_NAMESPACES_KEY ? '-' : namespace;
   const sortColumnIndex = !namespace ? 6 : 5;
   const parentName = props?.obj?.metadata?.name;
-  const [taskRuns, loaded, loadError] = useTaskRuns(ns, parentName);
+  const [taskRuns, loaded, loadError, nextPageToken] = useTaskRuns(
+    ns,
+    parentName,
+  );
   const [staticData, filteredData, onFilterChange] = useListPageFilter(
     taskRuns,
     useTaskRunsFilters(),
   );
+
+  useLoadMoreOnScroll(loadMoreRef, nextPageToken, loaded);
+
   return (
     <>
       <ListPageBody>
@@ -175,6 +183,7 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
           sortColumnIndex={sortColumnIndex}
           sortDirection={SortByDirection.desc}
         />
+        <div ref={loadMoreRef}></div>
       </ListPageBody>
     </>
   );

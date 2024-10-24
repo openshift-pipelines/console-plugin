@@ -24,6 +24,7 @@ export const getResultsSummary = async (
       url,
       method: 'GET',
       allowInsecure: true,
+      allowAuthHeader: true,
     });
 
     return sData;

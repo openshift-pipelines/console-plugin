@@ -1,9 +1,10 @@
-import { safeLoad } from 'js-yaml';
 import { consoleFetchJSON } from '@openshift-console/dynamic-plugin-sdk';
+import { safeLoad } from 'js-yaml';
 
 export const API_PROXY_URL = '/api/dev-console/proxy/internet';
 
-type ProxyRequest = {
+export type ProxyRequest = {
+  allowAuthHeader?: boolean;
   allowInsecure?: boolean;
   method: string;
   url: string;

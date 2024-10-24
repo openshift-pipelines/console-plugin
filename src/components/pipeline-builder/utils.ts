@@ -5,7 +5,6 @@ import {
   K8sResourceKind,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { FormikErrors } from 'formik';
-import i18n from 'i18next';
 import * as _ from 'lodash';
 import { ClusterTaskModel, PipelineModel, TaskModel } from '../../models';
 import {
@@ -18,6 +17,7 @@ import {
   TektonResourceGroup,
 } from '../../types';
 import { sanitizePipelineParams } from '../pipelines-details/utils';
+import { t } from '../utils/common-utils';
 import { getRandomChars } from '../utils/utils';
 import {
   getTaskErrorString,
@@ -137,7 +137,7 @@ export const findTask = (
       apiVersion: getAPIVersionForModel(TaskModel),
       kind: 'EmbeddedTask',
       metadata: {
-        name: i18n.t('pipelines-plugin~Embedded task'),
+        name: t('Embedded task'),
       },
       spec: task.taskSpec,
     };

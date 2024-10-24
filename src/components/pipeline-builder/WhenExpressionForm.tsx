@@ -19,7 +19,7 @@ const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
   autoCompleteValues,
 }) => {
   const { setFieldValue } = useFormikContext<PipelineBuilderFormikValues>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return (
     <Grid hasGutter>
@@ -36,7 +36,7 @@ const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
               data-test="input"
               type={TextInputTypes.text}
               name={`${namePrefix}.input`}
-              label={t('pipelines-plugin~Input')}
+              label={t('Input')}
               autoComplete="off"
             />
           )}
@@ -46,9 +46,9 @@ const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
         <DropdownField
           dataTest="operator"
           name={`${namePrefix}.operator`}
-          label={t('pipelines-plugin~Operator')}
+          label={t('Operator')}
           items={WhenExpressionOperatorType}
-          title={t('pipelines-plugin~Select operator')}
+          title={t('Select operator')}
           onChange={(operator: string) =>
             setFieldValue(`${namePrefix}.operator`, operator)
           }
@@ -59,7 +59,7 @@ const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
         <TextColumnField
           data-test="values"
           name={`${namePrefix}.values`}
-          label={t('pipelines-plugin~Values')}
+          label={t('Values')}
         >
           {({ name: arrayName, ...additionalProps }) => (
             <AutoCompletePopover

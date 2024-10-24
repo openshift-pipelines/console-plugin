@@ -12,9 +12,9 @@ import MultiColumnField from '../../pipelines-details/multi-column-field/MultiCo
 import { SelectedBuilderTask } from '../../../types';
 import { useBuilderParams } from '../../auto-complete/autoCompleteValueParsers';
 import { RowRendererProps } from '../../pipelines-details/multi-column-field/types';
+import WhenExpressionForm from '../WhenExpressionForm';
 
 import './TaskSidebarWhenExpression.scss';
-import WhenExpressionForm from '../WhenExpressionForm';
 
 type TaskSidebarWhenExpressionProps = {
   hasParam: boolean;
@@ -27,31 +27,27 @@ const TaskSidebarWhenExpression: React.FC<TaskSidebarWhenExpressionProps> = (
 ) => {
   const { name, selectedData } = props;
   const [field] = useField(name);
-  const { t } = useTranslation();
-  const removeWhenExpressionLabel = t(
-    'pipelines-plugin~Remove when expression',
-  );
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const removeWhenExpressionLabel = t('Remove when expression');
   const autoCompleteValues: string[] = useBuilderParams(selectedData);
 
   return (
     <div className="opp-task-sidebar-when-expression">
-      <h2>{t('pipelines-plugin~When expressions')}</h2>
+      <h2>{t('When expressions')}</h2>
       <p className="co-help-text opp-task-sidebar__paragraph">
         {field.value?.length > 0 ? (
-          <Trans ns="pipelines-plugin">
+          <Trans ns="plugin__pipelines-console-plugin">
             Use this format when you reference variables in this form:{' '}
             <code className="co-code">$(</code>
           </Trans>
         ) : (
-          t(
-            'pipelines-plugin~No when expressions are associated with this task.',
-          )
+          t('No when expressions are associated with this task.')
         )}
       </p>
       <MultiColumnField
         data-test="when-expression"
         name={name}
-        addLabel={t('pipelines-plugin~Add when expression')}
+        addLabel={t('Add when expression')}
         headers={[]}
         emptyValues={{ input: '', operator: '', values: [''] }}
         rowRenderer={({ onDelete, fieldName }: RowRendererProps) => (

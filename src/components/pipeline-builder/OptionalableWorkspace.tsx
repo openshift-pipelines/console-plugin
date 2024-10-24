@@ -13,7 +13,7 @@ const OptionalableWorkspace: React.FC<OptionalableWorkspace> = ({
   namePrefix,
   isReadOnly,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return (
     <>
@@ -21,14 +21,14 @@ const OptionalableWorkspace: React.FC<OptionalableWorkspace> = ({
         data-test="name"
         name={`${namePrefix}.name`}
         type={TextInputTypes.text}
-        placeholder={t('pipelines-plugin~Name')}
+        placeholder={t('Name')}
         isReadOnly={isReadOnly}
-        aria-label={t('pipelines-plugin~Name')}
+        aria-label={t('Name')}
       />
       <div style={{ marginBottom: 'var(--pf-global--spacer--xs)' }} />
       <CheckboxField
         name={`${namePrefix}.optional`}
-        label={t('pipelines-plugin~Optional workspace')}
+        label={t('Optional workspace')}
       />
     </>
   );

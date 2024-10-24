@@ -46,7 +46,7 @@ export const useFormikFetchAndSaveTasks = (
   namespace: string,
   validateForm: () => void,
 ) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { setFieldValue, setStatus } =
     useFormikContext<PipelineBuilderFormikValues>();
 
@@ -90,7 +90,7 @@ export const useFormikFetchAndSaveTasks = (
     if (!error) return;
 
     setStatus({
-      taskLoadingError: t('pipelines-plugin~Failed to load Tasks. {{error}}', {
+      taskLoadingError: t('Failed to load Tasks. {{error}}', {
         error,
       }),
     });

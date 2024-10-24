@@ -12,7 +12,7 @@ export const EditorToggle: React.FC<EditorToggleProps> = ({
   value,
   onChange,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     onChange(event?.currentTarget?.value as EditorType);
   };
@@ -28,13 +28,13 @@ export const EditorToggle: React.FC<EditorToggleProps> = ({
           className="co-synced-editor__editor-toggle-label"
           id="radio-group-title-editor-toggle"
         >
-          {t('console-shared~Configure via:')}
+          {t('Configure via:')}
         </label>
         <Radio
           isChecked={value === EditorType.Form}
           name={EditorType.Form}
           onChange={handleChange}
-          label={t('console-shared~Form view')}
+          label={t('Form view')}
           id={EditorType.Form}
           value={EditorType.Form}
         />
@@ -42,7 +42,7 @@ export const EditorToggle: React.FC<EditorToggleProps> = ({
           isChecked={value === EditorType.YAML}
           name={EditorType.YAML}
           onChange={handleChange}
-          label={t('console-shared~YAML view')}
+          label={t('YAML view')}
           id={EditorType.YAML}
           value={EditorType.YAML}
           data-test={`${EditorType.YAML}-view-input`}

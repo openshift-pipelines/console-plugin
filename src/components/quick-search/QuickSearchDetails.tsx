@@ -30,7 +30,7 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
   closeModal,
   detailsRenderer,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const history = useHistory();
   const defaultContentRenderer: DetailsRendererFunction = (
     props: QuickSearchDetailsProps,
@@ -40,7 +40,7 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
         <Title headingLevel="h4">{props.selectedItem.name}</Title>
         {props.selectedItem.provider && (
           <span className="ocs-quick-search-details__provider">
-            {t('console-shared~Provided by {{provider}}', {
+            {t('Provided by {{provider}}', {
               provider: props.selectedItem.provider,
             })}
           </span>

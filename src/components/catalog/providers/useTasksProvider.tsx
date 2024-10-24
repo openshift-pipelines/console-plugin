@@ -77,7 +77,7 @@ const normalizeTektonTasks = (
           categories,
         },
         cta: {
-          label: t('pipelines-plugin~Add'),
+          label: t('Add'),
           callback: () => {},
         },
         data: task,

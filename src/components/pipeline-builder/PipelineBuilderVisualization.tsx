@@ -39,7 +39,7 @@ const PipelineBuilderVisualization: React.FC<
   taskGroup,
   taskResources,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { errors, status } = useFormikContext<PipelineBuilderFormikValues>();
   const nodes = useNodes(
     onTaskSelection,
@@ -55,11 +55,7 @@ const PipelineBuilderVisualization: React.FC<
 
   if (status?.taskLoadingError) {
     return (
-      <Alert
-        variant="danger"
-        isInline
-        title={t('pipelines-plugin~Error loading the tasks.')}
-      >
+      <Alert variant="danger" isInline title={t('Error loading the tasks.')}>
         {status.taskLoadingError}
       </Alert>
     );
@@ -73,7 +69,7 @@ const PipelineBuilderVisualization: React.FC<
       <Alert
         variant="danger"
         isInline
-        title={t('pipelines-plugin~Unable to locate any tasks.')}
+        title={t('Unable to locate any tasks.')}
       />
     );
   }

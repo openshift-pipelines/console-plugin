@@ -31,7 +31,7 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
   onSearch,
   icon,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const inputRef = React.useRef<HTMLInputElement>(null);
   const spanRef = React.useRef<HTMLSpanElement>(null);
   return (
@@ -53,7 +53,7 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
         <TextInput
           type="text"
           ref={inputRef}
-          aria-label={t('console-shared~Quick search bar')}
+          aria-label={t('Quick search bar')}
           className="ocs-quick-search-bar__input"
           placeholder={searchPlaceholder}
           onChange={onSearch}
@@ -71,7 +71,7 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
             className="ocs-quick-search-bar__no-results ocs-quick-search-bar__border-none"
             data-test="quick-search-no-results"
           >
-            &mdash; {t('console-shared~No results')}
+            &mdash; {t('No results')}
           </InputGroupText>
         )}
       </div>

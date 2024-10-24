@@ -26,7 +26,7 @@ const TaskSidebarWorkspace: React.FC<TaskSidebarWorkspaceProps> = (props) => {
     name,
     resourceWorkspace: { name: workspaceName, optional = false },
   } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { getFieldMeta, setFieldValue } =
     useFormikContext<PipelineBuilderFormikValues>();
 
@@ -44,9 +44,7 @@ const TaskSidebarWorkspace: React.FC<TaskSidebarWorkspaceProps> = (props) => {
 
   const options: FormSelectFieldOption[] = [
     {
-      label: optional
-        ? t('pipelines-plugin~No workspace')
-        : t('pipelines-plugin~Select workspace...'),
+      label: optional ? t('No workspace') : t('Select workspace...'),
       value: '',
       isPlaceholder: true,
       isDisabled: !optional,

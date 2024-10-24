@@ -10,22 +10,20 @@ type PipelineWorkspacesParam = {
 };
 
 const PipelineWorkspaces: React.FC<PipelineWorkspacesParam> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
-    addLabel = t('pipelines-plugin~Add Pipeline workspace'),
+    addLabel = t('Add Pipeline workspace'),
     fieldName,
     isReadOnly = false,
   } = props;
-  const emptyMessage = t(
-    'pipelines-plugin~No workspaces are associated with this pipeline.',
-  );
+  const emptyMessage = t('No workspaces are associated with this pipeline.');
   return (
     <div className="co-m-pane__form">
       <MultiColumnField
         data-test="pipeline-workspaces"
         name={fieldName}
         addLabel={addLabel}
-        headers={[{ name: t('pipelines-plugin~Name'), required: true }]}
+        headers={[{ name: t('Name'), required: true }]}
         emptyValues={{ name: '', optional: false }}
         emptyMessage={emptyMessage}
         isReadOnly={isReadOnly}

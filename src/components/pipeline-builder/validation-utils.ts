@@ -166,7 +166,7 @@ const validRunAfter = (formData: PipelineBuilderFormValues, t: TFunction) => {
     .of(yup.string())
     .test(
       'tasks-matches-runAfters',
-      t('pipelines-plugin~Invalid runAfter'),
+      t('Invalid runAfter'),
       function (runAfter: string[]) {
         return runAfterMatches(formData, runAfter, this.parent.name);
       },
@@ -189,10 +189,10 @@ const taskValidation = (
     yup
       .object({
         // `name` is properly validated in TaskSidebarName
-        name: yup.string().required(t('pipelines-plugin~Required')),
+        name: yup.string().required(t('Required')),
         taskRef: yup
           .object({
-            name: yup.string().required(t('pipelines-plugin~Required')),
+            name: yup.string().required(t('Required')),
             kind: yup.string(),
           })
           .default(undefined),
@@ -202,12 +202,10 @@ const taskValidation = (
           .array()
           .of(
             yup.object({
-              name: yup.string().required(t('pipelines-plugin~Required')),
+              name: yup.string().required(t('Required')),
               value: yup.lazy((value) => {
                 if (Array.isArray(value)) {
-                  return yup
-                    .array()
-                    .of(yup.string().required(t('pipelines-plugin~Required')));
+                  return yup.array().of(yup.string().required(t('Required')));
                 }
                 return yup.string();
               }),
@@ -224,11 +222,9 @@ const taskValidation = (
           .array()
           .of(
             yup.object({
-              input: yup.string().required(t('pipelines-plugin~Required')),
-              operator: yup.string().required(t('pipelines-plugin~Required')),
-              values: yup
-                .array()
-                .of(yup.string().required(t('pipelines-plugin~Required'))),
+              input: yup.string().required(t('Required')),
+              operator: yup.string().required(t('Required')),
+              values: yup.array().of(yup.string().required(t('Required'))),
             }),
           )
           .test(
@@ -243,12 +239,12 @@ const taskValidation = (
           .array()
           .of(
             yup.object({
-              name: yup.string().required(t('pipelines-plugin~Required')),
+              name: yup.string().required(t('Required')),
               workspace: yup
                 .string()
                 .test(
                   'is-workspace-is-required',
-                  t('pipelines-plugin~Required'),
+                  t('Required'),
                   function (workspaceValue?: string): any {
                     const workspace = findWorkspace(
                       formValues,
@@ -260,14 +256,12 @@ const taskValidation = (
                 )
                 .test(
                   'are-workspaces-available',
-                  t(
-                    'pipelines-plugin~No workspaces available. Add pipeline workspaces.',
-                  ),
+                  t('No workspaces available. Add pipeline workspaces.'),
                   () => workspaces?.length > 0,
                 )
                 .test(
                   'is-workspace-link-broken',
-                  t('pipelines-plugin~Workspace name has changed; reselect.'),
+                  t('Workspace name has changed; reselect.'),
                   (workspaceValue?: string) =>
                     !workspaceValue ||
                     !!workspaces.find(({ name }) => name === workspaceValue),
@@ -288,7 +282,7 @@ const taskValidation = (
       })
       .test(
         'taskRef-or-taskSpec',
-        t('pipelines-plugin~TaskSpec or TaskRef must be provided.'),
+        t('TaskSpec or TaskRef must be provided.'),
         function (task) {
           return !!task.taskRef || !!task.taskSpec;
         },
@@ -304,12 +298,10 @@ const pipelineBuilderFormSchema = (
   t: TFunction,
 ) => {
   return yup.object({
-    name: nameValidationSchema((tKey) => t(tKey)).required(
-      t('pipelines-plugin~Required'),
-    ),
+    name: nameValidationSchema((tKey) => t(tKey)).required(t('Required')),
     params: yup.array().of(
       yup.object({
-        name: yup.string().required(t('pipelines-plugin~Required')),
+        name: yup.string().required(t('Required')),
         description: yup.string(),
         default: yup.string(), // TODO: should include string[]
         // TODO: should have type (string | string[])
@@ -317,23 +309,23 @@ const pipelineBuilderFormSchema = (
     ),
     workspaces: yup.array().of(
       yup.object({
-        name: yup.string().required(t('pipelines-plugin~Required')),
+        name: yup.string().required(t('Required')),
         // TODO: should include optional flag
       }),
     ),
     tasks: taskValidation(formValues, 'tasks', t)
-      .min(1, t('pipelines-plugin~Must define at least one task.'))
-      .required(t('pipelines-plugin~Required')),
+      .min(1, t('Must define at least one task.'))
+      .required(t('Required')),
     finallyTasks: taskValidation(formValues, 'finallyTasks', t),
     listTasks: yup.array().of(
       yup.object({
-        name: yup.string().required(t('pipelines-plugin~Required')),
+        name: yup.string().required(t('Required')),
         runAfter: validRunAfter(formValues.formData, t),
       }),
     ),
     finallyListTasks: yup.array().of(
       yup.object({
-        name: yup.string().required(t('pipelines-plugin~Required')),
+        name: yup.string().required(t('Required')),
       }),
     ),
   });

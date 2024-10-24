@@ -49,7 +49,7 @@ type PipelineBuilderFormProps = FormikProps<PipelineBuilderFormikValues> & {
 };
 
 const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const launchModal = useModal();
   const [selectedTask, setSelectedTask] =
     React.useState<SelectedBuilderTask>(null);
@@ -248,7 +248,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                     formContext={{
                       name: 'formData',
                       editor: formEditor,
-                      label: t('pipelines-plugin~Pipeline builder'),
+                      label: t('Pipeline builder'),
                       sanitizeTo: (yamlPipeline: PipelineKind) =>
                         sanitizeToForm(formData, yamlPipeline),
                     }}
@@ -268,11 +268,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                 handleReset={closeSidebarAndHandleReset}
                 errorMessage={status?.submitError}
                 isSubmitting={isSubmitting}
-                submitLabel={
-                  existingPipeline
-                    ? t('pipelines-plugin~Save')
-                    : t('pipelines-plugin~Create')
-                }
+                submitLabel={existingPipeline ? t('Save') : t('Create')}
                 disableSubmit={
                   editorType === EditorType.YAML
                     ? !dirty
@@ -283,7 +279,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                       formData.tasks.length === 0 ||
                       formData.loadingTasks.length > 0
                 }
-                resetLabel={t('pipelines-plugin~Cancel')}
+                resetLabel={t('Cancel')}
                 sticky
               />
             </FlexForm>

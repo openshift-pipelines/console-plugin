@@ -53,7 +53,7 @@ const Contents: React.FC<
   onUpdateTasks,
   taskGroup,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const savedCallback = React.useRef(null);
   savedCallback.current = callback;
   const [failedTasks, setFailedTasks] = React.useState<string[]>([]);
@@ -169,9 +169,7 @@ const Contents: React.FC<
       loaded: catalogService.loaded,
       getCatalogURL: (searchTerm: string, ns: string) =>
         `/search/ns/${ns}?keyword=${searchTerm}`,
-      // t('pipelines-plugin~View all tekton tasks ({{itemCount, number}})')
-      catalogLinkLabel:
-        'pipelines-plugin~View all tekton tasks ({{itemCount, number}})',
+      catalogLinkLabel: t('View all tekton tasks ({{itemCount, number}})'),
       extensions: catalogService.catalogExtensions,
     },
   ];
@@ -179,7 +177,7 @@ const Contents: React.FC<
     <QuickSearchController
       quickSearchProviders={quickSearchProviders}
       allItemsLoaded={catalogService.loaded}
-      searchPlaceholder={`${t('pipelines-plugin~Add task')}...`}
+      searchPlaceholder={`${t('Add task')}...`}
       namespace={namespace}
       viewContainer={viewContainer}
       isOpen={isOpen}

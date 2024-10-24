@@ -37,7 +37,7 @@ const ResourceSidebarWrapper: React.FC<{
       <div className="co-m-pane__body co-p-has-sidebar__sidebar-body">
         <CloseButton
           // ClassName="co-p-has-sidebar__close-button"
-          // ariaLabel={t('public~Close')}
+          // ariaLabel={t('Close')}
           onClick={toggleSidebar}
         />
         <h2 className="co-p-has-sidebar__sidebar-heading text-capitalize">
@@ -91,7 +91,7 @@ export const ResourceSidebar: React.FC<{
   samples: Sample[];
   snippets: Sample[];
 }> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
     downloadSampleYaml,
     kindObj,
@@ -120,20 +120,20 @@ export const ResourceSidebar: React.FC<{
   let tabs: Tab[] = [];
   if (showSamples) {
     tabs.push({
-      name: t('public~Samples'),
+      name: t('Samples'),
       component: ResourceSamples,
     });
   }
   if (showSnippets) {
     tabs.push({
-      name: t('public~Snippets'),
+      name: t('Snippets'),
       component: ResourceSnippets,
     });
   }
   if (showSchema) {
     tabs = [
       {
-        name: t('public~Schema'),
+        name: t('Schema'),
         component: ResourceSchema,
       },
       ...tabs,

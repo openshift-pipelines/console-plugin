@@ -42,7 +42,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
   selectedItem,
   closeModal,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const history = useHistory();
   const [selectedVersion, setSelectedVersion] = React.useState<string>();
   const [versions, setVersions] = React.useState(
@@ -211,7 +211,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
               icon={<CheckCircleIcon />}
               data-test="task-installed-badge"
             >
-              {t('pipelines-plugin~Installed')}
+              {t('Installed')}
             </Label>
           </LevelItem>
         )}
@@ -231,7 +231,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
             additionalClassName="opp-quick-search-details__hublink"
             dataTestID="task-hub-link"
             href={hubLink}
-            text={t('pipelines-plugin~Read more')}
+            text={t('Read more')}
           />
         )}
       </TextContent>
@@ -239,7 +239,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
         {selectedItem?.attributes?.categories?.length > 0 && (
           <StackItem>
             <LabelGroup
-              categoryName={t('pipelines-plugin~Categories')}
+              categoryName={t('Categories')}
               data-test="task-category-list"
             >
               {selectedItem?.attributes?.categories.map((category) => (
@@ -256,10 +256,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
         )}
         {selectedItem?.tags?.length > 0 && (
           <StackItem>
-            <LabelGroup
-              categoryName={t('pipelines-plugin~Tags')}
-              data-test="task-tag-list"
-            >
+            <LabelGroup categoryName={t('Tags')} data-test="task-tag-list">
               {selectedItem.tags.map((tag) => (
                 <Label color="blue" key={tag} data-test="task-tag-list-item">
                   {tag}

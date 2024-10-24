@@ -27,7 +27,7 @@ type PipelineBuilderFormEditorProps = {
 const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (
   props,
 ) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
     hasExistingPipeline,
     taskGroup,
@@ -41,7 +41,7 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (
     <>
       <div className="opp-pipeline-builder-form__short-section">
         <InputField
-          label={t('pipelines-plugin~Name')}
+          label={t('Name')}
           name="formData.name"
           type={TextInputTypes.text}
           isDisabled={hasExistingPipeline}
@@ -51,7 +51,7 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (
 
       <div>
         <h2>
-          {t('pipelines-plugin~Tasks')}
+          {t('Tasks')}
           <span className="pf-c-form__label-required">*</span>
         </h2>
         <PipelineBuilderVisualization
@@ -64,27 +64,25 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (
       </div>
 
       <div>
-        <h2>{t('pipelines-plugin~Parameters')}</h2>
+        <h2>{t('Parameters')}</h2>
         <PipelineParameters
           fieldName="formData.params"
-          addLabel={t('pipelines-plugin~Add parameter')}
-          nameLabel={t('pipelines-plugin~Name')}
+          addLabel={t('Add parameter')}
+          nameLabel={t('Name')}
           nameFieldName="name"
-          descriptionLabel={t('pipelines-plugin~Description')}
+          descriptionLabel={t('Description')}
           descriptionFieldName="description"
-          valueLabel={t('pipelines-plugin~Default value')}
+          valueLabel={t('Default value')}
           valueFieldName="default"
-          emptyMessage={t(
-            'pipelines-plugin~No parameters are associated with this Pipeline.',
-          )}
+          emptyMessage={t('No parameters are associated with this Pipeline.')}
           emptyValues={{ name: '', description: '', default: '' }}
         />
       </div>
 
       <div>
-        <h2>{t('pipelines-plugin~Workspaces')}</h2>
+        <h2>{t('Workspaces')}</h2>
         <PipelineWorkspaces
-          addLabel={t('pipelines-plugin~Add workspace')}
+          addLabel={t('Add workspace')}
           fieldName="formData.workspaces"
         />
       </div>

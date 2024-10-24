@@ -32,7 +32,7 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   limitItemCount,
   detailsRenderer,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const clientRect = useBoundingClientRect(viewContainer);
   const maxHeight = clientRect?.height;
   const maxWidth = clientRect?.width;
@@ -41,7 +41,7 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
     <Modal
       className="ocs-quick-search-modal"
       variant={ModalVariant.medium}
-      aria-label={t('console-shared~Quick search')}
+      aria-label={t('Quick search')}
       isOpen={isOpen}
       showClose={false}
       position="top"

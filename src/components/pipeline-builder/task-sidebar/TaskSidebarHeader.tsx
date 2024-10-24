@@ -23,7 +23,7 @@ const TaskSidebarHeader: React.FC<TaskSidebarHeaderProps> = ({
   removeThisTask,
   taskResource,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -58,7 +58,7 @@ const TaskSidebarHeader: React.FC<TaskSidebarHeaderProps> = ({
                   onClick={onToggleClick}
                   isExpanded={isOpen}
                 >
-                  {t('pipelines-plugin~Actions')}
+                  {t('Actions')}
                 </MenuToggle>
               )}
             >
@@ -67,7 +67,7 @@ const TaskSidebarHeader: React.FC<TaskSidebarHeaderProps> = ({
                   key="remove-task"
                   onClick={() => removeThisTask()}
                 >
-                  {t('pipelines-plugin~Remove task')}
+                  {t('Remove task')}
                 </DropdownItem>
               </DropdownList>
             </Dropdown>

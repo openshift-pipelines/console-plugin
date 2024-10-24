@@ -50,7 +50,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
   limitItemCount,
   onListChange,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const history = useHistory();
   const [itemsCount, setItemsCount] = React.useState<number>(
     limitItemCount || listItems.length,
@@ -97,7 +97,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
     <div className="ocs-quick-search-list">
       <DataList
         className="ocs-quick-search-list__list"
-        aria-label={t('console-shared~Quick search list')}
+        aria-label={t('Quick search list')}
         selectedDataListItemId={selectedItemId}
         onSelectDataListItem={onSelectListItem}
         isCompact

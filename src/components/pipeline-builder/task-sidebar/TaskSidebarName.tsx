@@ -22,7 +22,7 @@ type TaskSidebarNameProps = {
 };
 
 const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { name, onChange, taskName } = props;
   const { setStatus, status, values } =
     useFormikContext<PipelineBuilderFormikValues>();
@@ -66,11 +66,7 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
   };
 
   return (
-    <FormGroup
-      fieldId="task-name"
-      label={t('pipelines-plugin~Display name')}
-      isRequired
-    >
+    <FormGroup fieldId="task-name" label={t('Display name')} isRequired>
       <TextInput
         data-test={`task-name ${interimName}`}
         id="task-name"
@@ -80,10 +76,7 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
           setInterimName(value);
 
           if (reservedNames.includes(value)) {
-            saveErrorState(
-              value,
-              t('pipelines-plugin~This name is already in use.'),
-            );
+            saveErrorState(value, t('This name is already in use.'));
             return;
           }
 
@@ -95,10 +88,7 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
               setValidating(false);
             })
             .catch((err) => {
-              saveErrorState(
-                value,
-                err?.message || t('pipelines-plugin~Required'),
-              );
+              saveErrorState(value, err?.message || t('Required'));
               setValidating(false);
             });
         }}

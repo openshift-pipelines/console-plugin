@@ -20,7 +20,7 @@ interface ResourceLink {
 }
 
 const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { getFieldMeta, setFieldValue } =
     useFormikContext<PipelineBuilderFormikValues>();
   const {
@@ -45,8 +45,8 @@ const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
   const options: FormSelectFieldOption[] = [
     {
       label: optional
-        ? t('pipelines-plugin~No {{resourceType}} resource', { resourceType })
-        : t('pipelines-plugin~Select {{resourceType}} resource...', {
+        ? t('No {{resourceType}} resource', { resourceType })
+        : t('Select {{resourceType}} resource...', {
             resourceType,
           }),
       value: '',
@@ -72,12 +72,9 @@ const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
     <FormSelectField
       name={`${name}.resource`}
       label={resourceName}
-      helpText={t(
-        'pipelines-plugin~Only showing resources for this type ({{resourceType}}).',
-        {
-          resourceType,
-        },
-      )}
+      helpText={t('Only showing resources for this type ({{resourceType}}).', {
+        resourceType,
+      })}
       options={options}
       isDisabled={options.length === 1}
       onChange={(selectedResource: string) => {

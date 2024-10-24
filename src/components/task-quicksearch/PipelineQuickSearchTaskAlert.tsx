@@ -10,34 +10,30 @@ interface PipelineQuickSearchTaskAlertProps {
 const PipelineQuickSearchTaskAlert: React.FC<
   PipelineQuickSearchTaskAlertProps
 > = ({ ctaType }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   switch (ctaType) {
     case CTALabel.Install:
       return (
         <Alert
           className="co-alert"
           variant="info"
-          title={t('pipelines-plugin~This task is not installed')}
+          title={t('This task is not installed')}
           isInline
         >
-          <p>
-            {t('pipelines-plugin~Adding this task may take a few moments.')}
-          </p>
+          <p>{t('Adding this task may take a few moments.')}</p>
         </Alert>
       );
     case CTALabel.Update:
       return (
         <Alert
           className="co-alert"
-          title={t(
-            'pipelines-plugin~Task version will be updated across all instances',
-          )}
+          title={t('Task version will be updated across all instances')}
           variant="warning"
           isInline
         >
           <p>
             {t(
-              `pipelines-plugin~Only update this task's version if you'd like to replace all of its references in the namespace.`,
+              `Only update this task's version if you'd like to replace all of its references in the namespace.`,
             )}
           </p>
         </Alert>

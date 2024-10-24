@@ -19,7 +19,7 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
   const { highlightText, title, img, description, id, yaml, targetResource } =
     sample;
   const reference = referenceFor(targetResource);
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <li className="co-resource-sidebar-item">
       <h3 className="h4">
@@ -42,7 +42,7 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
             onClick={() => loadSampleYaml(id, yaml, reference)}
           >
             <PasteIcon className="co-icon-space-r" />
-            {t('public~Try it')}
+            {t('Try it')}
           </Button>
         </LevelItem>
         <LevelItem>
@@ -54,7 +54,7 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
             onClick={() => downloadSampleYaml(id, yaml, reference)}
           >
             <DownloadIcon className="co-icon-space-r" />
-            {t('public~Download YAML')}
+            {t('Download YAML')}
           </Button>
         </LevelItem>
       </Level>
@@ -135,7 +135,7 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
     }
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return (
     <li className="co-resource-sidebar-item">
@@ -147,7 +147,7 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
         <LevelItem>
           <Button type="button" variant="link" isInline onClick={insertSnippet}>
             <PasteIcon className="co-icon-space-r" />
-            {t('public~Insert snippet')}
+            {t('Insert snippet')}
           </Button>
         </LevelItem>
         <LevelItem>
@@ -159,12 +159,12 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
           >
             {yamlPreviewOpen ? (
               <>
-                {t('public~Hide YAML')}
+                {t('Hide YAML')}
                 <ChevronDownIcon className="co-icon-space-l" />
               </>
             ) : (
               <>
-                {t('public~Show YAML')}
+                {t('Show YAML')}
                 <ChevronRightIcon className="co-icon-space-l" />
               </>
             )}

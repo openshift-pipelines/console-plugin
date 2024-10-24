@@ -8,10 +8,10 @@ import {
 } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { global_palette_green_500 as greenColor } from '@patternfly/react-tokens';
-import i18n from 'i18next';
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
 import { TektonHubTaskVersion } from '../catalog/apis/tektonHub';
 import { isSelectedVersionInstalled } from './pipeline-quicksearch-utils';
+import { useTranslation } from 'react-i18next';
 
 interface PipelineQuickSearchVersionDropdownProps {
   selectedVersion: string;
@@ -23,6 +23,7 @@ interface PipelineQuickSearchVersionDropdownProps {
 const PipelineQuickSearchVersionDropdown: React.FC<
   PipelineQuickSearchVersionDropdownProps
 > = ({ item, versions, onChange, selectedVersion }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [isOpen, setOpen] = React.useState(false);
   const toggleIsOpen = React.useCallback(() => setOpen((v) => !v), []);
 
@@ -33,7 +34,7 @@ const PipelineQuickSearchVersionDropdown: React.FC<
     if (version) {
       acc[version.toString()] =
         version === item.data?.latestVersion?.version
-          ? i18n.t('pipelines-plugin~{{version}} (latest)', { version })
+          ? t('{{version}} (latest)', { version })
           : version;
     }
     return acc;

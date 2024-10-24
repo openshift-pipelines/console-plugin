@@ -53,7 +53,7 @@ const normalizeTektonHubTasks = (
         },
         attributes: { installed: '', versions, categories, apiURL, uiURL },
         cta: {
-          label: t('pipelines-plugin~Add'),
+          label: t('Add'),
         },
         data: task,
       };

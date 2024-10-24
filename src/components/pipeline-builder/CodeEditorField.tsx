@@ -54,7 +54,7 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
 }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<FormikValues>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const editorRef = React.useRef();
 
   const [sidebarOpen, setSidebarOpen] = React.useState<boolean>(true);
@@ -92,31 +92,6 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
   return (
     <div className="osc-yaml-editor" data-test="yaml-editor">
       <div className="osc-yaml-editor__editor">
-        {/* <AsyncComponent
-          loader={() => import(CodeEditor).then((c) => c.default)}
-          forwardRef={editorRef}
-          value={field.value}
-          minHeight={minHeight ?? '200px'}
-          onChange={(yaml: string) => setFieldValue(name, yaml)}
-          onSave={onSave}
-          showShortcuts={showShortcuts}
-          showMiniMap={showMiniMap}
-          language={language}
-          toolbarLinks={
-            !sidebarOpen &&
-            hasSidebarContent && [
-              <Button
-                isInline
-                variant="link"
-                onClick={() => setSidebarOpen(true)}
-                key=""
-              >
-                <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-                {t('console-shared~View sidebar')}
-              </Button>,
-            ]
-          }
-        /> */}
         <CodeEditor
           ref={editorRef}
           value={field.value}
@@ -136,7 +111,7 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
                 key=""
               >
                 <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-                {t('console-shared~View sidebar')}
+                {t('View sidebar')}
               </Button>,
             ]
           }

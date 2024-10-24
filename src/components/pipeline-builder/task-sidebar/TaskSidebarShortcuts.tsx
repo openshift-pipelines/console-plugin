@@ -5,15 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { Shortcut, ShortcutTable } from '../../shortcuts';
 
 const TaskSidebarShortcuts: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return (
     <Popover
-      aria-label={t('pipelines-plugin~View shortcuts')}
+      aria-label={t('View shortcuts')}
       bodyContent={
         <ShortcutTable>
           <Shortcut ctrl keyName="space">
-            {t('pipelines-plugin~Activate auto complete')}
+            {t('Activate auto complete')}
           </Shortcut>
         </ShortcutTable>
       }
@@ -22,7 +22,7 @@ const TaskSidebarShortcuts: React.FC = () => {
     >
       <Button type="button" variant="link" isInline>
         <QuestionCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-        {t('pipelines-plugin~View shortcuts')}
+        {t('View shortcuts')}
       </Button>
     </Popover>
   );

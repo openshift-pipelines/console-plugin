@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import './PipelineBuilderHeader.scss';
 
 const PipelineBuilderHeader: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return (
     <div className="odc-pipeline-builder-header">
@@ -13,7 +13,7 @@ const PipelineBuilderHeader: React.FC = () => {
         <FlexItem grow={{ default: 'grow' }}>
           <div className="co-m-nav-title">
             <h1 className="co-m-pane__heading odc-pipeline-builder-header__title">
-              {t('pipelines-plugin~Pipeline builder')}
+              {t('Pipeline builder')}
             </h1>
           </div>
         </FlexItem>

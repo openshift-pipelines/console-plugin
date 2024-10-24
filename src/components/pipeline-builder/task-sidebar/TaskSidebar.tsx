@@ -42,7 +42,7 @@ function safeIndex<T>(list: T[], comparatorFunc: (v: T) => boolean): number {
 }
 
 const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
     onRemoveTask,
     onRenameTask,
@@ -111,9 +111,9 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
         {params.length > 0 && (
           <div>
-            <h2>{t('pipelines-plugin~Parameters')}</h2>
+            <h2>{t('Parameters')}</h2>
             <p className="co-help-text opp-task-sidebar__paragraph">
-              <Trans ns="pipelines-plugin">
+              <Trans ns="plugin__pipelines-console-plugin">
                 Use this format when you reference variables in this form:{' '}
                 <code className="co-code">$(</code>
               </Trans>
@@ -139,7 +139,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
         )}
         {workspaces.length > 0 && (
           <div>
-            <h2>{t('pipelines-plugin~Workspaces')}</h2>
+            <h2>{t('Workspaces')}</h2>
             {workspaces.map((workspace) => {
               const taskWorkspaces: TektonWorkspace[] =
                 thisTask.workspaces || [];
@@ -166,13 +166,13 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
         {inputResources.length > 0 && (
           <div>
-            <h2>{t('pipelines-plugin~Input resources')}</h2>
+            <h2>{t('Input resources')}</h2>
             {inputResources.map(renderResource('inputs'))}
           </div>
         )}
         {outputResources.length > 0 && (
           <div>
-            <h2>{t('pipelines-plugin~Output resources')}</h2>
+            <h2>{t('Output resources')}</h2>
             {outputResources.map(renderResource('outputs'))}
           </div>
         )}

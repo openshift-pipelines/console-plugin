@@ -39,7 +39,7 @@ const Shortcut: React.FC<ShortcutProps> = ({
   shift,
   dragNdrop,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <tr>
       <td className="ocs-shortcut__cell">
@@ -59,7 +59,7 @@ const Shortcut: React.FC<ShortcutProps> = ({
         )}
         {hover && (
           <ShortcutCommand data-test-id="hover">
-            <MouseIcon /> {t('console-shared~Hover')}
+            <MouseIcon /> {t('Hover')}
           </ShortcutCommand>
         )}
         {keyName && (
@@ -71,22 +71,22 @@ const Shortcut: React.FC<ShortcutProps> = ({
         )}
         {drag && (
           <ShortcutCommand data-test-id="drag">
-            <MouseIcon /> {t('console-shared~Drag')}
+            <MouseIcon /> {t('Drag')}
           </ShortcutCommand>
         )}
         {click && (
           <ShortcutCommand data-test-id="click">
-            <MouseIcon /> {t('console-shared~Click')}
+            <MouseIcon /> {t('Click')}
           </ShortcutCommand>
         )}
         {rightClick && (
           <ShortcutCommand data-test-id="right-click">
-            <MouseIcon /> {t('console-shared~Right click')}
+            <MouseIcon /> {t('Right click')}
           </ShortcutCommand>
         )}
         {dragNdrop && (
           <ShortcutCommand data-test-id="drag-and-drop">
-            <MouseIcon /> {t('console-shared~Drag + Drop')}
+            <MouseIcon /> {t('Drag + Drop')}
           </ShortcutCommand>
         )}
       </td>

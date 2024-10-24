@@ -36,7 +36,7 @@ const normalizeArtifactHubTasks = (
         },
         attributes: { installed: '' },
         cta: {
-          label: t('pipelines-plugin~Add'),
+          label: t('Add'),
         },
         data: {
           task,

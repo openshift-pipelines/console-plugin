@@ -22,7 +22,7 @@ type RemoveModalProps = {
 const RemoveTaskModal: ModalComponent<
   RemoveModalProps & ModalComponentProps
 > = ({ taskName, closeModal, onRemove }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   const onSubmit = (e) => {
     onRemove();
@@ -33,19 +33,16 @@ const RemoveTaskModal: ModalComponent<
   return (
     <ModalWrapper onClose={closeModal}>
       <form onSubmit={onSubmit} name="form" className="modal-content">
-        <ModalTitle>{t('pipelines-plugin~Remove task')}</ModalTitle>
+        <ModalTitle>{t('Remove task')}</ModalTitle>
         <ModalBody>
           <ModalContent
             icon={<ExclamationTriangleIcon color={warningColor.value} />}
-            title={t('pipelines-plugin~Remove {{taskName}}?', {
+            title={t('Remove {{taskName}}?', {
               taskName,
             })}
-            message={t(
-              'pipelines-plugin~Are you sure you want to remove {{taskName}}?',
-              {
-                taskName,
-              },
-            )}
+            message={t('Are you sure you want to remove {{taskName}}?', {
+              taskName,
+            })}
           />
         </ModalBody>
         <ModalSubmitFooter

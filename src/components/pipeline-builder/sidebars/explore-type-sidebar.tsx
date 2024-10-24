@@ -33,7 +33,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   // OpenAPI document.
   const [drilldownHistory, setDrilldownHistory] = React.useState([]);
   const { kindObj, schema } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [allDefinitions, setAllDefinitions] =
     React.useState<SwaggerDefinitions>(null);
 
@@ -80,10 +80,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   const required = new Set(currentDefinition?.required || []);
   const kindLabel = kindObj?.labelKey ? t(kindObj.labelKey) : kindObj?.kind;
   const breadcrumbs = drilldownHistory.length
-    ? [
-        kindObj ? kindLabel : t('public~Schema'),
-        ..._.map(drilldownHistory, 'name'),
-      ]
+    ? [kindObj ? kindLabel : t('Schema'), ..._.map(drilldownHistory, 'name')]
     : [];
 
   const drilldown = (
@@ -167,7 +164,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
         )}
         {_.isEmpty(currentProperties) ? (
           <EmptyState variant={EmptyStateVariant.xs}>
-            <EmptyStateBody>{t('public~No Properties found')}</EmptyStateBody>
+            <EmptyStateBody>{t('No Properties found')}</EmptyStateBody>
           </EmptyState>
         ) : (
           <ul className="co-resource-sidebar-list pf-v5-c-list">
@@ -209,7 +206,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                         isInline
                         variant="link"
                       >
-                        {t('public~View details')}
+                        {t('View details')}
                       </Button>
                     )}
                   </li>

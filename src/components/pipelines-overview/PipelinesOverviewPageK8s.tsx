@@ -1,31 +1,34 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flex, FlexItem } from '@patternfly/react-core';
+import {
+  useActiveNamespace,
+  useFlag,
+} from '@openshift-console/dynamic-plugin-sdk';
 import { formatPrometheusDuration, parsePrometheusDuration } from './dateTime';
 import NameSpaceDropdown from './NamespaceDropdown';
 import TimeRangeDropdown from './TimeRangeDropdown';
 import RefreshDropdown from './RefreshDropdown';
 import { IntervalOptions, TimeRangeOptionsK8s, useQueryParams } from './utils';
-import { useActiveNamespace } from '@openshift-console/dynamic-plugin-sdk';
 import PipelineRunsStatusCardK8s from './PipelineRunsStatusCardK8s';
 import PipelineRunsNumbersChartK8s from './PipelineRunsNumbersChartK8s';
 import PipelineRunsTotalCardK8s from './PipelineRunsTotalCardK8s';
 import PipelineRunsDurationCardK8s from './PipelineRunsDurationCardK8s';
 import PipelineRunsListPageK8s from './list-pages/PipelineRunsListPageK8s';
 import { K8sDataLimitationAlert } from './K8sDataLimitationAlert';
+import { FLAGS } from '../../types';
+import { ALL_NAMESPACES_KEY } from '../../consts';
+import AllProjectsPage from '../projects-list/AllProjectsPage';
 import './PipelinesOverview.scss';
 
 const PipelinesOverviewPageK8s: React.FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const canListNS = useFlag(FLAGS.CAN_LIST_NS);
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();
-  const [namespace, setNamespace] = React.useState(activeNamespace);
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1d'));
   const [interval, setInterval] = React.useState(
     parsePrometheusDuration('30s'),
   );
-  React.useEffect(() => {
-    setActiveNamespace(namespace);
-  }, [namespace]);
 
   useQueryParams({
     key: 'refreshinterval',
@@ -47,6 +50,10 @@ const PipelinesOverviewPageK8s: React.FC = () => {
     loadFormat: parsePrometheusDuration,
   });
 
+  if (!canListNS && activeNamespace === ALL_NAMESPACES_KEY) {
+    return <AllProjectsPage pageTitle={t('Overview')} />;
+  }
+
   return (
     <>
       <div className="co-m-nav-title">
@@ -59,7 +66,10 @@ const PipelinesOverviewPageK8s: React.FC = () => {
       </div>
       <Flex className="project-dropdown-label__flex">
         <FlexItem>
-          <NameSpaceDropdown selected={namespace} setSelected={setNamespace} />
+          <NameSpaceDropdown
+            selected={activeNamespace}
+            setSelected={setActiveNamespace}
+          />
         </FlexItem>
         <FlexItem>
           <TimeRangeDropdown timespan={timespan} setTimespan={setTimespan} />
@@ -73,7 +83,7 @@ const PipelinesOverviewPageK8s: React.FC = () => {
           timespan={timespan}
           domain={{ y: [0, 100] }}
           bordered={true}
-          namespace={namespace}
+          namespace={activeNamespace}
           interval={interval}
         />
 
@@ -84,7 +94,7 @@ const PipelinesOverviewPageK8s: React.FC = () => {
             className="pipelines-overview__cards"
           >
             <PipelineRunsDurationCardK8s
-              namespace={namespace}
+              namespace={activeNamespace}
               timespan={timespan}
               interval={interval}
               bordered={true}
@@ -96,7 +106,7 @@ const PipelinesOverviewPageK8s: React.FC = () => {
             className="pipelines-overview__cards"
           >
             <PipelineRunsTotalCardK8s
-              namespace={namespace}
+              namespace={activeNamespace}
               timespan={timespan}
               interval={interval}
               bordered={true}
@@ -108,7 +118,7 @@ const PipelinesOverviewPageK8s: React.FC = () => {
             className="pipelines-overview__cards"
           >
             <PipelineRunsNumbersChartK8s
-              namespace={namespace}
+              namespace={activeNamespace}
               timespan={timespan}
               interval={interval}
               domain={{ y: [0, 500] }}
@@ -119,7 +129,7 @@ const PipelinesOverviewPageK8s: React.FC = () => {
       </div>
       <div className="pipelines-metrics__background">
         <PipelineRunsListPageK8s
-          namespace={namespace}
+          namespace={activeNamespace}
           timespan={timespan}
           interval={interval}
         />

@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import PipelineRunsStatusCard from './PipelineRunsStatusCard';
 import { Flex, FlexItem } from '@patternfly/react-core';
+import PipelineRunsStatusCard from './PipelineRunsStatusCard';
+import {
+  useActiveNamespace,
+  useFlag,
+} from '@openshift-console/dynamic-plugin-sdk';
 import PipelinesRunsDurationCard from './PipelineRunsDurationCard';
 import PipelinesRunsTotalCard from './PipelineRunsTotalCard';
 import PipelinesRunsNumbersChart from './PipelineRunsNumbersChart';
@@ -11,19 +15,18 @@ import PipelineRunsListPage from './list-pages/PipelineRunsListPage';
 import TimeRangeDropdown from './TimeRangeDropdown';
 import RefreshDropdown from './RefreshDropdown';
 import { IntervalOptions, TimeRangeOptions, useQueryParams } from './utils';
-import { useActiveNamespace } from '@openshift-console/dynamic-plugin-sdk';
+import { ALL_NAMESPACES_KEY } from '../../consts';
+import AllProjectsPage from '../projects-list/AllProjectsPage';
+import { FLAGS } from '../../types';
 
 const PipelinesOverviewPage: React.FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const canListNS = useFlag(FLAGS.CAN_LIST_NS);
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();
-  const [namespace, setNamespace] = React.useState(activeNamespace);
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1d'));
   const [interval, setInterval] = React.useState(
     parsePrometheusDuration('30s'),
   );
-  React.useEffect(() => {
-    setActiveNamespace(namespace);
-  }, [namespace]);
 
   useQueryParams({
     key: 'refreshinterval',
@@ -45,6 +48,10 @@ const PipelinesOverviewPage: React.FC = () => {
     loadFormat: parsePrometheusDuration,
   });
 
+  if (!canListNS && activeNamespace === ALL_NAMESPACES_KEY) {
+    return <AllProjectsPage pageTitle={t('Overview')} />;
+  }
+
   return (
     <>
       <div className="co-m-nav-title">
@@ -54,7 +61,10 @@ const PipelinesOverviewPage: React.FC = () => {
       </div>
       <Flex className="project-dropdown-label__flex">
         <FlexItem>
-          <NameSpaceDropdown selected={namespace} setSelected={setNamespace} />
+          <NameSpaceDropdown
+            selected={activeNamespace}
+            setSelected={setActiveNamespace}
+          />
         </FlexItem>
         <FlexItem>
           <TimeRangeDropdown timespan={timespan} setTimespan={setTimespan} />
@@ -68,7 +78,7 @@ const PipelinesOverviewPage: React.FC = () => {
           timespan={timespan}
           domain={{ y: [0, 100] }}
           bordered={true}
-          namespace={namespace}
+          namespace={activeNamespace}
           interval={interval}
         />
 
@@ -79,7 +89,7 @@ const PipelinesOverviewPage: React.FC = () => {
             className="pipelines-overview__cards"
           >
             <PipelinesRunsDurationCard
-              namespace={namespace}
+              namespace={activeNamespace}
               timespan={timespan}
               interval={interval}
               bordered={true}
@@ -91,7 +101,7 @@ const PipelinesOverviewPage: React.FC = () => {
             className="pipelines-overview__cards"
           >
             <PipelinesRunsTotalCard
-              namespace={namespace}
+              namespace={activeNamespace}
               timespan={timespan}
               interval={interval}
               bordered={true}
@@ -103,7 +113,7 @@ const PipelinesOverviewPage: React.FC = () => {
             className="pipelines-overview__cards"
           >
             <PipelinesRunsNumbersChart
-              namespace={namespace}
+              namespace={activeNamespace}
               timespan={timespan}
               interval={interval}
               domain={{ y: [0, 500] }}
@@ -114,7 +124,7 @@ const PipelinesOverviewPage: React.FC = () => {
       </div>
       <div className="pipelines-metrics__background">
         <PipelineRunsListPage
-          namespace={namespace}
+          namespace={activeNamespace}
           timespan={timespan}
           interval={interval}
         />

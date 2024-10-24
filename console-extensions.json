@@ -144,7 +144,10 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/pipelines-overview/ns/:ns"],
+      "path": [
+        "/pipelines-overview/ns/:ns",
+        "/pipelines-overview/all-namespaces"
+      ],
       "component": {
         "$codeRef": "pipelinesComponent.PipelinesOverviewPage"
       }
@@ -157,40 +160,16 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/pipelines-overview/ns/:ns"],
+      "path": [
+        "/pipelines-overview/ns/:ns",
+        "/pipelines-overview/all-namespaces"
+      ],
       "component": {
         "$codeRef": "pipelinesComponent.PipelinesOverviewPageK8s"
       }
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"],
-      "disallowed": ["PIPELINE_TEKTON_RESULT_INSTALLED"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/pipelines-overview/all-namespaces"],
-      "component": {
-        "$codeRef": "pipelinesComponent.PipelinesOverviewPage"
-      }
-    },
-    "flags": {
-      "required": ["PIPELINE_TEKTON_RESULT_INSTALLED", "CAN_LIST_NS"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": ["/pipelines-overview/all-namespaces"],
-      "component": {
-        "$codeRef": "pipelinesComponent.PipelinesOverviewPageK8s"
-      }
-    },
-    "flags": {
-      "required": ["OPENSHIFT_PIPELINE", "CAN_LIST_NS"],
       "disallowed": ["PIPELINE_TEKTON_RESULT_INSTALLED"]
     }
   },

@@ -406,10 +406,6 @@ When('user enters the value as {string}', (value: string) => {
   });
 });
 
-When('user clicks Create button on Pipeline Builder page', () => {
-  pipelineBuilderPage.clickCreateButton();
-});
-
 Then(
   'user will see tooltip saying {string} while scrolling over diamond structure before conditional task',
   (value: string) => {
@@ -419,6 +415,12 @@ Then(
     cy.get('[data-test="when-expression-tooltip"]').should('have.text', value);
   },
 );
+
+Given('user is at {string} on Pipeline Builder page', (view: string) => {
+  navigateTo(devNavigationMenu.Pipelines);
+  pipelinesPage.clickOnCreatePipeline();
+  startPipelineInPipelinesPage.selectView(view);
+});
 
 When('user selects {string} from Select task list', (task: string) => {
   pipelineBuilderPage.selectTask(task);
@@ -663,7 +665,7 @@ When('user hovers over the newly added task', () => {
   cy.mouseHover('[data-test="task-list"]');
   /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.get('[data-test="task-list"] .odc-task-list-node__trigger-underline')
-    .trigger('mouseenter')
+    .trigger('mouseenter', { force: true })
     .invoke('show');
 });
 
@@ -693,9 +695,9 @@ When(
     pipelineBuilderPage.clickAddTask();
     cy.get(pipelineBuilderPO.formView.quickSearch).type(task);
     cy.get('[aria-label="Quick search list"]').should('be.visible');
-    cy.get(
-      pipelineBuilderPO.formView.quickSearchListItem(task, provider),
-    ).click();
+    cy.get(pipelineBuilderPO.formView.quickSearchListItem(task, provider))
+      .eq(0)
+      .click();
     cy.byTestID('task-cta').click();
     pipelineBuilderPage.clickOnTask(task);
     pipelineBuilderSidePane.removeTask();
@@ -704,7 +706,7 @@ When(
 
 When('user changes version to {string}', (menuItem: string) => {
   cy.get(pipelineBuilderPO.formView.versionTask).click();
-  cy.get("[role='menu']")
+  cy.get('[role="listbox"]')
     .find('li')
     .contains(menuItem)
     .should('be.visible')
@@ -756,3 +758,13 @@ When('user selects {string} from Artifacthub', (taskName: string) => {
     .should('have.text', 'ArtifactHub')
     .click();
 });
+
+When(
+  'user creates pipeline resource using YAML editor from {string}',
+  (yamlLocation: string) => {
+    yamlEditor.isLoaded();
+    pipelinesPage.clearYAMLEditor();
+    pipelinesPage.setEditorContent(yamlLocation);
+    cy.get(pipelineBuilderPO.create).click();
+  },
+);

@@ -113,3 +113,57 @@ export const createKnativeKafka = () => {
     }
   });
 };
+
+export const createKnativeServingUsingCLI = (retries = 3) => {
+  const namespace = 'knative-serving';
+  const yamlFile = './cypress/testData/knative-serving.yaml';
+  cy.exec(`oc apply -f ${yamlFile} -n ${namespace}`, {
+    failOnNonZeroExit: false,
+  }).then(function (result) {
+    cy.log(result.stdout || result.stderr);
+    if (result.stderr) {
+      if (retries === 0) {
+        throw new Error(result.stderr);
+      }
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(20000);
+      createKnativeServingUsingCLI(retries - 1);
+    }
+  });
+};
+
+export const createKnativeEventingUsingCLI = (retries = 3) => {
+  const namespace = 'knative-eventing';
+  const yamlFile = './cypress/testData/knative-eventing.yaml';
+  cy.exec(`oc apply -f ${yamlFile} -n ${namespace}`, {
+    failOnNonZeroExit: false,
+  }).then(function (result) {
+    cy.log(result.stdout || result.stderr);
+    if (result.stderr) {
+      if (retries === 0) {
+        throw new Error(result.stderr);
+      }
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(20000);
+      createKnativeEventingUsingCLI(retries - 1);
+    }
+  });
+};
+
+export const createKnativeKafkaUsingCLI = (retries = 3) => {
+  const namespace = 'knative-eventing';
+  const yamlFile = './cypress/testData/knative-kafka.yaml';
+  cy.exec(`oc apply -f ${yamlFile} -n ${namespace}`, {
+    failOnNonZeroExit: false,
+  }).then(function (result) {
+    cy.log(result.stdout || result.stderr);
+    if (result.stderr) {
+      if (retries === 0) {
+        throw new Error(result.stderr);
+      }
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(20000);
+      createKnativeKafkaUsingCLI(retries - 1);
+    }
+  });
+};

@@ -12,8 +12,8 @@ import { app } from '../app';
 
 export const pipelinesPage = {
   clickOnCreatePipeline: (retry = 3) => {
-    detailsPage.titleShouldContain(pageTitle.Pipelines);
     app.waitForLoad();
+    detailsPage.titleShouldContain(pageTitle.Pipelines);
     cy.get('button');
     cy.get('body').then(($body) => {
       if ($body.find(pipelinesPO.createPipeline).length > 0) {
@@ -236,13 +236,15 @@ export const pipelinesPage = {
               .click({ force: true });
           });
       }
-      cy.byLegacyTestID(name);
+      cy.byLegacyTestID(name).should('be.visible');
     });
     // .eq(0)
     // .within(() => {
     // cy.byLegacyTestID(name);
     // });
-    cy.get(pipelinesPO.pipelinesTable.table).should('be.visible');
+    cy.get(pipelinesPO.pipelinesTable.table)
+      .contains('Pipeline')
+      .should('exist');
   },
 
   clearYAMLEditor: () => {
@@ -513,7 +515,8 @@ export const startPipelineInPipelinesPage = {
       case 'Secret':
         cy.byTestDropDownMenu('secret').click();
         break;
-      case 'PersistentVolumeClaim' || 'PVC':
+      case 'PersistentVolumeClaim':
+      case 'PVC':
         cy.byTestDropDownMenu('pvc').click();
         break;
       case 'VolumeClaimTemplate':

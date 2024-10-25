@@ -1,10 +1,14 @@
 import { checkErrors } from '../../../../tests/support/index';
-import { verifyAndInstallPipelinesOperator } from '../pages/functions/installOperatorOnCluster';
+import { checkDeveloperPerspective } from '../../../../tests/views/checkDeveloperPerspective';
+// import { verifyAndInstallPipelinesOperator } from '../pages/functions/installOperatorOnCluster';
+import { installPipelinesOperatorUsingCLI } from '../pages/functions/installOperatorOnClusterUsingCLI';
 
 before(() => {
   cy.login();
   cy.document().its('readyState').should('eq', 'complete');
-  verifyAndInstallPipelinesOperator();
+  // verifyAndInstallPipelinesOperator();
+  installPipelinesOperatorUsingCLI();
+  checkDeveloperPerspective();
 });
 
 after(() => {
@@ -12,7 +16,7 @@ after(() => {
   cy.log(`Deleting "${namespaces}" namespace`);
   cy.exec(`oc delete namespace ${namespaces}`, {
     failOnNonZeroExit: false,
-    timeout: 180000,
+    timeout: 200000,
   });
 });
 

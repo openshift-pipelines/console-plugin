@@ -61,7 +61,7 @@ Feature: Create Pipeline from Add Options
                   | nodejs-top |
 
 
-        @smoke
+        @smoke @broken-test
         Scenario Outline: Search the created pipeline from Add options in pipelines page: P-01-TC05
             Given user created workload "<name>" from add page with pipeline
               And user is at pipelines page

@@ -62,3 +62,33 @@ export enum nodeActions {
   EditDeploymentConfig = 'Edit DeploymentConfig',
   EditResourceLimits = 'Edit resource limits',
 }
+
+export enum operatorNamespaces {
+  PipelinesOperator = 'openshift-operators',
+  ServerlessOperator = 'openshift-serverless',
+  ShipwrightOperator = 'openshift-operators',
+  BuildsForOpenshiftOperator = 'openshift-operators',
+  WebTerminalOperator = 'openshift-operators',
+  RedHatIntegrationCamelK = 'openshift-operators',
+  DevWorkspaceOperator = 'openshift-operators',
+}
+
+export enum operatorSubscriptions {
+  PipelinesOperator = 'openshift-pipelines-operator',
+  ServerlessOperator = 'serverless-operator',
+  ShipwrightOperator = 'shipwright-operator',
+  BuildsForOpenshiftOperator = 'openshift-builds-operator',
+  WebTerminalOperator = 'web-terminal',
+  RedHatIntegrationCamelK = 'red-hat-camel-k',
+  DevWorkspaceOperator = 'devworkspace-operator',
+}
+
+export enum operatorPackage {
+  PipelinesOperator = 'openshift-pipelines-operator-rh',
+  ServerlessOperator = 'serverless-operator',
+  ShipwrightOperator = 'shipwright-operator',
+  BuildsForOpenshiftOperator = 'openshift-builds-operator',
+  WebTerminalOperator = 'web-terminal',
+  RedHatIntegrationCamelK = 'red-hat-camel-k',
+  DevWorkspaceOperator = 'devworkspace-operator',
+}

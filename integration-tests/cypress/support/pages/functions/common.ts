@@ -78,7 +78,7 @@ export const tableFunctions = {
   },
 
   selectKebabMenu: (name: string) => {
-    cy.get('div[role="grid"]').within(() => {
+    cy.get('[data-test-rows="resource-row"]').within(() => {
       cy.get('tr td:nth-child(1)').each(($el, index) => {
         if ($el.text().includes(name)) {
           cy.get('tbody tr')

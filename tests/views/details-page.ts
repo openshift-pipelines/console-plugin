@@ -20,6 +20,7 @@ export const detailsPage = {
   },
 };
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace DetailsPageSelector {
   export const name = 'dd[data-test-selector="details-item-value__Name"]';
   export const namespace =

@@ -354,8 +354,8 @@ export const kebabMenu = {
       .type(name);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
-    cy.get('div[role="grid"]').should('be.visible');
-    cy.get('div[role="grid"]').within(() => {
+    cy.get('table[role="grid"]').contains('Pipeline').should('be.visible');
+    cy.get('[data-test-rows="resource-row"]').within(() => {
       cy.get('tr td:nth-child(1)').each(($el, index) => {
         if ($el.text().includes(name)) {
           cy.get('tbody tr')

@@ -200,6 +200,7 @@ export const gitPage = {
       'contain.text',
       'Build using pipelines',
     );
+    cy.log('pipeline added in add section');
   },
   clickCreate: () =>
     /* eslint-disable-next-line cypress/unsafe-to-chain-command */

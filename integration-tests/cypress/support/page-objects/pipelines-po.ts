@@ -276,10 +276,10 @@ export const pipelinesPO = {
   pipelinesTab: '[data-test-id="horizontal-link-Pipelines"]',
   repositoriesTab: '[data-test-id="horizontal-link-Repositories"]',
   pipelinesTable: {
-    table: 'div[role="grid"]',
+    table: 'table[role="grid"]',
     pipelineName: 'tr td:nth-child(1)',
     pipelineRunName: 'tr td:nth-child(2)',
-    kebabMenu: '[data-test="kebab-button"]',
+    kebabMenu: '[data-test-id="kebab-button"]',
     columnValues: '[aria-label="Pipelines"] tbody tr td',
     columnNames: 'div[aria-label="Pipelines"] thead tr th',
     pipelineRunIcon: '[title="PipelineRun"]',

@@ -66,7 +66,7 @@ describe('pipelineQuickSearchVersionDropdown', () => {
     const { queryByTestId } = render(
       <PipelineQuickSearchVersionDropdown
         {...versionDropdownProps}
-        versions={sampleClusterTaskCatalogItem.attributes.versions}
+        versions={sampleClusterTaskCatalogItem?.attributes?.versions}
       />,
     );
     await waitFor(() => {
@@ -75,13 +75,11 @@ describe('pipelineQuickSearchVersionDropdown', () => {
   });
 
   it('should call the onchange handler with the version key', async () => {
+    const taskVerions = sampleClusterTaskCatalogItem.attributes?.versions || [];
     const { queryByTestId } = render(
       <PipelineQuickSearchVersionDropdown
         {...versionDropdownProps}
-        versions={[
-          ...sampleClusterTaskCatalogItem.attributes.versions,
-          { version: '0.2' },
-        ]}
+        versions={[...taskVerions, { version: '0.2' }]}
       />,
     );
     const taskDropdown = queryByTestId('task-version');

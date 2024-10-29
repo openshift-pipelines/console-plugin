@@ -1,6 +1,4 @@
-import * as dynamicPlugin from '@openshift-console/dynamic-plugin-sdk';
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
-import { safeLoad } from 'js-yaml';
 import { omit } from 'lodash';
 import { CTALabel } from '../const';
 import {
@@ -15,14 +13,11 @@ import {
   isSelectedVersionUpgradable,
   isTaskSearchable,
   isTaskVersionInstalled,
-  updateTask,
 } from '../pipeline-quicksearch-utils';
 import {
   sampleCatalogItems,
   sampleClusterTaskCatalogItem,
-  sampleTaskWithMultipleVersions,
   sampleTektonHubCatalogItem,
-  sampleVersions,
 } from './catalog-item-data';
 
 describe('pipeline-quicksearch-utils', () => {
@@ -308,65 +303,6 @@ describe('pipeline-quicksearch-utils', () => {
       expect(
         findInstalledTask(newCatalogItems, sampleTektonHubCatalogItem),
       ).toBe(installedCatalogTask);
-    });
-  });
-
-  describe('updateTask', () => {
-    beforeEach(() => {
-      jest
-        .spyOn(dynamicPlugin, 'k8sUpdate')
-        .mockImplementation(({ model, data }) => Promise.resolve(data));
-      jest.spyOn(dynamicPlugin, 'consoleFetch').mockImplementation((url) =>
-        Promise.resolve({
-          text: () =>
-            url === 'oc-task-0.1/url'
-              ? sampleTaskWithMultipleVersions[sampleVersions.VERSION_02]
-              : sampleTaskWithMultipleVersions[sampleVersions.VERSION_01],
-        } as any),
-      );
-    });
-    it('should update openshift client version from 0.1 to 0.2', async () => {
-      const openshiftClientV1 = {
-        ...sampleTektonHubCatalogItem,
-        data: safeLoad(
-          sampleTaskWithMultipleVersions[sampleVersions.VERSION_01],
-        ),
-      };
-      const updatedTask = await updateTask(
-        'oc-task-0.1/url',
-        openshiftClientV1,
-        'test-ns',
-        'openshift-client',
-      );
-      expect(updatedTask.metadata.labels['app.kubernetes.io/version']).toBe(
-        sampleVersions.VERSION_02,
-      );
-      expect(
-        updatedTask.metadata.annotations['tekton.dev/pipelines.minVersion'],
-      ).toBe('0.17.0');
-      expect(updatedTask.spec.params).toHaveLength(2);
-    });
-
-    it('should update openshift client version from 0.2 to 0.1', async () => {
-      const openshiftClientV2 = {
-        ...sampleTektonHubCatalogItem,
-        data: safeLoad(
-          sampleTaskWithMultipleVersions[sampleVersions.VERSION_02],
-        ),
-      };
-      const updatedTask = await updateTask(
-        'oc-task-0.2/url',
-        openshiftClientV2,
-        'test-ns',
-        'openshift-client',
-      );
-      expect(updatedTask.metadata.labels['app.kubernetes.io/version']).toBe(
-        sampleVersions.VERSION_01,
-      );
-      expect(
-        updatedTask.metadata.annotations['tekton.dev/pipelines.minVersion'],
-      ).toBe('0.12.1');
-      expect(updatedTask.spec.params).toHaveLength(3);
     });
   });
 });

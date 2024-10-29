@@ -80,6 +80,7 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
     useResolvedExtensions<YAMLTemplate>(isYAMLTemplate);
 
   const sanitizeYamlContent = React.useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (id = 'default', yaml = '', kind: string) => {
       if (yaml) {
         return yaml;

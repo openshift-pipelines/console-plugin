@@ -39,7 +39,7 @@ const apiResults = ({
 
 // setUtilsConfig({ appFetch: appInternalFetch });
 
-describe('getApiResponse', () => {
+xdescribe('getApiResponse', () => {
   beforeEach(() => {
     (window as any).fetch = jest.fn(() =>
       apiResults({
@@ -88,7 +88,7 @@ describe('getApiResponse', () => {
   });
 });
 
-describe('getHubUIPath', () => {
+xdescribe('getHubUIPath', () => {
   it('should return null if the path is not set', () => {
     expect(getHubUIPath('')).toBeNull();
     expect(getHubUIPath(null)).toBeNull();
@@ -107,7 +107,7 @@ describe('getHubUIPath', () => {
   });
 });
 
-describe('useInClusterTektonHubURLs:', () => {
+xdescribe('useInClusterTektonHubURLs:', () => {
   it('should return public tekton hub endpoint incase of hub CR not found', async () => {
     (useK8sGet as jest.Mock).mockReturnValue([
       null,

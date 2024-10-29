@@ -27,4 +27,9 @@ module.exports = {
     init: () => Promise.resolve(),
     t,
   },
+  getI18n: () => ({
+    t: (string) => t(string),
+  }),
+  Trans: ({ children }) => children,
+  useTranslation: () => ({ t: (key) => key }),
 };

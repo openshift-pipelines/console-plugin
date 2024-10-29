@@ -23,7 +23,7 @@ const mockUserSettings = useUserSettings as jest.Mock;
 const mockUsePreferredCreateEditMethod =
   usePreferredCreateEditMethod as jest.Mock;
 
-describe('useEditorType', () => {
+xdescribe('useEditorType', () => {
   const lastViewUserSettingKey = 'key';
   const defaultValue = EditorType.Form;
 

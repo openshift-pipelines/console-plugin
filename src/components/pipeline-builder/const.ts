@@ -63,7 +63,6 @@ export enum WhenExpressionOperatorType {
 export const initialPipelineFormData: PipelineBuilderFormValues = {
   name: 'new-pipeline',
   params: [],
-  resources: [],
   workspaces: [],
   tasks: [],
   listTasks: [],

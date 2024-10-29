@@ -60,7 +60,7 @@ export type PipelineBuilderTaskGroup = PipelineBuilderTaskGrouping & {
 export type PipelineBuilderFormValues = PipelineBuilderTaskGrouping & {
   name: string;
   params: TektonParam[];
-  resources: TektonResource[];
+  resources?: TektonResource[];
   workspaces: TektonWorkspace[];
   when?: WhenExpression[];
 };

@@ -37,7 +37,7 @@ const TextAreaField = (
         validated={isValid ? 'default' : 'error'}
         isRequired={required}
         aria-describedby={helpText ? `${fieldId}-helper` : undefined}
-        onChange={(value, event) => {
+        onChange={(event, value) => {
           onChange && onChange(value);
           field.onChange(event);
         }}

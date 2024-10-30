@@ -1226,6 +1226,22 @@
     }
   },
   {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/k8s/ns/:ns/tekton.dev~v1~Pipeline/:pipelineName/builder",
+      "component": {
+        "$codeRef": "pipelineBuilder.PipelineBuilderEditPage"
+      }
+    },
+    "flags": {
+      "required": [
+        "OPENSHIFT_PIPELINE",
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
+      ]
+    }
+  },
+  {
     "type": "console.catalog/item-type",
     "properties": {
       "type": "Red Hat",

@@ -10,6 +10,7 @@ import { LoadingBox } from '../status/status-box';
 import { k8sGet } from '@openshift-console/dynamic-plugin-sdk';
 
 import './PipelineBuilderEditPage.scss';
+import { useParams } from 'react-router-dom-v5-compat';
 
 type PipelineBuilderEditPageProps = RouteComponentProps<{
   ns: string;
@@ -22,11 +23,7 @@ const PipelineBuilderEditPage: React.FC<PipelineBuilderEditPageProps> = (
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [editPipeline, setEditPipeline] = React.useState<PipelineKind>(null);
   const [error, setError] = React.useState<string>(null);
-  const {
-    match: {
-      params: { pipelineName, ns },
-    },
-  } = props;
+  const { ns, pipelineName } = useParams();
 
   React.useEffect(() => {
     k8sGet({ model: PipelineModel, name: pipelineName, ns })

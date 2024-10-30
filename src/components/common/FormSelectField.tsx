@@ -11,6 +11,7 @@ import { useField, useFormikContext, FormikValues } from 'formik';
 import { useFormikValidationFix } from '../pipelines-details/multi-column-field/formik-validation-fix';
 import { getFieldId } from '../pipelines-details/multi-column-field/utils';
 import { FieldProps } from '../pipelines-details/multi-column-field/types';
+import { RedExclamationCircleIcon } from '@openshift-console/dynamic-plugin-sdk';
 
 export type FormSelectFieldOption<T = any> = {
   label: string;
@@ -60,7 +61,7 @@ const FormSelectField: React.FC<FormSelectFieldProps> = ({
         {...props}
         id={fieldId}
         aria-describedby={helpText ? `${fieldId}-helper` : undefined}
-        onChange={(value: any) => {
+        onChange={(_event, value: any) => {
           props.onChange && props.onChange(value);
           // Validation is automatically done by the useFormikValidationFix above
           setFieldValue(props.name, value, false);
@@ -74,9 +75,13 @@ const FormSelectField: React.FC<FormSelectFieldProps> = ({
       </FormSelect>
       <FormHelperText>
         <HelperText>
-          <HelperTextItem variant={!isValid ? 'error' : 'default'}>
-            {!isValid ? errorMessage : helpText}
-          </HelperTextItem>
+          {!isValid ? (
+            <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>
+              {errorMessage}
+            </HelperTextItem>
+          ) : (
+            <HelperTextItem>{helpText}</HelperTextItem>
+          )}
         </HelperText>
       </FormHelperText>
     </FormGroup>

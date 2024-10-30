@@ -1,17 +1,15 @@
-// @import '../../../../../public/style/vars';
-
 .ocs-synced-editor-field {
   &__editor-toggle {
     border-bottom: var(--pf-v5-global--BorderWidth--sm) solid
       var(--pf-v5-global--BorderColor--100);
     border-top: var(--pf-v5-global--BorderWidth--sm) solid
       var(--pf-v5-global--BorderColor--100);
-    margin-left: var(--pf-v5-global--gutter);
-    margin-right: var(--pf-v5-global--gutter);
+    margin-left: -var(--pf-v5-global--gutter);
+    margin-right: -var(--pf-v5-global--gutter);
     padding: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--lg);
     @media (min-width: var(--pf-v5-global--breakpoint--xl)) {
-      margin-left: var(--pf-v5-global--gutter--md);
-      margin-right: var(--pf-v5-global--gutter--md);
+      margin-left: -var(--pf-v5-global--gutter--md);
+      margin-right: -var(--pf-v5-global--gutter--md);
     }
     @media (min-width: var(--pf-v5-global--breakpoint--xl)) {
       padding-left: var(--pf-v5-global--gutter--md);

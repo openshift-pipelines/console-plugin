@@ -6,6 +6,7 @@ import {
   HelperTextItem,
   TextInput,
   TextInputTypes,
+  ValidatedOptions,
 } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
@@ -70,7 +71,7 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
       <TextInput
         data-test={`task-name ${interimName}`}
         id="task-name"
-        validated={isValid ? 'default' : 'error'}
+        validated={isValid ? ValidatedOptions.default : ValidatedOptions.error}
         isRequired
         onChange={(_event, value) => {
           setInterimName(value);
@@ -101,16 +102,18 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
         type={TextInputTypes.text}
         value={interimName}
       />
-      <FormHelperText>
-        <HelperText>
-          <HelperTextItem
-            icon={<ExclamationCircleIcon />}
-            variant={isValid ? 'default' : 'error'}
-          >
-            {errorMessage}
-          </HelperTextItem>
-        </HelperText>
-      </FormHelperText>
+      {!isValid && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem
+              icon={<ExclamationCircleIcon />}
+              variant={ValidatedOptions.error}
+            >
+              {errorMessage}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      )}
     </FormGroup>
   );
 };

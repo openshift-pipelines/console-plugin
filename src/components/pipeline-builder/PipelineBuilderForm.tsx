@@ -219,7 +219,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
       >
         <DrawerContentBody onClick={closeRef}>
           <div
-            className="opp-pipeline-builder  ocs-quick-search-modal__no-backdrop"
+            className="opp-pipeline-builder ocs-quick-search-modal__no-backdrop"
             ref={contentRef}
           >
             <PipelineBuilderHeader />

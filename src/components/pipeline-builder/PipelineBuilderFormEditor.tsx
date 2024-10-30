@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TextInputTypes } from '@patternfly/react-core';
+import { FormGroup, TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import PipelineBuilderVisualization from './PipelineBuilderVisualization';
 import {
@@ -49,11 +49,7 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (
         />
       </div>
 
-      <div>
-        <h2>
-          {t('Tasks')}
-          <span className="pf-c-form__label-required">*</span>
-        </h2>
+      <FormGroup label={t('Tasks')} isRequired>
         <PipelineBuilderVisualization
           onTaskSelection={onTaskSelection}
           onUpdateTasks={onUpdateTasks}
@@ -61,10 +57,9 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (
           taskGroup={taskGroup}
           taskResources={taskResources}
         />
-      </div>
+      </FormGroup>
 
-      <div>
-        <h2>{t('Parameters')}</h2>
+      <FormGroup label={t('Parameters')}>
         <PipelineParameters
           fieldName="formData.params"
           addLabel={t('Add parameter')}
@@ -77,15 +72,14 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (
           emptyMessage={t('No parameters are associated with this Pipeline.')}
           emptyValues={{ name: '', description: '', default: '' }}
         />
-      </div>
+      </FormGroup>
 
-      <div>
-        <h2>{t('Workspaces')}</h2>
+      <FormGroup label={t('Workspaces')}>
         <PipelineWorkspaces
           addLabel={t('Add workspace')}
           fieldName="formData.workspaces"
         />
-      </div>
+      </FormGroup>
     </>
   );
 };

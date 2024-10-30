@@ -143,7 +143,6 @@
   "Drag and drop file with your private SSH key here or browse to upload it.": "Drag and drop file with your private SSH key here or browse to upload it.",
   "Drop file here": "Drop file here",
   "Duration": "Duration",
-  "dynamic Pipeline builder": "dynamic Pipeline builder",
   "Edit": "Edit",
   "Edit {{resourceKind}}": "Edit {{resourceKind}}",
   "Edit annotations": "Edit annotations",

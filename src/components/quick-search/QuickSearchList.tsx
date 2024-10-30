@@ -1,0 +1,194 @@
+import * as React from 'react';
+import {
+  DataList,
+  DataListItem,
+  DataListItemRow,
+  DataListItemCells,
+  DataListCell,
+  Split,
+  SplitItem,
+  Label,
+  TextContent,
+  Text,
+  TextVariants,
+} from '@patternfly/react-core';
+import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom-v5-compat';
+import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
+import { CatalogLinkData } from './utils/quick-search-types';
+import { handleCta } from './utils/quick-search-utils';
+import { getIconProps } from '../catalog/catalog-utils';
+import { CatalogType } from '../catalog/types';
+
+import './QuickSearchList.scss';
+import { useHistory } from 'react-router';
+
+interface QuickSearchListProps {
+  listItems: CatalogItem[];
+  catalogItemTypes: CatalogType[];
+  viewAll?: CatalogLinkData[];
+  selectedItemId: string;
+  searchTerm: string;
+  namespace: string;
+  limitItemCount?: number;
+  onSelectListItem: (
+    event: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>,
+    itemId: string,
+  ) => void;
+  onListChange?: (items: number) => void;
+  closeModal: () => void;
+}
+
+const QuickSearchList: React.FC<QuickSearchListProps> = ({
+  listItems,
+  catalogItemTypes,
+  viewAll,
+  selectedItemId,
+  onSelectListItem,
+  closeModal,
+  limitItemCount,
+  onListChange,
+}) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const history = useHistory();
+  const [itemsCount, setItemsCount] = React.useState<number>(
+    limitItemCount || listItems.length,
+  );
+  const listHeight =
+    document.querySelector('.ocs-quick-search-list__list')?.clientHeight || 0;
+
+  const getIcon = (item: CatalogItem) => {
+    // const { iconImg, iconClass } = getIconProps(item);
+    const { iconImg } = getIconProps(item);
+    return (
+      <img
+        className="ocs-quick-search-list__item-icon-img"
+        // src={iconClass ? getImageForIconClass(iconClass) : iconImg}
+        src={iconImg}
+        alt={`${item.name} icon`}
+      />
+    );
+  };
+  React.useLayoutEffect(() => {
+    if (selectedItemId) {
+      const element = document.getElementById(selectedItemId);
+      if (element) {
+        element.scrollIntoView({ block: 'nearest' });
+      }
+    }
+  }, [selectedItemId]);
+
+  React.useEffect(() => {
+    if (listHeight > 0 && limitItemCount > 0) {
+      const rowHeight =
+        document.querySelector('.ocs-quick-search-list__item')?.clientHeight ||
+        0;
+      const count =
+        Math.floor(listHeight / rowHeight) < limitItemCount
+          ? limitItemCount
+          : Math.floor(listHeight / rowHeight);
+      setItemsCount(count);
+      onListChange?.(count);
+    }
+  }, [limitItemCount, listHeight, onListChange]);
+
+  return (
+    <div className="ocs-quick-search-list">
+      <DataList
+        className="ocs-quick-search-list__list"
+        aria-label={t('Quick search list')}
+        selectedDataListItemId={selectedItemId}
+        onSelectDataListItem={onSelectListItem}
+        isCompact
+      >
+        {listItems.slice(0, itemsCount).map((item) => {
+          const itemType =
+            catalogItemTypes.find((type) => type.value === item.type)?.label ||
+            item.type;
+
+          return (
+            <DataListItem
+              id={item.uid}
+              key={item.uid}
+              tabIndex={-1}
+              className={cx('ocs-quick-search-list__item', {
+                'ocs-quick-search-list__item--highlight':
+                  item.uid === selectedItemId,
+              })}
+              onDoubleClick={(e: React.SyntheticEvent) => {
+                handleCta(e, item, closeModal, history);
+              }}
+            >
+              <DataListItemRow className="ocs-quick-search-list__item-row">
+                <DataListItemCells
+                  className="ocs-quick-search-list__item-content"
+                  dataListCells={[
+                    <DataListCell isIcon key={`${item.uid}-icon`}>
+                      <div className="ocs-quick-search-list__item-icon">
+                        {item.icon?.node ?? getIcon(item)}
+                      </div>
+                    </DataListCell>,
+                    <DataListCell
+                      style={{ paddingTop: 'var(--pf-v5-global--spacer--sm)' }}
+                      width={2}
+                      wrapModifier="truncate"
+                      key={`${item.uid}-name`}
+                    >
+                      <span
+                        className="ocs-quick-search-list__item-name"
+                        data-test={`item-name-${item.name}-${itemType}`}
+                      >
+                        {item.name}
+                      </span>
+                      <Split style={{ alignItems: 'center' }} hasGutter>
+                        <SplitItem>
+                          <Split>
+                            <SplitItem>
+                              <Label>{itemType}</Label>
+                            </SplitItem>
+                            {item?.secondaryLabel && (
+                              <SplitItem className="ocs-quick-search-list__secondary-label">
+                                {item.secondaryLabel}
+                              </SplitItem>
+                            )}
+                          </Split>
+                        </SplitItem>
+                        <SplitItem>
+                          <TextContent
+                            data-test={`item-name-${item.name}-${item.provider}-secondary-label`}
+                          >
+                            <Text component={TextVariants.small}>
+                              {item.provider}
+                            </Text>
+                          </TextContent>
+                        </SplitItem>
+                      </Split>
+                    </DataListCell>,
+                  ]}
+                />
+              </DataListItemRow>
+            </DataListItem>
+          );
+        })}
+      </DataList>
+
+      {viewAll?.length > 0 && (
+        <div className="ocs-quick-search-list__all-items-link">
+          {viewAll.map((catalogLink) => (
+            <Link
+              id={catalogLink.catalogType}
+              to={catalogLink.to}
+              key={catalogLink.catalogType}
+              style={{ fontSize: 'var(--pf-v5-global--FontSize--sm)' }}
+            >
+              {catalogLink.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default QuickSearchList;

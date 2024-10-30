@@ -1184,5 +1184,134 @@
       ],
       "component": { "$codeRef": "pipelineRunDetails.LogURLRedirect" }
     }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": [
+        "OPENSHIFT_PIPELINE",
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
+      ]
+    },
+    "properties": {
+      "id": "pipeline",
+      "groupId": "pipelines",
+      "href": "/k8s/ns/:namespace/tekton.dev~v1~Pipeline/~new/builder",
+      "label": "%plugin__pipelines-console-plugin~Pipelines%",
+      "description": "%plugin__pipelines-console-plugin~Create a Tekton Pipeline to automate delivery of your application%",
+      "icon": { "$codeRef": "icons.pipelineIconSVG" },
+      "accessReview": [
+        {
+          "group": "tekton.dev",
+          "resource": "pipelines",
+          "verb": "create"
+        }
+      ]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/k8s/ns/:ns/tekton.dev~v1~Pipeline/~new/builder",
+      "component": {
+        "$codeRef": "pipelineBuilder.PipelineBuilderPage"
+      }
+    },
+    "flags": {
+      "required": [
+        "OPENSHIFT_PIPELINE",
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
+      ]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/k8s/ns/:ns/tekton.dev~v1~Pipeline/:pipelineName/builder",
+      "component": {
+        "$codeRef": "pipelineBuilder.PipelineBuilderEditPage"
+      }
+    },
+    "flags": {
+      "required": [
+        "OPENSHIFT_PIPELINE",
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
+      ]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "Red Hat",
+      "title": "%plugin__pipelines-console-plugin~Red Hat%",
+      "catalogDescription": "%plugin__pipelines-console-plugin~Browse for openshift pipeline tasks available in the cluster.%"
+    },
+    "flags": {
+      "required": [
+        "OPENSHIFT_PIPELINE",
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
+      ]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "Community",
+      "title": "%plugin__pipelines-console-plugin~Community%",
+      "catalogDescription": "%plugin__pipelines-console-plugin~Browse tekton hub tasks.%"
+    },
+    "flags": {
+      "required": [
+        "OPENSHIFT_PIPELINE",
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
+      ]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "pipelines-task-catalog",
+      "type": "Red Hat",
+      "title": "%plugin__pipelines-console-plugin~Tasks%",
+      "provider": { "$codeRef": "catalog.TektonTaskProvider" }
+    },
+    "flags": {
+      "required": [
+        "OPENSHIFT_PIPELINE",
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
+      ]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "pipelines-task-catalog",
+      "type": "Community",
+      "title": "%plugin__pipelines-console-plugin~Tasks%",
+      "provider": { "$codeRef": "catalog.TektonHubTaskProvider" }
+    },
+    "flags": {
+      "required": [
+        "OPENSHIFT_PIPELINE",
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
+      ]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "pipelines-task-catalog",
+      "type": "Community",
+      "title": "%plugin__pipelines-console-plugin~Tasks%",
+      "provider": { "$codeRef": "catalog.ArtifactHubTaskProvider" }
+    },
+    "flags": {
+      "required": [
+        "OPENSHIFT_PIPELINE",
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
+      ]
+    }
   }
 ]

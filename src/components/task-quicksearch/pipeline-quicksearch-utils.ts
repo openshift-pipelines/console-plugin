@@ -4,7 +4,7 @@ import {
   k8sCreate,
   k8sUpdate,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import * as _ from 'lodash';
 import { ClusterTaskModel, TaskModel } from '../../models';
 import { TaskKind } from '../../types';
@@ -158,7 +158,7 @@ export const updateTask = async (
   return consoleFetch(url)
     .then(async (res) => {
       const yaml = await res.text();
-      const task = safeLoad(yaml) as TaskKind;
+      const task = load(yaml) as TaskKind;
       task.metadata.namespace = namespace;
       task.metadata.annotations = {
         ...task.metadata.annotations,
@@ -179,7 +179,7 @@ export const createTask = (url: string, namespace: string) => {
   return consoleFetch(url)
     .then(async (res) => {
       const yaml = await res.text();
-      const task = safeLoad(yaml) as TaskKind;
+      const task = load(yaml) as TaskKind;
       task.metadata.namespace = namespace;
       task.metadata.annotations = {
         ...task.metadata.annotations,

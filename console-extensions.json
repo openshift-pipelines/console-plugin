@@ -438,20 +438,6 @@
     "properties": {
       "model": {
         "group": "tekton.dev",
-        "version": "v1beta1",
-        "kind": "ClusterTask"
-      },
-      "component": { "$codeRef": "tasksComponent.ClusterTaskListPage" }
-    },
-    "flags": {
-      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST"]
-    }
-  },
-  {
-    "type": "console.page/resource/list",
-    "properties": {
-      "model": {
-        "group": "tekton.dev",
         "version": "v1",
         "kind": "Task"
       },
@@ -473,20 +459,6 @@
     },
     "flags": {
       "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TASKRUNS_LIST"]
-    }
-  },
-  {
-    "type": "console.page/resource/list",
-    "properties": {
-      "model": {
-        "group": "tekton.dev",
-        "version": "v1",
-        "kind": "ClusterTask"
-      },
-      "component": { "$codeRef": "tasksComponent.ClusterTaskListPage" }
-    },
-    "flags": {
-      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST"]
     }
   },
   {
@@ -820,38 +792,6 @@
         "group": "tekton.dev",
         "version": "v1beta1",
         "kind": "Task"
-      },
-      "component": {
-        "$codeRef": "tasksComponent.WorkspaceDefinitionList"
-      },
-      "sortWeight": 1,
-      "column": "right"
-    }
-  },
-  {
-    "type": "console.resource/details-item",
-    "properties": {
-      "id": "clustertasks-workspaces",
-      "model": {
-        "group": "tekton.dev",
-        "version": "v1",
-        "kind": "ClusterTask"
-      },
-      "component": {
-        "$codeRef": "tasksComponent.WorkspaceDefinitionList"
-      },
-      "sortWeight": 1,
-      "column": "right"
-    }
-  },
-  {
-    "type": "console.resource/details-item",
-    "properties": {
-      "id": "clustertasks-workspaces",
-      "model": {
-        "group": "tekton.dev",
-        "version": "v1beta1",
-        "kind": "ClusterTask"
       },
       "component": {
         "$codeRef": "tasksComponent.WorkspaceDefinitionList"

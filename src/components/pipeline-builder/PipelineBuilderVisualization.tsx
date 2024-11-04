@@ -50,7 +50,8 @@ const PipelineBuilderVisualization: React.FC<
     getBuilderTasksErrorGroup(errors?.formData, status),
   );
   const taskCount =
-    taskResources.namespacedTasks.length + taskResources.clusterTasks.length;
+    taskResources.namespacedTasks.length +
+    taskResources.clusterResolverTasks.length;
   const hasWhenExpression = nodesHasWhenExpression(nodes);
 
   if (status?.taskLoadingError) {

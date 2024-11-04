@@ -6,7 +6,8 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { FormikErrors } from 'formik';
 import * as _ from 'lodash';
-import { ClusterTaskModel, PipelineModel, TaskModel } from '../../models';
+import { PIPELINE_NAMESPACE } from '../../consts';
+import { PipelineModel, TaskModel } from '../../models';
 import {
   PipelineKind,
   PipelineTask,
@@ -112,24 +113,35 @@ export const findTask = (
   resourceTasks: PipelineBuilderTaskResources,
   task: PipelineTask,
 ): TaskKind => {
+  const getTaskName = (task: PipelineTask): string | null => {
+    if (!task?.taskRef) return null;
+
+    const { taskRef } = task;
+
+    if (taskRef.resolver === 'cluster') {
+      const nameParam = taskRef.params?.find((param) => param.name === 'name');
+      return nameParam ? nameParam.value : null;
+    }
+    return taskRef.name;
+  };
   if (task?.taskRef) {
     if (
       !resourceTasks?.tasksLoaded ||
-      !resourceTasks.clusterTasks ||
+      !resourceTasks.clusterResolverTasks ||
       !resourceTasks.namespacedTasks
     ) {
       return null;
     }
-    const {
-      taskRef: { kind, name },
-    } = task;
-    const matchingName = (taskResource: TaskKind) =>
-      taskResource.metadata.name === name;
 
-    if (kind === ClusterTaskModel.kind) {
-      return resourceTasks.clusterTasks.find(matchingName);
-    }
-    return resourceTasks.namespacedTasks.find(matchingName);
+    const taskName = getTaskName(task);
+
+    const matchingName = (taskResource: TaskKind) =>
+      taskResource.metadata.name === taskName;
+
+    return (
+      resourceTasks.namespacedTasks.find(matchingName) ||
+      resourceTasks.clusterResolverTasks.find(matchingName)
+    );
   }
 
   if (task?.taskSpec) {
@@ -316,15 +328,32 @@ export const convertResourceToTask = (
   usedNames: string[],
   resource: TaskKind,
   runAfter?: string[],
+  namespace?: string,
 ): PipelineTask => {
   const kind = resource.kind ?? TaskModel.kind;
+  let taskRef;
+  if (
+    resource.metadata.namespace === PIPELINE_NAMESPACE &&
+    namespace !== PIPELINE_NAMESPACE
+  ) {
+    taskRef = {
+      resolver: 'cluster',
+      params: [
+        { name: 'kind', value: 'task' },
+        { name: 'name', value: resource.metadata.name },
+        { name: 'namespace', value: PIPELINE_NAMESPACE },
+      ],
+    };
+  } else {
+    taskRef = {
+      kind,
+      name: resource.metadata.name,
+    };
+  }
   return {
     name: safeName(usedNames, resource.metadata.name),
     runAfter,
-    taskRef: {
-      kind,
-      name: resource.metadata.name,
-    },
+    taskRef,
     params: getTaskParameters(resource).map(
       (param: TektonParam): PipelineTaskParam => ({
         name: param.name,

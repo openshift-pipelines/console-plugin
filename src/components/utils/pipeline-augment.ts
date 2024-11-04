@@ -10,7 +10,6 @@ import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/
 import { global_danger_color_100 as failureColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
 import { TektonResourceLabel } from '../../consts';
 import {
-  ClusterTaskModel,
   ClusterTriggerBindingModel,
   EventListenerModel,
   PipelineModel,
@@ -213,15 +212,25 @@ export const totalPipelineRunCustomTasks = (
     return 0;
   }
   const totalCustomTasks =
-    (executedPipeline.spec?.tasks || []).filter(
-      (task) =>
-        task.taskRef?.kind !== 'Task' && task.taskRef?.kind !== 'ClusterTask',
-    ).length ?? 0;
+    (executedPipeline.spec?.tasks || []).filter((task) => {
+      if (task.taskRef?.resolver === 'cluster') {
+        const kindParam = task.taskRef?.params?.find(
+          (param) => param.name === 'kind',
+        )?.value;
+        return kindParam !== 'task';
+      }
+      return task.taskRef?.kind !== 'Task';
+    }).length ?? 0;
   const finallyCustomTasks =
-    (executedPipeline.spec?.finally || []).filter(
-      (task) =>
-        task.taskRef?.kind !== 'Task' && task.taskRef?.kind !== 'ClusterTask',
-    ).length ?? 0;
+    (executedPipeline.spec?.finally || []).filter((task) => {
+      if (task.taskRef?.resolver === 'cluster') {
+        const kindParam = task.taskRef?.params?.find(
+          (param) => param.name === 'kind',
+        )?.value;
+        return kindParam !== 'task';
+      }
+      return task.taskRef?.kind !== 'Task';
+    }).length ?? 0;
   return totalCustomTasks + finallyCustomTasks;
 };
 
@@ -301,9 +310,6 @@ export const getTaskStatus = (
 };
 
 export const getResourceModelFromTaskKind = (kind: string): K8sKind => {
-  if (kind === ClusterTaskModel.kind) {
-    return ClusterTaskModel;
-  }
   if (kind === TaskModel.kind || kind === undefined) {
     return TaskModel;
   }

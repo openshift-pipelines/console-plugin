@@ -10,7 +10,7 @@ import {
 } from '@testing-library/react';
 import { cloneDeep, omit } from 'lodash';
 import {
-  sampleClusterTaskCatalogItem,
+  sampleTaskCatalogItem,
   sampleTektonHubCatalogItem,
   sampleTektonHubCatalogItemWithHubURL,
 } from './catalog-item-data';
@@ -56,8 +56,8 @@ beforeEach(() => {
 });
 
 describe('pipelineQuickSearchDetails', () => {
-  const clusterTaskProps = {
-    selectedItem: sampleClusterTaskCatalogItem,
+  const taskProps = {
+    selectedItem: sampleTaskCatalogItem,
     closeModal: jest.fn(),
   };
 
@@ -71,7 +71,7 @@ describe('pipelineQuickSearchDetails', () => {
   describe('Installed badge tests', () => {
     it('should show the installed badge for the cluster task', async () => {
       const { queryByTestId } = render(
-        <PipelineQuickSearchDetails {...clusterTaskProps} />,
+        <PipelineQuickSearchDetails {...taskProps} />,
       );
       await waitFor(() => {
         expect(queryByTestId('task-installed-badge')).not.toBeNull();
@@ -136,15 +136,9 @@ describe('pipelineQuickSearchDetails', () => {
     });
 
     it('Add button should be enabled if the versions is not available in the user created task', async () => {
-      const customTask = omit(
-        clusterTaskProps.selectedItem,
-        'attributes.versions',
-      );
+      const customTask = omit(taskProps.selectedItem, 'attributes.versions');
       const { getByRole } = render(
-        <PipelineQuickSearchDetails
-          {...clusterTaskProps}
-          selectedItem={customTask}
-        />,
+        <PipelineQuickSearchDetails {...taskProps} selectedItem={customTask} />,
       );
       await waitFor(() => {
         expect(
@@ -155,7 +149,7 @@ describe('pipelineQuickSearchDetails', () => {
 
     it('Add button should be enabled if the versions is not available', async () => {
       const { getByRole } = render(
-        <PipelineQuickSearchDetails {...clusterTaskProps} />,
+        <PipelineQuickSearchDetails {...taskProps} />,
       );
       await waitFor(() => {
         expect(
@@ -166,7 +160,7 @@ describe('pipelineQuickSearchDetails', () => {
 
     it('should show the Add button for already installed task', async () => {
       const { getByRole } = render(
-        <PipelineQuickSearchDetails {...clusterTaskProps} />,
+        <PipelineQuickSearchDetails {...taskProps} />,
       );
       await waitFor(() => {
         expect(getByRole('button', { name: 'Add' })).not.toBeNull();
@@ -207,7 +201,7 @@ describe('pipelineQuickSearchDetails', () => {
   describe('Version dropdown tests', () => {
     it('should show the version dropdown if the versions are available', async () => {
       const { queryByTestId } = render(
-        <PipelineQuickSearchDetails {...clusterTaskProps} />,
+        <PipelineQuickSearchDetails {...taskProps} />,
       );
       await waitFor(() => {
         expect(queryByTestId('task-version-dropdown')).not.toBeNull();
@@ -215,14 +209,11 @@ describe('pipelineQuickSearchDetails', () => {
     });
 
     it('should not show the version dropdown if the versions are not available', async () => {
-      const selectedItem = omit(
-        clusterTaskProps.selectedItem,
-        'attributes.versions',
-      );
+      const selectedItem = omit(taskProps.selectedItem, 'attributes.versions');
       selectedItem.attributes.versions = [];
       const { queryByTestId } = render(
         <PipelineQuickSearchDetails
-          {...clusterTaskProps}
+          {...taskProps}
           selectedItem={selectedItem}
         />,
       );
@@ -280,7 +271,7 @@ describe('pipelineQuickSearchDetails', () => {
   describe('Category labels', () => {
     it('should show the category labels if the categories are available', async () => {
       const { queryByTestId } = render(
-        <PipelineQuickSearchDetails {...clusterTaskProps} />,
+        <PipelineQuickSearchDetails {...taskProps} />,
       );
       await waitFor(() => {
         expect(queryByTestId('task-category-list')).not.toBeNull();
@@ -289,12 +280,12 @@ describe('pipelineQuickSearchDetails', () => {
 
     it('should not show the category labels if the categories are not available', async () => {
       const selectedItem = omit(
-        clusterTaskProps.selectedItem,
+        taskProps.selectedItem,
         'attributes.categories',
       );
       const { queryByTestId } = render(
         <PipelineQuickSearchDetails
-          {...clusterTaskProps}
+          {...taskProps}
           selectedItem={selectedItem}
         />,
       );
@@ -307,7 +298,7 @@ describe('pipelineQuickSearchDetails', () => {
   describe('Tag labels', () => {
     it('should show the tag labels if the tag are available', async () => {
       const { queryByTestId } = render(
-        <PipelineQuickSearchDetails {...clusterTaskProps} />,
+        <PipelineQuickSearchDetails {...taskProps} />,
       );
       await waitFor(() => {
         expect(queryByTestId('task-tag-list')).not.toBeNull();
@@ -315,10 +306,10 @@ describe('pipelineQuickSearchDetails', () => {
     });
 
     it('should not show the tag labels if the tags are not available', async () => {
-      const selectedItem = omit(clusterTaskProps.selectedItem, 'tags');
+      const selectedItem = omit(taskProps.selectedItem, 'tags');
       const { queryByTestId } = render(
         <PipelineQuickSearchDetails
-          {...clusterTaskProps}
+          {...taskProps}
           selectedItem={selectedItem}
         />,
       );

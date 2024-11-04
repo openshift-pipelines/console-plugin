@@ -6,7 +6,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { load } from 'js-yaml';
 import * as _ from 'lodash';
-import { ClusterTaskModel, TaskModel } from '../../models';
+import { TaskModel } from '../../models';
 import { TaskKind } from '../../types';
 import { t } from '../utils/common-utils';
 import { returnValidTaskModel } from '../utils/pipeline-utils';
@@ -140,7 +140,6 @@ export const findInstalledTask = (
     (i) =>
       i.uid !== item.uid &&
       i.name === item.name &&
-      item.data.kind !== ClusterTaskModel.kind &&
       i.data.kind === TaskModel.kind &&
       (i.data.metadata?.annotations?.[TektonTaskAnnotation.installedFrom] ===
         TEKTONHUB ||

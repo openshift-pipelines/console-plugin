@@ -9,7 +9,7 @@ import {
   act,
 } from '@testing-library/react';
 import { omit } from 'lodash';
-import { sampleClusterTaskCatalogItem } from './catalog-item-data';
+import { sampleTaskCatalogItem } from './catalog-item-data';
 import PipelineQuickSearchVersionDropdown from '../PipelineQuickSearchVersionDropdown';
 
 configure({ testIdAttribute: 'data-test' });
@@ -30,7 +30,7 @@ if (!Element.prototype.closest) {
 describe('pipelineQuickSearchVersionDropdown', () => {
   const onChange = jest.fn();
   const versionDropdownProps = {
-    item: sampleClusterTaskCatalogItem,
+    item: sampleTaskCatalogItem,
     selectedVersion: '0.1',
     versions: [],
     onChange,
@@ -54,7 +54,7 @@ describe('pipelineQuickSearchVersionDropdown', () => {
     const { queryByTestId } = render(
       <PipelineQuickSearchVersionDropdown
         {...versionDropdownProps}
-        item={omit(sampleClusterTaskCatalogItem, 'attributes.versions')}
+        item={omit(sampleTaskCatalogItem, 'attributes.versions')}
       />,
     );
     await waitFor(() => {
@@ -66,7 +66,7 @@ describe('pipelineQuickSearchVersionDropdown', () => {
     const { queryByTestId } = render(
       <PipelineQuickSearchVersionDropdown
         {...versionDropdownProps}
-        versions={sampleClusterTaskCatalogItem?.attributes?.versions}
+        versions={sampleTaskCatalogItem?.attributes?.versions}
       />,
     );
     await waitFor(() => {
@@ -75,7 +75,7 @@ describe('pipelineQuickSearchVersionDropdown', () => {
   });
 
   it('should call the onchange handler with the version key', async () => {
-    const taskVerions = sampleClusterTaskCatalogItem.attributes?.versions || [];
+    const taskVerions = sampleTaskCatalogItem.attributes?.versions || [];
     const { queryByTestId } = render(
       <PipelineQuickSearchVersionDropdown
         {...versionDropdownProps}

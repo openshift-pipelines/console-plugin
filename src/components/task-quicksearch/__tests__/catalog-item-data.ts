@@ -3,7 +3,7 @@ import { TaskKind } from '../../../types';
 import { TektonHubTask } from '../../catalog/apis/tektonHub';
 
 export enum CatalogItemTypes {
-  CLUSTER_TASK = 'clusterTask',
+  ECOSYSTEM_TASK = 'clusterResolverTask',
   TEKTONHUB_TASK = 'TektonHubTask',
 }
 
@@ -25,7 +25,7 @@ type TektonHubPlatformTasks = {
 };
 
 export const sampleTasks: SampleTasks = {
-  [CatalogItemTypes.CLUSTER_TASK]: {
+  [CatalogItemTypes.ECOSYSTEM_TASK]: {
     kind: 'Task',
     apiVersion: 'tekton.dev/v1beta1',
     metadata: {
@@ -169,7 +169,7 @@ export const tekonHubPlatformTasks: TektonHubPlatformTasks = {
   },
 };
 
-export const sampleClusterTaskCatalogItem: CatalogItem = {
+export const sampleTaskCatalogItem: CatalogItem = {
   uid: '8a357c10-ea59-49a3-b4ea-26fd594afb10',
   type: 'Red Hat',
   name: 'ansible-tower-cli',
@@ -192,7 +192,7 @@ export const sampleClusterTaskCatalogItem: CatalogItem = {
   cta: {
     label: 'Add',
   },
-  data: sampleTasks[CatalogItemTypes.CLUSTER_TASK],
+  data: sampleTasks[CatalogItemTypes.ECOSYSTEM_TASK],
 };
 
 export const sampleTektonHubCatalogItem: CatalogItem = {
@@ -388,6 +388,6 @@ export const sampleTaskWithMultipleVersions = {
 };
 
 export const sampleCatalogItems: CatalogItem[] = [
-  sampleClusterTaskCatalogItem,
+  sampleTaskCatalogItem,
   sampleTektonHubCatalogItem,
 ];

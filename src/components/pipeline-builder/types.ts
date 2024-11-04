@@ -49,7 +49,7 @@ export type PipelineBuilderTaskGrouping = {
 
 export type PipelineBuilderTaskResources = {
   namespacedTasks: TaskKind[];
-  clusterTasks: TaskKind[];
+  clusterResolverTasks: TaskKind[];
   tasksLoaded: boolean;
 };
 
@@ -152,6 +152,7 @@ export type CleanupResults = {
 export type UpdateOperationAction<D extends UpdateOperationBaseData> = (
   taskGrouping: PipelineBuilderTaskGrouping,
   data: D,
+  namespace?: string,
 ) => CleanupResults;
 
 export type Sample = {

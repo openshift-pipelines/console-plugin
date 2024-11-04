@@ -34,7 +34,7 @@ import {
 
 describe('findTaskFromFormikData / findTask', () => {
   const createFormValues = (
-    clusterTasks = [],
+    clusterResolverTasks = [],
     namespacedTasks = [],
   ): PipelineBuilderFormikValues => {
     return {
@@ -42,9 +42,10 @@ describe('findTaskFromFormikData / findTask', () => {
       yamlData: '',
       formData: initialPipelineFormData,
       taskResources: {
-        clusterTasks,
+        clusterResolverTasks,
         namespacedTasks,
-        tasksLoaded: clusterTasks.length > 0 || namespacedTasks.length > 0,
+        tasksLoaded:
+          clusterResolverTasks.length > 0 || namespacedTasks.length > 0,
       },
     };
   };
@@ -67,7 +68,7 @@ describe('findTaskFromFormikData / findTask', () => {
       findTask(
         {
           tasksLoaded: true,
-          clusterTasks: [externalTask],
+          clusterResolverTasks: [externalTask],
           namespacedTasks: [],
         },
         null,
@@ -77,25 +78,12 @@ describe('findTaskFromFormikData / findTask', () => {
       findTask(
         {
           tasksLoaded: true,
-          clusterTasks: [externalTask],
+          clusterResolverTasks: [externalTask],
           namespacedTasks: [],
         },
         { name: 'test', taskRef: { name: 'unavailable-task' } },
       ),
     ).toBe(undefined);
-  });
-
-  it('should be able to find a clusterTask', () => {
-    const formValues = createFormValues([externalTask]);
-    expect(
-      findTask(formValues.taskResources, {
-        name: 'test',
-        taskRef: {
-          name: externalTask.metadata.name,
-          kind: externalTask.kind,
-        },
-      }),
-    ).toBe(externalTask);
   });
 
   it('should be able to find a namespacedTask', () => {
@@ -148,7 +136,7 @@ describe('convertResourceToTask', () => {
     it('should refer to the proper taskRef', () => {
       expect(result.taskRef).toEqual({
         name: externalTaskWithVarietyParams.metadata.name,
-        kind: 'ClusterTask',
+        kind: 'Task',
       });
     });
 

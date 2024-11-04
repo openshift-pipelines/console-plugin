@@ -131,7 +131,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   };
 
   const onUpdateTasks = (updatedTaskGroup, op) => {
-    updateTasks(applyChange(updatedTaskGroup, op));
+    updateTasks(applyChange(updatedTaskGroup, op, namespace));
   };
 
   const closeSidebarAndHandleReset = React.useCallback(() => {
@@ -192,10 +192,14 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
               errorMap={status?.tasks || {}}
               onRenameTask={(data: UpdateOperationRenameTaskData) => {
                 updateTasks(
-                  applyChange(taskGroup, {
-                    type: UpdateOperationType.RENAME_TASK,
-                    data,
-                  }),
+                  applyChange(
+                    taskGroup,
+                    {
+                      type: UpdateOperationType.RENAME_TASK,
+                      data,
+                    },
+                    namespace,
+                  ),
                 );
               }}
               onRemoveTask={(taskName: string) => {
@@ -204,10 +208,14 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                   onRemove: () => {
                     setSelectedTask(null);
                     updateTasks(
-                      applyChange(taskGroup, {
-                        type: UpdateOperationType.REMOVE_TASK,
-                        data: { taskName },
-                      }),
+                      applyChange(
+                        taskGroup,
+                        {
+                          type: UpdateOperationType.REMOVE_TASK,
+                          data: { taskName },
+                        },
+                        namespace,
+                      ),
                     );
                   },
                 });

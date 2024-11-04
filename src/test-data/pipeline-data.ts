@@ -1,5 +1,9 @@
 import { K8sResourceKind } from '@openshift-console/dynamic-plugin-sdk';
-import { preferredNameAnnotation, TektonResourceLabel } from '../consts';
+import {
+  PIPELINE_NAMESPACE,
+  preferredNameAnnotation,
+  TektonResourceLabel,
+} from '../consts';
 import {
   PipelineKind,
   PipelineRunKind,
@@ -199,22 +203,50 @@ export const pipelineSpec: PipelineSpecData = {
     tasks: [
       {
         name: 'install-deps',
-        taskRef: { kind: 'ClusterTask', name: 'cluster-install-dependencies' },
+        taskRef: {
+          resolver: 'cluster',
+          params: [
+            { name: 'kind', value: 'task' },
+            { name: 'name', value: 'cluster-install-dependencies' },
+            { name: 'namespace', value: PIPELINE_NAMESPACE },
+          ],
+        },
       },
       {
         name: 'code-sanity',
         runAfter: ['install-deps'],
-        taskRef: { kind: 'ClusterTask', name: 'cluster-lint-and-test' },
+        taskRef: {
+          resolver: 'cluster',
+          params: [
+            { name: 'kind', value: 'task' },
+            { name: 'name', value: 'cluster-lint-and-test' },
+            { name: 'namespace', value: PIPELINE_NAMESPACE },
+          ],
+        },
       },
       {
         name: 'compile',
         runAfter: ['install-deps'],
-        taskRef: { kind: 'ClusterTask', name: 'cluster-build-dist' },
+        taskRef: {
+          resolver: 'cluster',
+          params: [
+            { name: 'kind', value: 'task' },
+            { name: 'name', value: 'cluster-build-dist' },
+            { name: 'namespace', value: PIPELINE_NAMESPACE },
+          ],
+        },
       },
       {
         name: 'e2e-tests',
         runAfter: ['code-sanity', 'compile'],
-        taskRef: { kind: 'ClusterTask', name: 'cluster-run-e2e-tests' },
+        taskRef: {
+          resolver: 'cluster',
+          params: [
+            { name: 'kind', value: 'task' },
+            { name: 'name', value: 'cluster-run-e2e-tests' },
+            { name: 'namespace', value: PIPELINE_NAMESPACE },
+          ],
+        },
       },
     ],
   },
@@ -289,8 +321,12 @@ export const pipelineSpec: PipelineSpecData = {
           },
         ],
         taskRef: {
-          kind: 'ClusterTask',
-          name: 'git-clone',
+          resolver: 'cluster',
+          params: [
+            { name: 'kind', value: 'task' },
+            { name: 'name', value: 'git-clone' },
+            { name: 'namespace', value: PIPELINE_NAMESPACE },
+          ],
         },
       },
     ],
@@ -3903,92 +3939,3 @@ export const mockRepositories: RepositoryKind[] = [
     },
   },
 ];
-
-type TaskTestData = {
-  v1alpha1: { buildah: TaskKindAlpha };
-  v1beta1: { buildah: TaskKind };
-};
-export const taskTestData: TaskTestData = {
-  v1alpha1: {
-    buildah: {
-      apiVersion: 'tekton.dev/v1alpha1',
-      kind: 'ClusterTask',
-      metadata: {
-        name: 'buildah',
-      },
-      spec: {
-        inputs: {
-          params: [
-            {
-              default: 'quay.io/buildah/stable:v1.11.0',
-              description: 'The location of the buildah builder image.',
-              name: 'BUILDER_IMAGE',
-              type: 'string',
-            },
-            {
-              default: './Dockerfile',
-              description: 'Path to the Dockerfile to build.',
-              name: 'DOCKERFILE',
-              type: 'string',
-            },
-          ],
-          resources: [
-            {
-              name: 'source',
-              type: 'git',
-            },
-          ],
-        },
-        outputs: {
-          resources: [
-            {
-              name: 'image',
-              type: 'image',
-            },
-          ],
-        },
-        steps: [],
-      },
-    },
-  },
-  v1beta1: {
-    buildah: {
-      apiVersion: 'tekton.dev/v1beta1',
-      kind: 'ClusterTask',
-      metadata: {
-        name: 'buildah',
-      },
-      spec: {
-        params: [
-          {
-            default: 'quay.io/buildah/stable:v1.11.0',
-            description: 'The location of the buildah builder image.',
-            name: 'BUILDER_IMAGE',
-            type: 'string',
-          },
-          {
-            default: './Dockerfile',
-            description: 'Path to the Dockerfile to build.',
-            name: 'DOCKERFILE',
-            type: 'string',
-          },
-        ],
-        resources: {
-          inputs: [
-            {
-              name: 'source',
-              type: 'git',
-            },
-          ],
-          outputs: [
-            {
-              name: 'image',
-              type: 'image',
-            },
-          ],
-        },
-        steps: [],
-      },
-    },
-  },
-};

@@ -328,7 +328,7 @@ Feature: Create the pipeline from builder page
               And user clicks Create Pipeline button
               And user clicks Add task button under Tasks section
               And user types 'git'
-             Then user will see Task, clusterTask only
+             Then user will see Task only
 
 
         @regression @manual

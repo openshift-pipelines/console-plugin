@@ -9,6 +9,7 @@ export type ResourceModelLink = {
   name: string;
   qualifier?: string;
   disableLink?: boolean;
+  namespace?: string;
 };
 
 type DynamicResourceLinkListProps = {
@@ -37,7 +38,13 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
         {title && <dt>{title}</dt>}
         <dd>
           {links.map(
-            ({ name, resourceKind, qualifier = '', disableLink = false }) => {
+            ({
+              name,
+              resourceKind,
+              qualifier = '',
+              disableLink = false,
+              namespace: namespaceForTask,
+            }) => {
               let linkName = qualifier;
               if (qualifier?.length > 0 && name !== qualifier) {
                 linkName += ` (${name})`;
@@ -48,7 +55,7 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
                     resourceKind={resourceKind}
                     resourceName={name}
                     displayName={linkName}
-                    namespace={namespace}
+                    namespace={namespaceForTask || namespace}
                     disableLink={disableLink}
                   />
                 </div>

@@ -17,7 +17,6 @@ import {
   TektonResourceLabel,
 } from '../../consts';
 import {
-  ClusterTaskModel,
   ClusterTriggerBindingModel,
   EventListenerModel,
   PipelineModel,
@@ -496,8 +495,6 @@ export const pipelinesTab = (kindObj: K8sKind) => {
       return 'pipeline-runs';
     case TaskRunModel.kind:
       return 'task-runs';
-    case ClusterTaskModel.kind:
-      return 'cluster-tasks';
     case TriggerTemplateModel.kind:
       return 'trigger-templates';
     case TriggerBindingModel.kind:

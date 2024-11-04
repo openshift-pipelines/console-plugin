@@ -11,16 +11,14 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import TasksList from './TasksList';
 import TaskRunsList from './TaskRunsList';
-import ClusterTaskList from './ClusterTaskList';
 import { getReferenceForModel } from '../pipelines-overview/utils';
-import { ClusterTaskModel, TaskModel, TaskRunModel } from '../../models';
+import { TaskModel, TaskRunModel } from '../../models';
 import { ALL_NAMESPACES_KEY, DEFAULT_NAMESPACE } from '../../consts';
 
 import './TasksNavigationPage.scss';
 
 const taskModelRef = getReferenceForModel(TaskModel);
 const taskRunModelRef = getReferenceForModel(TaskRunModel);
-const clusterTaskModelRef = getReferenceForModel(ClusterTaskModel);
 
 const TasksNavigationPage = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -30,7 +28,6 @@ const TasksNavigationPage = () => {
   const createItems = {
     tasks: TaskModel.labelKey || TaskModel.label,
     taskRun: TaskRunModel.labelKey || TaskRunModel.label,
-    clusterTask: ClusterTaskModel.labelKey || ClusterTaskModel.label,
   };
 
   const onCreate = (type: string) => {
@@ -42,20 +39,12 @@ const TasksNavigationPage = () => {
               : activeNamespace
           }/${taskModelRef}/~new`,
         )
-      : type === 'taskRun'
-      ? history.push(
-          `/k8s/ns/${
-            activeNamespace === ALL_NAMESPACES_KEY
-              ? DEFAULT_NAMESPACE
-              : activeNamespace
-          }/${taskRunModelRef}/~new`,
-        )
       : history.push(
           `/k8s/ns/${
             activeNamespace === ALL_NAMESPACES_KEY
               ? DEFAULT_NAMESPACE
               : activeNamespace
-          }/${clusterTaskModelRef}/~new`,
+          }/${taskRunModelRef}/~new`,
         );
   };
 
@@ -69,11 +58,6 @@ const TasksNavigationPage = () => {
       href: 'task-runs',
       name: t('TaskRuns'),
       component: TaskRunsList,
-    },
-    {
-      href: 'cluster-tasks',
-      name: t('ClusterTasks'),
-      component: ClusterTaskList,
     },
   ];
 

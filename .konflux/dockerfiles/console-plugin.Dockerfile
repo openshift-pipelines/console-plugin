@@ -4,7 +4,8 @@ ARG RUNTIME=registry.access.redhat.com/ubi8/nginx-124:latest
 FROM $BUILDER AS builder-ui
 
 USER root
-RUN command -v yarn || npm i -g yarn
+# RUN command -v yarn || npm i -g yarn
+RUN npm i -g yarn
 
 WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .

@@ -3,13 +3,12 @@ ARG RUNTIME=registry.access.redhat.com/ubi8/nginx-124:latest
 
 FROM $BUILDER AS builder-ui
 
-USER root
-RUN command -v yarn || npm i -g yarn
-
 WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .
+RUN npm install -g yarn-1.22.22.tgz
 RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
-RUN yarn install --frozen-lockfile && \
+COPY .konflux/yarn.lock .
+RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
     yarn build
 
 FROM $RUNTIME

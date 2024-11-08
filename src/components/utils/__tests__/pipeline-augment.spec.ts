@@ -1,7 +1,6 @@
 import { getAPIVersionForModel } from '@openshift-console/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import {
-  ClusterTaskModel,
   ClusterTriggerBindingModel,
   PipelineModel,
   TaskModel,
@@ -417,16 +416,6 @@ describe('PipelineAugment test successfully determine Task type', () => {
     );
     expect(model).toBe(TaskModel);
   });
-
-  it('expect to get a ClusterTaskModel for tasks of a ClusterTask kind', () => {
-    const complexTestData =
-      pipelineTestData[PipelineExampleNames.CLUSTER_PIPELINE];
-
-    const model = getResourceModelFromTask(
-      complexTestData.pipeline.spec.tasks[0],
-    );
-    expect(model).toBe(ClusterTaskModel);
-  });
 });
 
 describe('Pipeline exists test to determine whether a pipeline is linked to a pipelinerun', () => {
@@ -506,10 +495,6 @@ describe('Pipelinerun graph to show the executed pipeline structure', () => {
 describe('getResourceModelFromTaskKind', () => {
   it('should handle null', () => {
     expect(getResourceModelFromTaskKind(null)).toBe(null);
-  });
-
-  it('should be able to find ClusterTaskModel', () => {
-    expect(getResourceModelFromTaskKind('ClusterTask')).toBe(ClusterTaskModel);
   });
 
   it('should be able to find TaskModel', () => {

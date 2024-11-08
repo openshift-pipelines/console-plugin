@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { PIPELINE_NAMESPACE } from '../../consts';
 import {
   PipelineKind,
   PipelineTask,
@@ -19,9 +20,20 @@ export const getPipelineTaskLinks = (
   const toResourceLinkData = (tasks: PipelineTask[]): ResourceModelLink[] => {
     const { t } = useTranslation('plugin__pipelines-console-plugin');
     if (!tasks) return [];
-    return tasks?.map((task) =>
-      task.taskRef
-        ? task.taskRef.kind === 'ClusterTask' || task.taskRef.kind === 'Task'
+    return tasks?.map((task) => {
+      if (task.taskRef) {
+        if (task.taskRef.resolver === 'cluster') {
+          const nameParam = task.taskRef.params?.find(
+            (param) => param.name === 'name',
+          )?.value;
+          return {
+            resourceKind: getSafeTaskResourceKind(task.taskRef.kind),
+            name: nameParam,
+            qualifier: task.name,
+            namespace: PIPELINE_NAMESPACE,
+          };
+        }
+        return task.taskRef.kind === 'Task'
           ? {
               resourceKind: getSafeTaskResourceKind(task.taskRef.kind),
               name: task.taskRef.name,
@@ -35,14 +47,15 @@ export const getPipelineTaskLinks = (
                   : t('Custom Task'),
               qualifier: task.name,
               disableLink: true,
-            }
-        : {
-            resourceKind: 'EmbeddedTask',
-            name: t('Embedded task'),
-            qualifier: task.name,
-            disableLink: true,
-          },
-    );
+            };
+      }
+      return {
+        resourceKind: 'EmbeddedTask',
+        name: t('Embedded task'),
+        qualifier: task.name,
+        disableLink: true,
+      };
+    });
   };
   return {
     taskLinks: toResourceLinkData(pipeline.spec.tasks),

@@ -102,14 +102,14 @@ export type LoadingNodeModel = PipelineRunAfterNodeModelData & {
   isFinallyTask: boolean;
 };
 export type BuilderFinallyNodeModel = BuilderFinallyNodeData & {
-  clusterTaskList: TaskKind[];
+  clusterResolverTaskList: TaskKind[];
   namespaceTaskList: TaskKind[];
   namespace: string;
   isFinallyTask: boolean;
 };
 
 export type TaskListNodeModelData = PipelineRunAfterNodeModelData & {
-  clusterTaskList: TaskKind[];
+  clusterResolverTaskList: TaskKind[];
   namespaceTaskList: TaskKind[];
   onNewTask: NewTaskNodeCallback;
   onRemoveTask: RemoveListTaskCallback | null;

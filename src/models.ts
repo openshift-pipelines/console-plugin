@@ -259,24 +259,6 @@ export const EventListenerModel: K8sKind = {
   color,
 };
 
-export const ClusterTaskModel: K8sKind = {
-  apiGroup: 'tekton.dev',
-  apiVersion: 'v1beta1',
-  label: 'ClusterTask',
-  // t('plugin__pipelines-console-plugin~ClusterTask')
-  labelKey: 'ClusterTask',
-  // t('plugin__pipelines-console-plugin~ClusterTasks')
-  labelPluralKey: 'ClusterTasks',
-  plural: 'clustertasks',
-  abbr: 'CT',
-  namespaced: false,
-  kind: 'ClusterTask',
-  id: 'clustertask',
-  labelPlural: 'ClusterTasks',
-  crd: true,
-  color,
-};
-
 export const TriggerTemplateModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1beta1',

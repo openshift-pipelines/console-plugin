@@ -185,7 +185,28 @@ const TaskRunsRow: React.FC<RowProps<TaskRunKind>> = ({
         )}
       </TableData>
       <TableData activeColumnIDs={activeColumnIDs} id="task">
-        {obj.spec.taskRef?.name ? (
+        {obj.spec.taskRef?.resolver === 'cluster' ? (
+          (() => {
+            const taskName = obj.spec.taskRef?.params?.find(
+              (param) => param.name === 'name',
+            )?.value;
+            const taskNamespace = obj.spec.taskRef?.params?.find(
+              (param) => param.name === 'namespace',
+            )?.value;
+            return taskName ? (
+              <ResourceLink
+                kind={getModelReferenceFromTaskKind('Task')}
+                displayName={
+                  obj.metadata.labels[TektonResourceLabel.pipelineTask]
+                }
+                name={taskName}
+                namespace={taskNamespace || obj.metadata.namespace}
+              />
+            ) : (
+              '-'
+            );
+          })()
+        ) : obj.spec.taskRef?.name ? (
           <ResourceLink
             kind={getModelReferenceFromTaskKind(obj.spec.taskRef?.kind)}
             displayName={obj.metadata.labels[TektonResourceLabel.pipelineTask]}

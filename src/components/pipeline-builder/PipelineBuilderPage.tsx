@@ -43,7 +43,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
       ...(convertPipelineToBuilderForm(existingPipeline) || {}),
     },
     taskResources: {
-      clusterTasks: [],
+      clusterResolverTasks: [],
       namespacedTasks: [],
       tasksLoaded: false,
     },

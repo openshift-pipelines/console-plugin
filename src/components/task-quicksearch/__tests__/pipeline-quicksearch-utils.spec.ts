@@ -16,19 +16,19 @@ import {
 } from '../pipeline-quicksearch-utils';
 import {
   sampleCatalogItems,
-  sampleClusterTaskCatalogItem,
+  sampleTaskCatalogItem,
   sampleTektonHubCatalogItem,
 } from './catalog-item-data';
 
 describe('pipeline-quicksearch-utils', () => {
   const sampleCatalogInstalledTask: CatalogItem = {
-    ...sampleClusterTaskCatalogItem,
+    ...sampleTaskCatalogItem,
     data: {
-      ...sampleClusterTaskCatalogItem.data,
+      ...sampleTaskCatalogItem.data,
       metadata: {
-        ...sampleClusterTaskCatalogItem.data.metadata,
+        ...sampleTaskCatalogItem.data.metadata,
         annotations: {
-          ...sampleClusterTaskCatalogItem.data.metadata.annotations,
+          ...sampleTaskCatalogItem.data.metadata.annotations,
           ...getInstalledFromAnnotation(),
         },
       },
@@ -185,7 +185,7 @@ describe('pipeline-quicksearch-utils', () => {
       expect(
         isInstalledNamespaceTask(
           omit(
-            sampleClusterTaskCatalogItem,
+            sampleTaskCatalogItem,
             'data.metadata.annotations',
           ) as CatalogItem,
         ),
@@ -197,9 +197,7 @@ describe('pipeline-quicksearch-utils', () => {
     });
 
     it('should return false if the namespace task is not installed through pipeline builder', () => {
-      expect(isInstalledNamespaceTask(sampleClusterTaskCatalogItem)).toBe(
-        false,
-      );
+      expect(isInstalledNamespaceTask(sampleTaskCatalogItem)).toBe(false);
     });
 
     it('should return true if the namespace task is installed through pipeline builder', () => {
@@ -212,8 +210,8 @@ describe('pipeline-quicksearch-utils', () => {
       expect(isExternalTask(sampleTektonHubCatalogItem)).toBe(true);
     });
 
-    it('should return false if clusterTask and namespaceTask is passed', () => {
-      expect(isExternalTask(sampleClusterTaskCatalogItem)).toBe(false);
+    it('should return false if namespaceTask is passed', () => {
+      expect(isExternalTask(sampleTaskCatalogItem)).toBe(false);
     });
   });
 
@@ -225,9 +223,9 @@ describe('pipeline-quicksearch-utils', () => {
     });
 
     it('should return true for all the cluster and namespace tasks not added through pipeline builder', () => {
-      expect(
-        isTaskSearchable(sampleCatalogItems, sampleClusterTaskCatalogItem),
-      ).toBe(true);
+      expect(isTaskSearchable(sampleCatalogItems, sampleTaskCatalogItem)).toBe(
+        true,
+      );
     });
 
     it('should return false for all the namespace tasks added through pipeline builder', () => {
@@ -264,7 +262,7 @@ describe('pipeline-quicksearch-utils', () => {
         findInstalledTask(
           sampleCatalogItems,
           omit(
-            sampleClusterTaskCatalogItem,
+            sampleTaskCatalogItem,
             'data.metadata.annotations',
           ) as CatalogItem,
         ),
@@ -279,16 +277,16 @@ describe('pipeline-quicksearch-utils', () => {
 
     it('should return the installed Task resource through pipeline builder', () => {
       const installedCatalogTask: CatalogItem = {
-        ...sampleClusterTaskCatalogItem,
+        ...sampleTaskCatalogItem,
         uid: '23',
         name: sampleTektonHubCatalogItem.data.name,
         data: {
-          ...sampleClusterTaskCatalogItem.data,
+          ...sampleTaskCatalogItem.data,
           kind: 'Task',
           metadata: {
-            ...sampleClusterTaskCatalogItem.data.metadata,
+            ...sampleTaskCatalogItem.data.metadata,
             annotations: {
-              ...sampleClusterTaskCatalogItem.data.metadata.annotations,
+              ...sampleTaskCatalogItem.data.metadata.annotations,
               ...getInstalledFromAnnotation(),
             },
           },
@@ -297,7 +295,7 @@ describe('pipeline-quicksearch-utils', () => {
 
       const newCatalogItems = [
         sampleTektonHubCatalogItem,
-        sampleClusterTaskCatalogItem,
+        sampleTaskCatalogItem,
         installedCatalogTask,
       ];
       expect(

@@ -192,8 +192,26 @@ const taskValidation = (
         name: yup.string().required(t('Required')),
         taskRef: yup
           .object({
-            name: yup.string().required(t('Required')),
+            name: yup.string().when('resolver', {
+              is: (resolver) => !resolver,
+              then: yup.string().required(t('Required')),
+              otherwise: yup.string().notRequired(),
+            }),
             kind: yup.string(),
+            resolver: yup.string().oneOf(['cluster']).notRequired(),
+            params: yup
+              .array()
+              .of(
+                yup.object({
+                  name: yup.string().required(t('Required')),
+                  value: yup.string().required(t('Required')),
+                }),
+              )
+              .when('resolver', {
+                is: (resolver) => !!resolver,
+                then: yup.array().min(1, t('Required')),
+                otherwise: yup.array().notRequired(),
+              }),
           })
           .default(undefined),
         taskSpec: yup.object(),

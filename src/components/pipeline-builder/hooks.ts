@@ -2,7 +2,8 @@ import { useK8sWatchResources } from '@openshift-console/dynamic-plugin-sdk';
 import { FormikTouched, useFormikContext } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ClusterTaskModel, TaskModel } from '../../models';
+import { PIPELINE_NAMESPACE } from '../../consts';
+import { TaskModel } from '../../models';
 import { PipelineTask, TaskKind } from '../../types';
 import { AddNodeDirection } from '../pipeline-topology/const';
 import {
@@ -50,42 +51,53 @@ export const useFormikFetchAndSaveTasks = (
   const { setFieldValue, setStatus } =
     useFormikContext<PipelineBuilderFormikValues>();
 
-  const { namespacedTasks, clusterTasks } = useK8sWatchResources<{
+  const { namespacedTasks, clusterResolverTasks } = useK8sWatchResources<{
     namespacedTasks: TaskKind[];
-    clusterTasks: TaskKind[];
+    clusterResolverTasks: TaskKind[];
   }>({
     namespacedTasks: {
       kind: getReferenceForModel(TaskModel),
       isList: true,
       namespace,
     },
-    clusterTasks: {
-      kind: getReferenceForModel(ClusterTaskModel),
+    clusterResolverTasks: {
+      kind: getReferenceForModel(TaskModel),
       isList: true,
-      namespaced: false,
+      namespace: PIPELINE_NAMESPACE,
     },
   });
   const namespacedTaskData = namespacedTasks.loaded
     ? namespacedTasks.data
     : null;
-  const clusterTaskData = clusterTasks.loaded ? clusterTasks.data : null;
+  const clusterResolverTaskData = clusterResolverTasks.loaded
+    ? clusterResolverTasks.data
+    : null;
 
   React.useEffect(() => {
     if (namespacedTaskData) {
       setFieldValue('taskResources.namespacedTasks', namespacedTaskData, false);
     }
-    if (clusterTaskData) {
-      setFieldValue('taskResources.clusterTasks', clusterTaskData, false);
+    if (clusterResolverTaskData) {
+      setFieldValue(
+        'taskResources.clusterResolverTasks',
+        clusterResolverTaskData,
+        false,
+      );
     }
-    const tasksLoaded = !!namespacedTaskData && !!clusterTaskData;
+    const tasksLoaded = !!namespacedTaskData && !!clusterResolverTaskData;
     setFieldValue('taskResources.tasksLoaded', tasksLoaded, false);
     if (tasksLoaded) {
       // Wait for Formik to fully understand the set values (thread end) and then validate again
       setTimeout(() => validateForm(), 0);
     }
-  }, [setFieldValue, namespacedTaskData, clusterTaskData, validateForm]);
+  }, [
+    setFieldValue,
+    namespacedTaskData,
+    clusterResolverTaskData,
+    validateForm,
+  ]);
 
-  const error = namespacedTasks.loadError || clusterTasks.loadError;
+  const error = namespacedTasks.loadError || clusterResolverTasks.loadError;
   React.useEffect(() => {
     if (!error) return;
 
@@ -107,7 +119,7 @@ const useConnectFinally = (
   taskResources: PipelineBuilderTaskResources,
   tasksInError: TaskErrors,
 ): PipelineMixedNodeModel => {
-  const { clusterTasks, namespacedTasks } = taskResources;
+  const { clusterResolverTasks, namespacedTasks } = taskResources;
   const taskGroupRef = React.useRef(taskGroup);
   taskGroupRef.current = taskGroup;
   const addNewFinallyListNode = () => {
@@ -213,7 +225,7 @@ const useConnectFinally = (
     isFinallyTask: true,
     namespace,
     namespaceTaskList: namespacedTasks,
-    clusterTaskList: clusterTasks,
+    clusterResolverTaskList: clusterResolverTasks,
     task: {
       isFinallyTask: true,
       name: finallyNodeName,
@@ -247,7 +259,7 @@ export const useNodes = (
   taskResources: PipelineBuilderTaskResources,
   tasksInError: BuilderTasksErrorGroup,
 ): PipelineMixedNodeModel[] => {
-  const { clusterTasks, namespacedTasks } = taskResources;
+  const { clusterResolverTasks, namespacedTasks } = taskResources;
 
   const taskGroupRef = React.useRef(taskGroup);
   taskGroupRef.current = taskGroup;
@@ -291,7 +303,7 @@ export const useNodes = (
   ): PipelineTaskListNodeModel =>
     createTaskListNode(name, {
       namespaceTaskList: namespacedTasks,
-      clusterTaskList: clusterTasks,
+      clusterResolverTaskList: clusterResolverTasks,
       onNewTask: (resource: TaskKind) => {
         resource.kind
           ? onNewTask(resource, name, runAfter)
@@ -319,7 +331,7 @@ export const useNodes = (
   ): PipelineTaskListNodeModel =>
     createInvalidTaskListNode(name, {
       namespaceTaskList: namespacedTasks,
-      clusterTaskList: clusterTasks,
+      clusterResolverTaskList: clusterResolverTasks,
       onNewTask: (resource: TaskKind) => {
         const data: UpdateOperationFixInvalidTaskListData = {
           existingName: name,

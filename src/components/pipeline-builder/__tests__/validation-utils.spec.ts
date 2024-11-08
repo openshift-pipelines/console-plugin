@@ -1,5 +1,6 @@
 import { merge } from 'lodash';
 import { t } from '../../../../__mocks__/react-i18next';
+import { PIPELINE_NAMESPACE } from '../../../consts';
 import {
   getTaskErrorString,
   initialPipelineFormData,
@@ -307,13 +308,20 @@ describe('Pipeline Build validation schema', () => {
             tasks: [
               {
                 name: 'test-task',
-                taskRef: { name: 'external-task', kind: 'ClusterTask' },
+                taskRef: {
+                  resolver: 'cluster',
+                  params: [
+                    { name: 'kind', value: 'task' },
+                    { name: 'name', value: 'external-task' },
+                    { name: 'namespace', value: PIPELINE_NAMESPACE },
+                  ],
+                },
                 params: [],
               },
             ],
           },
           {
-            clusterTasks: [externalTaskNoDefaultParam],
+            clusterResolverTasks: [externalTaskNoDefaultParam],
           },
         )
           .then(shouldHaveFailed)
@@ -332,13 +340,20 @@ describe('Pipeline Build validation schema', () => {
             tasks: [
               {
                 name: 'test-task',
-                taskRef: { name: 'external-task', kind: 'ClusterTask' },
+                taskRef: {
+                  resolver: 'cluster',
+                  params: [
+                    { name: 'kind', value: 'task' },
+                    { name: 'name', value: 'external-task' },
+                    { name: 'namespace', value: PIPELINE_NAMESPACE },
+                  ],
+                },
                 params: [{ name: 'echo-value' }],
               },
             ],
           },
           {
-            clusterTasks: [externalTaskNoDefaultParam],
+            clusterResolverTasks: [externalTaskNoDefaultParam],
           },
         )
           .then(shouldHaveFailed)
@@ -357,13 +372,20 @@ describe('Pipeline Build validation schema', () => {
             tasks: [
               {
                 name: 'test-task',
-                taskRef: { name: 'external-task', kind: 'ClusterTask' },
+                taskRef: {
+                  resolver: 'cluster',
+                  params: [
+                    { name: 'kind', value: 'task' },
+                    { name: 'name', value: 'external-task' },
+                    { name: 'namespace', value: PIPELINE_NAMESPACE },
+                  ],
+                },
                 params: [{ name: 'echo-value-with-default' }],
               },
             ],
           },
           {
-            clusterTasks: [externalTaskWithDefaultParam],
+            clusterResolverTasks: [externalTaskWithDefaultParam],
           },
         )
           .then(hasResults)
@@ -377,13 +399,20 @@ describe('Pipeline Build validation schema', () => {
             tasks: [
               {
                 name: 'test-task',
-                taskRef: { name: 'external-task', kind: 'ClusterTask' },
+                taskRef: {
+                  resolver: 'cluster',
+                  params: [
+                    { name: 'kind', value: 'task' },
+                    { name: 'name', value: 'external-task' },
+                    { name: 'namespace', value: PIPELINE_NAMESPACE },
+                  ],
+                },
                 params: [{ name: 'echo-value-with-empty-default' }],
               },
             ],
           },
           {
-            clusterTasks: [externalTaskWitEmptyDefaultParam],
+            clusterResolverTasks: [externalTaskWitEmptyDefaultParam],
           },
         )
           .then(hasResults)
@@ -468,14 +497,18 @@ describe('Pipeline Build validation schema', () => {
               {
                 name: 'test-task',
                 taskRef: {
-                  name: 'external-task-with-workspace',
-                  kind: 'ClusterTask',
+                  resolver: 'cluster',
+                  params: [
+                    { name: 'kind', value: 'task' },
+                    { name: 'name', value: 'external-task-with-workspace' },
+                    { name: 'namespace', value: PIPELINE_NAMESPACE },
+                  ],
                 },
               },
             ],
           },
           {
-            clusterTasks: [workspaceTask],
+            clusterResolverTasks: [workspaceTask],
           },
         )
           .then(shouldHaveFailed)
@@ -496,15 +529,19 @@ describe('Pipeline Build validation schema', () => {
               {
                 name: 'test-task',
                 taskRef: {
-                  name: 'external-task-with-workspace',
-                  kind: 'ClusterTask',
+                  resolver: 'cluster',
+                  params: [
+                    { name: 'kind', value: 'task' },
+                    { name: 'name', value: 'external-task-with-workspace' },
+                    { name: 'namespace', value: PIPELINE_NAMESPACE },
+                  ],
                 },
                 workspaces: [{ name: 'output', workspace: 'workspace' }],
               },
             ],
           },
           {
-            clusterTasks: [workspaceTask],
+            clusterResolverTasks: [workspaceTask],
           },
         )
           .then(shouldHaveFailed)
@@ -525,8 +562,12 @@ describe('Pipeline Build validation schema', () => {
               {
                 name: 'test-task',
                 taskRef: {
-                  name: 'external-task-with-workspace',
-                  kind: 'ClusterTask',
+                  resolver: 'cluster',
+                  params: [
+                    { name: 'kind', value: 'task' },
+                    { name: 'name', value: 'external-task-with-workspace' },
+                    { name: 'namespace', value: PIPELINE_NAMESPACE },
+                  ],
                 },
                 workspaces: [
                   { name: 'output', workspace: 'workspace' },
@@ -536,7 +577,7 @@ describe('Pipeline Build validation schema', () => {
             ],
           },
           {
-            clusterTasks: [workspaceTask],
+            clusterResolverTasks: [workspaceTask],
           },
         )
           .then(hasResults)
@@ -544,7 +585,7 @@ describe('Pipeline Build validation schema', () => {
       });
 
       it('should pass if the task does not contain an optional workspaces', async () => {
-        const clusterTask = {
+        const clusterResolverTask = {
           ...workspaceTask,
           spec: {
             ...workspaceTask.spec,
@@ -559,15 +600,19 @@ describe('Pipeline Build validation schema', () => {
               {
                 name: 'test-task',
                 taskRef: {
-                  name: 'external-task-with-workspace',
-                  kind: 'ClusterTask',
+                  resolver: 'cluster',
+                  params: [
+                    { name: 'kind', value: 'task' },
+                    { name: 'name', value: 'external-task-with-workspace' },
+                    { name: 'namespace', value: PIPELINE_NAMESPACE },
+                  ],
                 },
                 workspaces: [],
               },
             ],
           },
           {
-            clusterTasks: [clusterTask],
+            clusterResolverTasks: [clusterResolverTask],
           },
         )
           .then(hasResults)
@@ -575,7 +620,7 @@ describe('Pipeline Build validation schema', () => {
       });
 
       it('should fail if the task has a optional workspace but miss a required workspaces', async () => {
-        const clusterTask = {
+        const clusterResolverTask = {
           ...workspaceTask,
           spec: {
             ...workspaceTask.spec,
@@ -593,8 +638,12 @@ describe('Pipeline Build validation schema', () => {
               {
                 name: 'test-task',
                 taskRef: {
-                  name: 'external-task-with-workspace',
-                  kind: 'ClusterTask',
+                  resolver: 'cluster',
+                  params: [
+                    { name: 'kind', value: 'task' },
+                    { name: 'name', value: 'external-task-with-workspace' },
+                    { name: 'namespace', value: PIPELINE_NAMESPACE },
+                  ],
                 },
                 workspaces: [
                   { name: 'optional-workspace', workspace: 'workspace' },
@@ -603,7 +652,7 @@ describe('Pipeline Build validation schema', () => {
             ],
           },
           {
-            clusterTasks: [clusterTask],
+            clusterResolverTasks: [clusterResolverTask],
           },
         )
           .then(shouldHaveFailed)
@@ -624,8 +673,12 @@ describe('Pipeline Build validation schema', () => {
               {
                 name: 'test-task',
                 taskRef: {
-                  name: 'external-task-with-workspace',
-                  kind: 'ClusterTask',
+                  resolver: 'cluster',
+                  params: [
+                    { name: 'kind', value: 'task' },
+                    { name: 'name', value: 'external-task-with-workspace' },
+                    { name: 'namespace', value: PIPELINE_NAMESPACE },
+                  ],
                 },
                 workspaces: [
                   { name: 'output', workspace: 'workspace' },
@@ -635,7 +688,7 @@ describe('Pipeline Build validation schema', () => {
             ],
           },
           {
-            clusterTasks: [workspaceTask],
+            clusterResolverTasks: [workspaceTask],
           },
         )
           .then(shouldHaveFailed)

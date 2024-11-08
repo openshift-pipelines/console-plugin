@@ -81,7 +81,7 @@ describe('autoCompleteUtils', () => {
 
   describe('taskToResult', () => {
     const resources: PipelineBuilderTaskResources = {
-      clusterTasks: [],
+      clusterResolverTasks: [],
       namespacedTasks: [resultTask],
       tasksLoaded: true,
     };

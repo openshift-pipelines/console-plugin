@@ -33,7 +33,7 @@ const embeddedTaskTemplate: TektonTaskSpec = {
 };
 const externalTaskTemplate: TaskKind = {
   apiVersion: 'tekton.dev/v1beta1',
-  kind: 'ClusterTask',
+  kind: 'Task',
   metadata: {
     name: 'external-task',
   },
@@ -85,7 +85,7 @@ export const embeddedTaskSpec = embeddedTaskTemplate;
 
 const externalTaskWithResourcesTemplate: TaskKind = {
   apiVersion: 'tekton.dev/v1beta1',
-  kind: 'ClusterTask',
+  kind: 'Task',
   metadata: {
     name: 'external-task-with-resources',
   },
@@ -116,7 +116,7 @@ export const resourceTask = externalTaskWithResourcesTemplate;
 
 const externalTaskWithWorkspacesTemplate: TaskKind = {
   apiVersion: 'tekton.dev/v1beta1',
-  kind: 'ClusterTask',
+  kind: 'Task',
   metadata: {
     name: 'external-task-with-workspace',
   },
@@ -177,7 +177,7 @@ export const withFormData = (formData, taskResources?) =>
     yamlData: '',
     formData,
     taskResources: {
-      clusterTasks: [],
+      clusterResolverTasks: [],
       namespacedTasks: [],
       ...(taskResources || {}),
       tasksLoaded: !!taskResources,

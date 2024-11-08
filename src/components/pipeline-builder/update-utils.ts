@@ -110,7 +110,7 @@ const getTaskNames = (tasks: PipelineTask[]) => tasks.map((t) => t.name);
 
 const convertListToTask: UpdateOperationAction<
   UpdateOperationConvertToTaskData
-> = (taskGrouping, data) => {
+> = (taskGrouping, data, namespace) => {
   const { name, resource, runAfter } = data;
   const { tasks, listTasks, finallyTasks } = taskGrouping;
   const usedNames = getTaskNames([...tasks, ...finallyTasks]);
@@ -118,6 +118,7 @@ const convertListToTask: UpdateOperationAction<
     usedNames,
     resource,
     runAfter,
+    namespace,
   );
   return {
     ...taskGrouping,
@@ -136,13 +137,15 @@ const convertListToTask: UpdateOperationAction<
 };
 const convertFinallyListToTask: UpdateOperationAction<
   UpdateOperationConvertToTaskData
-> = (taskGrouping, data) => {
+> = (taskGrouping, data, namespace) => {
   const { name, resource } = data;
   const { tasks, finallyTasks, finallyListTasks } = taskGrouping;
   const usedNames = getTaskNames([...tasks, ...finallyTasks]);
   const newPipelineTask: PipelineTask = convertResourceToTask(
     usedNames,
     resource,
+    undefined,
+    namespace,
   );
 
   return {
@@ -163,7 +166,7 @@ const convertFinallyListToTask: UpdateOperationAction<
 
 const convertLoadingNodeToFinallyTask: UpdateOperationAction<
   UpdateOperationConvertToTaskData
-> = (taskGrouping, data) => {
+> = (taskGrouping, data, namespace) => {
   const { name, resource, runAfter } = data;
   const { tasks, loadingTasks, finallyTasks } = taskGrouping;
   const usedNames = getTaskNames([...tasks, ...finallyTasks]);
@@ -171,6 +174,7 @@ const convertLoadingNodeToFinallyTask: UpdateOperationAction<
     usedNames,
     resource,
     runAfter,
+    namespace,
   );
   return {
     ...taskGrouping,
@@ -190,7 +194,7 @@ const convertLoadingNodeToFinallyTask: UpdateOperationAction<
 
 const convertLoadingNodeToTask: UpdateOperationAction<
   UpdateOperationConvertToTaskData
-> = (taskGrouping, data) => {
+> = (taskGrouping, data, namespace) => {
   const { name, resource, runAfter } = data;
   const { tasks, loadingTasks, finallyTasks } = taskGrouping;
   const usedNames = getTaskNames([...tasks, ...finallyTasks]);
@@ -198,6 +202,7 @@ const convertLoadingNodeToTask: UpdateOperationAction<
     usedNames,
     resource,
     runAfter,
+    namespace,
   );
   return {
     ...taskGrouping,
@@ -378,7 +383,7 @@ const renameTask: UpdateOperationAction<UpdateOperationRenameTaskData> = (
 
 const fixInvalidListTask: UpdateOperationAction<
   UpdateOperationFixInvalidTaskListData
-> = (taskGrouping, data) => {
+> = (taskGrouping, data, namespace) => {
   const { existingName, resource, runAfter } = data;
   const { tasks, listTasks } = taskGrouping;
   const usedNames = getTaskNames(tasks);
@@ -386,6 +391,7 @@ const fixInvalidListTask: UpdateOperationAction<
     usedNames,
     resource,
     runAfter,
+    namespace,
   );
 
   return {
@@ -407,7 +413,7 @@ const fixInvalidListTask: UpdateOperationAction<
 };
 const fixInvalidFinallyListTask: UpdateOperationAction<
   UpdateOperationFixInvalidTaskListData
-> = (taskGrouping, data) => {
+> = (taskGrouping, data, namespace) => {
   const { existingName, resource, runAfter } = data;
   const { tasks, finallyTasks, finallyListTasks } = taskGrouping;
   const usedNames = getTaskNames([...finallyTasks, ...tasks]);
@@ -415,6 +421,7 @@ const fixInvalidFinallyListTask: UpdateOperationAction<
     usedNames,
     resource,
     runAfter,
+    namespace,
   );
 
   return {
@@ -448,6 +455,7 @@ const addFinallyListTask: UpdateOperationAction<
 export const applyChange = (
   taskGroup: PipelineBuilderTaskGroup,
   op: UpdateOperation,
+  namespace?: string,
 ): CleanupResults => {
   const { type, data } = op;
   const { tasks, listTasks, finallyTasks, finallyListTasks, loadingTasks } =
@@ -466,11 +474,13 @@ export const applyChange = (
       return convertListToTask(
         taskGrouping,
         data as UpdateOperationConvertToTaskData,
+        namespace,
       );
     case UpdateOperationType.CONVERT_LIST_TO_FINALLY_TASK:
       return convertFinallyListToTask(
         taskGrouping,
         data as UpdateOperationConvertToTaskData,
+        namespace,
       );
     case UpdateOperationType.DELETE_LIST_TASK:
       return deleteListTask(
@@ -485,11 +495,13 @@ export const applyChange = (
       return fixInvalidListTask(
         taskGrouping,
         data as UpdateOperationFixInvalidTaskListData,
+        namespace,
       );
     case UpdateOperationType.FIX_INVALID_FINALLY_LIST_TASK:
       return fixInvalidFinallyListTask(
         taskGrouping,
         data as UpdateOperationFixInvalidTaskListData,
+        namespace,
       );
     case UpdateOperationType.ADD_FINALLY_LIST_TASK:
       return addFinallyListTask(
@@ -505,11 +517,13 @@ export const applyChange = (
       return convertLoadingNodeToTask(
         taskGrouping,
         data as UpdateOperationConvertToTaskData,
+        namespace,
       );
     case UpdateOperationType.CONVERT_LOADING_TASK_TO_FINALLY_TASK:
       return convertLoadingNodeToFinallyTask(
         taskGrouping,
         data as UpdateOperationConvertToTaskData,
+        namespace,
       );
     default:
       throw new Error(`Invalid update operation ${type}`);

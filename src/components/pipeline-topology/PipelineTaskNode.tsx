@@ -19,7 +19,7 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { Link } from 'react-router-dom-v5-compat';
 import { NodeType } from './const';
-import { ClusterTaskModel, PipelineRunModel, TaskModel } from '../../models';
+import { PipelineRunModel, TaskModel } from '../../models';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { ComputedStatus, TaskKind } from '../../types';
@@ -51,10 +51,18 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   const detailsLevel = useDetailsLevel();
   const isFinallyTask = element.getType() === NodeType.FINALLY_NODE;
   let resources;
-  if (data.task?.taskRef?.kind === ClusterTaskModel.kind) {
+  if (data.task?.taskRef?.resolver === 'cluster') {
+    const taskName = data.task.taskRef?.params?.find(
+      (param) => param.name === 'name',
+    )?.value;
+    const taskNamespace = data.task.taskRef?.params?.find(
+      (param) => param.name === 'namespace',
+    )?.value;
+
     resources = {
-      kind: getReferenceForModel(ClusterTaskModel),
-      name: data.task.taskRef.name,
+      kind: getReferenceForModel(TaskModel),
+      name: taskName,
+      namespace: taskNamespace || data.pipeline.metadata.namespace,
       prop: 'task',
     };
   } else if (data.task?.taskRef) {

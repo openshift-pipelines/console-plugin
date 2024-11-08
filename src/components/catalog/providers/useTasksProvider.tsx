@@ -98,12 +98,12 @@ const useTasksProvider: ExtensionHook<CatalogItem[]> = (): [
 ] => {
   const { values, status } = useFormikContext<PipelineBuilderFormikValues>();
   const {
-    taskResources: { namespacedTasks, clusterTasks, tasksLoaded },
+    taskResources: { namespacedTasks, clusterResolverTasks, tasksLoaded },
   } = values;
 
   const tektonTasks = React.useMemo(
-    () => _.filter([...namespacedTasks, ...clusterTasks]),
-    [namespacedTasks, clusterTasks],
+    () => _.filter([...namespacedTasks, ...clusterResolverTasks]),
+    [namespacedTasks, clusterResolverTasks],
   );
 
   const normalizedTektonTasks = React.useMemo(

@@ -99,7 +99,10 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
 
   const reRunAction = () => {
     const { pipelineRef, pipelineSpec } = obj.spec;
-    if (namespace && (pipelineRef?.name || pipelineSpec)) {
+    if (
+      namespace &&
+      (pipelineRef?.name || pipelineSpec || pipelineRef?.resolver)
+    ) {
       k8sCreate({
         model: returnValidPipelineRunModel(obj),
         data: getPipelineRunData(null, obj),

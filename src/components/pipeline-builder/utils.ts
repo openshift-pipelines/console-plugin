@@ -462,10 +462,7 @@ export const convertBuilderFormToPipeline = (
                 task &&
                 removeEmptyFormFields(removeListRunAfters(task, listIds)),
             ),
-      finally:
-        finallyTasks.length > 0
-          ? finallyTasks
-          : existingPipeline?.spec?.finally ?? [],
+      finally: finallyTasks,
     },
   };
   console.log(pipelineYAML, '####', formValues);

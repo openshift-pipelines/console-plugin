@@ -3,9 +3,9 @@
 apiVersion: appstudio.redhat.com/v1beta2
 kind: IntegrationTestScenario
 metadata:
-  name: console-plugin-main-enterprise-contract-group
+  name: console-plugin-next-enterprise-contract-group
 spec:
-  application: console-plugin-main
+  application: console-plugin-next
   contexts:
     - description: Application testing
       name: group

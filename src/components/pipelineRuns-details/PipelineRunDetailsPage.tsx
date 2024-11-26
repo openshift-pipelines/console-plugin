@@ -68,7 +68,10 @@ const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
   const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, name);
   const reRunAction = () => {
     const { pipelineRef, pipelineSpec } = pipelineRun.spec;
-    if (namespace && (pipelineRef?.name || pipelineSpec)) {
+    if (
+      namespace &&
+      (pipelineRef?.name || pipelineSpec || pipelineRef?.resolver)
+    ) {
       k8sCreate({
         model: returnValidPipelineRunModel(pipelineRun),
         data: getPipelineRunData(null, pipelineRun),

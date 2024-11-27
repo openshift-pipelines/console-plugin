@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { EditorType, EditorToggle } from './editor-toggle';
 import { K8sResourceKind } from '@openshift-console/dynamic-plugin-sdk';
 import { asyncYAMLToJS, safeJSToYAML } from '../yaml';
+import { LOCAL_STORAGE_KEY_EDITOR_TYPE } from '../const';
 
 const YAML_KEY_ORDER = ['apiVerion', 'kind', 'metadata', 'spec', 'status'];
 export const YAML_TO_JS_OPTIONS = {
@@ -47,7 +48,8 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
   const [switchError, setSwitchError] = React.useState<string | undefined>();
   const [yamlWarning, setYAMLWarning] = React.useState<boolean>(false);
   const [editorType, setEditorType] = React.useState<EditorType>(
-    EditorType.Form,
+    (localStorage.getItem(LOCAL_STORAGE_KEY_EDITOR_TYPE) as EditorType) ||
+      EditorType.Form,
   );
 
   const handleFormDataChange = (newFormData: K8sResourceKind = {}) => {
@@ -71,6 +73,7 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
 
   const changeEditorType = (newType: EditorType): void => {
     setEditorType(newType);
+    localStorage.setItem(LOCAL_STORAGE_KEY_EDITOR_TYPE, newType);
     onChangeEditorType(newType);
   };
 

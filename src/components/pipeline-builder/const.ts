@@ -70,3 +70,6 @@ export const initialPipelineFormData: PipelineBuilderFormValues = {
   finallyListTasks: [],
   loadingTasks: [],
 };
+
+export const LOCAL_STORAGE_KEY_EDITOR_TYPE =
+  'pipeline-console-plugin-editorType';

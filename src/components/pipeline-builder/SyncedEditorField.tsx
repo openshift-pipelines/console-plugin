@@ -5,12 +5,10 @@ import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import RadioGroupField from './RadioGroupField';
-
-import './SyncedEditorField.scss';
 import { EditorType } from './types';
 import { safeJSToYAML, safeYAMLToJS } from './yaml';
-import { LoadingBox } from '../status/status-box';
-import { useEditorType } from './synced-editor/useEditorType';
+
+import './SyncedEditorField.scss';
 
 type FormErrorCallback<ReturnValue = {}> = () => ReturnValue;
 type WithOrWithoutPromise<Type> = Promise<Type> | Type;
@@ -42,9 +40,11 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
   yamlContext,
   prune,
   noMargin = false,
-  lastViewUserSettingKey,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const [editorType, setEditorType] = React.useState<EditorType>(
+    EditorType.Form,
+  );
   const [field] = useField(name);
 
   const { values, setFieldValue, setStatus } = useFormikContext<FormikValues>();
@@ -58,19 +58,6 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
   const [disabledFormAlert, setDisabledFormAlert] = React.useState<boolean>(
     formContext.isDisabled,
   );
-
-  const isEditorTypeEnabled = (type: EditorType): boolean =>
-    !(type === EditorType.Form
-      ? formContext?.isDisabled
-      : yamlContext?.isDisabled);
-
-  const [editorType, setEditorType, resourceLoaded] = useEditorType(
-    lastViewUserSettingKey,
-    field.value as EditorType,
-    isEditorTypeEnabled,
-  );
-
-  const loaded = resourceLoaded && field.value === editorType;
 
   const changeEditorType = (newType: EditorType) => {
     setEditorType(newType);
@@ -145,19 +132,12 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
 
   React.useEffect(() => {
     setDisabledFormAlert(formContext.isDisabled);
-    if (resourceLoaded && field.value !== editorType) {
+    if (field.value !== editorType) {
       setFieldValue(name, editorType);
     }
-  }, [
-    editorType,
-    field.value,
-    formContext.isDisabled,
-    name,
-    resourceLoaded,
-    setFieldValue,
-  ]);
+  }, [editorType, field.value, formContext.isDisabled, name, setFieldValue]);
 
-  return loaded ? (
+  return (
     <>
       <div
         className={cx('ocs-synced-editor-field__editor-toggle', {
@@ -219,8 +199,6 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
         ? formContext.editor
         : yamlContext.editor}
     </>
-  ) : (
-    <LoadingBox />
   );
 };
 

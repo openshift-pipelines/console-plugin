@@ -465,7 +465,6 @@ export const convertBuilderFormToPipeline = (
       finally: finallyTasks,
     },
   };
-  console.log(pipelineYAML, '####', formValues);
   return pipelineYAML;
 };
 

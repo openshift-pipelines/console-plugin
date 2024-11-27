@@ -9,6 +9,7 @@ import { EditorType } from './types';
 import { safeJSToYAML, safeYAMLToJS } from './yaml';
 
 import './SyncedEditorField.scss';
+import { LOCAL_STORAGE_KEY_EDITOR_TYPE } from './const';
 
 type FormErrorCallback<ReturnValue = {}> = () => ReturnValue;
 type WithOrWithoutPromise<Type> = Promise<Type> | Type;
@@ -43,7 +44,8 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [editorType, setEditorType] = React.useState<EditorType>(
-    EditorType.Form,
+    (localStorage.getItem(LOCAL_STORAGE_KEY_EDITOR_TYPE) as EditorType) ||
+      EditorType.Form,
   );
   const [field] = useField(name);
 
@@ -61,6 +63,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
 
   const changeEditorType = (newType: EditorType) => {
     setEditorType(newType);
+    localStorage.setItem(LOCAL_STORAGE_KEY_EDITOR_TYPE, newType);
     setFieldValue(name, newType);
   };
 

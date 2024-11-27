@@ -3,10 +3,8 @@ import { Alert, Button } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { EditorType, EditorToggle } from './editor-toggle';
-import { useEditorType } from './useEditorType';
 import { K8sResourceKind } from '@openshift-console/dynamic-plugin-sdk';
 import { asyncYAMLToJS, safeJSToYAML } from '../yaml';
-import { LoadingBox } from '../../status/status-box';
 
 const YAML_KEY_ORDER = ['apiVerion', 'kind', 'metadata', 'spec', 'status'];
 export const YAML_TO_JS_OPTIONS = {
@@ -31,13 +29,11 @@ export const YAML_TO_JS_OPTIONS = {
 export const SyncedEditor: React.FC<SyncedEditorProps> = ({
   context = { formContext: {}, yamlContext: {} },
   FormEditor,
-  initialType = EditorType.Form,
   initialData = {},
   onChangeEditorType = _.noop,
   onChange = _.noop,
   prune,
   YAMLEditor,
-  lastViewUserSettingKey,
   displayConversionError,
 }) => {
   const { formContext, yamlContext } = context;
@@ -50,9 +46,8 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
   );
   const [switchError, setSwitchError] = React.useState<string | undefined>();
   const [yamlWarning, setYAMLWarning] = React.useState<boolean>(false);
-  const [editorType, setEditorType, loaded] = useEditorType(
-    lastViewUserSettingKey,
-    initialType,
+  const [editorType, setEditorType] = React.useState<EditorType>(
+    EditorType.Form,
   );
 
   const handleFormDataChange = (newFormData: K8sResourceKind = {}) => {
@@ -117,7 +112,7 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
     }
   };
 
-  return loaded ? (
+  return (
     <>
       <EditorToggle value={editorType} onChange={onChangeType} />
       {yamlWarning && (
@@ -153,8 +148,6 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
         />
       )}
     </>
-  ) : (
-    <LoadingBox />
   );
 };
 

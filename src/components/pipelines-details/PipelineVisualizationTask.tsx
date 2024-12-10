@@ -30,6 +30,7 @@ import SvgDropShadowFilter from '../pipeline-topology/SvgDropShadowFilter';
 import { WHEN_EXPRESSSION_DIAMOND_SIZE } from './const';
 import WhenExpressionDecorator from '../pipeline-topology/WhenExpressionDecorator';
 import { resourcePathFromModel } from '../utils/utils';
+import '../styles/common.scss';
 
 type PipelineVisualizationTask = {
   name?: string;
@@ -226,7 +227,7 @@ const TaskComponent: React.FC<TaskProps> = ({
           >
             <g
               className={cx({
-                'fa-spin odc-pipeline-vis-task--icon-spin':
+                'co-spin odc-pipeline-vis-task--icon-spin':
                   status.reason === ComputedStatus.Running,
                 'odc-pipeline-vis-task--icon-stop':
                   status.reason !== ComputedStatus.Running,

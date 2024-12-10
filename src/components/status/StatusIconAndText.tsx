@@ -4,6 +4,7 @@ import {
   CamelCaseWrap,
   StatusComponentProps,
 } from '@openshift-console/dynamic-plugin-sdk';
+import '../styles/common.scss';
 
 type StatusIconAndTextProps = StatusComponentProps & {
   icon?: React.ReactElement;
@@ -43,7 +44,7 @@ const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
       {icon &&
         React.cloneElement(icon, {
           className: classNames(
-            spin && 'fa-spin',
+            spin && 'pipelines-console-plugin__spin',
             icon.props.className,
             !iconOnly && 'co-icon-and-text__icon co-icon-flex-child',
           ),

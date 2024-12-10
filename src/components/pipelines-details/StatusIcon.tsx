@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { ComputedStatus } from '../../types';
 import { YellowExclamationTriangleIcon } from '@openshift-console/dynamic-plugin-sdk';
 import { getRunStatusColor } from '../utils/pipeline-augment';
+import '../styles/common.scss';
 
 interface StatusIconProps {
   status: string;
@@ -29,7 +30,9 @@ export const StatusIcon: React.FC<StatusIconProps> = ({
       return (
         <SyncAltIcon
           {...props}
-          className={classnames({ 'fa-spin': !disableSpin })}
+          className={classnames({
+            'pipelines-console-plugin__spin': !disableSpin,
+          })}
         />
       );
 

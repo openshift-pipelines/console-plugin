@@ -1,4 +1,4 @@
-@keyframes co-spin {
+@keyframes pipelines-console-plugin__spin {
   0% {
     transform: rotate(0deg);
   }
@@ -7,12 +7,10 @@
   }
 }
 
-.co-spin {
-  animation: co-spin 2s infinite linear;
-}
+.pipelines-console-plugin__spin {
+  animation: pipelines-console-plugin__spin 2s infinite linear;
 
-@media (prefers-reduced-motion: reduce) {
-  .co-spin {
+  @media (prefers-reduced-motion: reduce) {
     animation: none;
   }
 }

@@ -40,7 +40,10 @@ export const StatusIcon: React.FC<StatusIconProps> = ({
     case ComputedStatus['In Progress']:
     case ComputedStatus.Running:
       return (
-        <SyncAltIcon {...props} className={cx({ 'co-spin': !disableSpin })} />
+        <SyncAltIcon
+          {...props}
+          className={cx({ 'pipelines-console-plugin__spin': !disableSpin })}
+        />
       );
 
     case ComputedStatus.Succeeded:

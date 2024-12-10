@@ -89,7 +89,9 @@ export const pipelineBuilderPage = {
     pipelineBuilderPage.AddTask(taskName);
   },
   clickOnTask: (taskName: string) => {
-    cy.get('.co-spin', { timeout: 80000 }).should('not.exist');
+    cy.get('.pipelines-console-plugin__spin', { timeout: 80000 }).should(
+      'not.exist',
+    );
     cy.get(`[data-id="${taskName}"] text`).click({ force: true });
   },
   selectParallelTask: (taskName: string) => {

@@ -30,7 +30,9 @@ export const StatusIcon: React.FC<StatusIconProps> = ({
       return (
         <SyncAltIcon
           {...props}
-          className={classnames({ 'co-spin': !disableSpin })}
+          className={classnames({
+            'pipelines-console-plugin__spin': !disableSpin,
+          })}
         />
       );
 

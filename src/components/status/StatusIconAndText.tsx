@@ -44,7 +44,7 @@ const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
       {icon &&
         React.cloneElement(icon, {
           className: classNames(
-            spin && 'co-spin',
+            spin && 'pipelines-console-plugin__spin',
             icon.props.className,
             !iconOnly && 'co-icon-and-text__icon co-icon-flex-child',
           ),

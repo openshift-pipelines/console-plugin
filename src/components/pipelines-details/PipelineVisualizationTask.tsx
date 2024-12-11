@@ -227,7 +227,7 @@ const TaskComponent: React.FC<TaskProps> = ({
           >
             <g
               className={cx({
-                'co-spin odc-pipeline-vis-task--icon-spin':
+                'pipelines-console-plugin__spin odc-pipeline-vis-task--icon-spin':
                   status.reason === ComputedStatus.Running,
                 'odc-pipeline-vis-task--icon-stop':
                   status.reason !== ComputedStatus.Running,

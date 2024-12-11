@@ -8,17 +8,17 @@ metadata:
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
-      == "main" &&
-      ("***".pathChanged() ||
+      == "release-v1.17.x" &&
+      ("upstream/***".pathChanged() || ".konflux/patches/***".pathChanged() || ".konflux/rpms/***".pathChanged() ||
       ".konflux/dockerfiles/console-plugin.Dockerfile".pathChanged() ||
-      ".tekton/console-plugin-main-console-plugin-push.yaml".pathChanged() ||
+      ".tekton/console-plugin-next-console-plugin-push.yaml".pathChanged() ||
       ".tekton/docker-build-ta.yaml".pathChanged())
   creationTimestamp: null
   labels:
-    appstudio.openshift.io/application: console-plugin-main
-    appstudio.openshift.io/component: console-plugin-main-console-plugin
+    appstudio.openshift.io/application: console-plugin-next
+    appstudio.openshift.io/component: console-plugin-next-console-plugin
     pipelines.appstudio.openshift.io/type: build
-  name: console-plugin-main-console-plugin-on-push
+  name: console-plugin-next-console-plugin-on-push
   namespace: tekton-ecosystem-tenant
 spec:
   params:
@@ -27,7 +27,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/tekton-ecosystem-tenant/console-plugin-main/console-plugin:{{revision}}
+    value: quay.io/redhat-user-workloads/tekton-ecosystem-tenant/console-plugin-next/console-plugin:{{revision}}
   - name: dockerfile
     value: .konflux/dockerfiles/console-plugin.Dockerfile
   - name: build-platforms

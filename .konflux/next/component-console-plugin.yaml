@@ -15,4 +15,4 @@ spec:
     git:
       url: https://github.com/openshift-pipelines/console-plugin
       dockerfileUrl: .konflux/dockerfiles/console-plugin.Dockerfile
-      revision: next
+      revision: release-v1.17.x

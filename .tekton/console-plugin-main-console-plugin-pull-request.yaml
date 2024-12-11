@@ -35,7 +35,7 @@ spec:
     value: .konflux/dockerfiles/console-plugin.Dockerfile
   - name: build-platforms
     value:
-      - linux/x86_64
+    - linux/x86_64
   - name: prefetch-input
     value: |
       {"type": "rpm", "path": ".konflux/rpms"}

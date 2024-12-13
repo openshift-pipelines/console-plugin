@@ -9,7 +9,6 @@ metadata:
   name: console-plugin-next-rp
 spec:
   application: console-plugin-next
-  target: tekton-ecosystem-tenant
   tenantPipeline:
     serviceAccountName: release-registry-openshift-pipelines-next
     pipelineRef:

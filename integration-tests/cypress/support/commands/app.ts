@@ -153,6 +153,7 @@ Cypress.Commands.add('checkErrors', () => {
 
 Cypress.Commands.add(
   'waitUntilEnabled',
+  // eslint-disable-next-line @typescript-eslint/no-inferrable-types
   (selector: string, timeout: number = 20000): any => {
     const start = new Date().getTime();
 

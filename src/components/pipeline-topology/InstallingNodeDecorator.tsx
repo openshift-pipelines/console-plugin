@@ -4,6 +4,7 @@ import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progre
 import { BUILDER_NODE_DECORATOR_RADIUS } from './const';
 
 import './InstallingNodeDecorator.scss';
+import '../styles/common.scss';
 
 type InstallingNodeDecoratorProps = {
   content: string;
@@ -33,7 +34,7 @@ const InstallingNodeDecorator: React.FC<InstallingNodeDecoratorProps> = ({
           className="opp-installing-node-decorator__circle"
         />
         <g transform="translate(-5, -7)">
-          <InProgressIcon className="fa-spin" />
+          <InProgressIcon className="pipelines-console-plugin__spin" />
         </g>
       </g>
     </Tooltip>

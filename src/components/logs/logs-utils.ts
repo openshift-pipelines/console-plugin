@@ -93,6 +93,7 @@ export const getDownloadAllLogsCallback = (
   taskRuns: TaskRunKind[],
   namespace: string,
   pipelineRunName: string,
+  isDevConsoleProxyAvailable?: boolean,
 ): (() => Promise<Error>) => {
   const getWatchUrls = async (): Promise<StepsWatchUrl> => {
     const stepsList: ContainerStatus[][] = await Promise.all(
@@ -170,9 +171,10 @@ export const getDownloadAllLogsCallback = (
         }
       } else {
         // eslint-disable-next-line no-await-in-loop
-        allLogs += await getTaskRunLog(task.taskRunPath).then(
-          (log) => `${tasks[currTask].name.toUpperCase()}\n\n${log}\n\n`,
-        );
+        allLogs += await getTaskRunLog(
+          task.taskRunPath,
+          isDevConsoleProxyAvailable,
+        ).then((log) => `${tasks[currTask].name.toUpperCase()}\n\n${log}\n\n`);
       }
     }
     const buffer = new LineBuffer(null);

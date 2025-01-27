@@ -57,11 +57,10 @@ const RepositoriesList: React.FC<RepositoriesListProps> = ({
       />
       <VirtualizedTable
         EmptyMsg={() => (
-          <div
-            className="pf-u-text-align-center virtualized-table-empty-msg"
-            id="no-templates-msg"
-          >
-            {t('No Repositories found')}
+          <div className="cos-status-box">
+            <div className="pf-v5-u-text-align-center">
+              {t('No Repositories found')}
+            </div>
           </div>
         )}
         columns={columns}

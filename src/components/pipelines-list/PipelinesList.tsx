@@ -67,11 +67,10 @@ const PipelinesList: React.FC<PipelineListProps> = ({
       <VirtualizedTable<K8sResourceCommon>
         key={sortColumnIndex}
         EmptyMsg={() => (
-          <div
-            className="pf-u-text-align-center virtualized-table-empty-msg"
-            id="no-templates-msg"
-          >
-            {t('No Pipelines found')}
+          <div className="cos-status-box">
+            <div className="pf-v5-u-text-align-center">
+              {t('No Pipelines found')}
+            </div>
           </div>
         )}
         columns={columns}

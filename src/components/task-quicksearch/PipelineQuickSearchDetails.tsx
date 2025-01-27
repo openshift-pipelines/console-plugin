@@ -16,6 +16,8 @@ import {
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router';
+import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import { getArtifactHubTaskDetails } from '../catalog/apis/artifactHub';
 import {
   getCtaButtonText,
@@ -34,7 +36,7 @@ import {
 import { ExternalLink } from '../utils/link';
 import { handleCta } from '../quick-search';
 import { QuickSearchDetailsRendererProps } from '../quick-search/QuickSearchDetails';
-import { useHistory } from 'react-router';
+import { FLAGS } from '../../types';
 
 import './PipelineQuickSearchDetails.scss';
 
@@ -44,6 +46,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const history = useHistory();
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const [selectedVersion, setSelectedVersion] = React.useState<string>();
   const [versions, setVersions] = React.useState(
     selectedItem?.attributes?.versions ?? [],
@@ -61,7 +64,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
     (key) => {
       setSelectedVersion(key);
       if (isArtifactHubTask(selectedItem)) {
-        getArtifactHubTaskDetails(selectedItem, key)
+        getArtifactHubTaskDetails(selectedItem, key, isDevConsoleProxyAvailable)
           .then((item) => {
             selectedItem.attributes.versions = item.available_versions;
             selectedItem.attributes.selectedVersionContentUrl =
@@ -117,7 +120,11 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
       const debouncedLoadDetails = debounce(async () => {
         if (mounted) {
           try {
-            const item = await getArtifactHubTaskDetails(selectedItem);
+            const item = await getArtifactHubTaskDetails(
+              selectedItem,
+              undefined,
+              isDevConsoleProxyAvailable,
+            );
             selectedItem.attributes.versions = item.available_versions;
             selectedItem.attributes.selectedVersionContentUrl =
               item.content_url;

@@ -1,21 +1,19 @@
 import * as React from 'react';
-import {
-  ARTIFACTHUB,
-  ArtifactHubTask,
-  useGetArtifactHubTasks,
-} from '../apis/artifactHub';
+import { ARTIFACTHUB, useGetArtifactHubTasks } from '../apis/artifactHub';
 import { TektonHubTask } from '../apis/tektonHub';
 import {
   CatalogItem,
   ExtensionHook,
   ResourceIcon,
   useAccessReview,
+  useFlag,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { TaskProviders } from '../../task-quicksearch/pipeline-quicksearch-utils';
 import { TaskModel } from '../../../models';
 import { getReferenceForModel } from '../../pipelines-overview/utils';
 import { useTektonHubIntegration } from '../catalog-utils';
 import { t } from '../../utils/common-utils';
+import { ArtifactHubTask, FLAGS } from '../../../types';
 
 const normalizeArtifactHubTasks = (
   artifactHubTasks: ArtifactHubTask[],
@@ -55,6 +53,7 @@ const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, string] => {
   const artifactHubIntegration = useTektonHubIntegration();
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const canCreateTask = useAccessReview({
     group: TaskModel.apiGroup,
     resource: TaskModel.plural,
@@ -71,6 +70,7 @@ const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
 
   const [artifactHubTasks, tasksLoaded, tasksError] = useGetArtifactHubTasks(
     canCreateTask && canUpdateTask && artifactHubIntegration,
+    isDevConsoleProxyAvailable,
   );
   const normalizedArtifactHubTasks = React.useMemo<
     CatalogItem<TektonHubTask>[]

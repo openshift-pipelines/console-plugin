@@ -13,6 +13,7 @@ import {
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
 import { Card, CardBody, CardTitle } from '@patternfly/react-core';
+import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import {
   formatDate,
   getDropDownDate,
@@ -21,8 +22,8 @@ import {
   parsePrometheusDuration,
   monthYear,
 } from './dateTime';
-import { DataType } from '../utils/tekton-results';
-import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
+import { getResultsSummary } from '../utils/summary-api';
+import { DataType, FLAGS, SummaryResponse } from '../../types';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { getFilter, useInterval } from './utils';
 import { LoadingInline } from '../Loading';
@@ -76,6 +77,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
   width = 530,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const startTimespan = timespan - parsePrometheusDuration('1d');
   const endDate = new Date(Date.now()).setHours(0, 0, 0, 0);
   const startDate = new Date(Date.now() - startTimespan).setHours(0, 0, 0, 0);
@@ -103,7 +105,12 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
       groupBy: group_by,
     };
 
-    getResultsSummary(namespace, summaryOpt)
+    getResultsSummary(
+      namespace,
+      summaryOpt,
+      undefined,
+      isDevConsoleProxyAvailable,
+    )
       .then((d) => {
         setLoaded(true);
         setData(d);

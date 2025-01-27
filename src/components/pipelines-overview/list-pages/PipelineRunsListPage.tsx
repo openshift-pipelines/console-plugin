@@ -14,7 +14,7 @@ import PipelineRunsForPipelinesList from './PipelineRunsForPipelinesList';
 import SearchInputField from '../SearchInput';
 import { SummaryProps, useInterval, useQueryParams } from '../utils';
 import { getResultsSummary } from '../../../components/utils/summary-api';
-import { DataType } from '../../../components/utils/tekton-results';
+import { DataType } from '../../../types';
 import { getDropDownDate } from '../dateTime';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
 

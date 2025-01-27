@@ -14,10 +14,10 @@ import {
 import { SummaryProps, useInterval } from './utils';
 import { PipelineModel, RepositoryModel } from '../../models';
 import { getResultsSummary } from '../utils/summary-api';
-import { DataType } from '../utils/tekton-results';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { getDropDownDate } from './dateTime';
 import { LoadingInline } from '../Loading';
+import { DataType } from '../../types';
 
 import './PipelineRunsTotalCard.scss';
 

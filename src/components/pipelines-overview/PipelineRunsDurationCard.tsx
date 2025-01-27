@@ -16,7 +16,7 @@ import {
 } from '@patternfly/react-core';
 import { SummaryProps, getFilter, useInterval } from './utils';
 import { getResultsSummary } from '../utils/summary-api';
-import { DataType } from '../utils/tekton-results';
+import { DataType } from '../../types';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { formatTime, getDropDownDate } from './dateTime';
 import { LoadingInline } from '../Loading';

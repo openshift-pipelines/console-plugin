@@ -23,9 +23,9 @@ import {
   timeToMinutes,
 } from '../pipelines-overview/dateTime';
 import { ALL_NAMESPACES_KEY } from '../../consts';
-import { DataType } from '../utils/tekton-results';
-import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
+import { getResultsSummary } from '../utils/summary-api';
 import { getFilter, useInterval } from '../pipelines-overview/utils';
+import { DataType, SummaryResponse } from '../../types';
 
 interface PipelinesAverageDurationProps {
   timespan?: number;

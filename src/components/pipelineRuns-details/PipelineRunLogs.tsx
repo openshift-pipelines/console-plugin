@@ -4,9 +4,14 @@ import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom-v5-compat';
+import {
+  useFlag,
+  WatchK8sResource,
+} from '@openshift-console/dynamic-plugin-sdk';
 import { PipelineRunModel } from '../../models';
 import {
   ComputedStatus,
+  FLAGS,
   PipelineRunKind,
   PipelineTask,
   TaskRunKind,
@@ -19,7 +24,6 @@ import LogsWrapperComponent from '../logs/LogsWrapperComponent';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import { taskRunStatus } from '../utils/pipeline-utils';
 import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
-import { WatchK8sResource } from '@openshift-console/dynamic-plugin-sdk';
 import { ColoredStatusIcon } from '../pipeline-topology/StatusIcons';
 import { resourcePathFromModel } from '../utils/utils';
 import './PipelineRunLogs.scss';
@@ -29,6 +33,7 @@ interface PipelineRunLogsProps {
   activeTask?: string;
   t: TFunction;
   taskRuns: TaskRunKind[];
+  isDevConsoleProxyAvailable?: boolean;
 }
 interface PipelineRunLogsState {
   activeItem: string;
@@ -118,7 +123,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
   };
 
   render() {
-    const { obj, t, taskRuns: tRuns } = this.props;
+    const { obj, t, taskRuns: tRuns, isDevConsoleProxyAvailable } = this.props;
     const { activeItem } = this.state;
     const taskRunNames = this.getSortedTaskRun(tRuns, [
       ...(obj?.status?.pipelineSpec?.tasks || []),
@@ -138,6 +143,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
             tRuns,
             obj.metadata?.namespace,
             obj.metadata?.name,
+            isDevConsoleProxyAvailable,
           )
         : undefined;
     const activeTaskRun = tRuns.find(
@@ -263,7 +269,20 @@ type PipelineRunLogsWithActiveTaskProps = {
   obj: PipelineRunKind;
 };
 
-const PipelineRunLogs = withTranslation()(PipelineRunLogsWithTranslation);
+const TranslatedPipelineRunLogs = withTranslation()(
+  PipelineRunLogsWithTranslation,
+);
+
+const PipelineRunLogs = (props) => {
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
+
+  return (
+    <TranslatedPipelineRunLogs
+      {...props}
+      isDevConsoleProxyAvailable={isDevConsoleProxyAvailable}
+    />
+  );
+};
 
 export const PipelineRunLogsWithActiveTask: React.FC<
   PipelineRunLogsWithActiveTaskProps

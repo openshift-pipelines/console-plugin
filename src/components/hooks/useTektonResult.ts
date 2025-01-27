@@ -11,10 +11,14 @@ import {
   RepositoryLabels,
   TektonResourceLabel,
 } from '../../consts';
-import { PipelineRunKind, TaskRunKind } from '../../types';
 import {
+  FLAGS,
+  PipelineRunKind,
   RecordsList,
+  TaskRunKind,
   TektonResultsOptions,
+} from '../../types';
+import {
   getPipelineRuns,
   getTaskRunLog,
   getTaskRuns,
@@ -29,11 +33,13 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
     options?: TektonResultsOptions,
     nextPageToken?: string,
     cacheKey?: string,
+    isDevConsoleProxyAvailable?: boolean,
   ) => Promise<[Kind[], RecordsList, boolean?]>,
   namespace: string,
   options?: TektonResultsOptions,
   cacheKey?: string,
 ): [Kind[], boolean, unknown, GetNextPage] => {
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const [nextPageToken, setNextPageToken] = React.useState<string>(null);
   const [localCacheKey, setLocalCacheKey] = React.useState(cacheKey);
 
@@ -61,6 +67,7 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
           options,
           nextPageToken,
           localCacheKey,
+          isDevConsoleProxyAvailable,
         );
         if (!disposed) {
           const token = tkPipelineRuns[1].nextPageToken;
@@ -206,12 +213,17 @@ export const useTRTaskRunLog = (
     false,
     undefined,
   ]);
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
+
   React.useEffect(() => {
     let disposed = false;
     if (namespace && taskRunName) {
       (async () => {
         try {
-          const log = await getTaskRunLog(taskRunPath);
+          const log = await getTaskRunLog(
+            taskRunPath,
+            isDevConsoleProxyAvailable,
+          );
           if (!disposed) {
             setResult([log, true, undefined]);
           }

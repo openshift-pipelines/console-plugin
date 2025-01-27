@@ -11,13 +11,14 @@ import {
   GridItem,
   Label,
 } from '@patternfly/react-core';
+import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import { SummaryProps, useInterval } from './utils';
 import { PipelineModel, RepositoryModel } from '../../models';
 import { getResultsSummary } from '../utils/summary-api';
-import { DataType } from '../utils/tekton-results';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { getDropDownDate } from './dateTime';
 import { LoadingInline } from '../Loading';
+import { DataType, FLAGS } from '../../types';
 
 import './PipelineRunsTotalCard.scss';
 
@@ -36,6 +37,7 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
   bordered,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
 
   const [totalRun, setTotalRun] = React.useState(0);
   const [plrRun, setPlrRun] = React.useState(0);
@@ -53,11 +55,16 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
   const date = getDropDownDate(timespan).toISOString();
 
   const getSummaryData = (filter, setData) => {
-    getResultsSummary(namespace, {
-      summary: 'total',
-      data_type: DataType?.PipelineRun,
-      filter,
-    })
+    getResultsSummary(
+      namespace,
+      {
+        summary: 'total',
+        data_type: DataType?.PipelineRun,
+        filter,
+      },
+      undefined,
+      isDevConsoleProxyAvailable,
+    )
       .then((response) => {
         setLoaded(true);
         setData(response.summary?.[0].total);

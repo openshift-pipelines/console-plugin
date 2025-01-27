@@ -13,6 +13,7 @@ import {
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
 import { Card, CardBody, CardTitle } from '@patternfly/react-core';
+import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import {
   formatDate,
   getDropDownDate,
@@ -23,9 +24,9 @@ import {
   timeToMinutes,
 } from '../pipelines-overview/dateTime';
 import { ALL_NAMESPACES_KEY } from '../../consts';
-import { DataType } from '../utils/tekton-results';
-import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
+import { getResultsSummary } from '../utils/summary-api';
 import { getFilter, useInterval } from '../pipelines-overview/utils';
+import { DataType, FLAGS, SummaryResponse } from '../../types';
 
 interface PipelinesAverageDurationProps {
   timespan?: number;
@@ -74,6 +75,7 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
   kind,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const [data, setData] = React.useState<SummaryResponse>();
   const startTimespan = timespan - parsePrometheusDuration('1d');
   const endDate = new Date(Date.now()).setHours(0, 0, 0, 0);
@@ -100,7 +102,12 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
       groupBy: group_by,
     };
 
-    getResultsSummary(namespace, summaryOpt)
+    getResultsSummary(
+      namespace,
+      summaryOpt,
+      undefined,
+      isDevConsoleProxyAvailable,
+    )
       .then((d) => {
         setData(d);
       })

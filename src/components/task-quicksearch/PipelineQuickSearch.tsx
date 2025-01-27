@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { useTranslation } from 'react-i18next';
+import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import {
   useCleanupOnFailure,
   useLoadingTaskCleanup,
@@ -28,6 +29,7 @@ import {
   createArtifactHubTask,
   updateArtifactHubTask,
 } from '../catalog/apis/artifactHub';
+import { FLAGS } from '../../types';
 
 interface QuickSearchProps {
   namespace: string;
@@ -55,6 +57,7 @@ const Contents: React.FC<
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const savedCallback = React.useRef(null);
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   savedCallback.current = callback;
   const [failedTasks, setFailedTasks] = React.useState<string[]>([]);
 
@@ -134,6 +137,7 @@ const Contents: React.FC<
                 namespace,
                 item.data.task.name,
                 selectedVersion,
+                isDevConsoleProxyAvailable,
               ).catch(() =>
                 setFailedTasks([...failedTasks, item.data.task.name]),
               );
@@ -148,6 +152,7 @@ const Contents: React.FC<
               selectedVersionUrl,
               namespace,
               selectedVersion,
+              isDevConsoleProxyAvailable,
             ).catch(() =>
               setFailedTasks([...failedTasks, item.data.task.name]),
             );

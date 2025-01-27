@@ -15,14 +15,16 @@ import {
   sampleTektonHubCatalogItemWithHubURL,
 } from './catalog-item-data';
 import PipelineQuickSearchDetails from '../PipelineQuickSearchDetails';
-import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
+import { consoleFetch, useFlag } from '@openshift-console/dynamic-plugin-sdk';
 
 configure({ testIdAttribute: 'data-test' });
 
 const coFetchMock = consoleFetch as jest.Mock;
+const useFlagMock = useFlag as jest.Mock;
 
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => ({
   consoleFetch: jest.fn(),
+  useFlag: jest.fn(),
 }));
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
@@ -53,6 +55,7 @@ beforeEach(() => {
       }),
     }),
   );
+  useFlagMock.mockReturnValue(true);
 });
 
 describe('pipelineQuickSearchDetails', () => {

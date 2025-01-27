@@ -9,12 +9,13 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from '@patternfly/react-core';
+import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import PipelineRunsForRepositoriesList from './PipelineRunsForRepositoriesList';
 import PipelineRunsForPipelinesList from './PipelineRunsForPipelinesList';
 import SearchInputField from '../SearchInput';
 import { SummaryProps, useInterval, useQueryParams } from '../utils';
 import { getResultsSummary } from '../../../components/utils/summary-api';
-import { DataType } from '../../../components/utils/tekton-results';
+import { DataType, FLAGS } from '../../../types';
 import { getDropDownDate } from '../dateTime';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
 
@@ -32,6 +33,8 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
   interval,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
+
   const [pageFlag, setPageFlag] = React.useState(1);
   const [loaded, setloaded] = React.useState(false);
   const [summaryData, setSummaryData] = React.useState<SummaryProps[]>([]);
@@ -60,6 +63,8 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
             groupBy: 'repository',
             filter: `data.status.startTime>timestamp("${date}") && data.metadata.labels.contains('pipelinesascode.tekton.dev/repository')`,
           },
+      undefined,
+      isDevConsoleProxyAvailable,
     )
       .then((response) => {
         setloaded(true);

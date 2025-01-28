@@ -2,16 +2,16 @@
   &__signed-indicator {
     display: inline-block;
     --pf-c-table--cell--Color: var(
-      --pf-global--BackgroundColor--dark-transparent-100
+      --pf-v5-global--BackgroundColor--dark-transparent-100
     );
-    margin-left: var(--pf-global--spacer--xs);
+    margin-left: var(--pf-v5-global--spacer--xs);
     vertical-align: middle;
   }
   &__results-indicator {
     display: inline-block;
-    margin-left: var(--pf-global--spacer--xs);
+    margin-left: var(--pf-v5-global--spacer--xs);
     > svg {
-      color: var(--pf-global--Color--400);
+      color: var(--pf-v5-global--Color--400);
     }
   }
 }

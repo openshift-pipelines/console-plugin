@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 import ModalContent from './ModalContent';
@@ -10,7 +11,8 @@ import {
   ModalTitle,
   ModalWrapper,
 } from '../../modals/modal';
-import { useTranslation } from 'react-i18next';
+
+import './ModalContent.scss';
 
 type ModalCallback = () => void;
 
@@ -33,7 +35,9 @@ const RemoveTaskModal: ModalComponent<
   return (
     <ModalWrapper onClose={closeModal}>
       <form onSubmit={onSubmit} name="form" className="modal-content">
-        <ModalTitle>{t('Remove task')}</ModalTitle>
+        <ModalTitle className="pipelines-remove-task-header">
+          {t('Remove task')}
+        </ModalTitle>
         <ModalBody>
           <ModalContent
             icon={<ExclamationTriangleIcon color={warningColor.value} />}

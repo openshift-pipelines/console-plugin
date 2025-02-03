@@ -9,7 +9,6 @@ import { PipelineRunModel } from '../../models';
 import { PipelineRunKind } from '../../types';
 
 import ResultsList from './ResultsList';
-import { pipelineRunFilterReducer } from '../utils/pipeline-filter-reducer';
 
 const OutputTab: React.FC<{ obj: PipelineRunKind }> = ({
   obj: pipelineRun,
@@ -23,7 +22,6 @@ const OutputTab: React.FC<{ obj: PipelineRunKind }> = ({
           pipelineRun.status?.pipelineResults || pipelineRun.status?.results
         }
         resourceName={t(PipelineRunModel.labelKey)}
-        status={pipelineRunFilterReducer(pipelineRun)}
       />
     </div>
   ) : (

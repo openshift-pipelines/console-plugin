@@ -3,17 +3,19 @@
 apiVersion: appstudio.redhat.com/v1beta2
 kind: IntegrationTestScenario
 metadata:
-  name: console-plugin-next-enterprise-contract-group
+  name: console-plugin-next-enterprise-contract
 spec:
   application: console-plugin-next
   contexts:
-    - description: Application testing
-      name: pull_request
+    - description: Application testing for console-plugin-next-console-plugin
+      name: component_console-plugin-next-console-plugin
   params:
     - name: POLICY_CONFIGURATION
       value: tekton-ecosystem-tenant/tekton-ecosystem-tenant-containers
     - name: TIMEOUT
       value: "15m0s"
+    - name: SINGLE_COMPONENT
+      value: "true"
   resolverRef:
     params:
       - name: url

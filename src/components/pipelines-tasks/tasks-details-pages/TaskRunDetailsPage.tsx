@@ -89,8 +89,7 @@ const TaskRunDetailsPage = () => {
         {
           href: 'logs',
           path: 'logs/:name?',
-          // t('Logs')
-          name: 'Logs',
+          name: t('Logs'),
           component: TaskRunLogsTab,
         },
         navFactory.events(TaskRunEvents),

@@ -180,6 +180,7 @@
   "Filesystem": "Filesystem",
   "Finally task": "Finally task",
   "Finally tasks": "Finally tasks",
+  "Fit to screen": "Fit to screen",
   "For example quay.io or docker.io": "For example quay.io or docker.io",
   "Form view": "Form view",
   "Form view is disabled for this chart because the schema is not available": "Form view is disabled for this chart because the schema is not available",
@@ -369,6 +370,7 @@
   "Required": "Required",
   "Rerun": "Rerun",
   "Reset": "Reset",
+  "Reset view": "Reset view",
   "Resource is being fetched from Tekton Results.": "Resource is being fetched from Tekton Results.",
   "Resource is deleted.": "Resource is deleted.",
   "Right click": "Right click",
@@ -525,5 +527,7 @@
   "YAML": "YAML",
   "YAML view": "YAML view",
   "You made changes to this page.": "You made changes to this page.",
-  "Your approval has been requested on {{plrs}} pipeline": "Your approval has been requested on {{plrs}} pipeline"
+  "Your approval has been requested on {{plrs}} pipeline": "Your approval has been requested on {{plrs}} pipeline",
+  "Zoom in": "Zoom in",
+  "Zoom out": "Zoom out"
 }

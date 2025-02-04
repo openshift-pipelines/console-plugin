@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   GRAPH_LAYOUT_END_EVENT,
   Model,
@@ -42,6 +43,7 @@ const PipelineVisualizationSurface: React.FC<
   showControlBar = false,
   noScrollbar = false,
 }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [vis, setVis] = React.useState<Controller>(null);
   const [maxSize, setMaxSize] = React.useState(null);
   const [width, setWidth] = React.useState(null);
@@ -139,16 +141,24 @@ const PipelineVisualizationSurface: React.FC<
         zoomInCallback: action(() => {
           controller.getGraph().scaleBy(4 / 3);
         }),
+        zoomInTip: t('Zoom in'),
+        zoomInAriaLabel: t('Zoom in'),
         zoomOutCallback: action(() => {
           controller.getGraph().scaleBy(0.75);
         }),
+        zoomOutTip: t('Zoom out'),
+        zoomOutAriaLabel: t('Zoom out'),
         fitToScreenCallback: action(() => {
           controller.getGraph().fit(80);
         }),
+        fitToScreenTip: t('Fit to screen'),
+        fitToScreenAriaLabel: t('Fit to screen'),
         resetViewCallback: action(() => {
           controller.getGraph().reset();
           controller.getGraph().layout();
         }),
+        resetViewTip: t('Reset view'),
+        resetViewAriaLabel: t('Reset view'),
         legend: false,
       })}
     />

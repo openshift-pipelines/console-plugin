@@ -1,24 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NavPage } from '@openshift-console/dynamic-plugin-sdk';
+import { t } from './common-utils';
 
 type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => NavPage };
 export const navFactory: NavFactory = {
   details: (component) => ({
     href: '',
-    // t('Details')
-    name: 'Details',
+    name: t('Details'),
     component,
   }),
   events: (component) => ({
     href: 'events',
-    // t('Events')
-    name: 'Events',
+    name: t('Events'),
     component,
   }),
   editYaml: (component) => ({
     href: 'yaml',
-    // t('YAML')
-    name: 'YAML',
+    name: t('YAML'),
     component,
   }),
 };

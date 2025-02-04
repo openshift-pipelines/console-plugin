@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dropdown,
   DropdownItem,
@@ -60,6 +61,7 @@ const DetailsPage: React.FC<React.PropsWithChildren<DetailsPageProps>> = ({
   model,
   pages,
 }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [isOpen, setIsOpen] = React.useState(false);
   const toggleIsOpen = React.useCallback(() => setIsOpen((v) => !v), []);
   const setClosed = React.useCallback(() => setIsOpen(false), []);
@@ -136,7 +138,7 @@ const DetailsPage: React.FC<React.PropsWithChildren<DetailsPageProps>> = ({
                     onClick={toggleIsOpen}
                     isExpanded={isOpen}
                   >
-                    Actions
+                    {t('Actions')}
                   </MenuToggle>
                 )}
                 isOpen={isOpen}

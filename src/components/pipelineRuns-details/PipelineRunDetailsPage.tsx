@@ -232,7 +232,7 @@ const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
         },
         {
           key: 'cancel-pipelineRun',
-          label: 'Cancel',
+          label: t('Cancel'),
           tooltipProps: {
             content: t(
               'Interrupt any executing non finally tasks, then execute finally tasks',

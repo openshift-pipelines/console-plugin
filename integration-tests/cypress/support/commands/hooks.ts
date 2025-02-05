@@ -12,7 +12,7 @@ after(() => {
   cy.log(`Deleting "${namespaces}" namespace`);
   cy.exec(`oc delete namespace ${namespaces}`, {
     failOnNonZeroExit: false,
-    timeout: 180000,
+    timeout: 200000,
   });
 });
 

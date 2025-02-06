@@ -160,3 +160,16 @@ export enum StartedByLabel {
 }
 
 export const TRIGGER_BINDING_EMPTY = '#empty-trigger-binding#';
+
+export const GITHUB_BASE_URL = 'https://github.com';
+
+/* Backend API Endpoints */
+export const TEKTON_RESULTS_TASKRUN_LOGS_URL =
+  '/api/dev-console/tekton-results/logs';
+export const TEKTON_RESULTS_FETCH_URL = '/api/dev-console/tekton-results/get';
+export const SUMMARY_FETCH_URL = '/api/dev-console/tekton-results/summary';
+
+export const ARTIFACTHUB_SEARCH_URL = '/api/dev-console/artifacthub/search';
+export const ARTIFACTHUB_TASK_DETAILS_URL = '/api/dev-console/artifacthub/get';
+export const GITHUB_ARTIFACTHUB_TASK_YAML_URL =
+  '/api/dev-console/artifacthub/yaml';

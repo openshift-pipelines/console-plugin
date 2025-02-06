@@ -1,9 +1,5 @@
 import * as React from 'react';
-import {
-  ARTIFACTHUB,
-  ArtifactHubTask,
-  useGetArtifactHubTasks,
-} from '../apis/artifactHub';
+import { ARTIFACTHUB, useGetArtifactHubTasks } from '../apis/artifactHub';
 import { TektonHubTask } from '../apis/tektonHub';
 import {
   CatalogItem,
@@ -16,6 +12,7 @@ import { TaskModel } from '../../../models';
 import { getReferenceForModel } from '../../pipelines-overview/utils';
 import { useTektonHubIntegration } from '../catalog-utils';
 import { t } from '../../utils/common-utils';
+import { ArtifactHubTask } from '../../../types';
 
 const normalizeArtifactHubTasks = (
   artifactHubTasks: ArtifactHubTask[],

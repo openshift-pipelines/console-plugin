@@ -1,12 +1,12 @@
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
-import { PipelineRunKind, TaskRunKind } from '../../types';
 import {
+  PipelineRunKind,
   RecordsList,
+  TaskRunKind,
   TektonResultsOptions,
-  getPipelineRuns,
-  getTaskRuns,
-} from '../utils/tekton-results';
+} from '../../types';
+import { getPipelineRuns, getTaskRuns } from '../utils/tekton-results';
 
 export type GetNextPage = () => void | undefined;
 

@@ -11,10 +11,13 @@ import {
   RepositoryLabels,
   TektonResourceLabel,
 } from '../../consts';
-import { PipelineRunKind, TaskRunKind } from '../../types';
 import {
+  PipelineRunKind,
   RecordsList,
+  TaskRunKind,
   TektonResultsOptions,
+} from '../../types';
+import {
   getPipelineRuns,
   getTaskRunLog,
   getTaskRuns,

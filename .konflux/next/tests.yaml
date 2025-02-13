@@ -3,12 +3,12 @@
 apiVersion: appstudio.redhat.com/v1beta2
 kind: IntegrationTestScenario
 metadata:
-  name: console-plugin-main-enterprise-contract
+  name: console-plugin-next-enterprise-contract
 spec:
-  application: console-plugin-main
+  application: console-plugin-next
   contexts:
-    - description: Application testing for console-plugin-main-console-plugin
-      name: component_console-plugin-main-console-plugin
+    - description: Application testing for console-plugin-next-console-plugin
+      name: component_console-plugin-next-console-plugin
   params:
     - name: POLICY_CONFIGURATION
       value: tekton-ecosystem-tenant/tekton-ecosystem-tenant-containers

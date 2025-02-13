@@ -12,7 +12,7 @@ RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
     yarn build
 
 FROM $RUNTIME
-ARG VERSION=console-plugin-main
+ARG VERSION=console-plugin-1-18
 
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/dist /usr/share/nginx/html
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/nginx.conf /etc/nginx/nginx.conf
@@ -22,8 +22,8 @@ USER 1001
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
 
 LABEL \
-      com.redhat.component="openshift-pipelines-console-plugin-rhel8-container" \
-      name="openshift-pipelines/pipelines-console-plugin-rhel8" \
+      com.redhat.component="openshift-pipelines-console-plugin-rhel9-container" \
+      name="openshift-pipelines/pipelines-console-plugin-rhel9" \
       version=$VERSION \
       summary="Red Hat OpenShift Pipelines Console Plugin" \
       maintainer="pipelines-extcomm@redhat.com" \

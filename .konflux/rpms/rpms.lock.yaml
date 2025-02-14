@@ -1033,13 +1033,13 @@ arches:
     name: libssh-config
     evr: 0.10.4-13.el9
     sourcerpm: libssh-0.10.4-13.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/l/libstdc++-11.5.0-2.el9.aarch64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/l/libstdc++-11.5.0-5.el9_5.aarch64.rpm
     repoid: ubi-9-for-aarch64-baseos-rpms
-    size: 722656
-    checksum: sha256:c4f33e31d14cc6d374fc76401fb690a6d8f3389c6e5bc342c3e4ce24f9c797ce
+    size: 719222
+    checksum: sha256:e37944a122f5b113e20757ab905462c9c01b18811eeec2e43ffbf71e2bd2861a
     name: libstdc++
-    evr: 11.5.0-2.el9
-    sourcerpm: gcc-11.5.0-2.el9.src.rpm
+    evr: 11.5.0-5.el9_5
+    sourcerpm: gcc-11.5.0-5.el9_5.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/aarch64/baseos/os/Packages/l/libuser-0.63-15.el9.aarch64.rpm
     repoid: ubi-9-for-aarch64-baseos-rpms
     size: 426372
@@ -2549,13 +2549,13 @@ arches:
     name: libssh-config
     evr: 0.10.4-13.el9
     sourcerpm: libssh-0.10.4-13.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/ppc64le/baseos/os/Packages/l/libstdc++-11.5.0-2.el9.ppc64le.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/ppc64le/baseos/os/Packages/l/libstdc++-11.5.0-5.el9_5.ppc64le.rpm
     repoid: ubi-9-for-ppc64le-baseos-rpms
-    size: 858555
-    checksum: sha256:824957fb47e44ba7e5e1b548959af6d613d990c09762fc4dd0ef96d93e6055d5
+    size: 855950
+    checksum: sha256:6b60a9d9525edbe9aa461de42844e2beaa7e3a3152d904a5c62cc5eeb129e3af
     name: libstdc++
-    evr: 11.5.0-2.el9
-    sourcerpm: gcc-11.5.0-2.el9.src.rpm
+    evr: 11.5.0-5.el9_5
+    sourcerpm: gcc-11.5.0-5.el9_5.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/ppc64le/baseos/os/Packages/l/libuser-0.63-15.el9.ppc64le.rpm
     repoid: ubi-9-for-ppc64le-baseos-rpms
     size: 437720
@@ -4065,13 +4065,13 @@ arches:
     name: libssh-config
     evr: 0.10.4-13.el9
     sourcerpm: libssh-0.10.4-13.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/s390x/baseos/os/Packages/l/libstdc++-11.5.0-2.el9.s390x.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/s390x/baseos/os/Packages/l/libstdc++-11.5.0-5.el9_5.s390x.rpm
     repoid: ubi-9-for-s390x-baseos-rpms
-    size: 797379
-    checksum: sha256:3ef9696073f8e9dc866afa63a121850de306526f0d5e31d58366a5f03131429a
+    size: 794076
+    checksum: sha256:ee1c1fd0dfffafafa13fd5c012e65b207970a9b7eaf269b3df916883a15319f8
     name: libstdc++
-    evr: 11.5.0-2.el9
-    sourcerpm: gcc-11.5.0-2.el9.src.rpm
+    evr: 11.5.0-5.el9_5
+    sourcerpm: gcc-11.5.0-5.el9_5.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/s390x/baseos/os/Packages/l/libuser-0.63-15.el9.s390x.rpm
     repoid: ubi-9-for-s390x-baseos-rpms
     size: 422618
@@ -5588,13 +5588,13 @@ arches:
     name: libssh-config
     evr: 0.10.4-13.el9
     sourcerpm: libssh-0.10.4-13.el9.src.rpm
-  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/l/libstdc++-11.5.0-2.el9.x86_64.rpm
+  - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/l/libstdc++-11.5.0-5.el9_5.x86_64.rpm
     repoid: ubi-9-for-x86_64-baseos-rpms
-    size: 760252
-    checksum: sha256:9dac0cfb1c22c39a7d5603f2a4cf3e8424bb3ccadd9d760457874d81113de5c7
+    size: 759582
+    checksum: sha256:bd344d5654cc4385fc5480249a873a418bcdee6ba8a257012edc3bc255c63ab0
     name: libstdc++
-    evr: 11.5.0-2.el9
-    sourcerpm: gcc-11.5.0-2.el9.src.rpm
+    evr: 11.5.0-5.el9_5
+    sourcerpm: gcc-11.5.0-5.el9_5.src.rpm
   - url: https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/os/Packages/l/libuser-0.63-15.el9.x86_64.rpm
     repoid: ubi-9-for-x86_64-baseos-rpms
     size: 426985

@@ -28,7 +28,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/tekton-ecosystem-tenant/console-plugin-1-18/console-plugin:{{revision}}
+    value: quay.io/redhat-user-workloads/tekton-ecosystem-tenant/1-18/console-plugin-rhel9:{{revision}}
   - name: dockerfile
     value: .konflux/dockerfiles/console-plugin.Dockerfile
   - name: prefetch-input

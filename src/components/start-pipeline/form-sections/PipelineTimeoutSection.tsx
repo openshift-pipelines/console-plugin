@@ -9,12 +9,6 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
-const dropdownUnits = {
-  h: 'Hr',
-  m: 'Min',
-  s: 'Sec',
-};
-
 const PipelineTimeoutSection = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [, { touched, error }] = useField<string | string[]>(
@@ -33,6 +27,14 @@ const PipelineTimeoutSection = () => {
     setFieldTouched('timeouts.timeValue', true);
     setFieldValue('timeouts.timeUnit', unit);
   };
+  const dropdownUnits = React.useMemo(
+    () => ({
+      h: t('Hr'),
+      m: t('Min'),
+      s: t('Sec'),
+    }),
+    [t],
+  );
   return (
     <FormGroup label={t('Timeouts')}>
       <RequestSizeInput

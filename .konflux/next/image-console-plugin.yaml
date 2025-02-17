@@ -11,5 +11,5 @@ metadata:
     appstudio.redhat.com/application: console-plugin-next
 spec:
   image:
-   name: next/console-plugin-rhel9
+   name: next/console-pluginrhel9
    visibility: public

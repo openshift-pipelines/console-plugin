@@ -1,5 +1,3 @@
-import { DevConsoleEndpointRequest } from './backendAPI';
-
 export type ArtifactHubRepository = {
   name: string;
   kind: number;
@@ -41,14 +39,14 @@ export type ArtifactHubTaskDetails = {
 
 export type TaskSearchRequest = {
   searchQuery?: string;
-} & DevConsoleEndpointRequest;
+};
 
 export type TaskDetailsRequest = {
   repoName: string;
   name: string;
   version: string;
-} & DevConsoleEndpointRequest;
+};
 
 export type TaskYAMLRequest = {
   yamlPath: string;
-} & DevConsoleEndpointRequest;
+};

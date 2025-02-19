@@ -30,8 +30,6 @@ export const getArtifactHubTaskDetails = async (
     repoName,
     name,
     version: v || version,
-    allowAuthHeader: true,
-    allowInsecure: true,
   });
 };
 
@@ -45,7 +43,7 @@ export const useGetArtifactHubTasks = (
   React.useEffect(() => {
     let mounted = true;
     if (hasPermission) {
-      searchTasks({ allowAuthHeader: true, allowInsecure: true })
+      searchTasks()
         .then((packages) => {
           if (mounted) {
             setLoaded(true);
@@ -82,8 +80,6 @@ export const createArtifactHubTask = (
 
   return getTaskYAMLFromGithub({
     yamlPath,
-    allowAuthHeader: true,
-    allowInsecure: true,
   })
     .then((task: K8sResourceKind) => {
       task.metadata.namespace = namespace;
@@ -121,8 +117,6 @@ export const updateArtifactHubTask = async (
 
   return getTaskYAMLFromGithub({
     yamlPath,
-    allowAuthHeader: true,
-    allowInsecure: true,
   })
     .then((task: K8sResourceKind) => {
       task.metadata.namespace = namespace;

@@ -184,7 +184,7 @@ export const NoEvents = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <Box className="co-sysevent-stream__status-box-empty">
-      <div className="pf-v5-u-text-align-center cos-status-box__detail">
+      <div className="cp-text-align-center cos-status-box__detail">
         {t('No events')}
       </div>
     </Box>
@@ -196,7 +196,7 @@ export const NoMatchingEvents = ({ allCount }) => {
   return (
     <Box className="co-sysevent-stream__status-box-empty">
       <div className="cos-status-box__title">{t('No matching events')}</div>
-      <div className="pf-v5-u-text-align-center cos-status-box__detail">
+      <div className="cp-text-align-center cos-status-box__detail">
         {allCount >= maxMessages
           ? t('{{count}}+ event exist, but none match the current filter', {
               count: maxMessages,
@@ -216,7 +216,7 @@ export const ErrorLoadingEvents = () => {
       <div className="cos-status-box__title cos-error-title">
         {t('Error loading events')}
       </div>
-      <div className="cos-status-box__detail pf-v5-u-text-align-center">
+      <div className="cos-status-box__detail cp-text-align-center">
         {t(
           'An error occurred during event retrieval. Attempting to reconnect...',
         )}

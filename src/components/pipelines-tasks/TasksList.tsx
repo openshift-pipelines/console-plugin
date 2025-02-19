@@ -5,7 +5,6 @@ import {
   K8sResourceCommon,
   ListPageBody,
   ListPageCreateLink,
-  ListPageFilter,
   VirtualizedTable,
   getGroupVersionKindForModel,
   useK8sWatchResource,
@@ -15,6 +14,7 @@ import { TaskModel } from '../../models';
 import TaskRow from './TasksRow';
 import { useDefaultColumns } from '../list-pages/default-resources';
 import { getReferenceForModel } from '../pipelines-overview/utils';
+import { ListPageFilter } from '../list-pages/ListPageFilter';
 
 interface TaskListProps {
   showTitle?: boolean;
@@ -76,10 +76,8 @@ const TasksList: React.FC<TaskListProps> = ({
           Row={TaskRow}
           unfilteredData={staticData}
           NoDataEmptyMsg={() => (
-            <div className="cos-status-box">
-              <div className="pf-v5-u-text-align-center">
-                {t('No Tasks found')}
-              </div>
+            <div className="cp-text-align-center" id="no-resource-msg">
+              {t('No Tasks found')}
             </div>
           )}
         />

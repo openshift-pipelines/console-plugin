@@ -2,6 +2,7 @@ import { guidedTour } from '../views/guided-tour';
 import { nav } from '../views/nav';
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
       initAdmin(): Chainable<Element>;
@@ -23,10 +24,10 @@ Cypress.Commands.add('initAdmin', () => {
 
 Cypress.Commands.add('initDeveloper', () => {
   cy.log('redirect to home');
+  nav.sidenav.switcher.changePerspectiveTo('Developer');
+  nav.sidenav.switcher.shouldHaveText('Developer');
   cy.visit('/add');
   cy.byTestID('loading-indicator').should('not.exist');
   cy.log('ensure perspective switcher is set to Developer');
-  nav.sidenav.switcher.changePerspectiveTo('Developer');
-  nav.sidenav.switcher.shouldHaveText('Developer');
   guidedTour.close();
 });

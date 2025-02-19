@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom-v5-compat';
 import { SortByDirection } from '@patternfly/react-table';
 import {
   ListPageBody,
-  ListPageFilter,
   VirtualizedTable,
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
@@ -16,6 +15,7 @@ import PipelineRunsRow from './PipelineRunsRow';
 import { useLoadMoreOnScroll } from '../utils/tekton-results';
 
 import './PipelineRunsList.scss';
+import { ListPageFilter } from '../list-pages/ListPageFilter';
 
 type PipelineRunsListProps = {
   namespace?: string;
@@ -78,10 +78,7 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
       <VirtualizedTable<PipelineRunKind>
         key={sortColumnIndex}
         EmptyMsg={() => (
-          <div
-            className="pf-v5-u-text-align-center virtualized-table-empty-msg"
-            id="no-templates-msg"
-          >
+          <div className="cp-text-align-center" id="no-resource-msg">
             {t('No PipelineRuns found')}
           </div>
         )}

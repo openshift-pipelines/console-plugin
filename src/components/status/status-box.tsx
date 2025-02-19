@@ -18,7 +18,7 @@ export const LoadError: React.FC<LoadErrorProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <Box className={className}>
-      <div className="pf-v5-u-text-align-center cos-error-title">
+      <div className="cp-text-align-center cos-error-title">
         {_.isString(message)
           ? t('Error Loading {{label}}: {{message}}', {
               label,
@@ -27,7 +27,7 @@ export const LoadError: React.FC<LoadErrorProps> = ({
           : t('Error Loading {{label}}', { label })}
       </div>
       {canRetry && (
-        <div className="pf-v5-u-text-align-center">
+        <div className="cp-text-align-center">
           <Trans ns="plugin__pipelines-console-plugin">
             Please{' '}
             <Button

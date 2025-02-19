@@ -2,15 +2,16 @@ import {
   getGroupVersionKindForModel,
   K8sResourceCommon,
   ListPageBody,
-  ListPageFilter,
   useK8sWatchResource,
   useListPageFilter,
   VirtualizedTable,
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDefaultColumns } from '../list-pages/default-resources';
 import { ClusterTriggerBindingModel } from '../../models';
 import EventListenersRow from './EventListenersRow';
+import { ListPageFilter } from '../list-pages/ListPageFilter';
 
 type ClusterTriggerBindingsListProps = {
   hideNameLabelFilters?: boolean;
@@ -19,6 +20,7 @@ type ClusterTriggerBindingsListProps = {
 const ClusterTriggerBindingsList: React.FC<ClusterTriggerBindingsListProps> = ({
   hideNameLabelFilters,
 }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const columns = useDefaultColumns();
   const [
     clusterTriggerBindings,
@@ -49,6 +51,11 @@ const ClusterTriggerBindingsList: React.FC<ClusterTriggerBindingsListProps> = ({
         loadError={clusterTriggerBindingsLoadError}
         Row={EventListenersRow}
         unfilteredData={staticData}
+        EmptyMsg={() => (
+          <div className="cp-text-align-center" id="no-resource-msg">
+            {t('Not found')}
+          </div>
+        )}
       />
     </ListPageBody>
   );

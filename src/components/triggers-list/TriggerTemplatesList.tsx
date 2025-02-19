@@ -2,16 +2,17 @@ import {
   getGroupVersionKindForModel,
   K8sResourceCommon,
   ListPageBody,
-  ListPageFilter,
   useK8sWatchResource,
   useListPageFilter,
   VirtualizedTable,
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useDefaultColumns } from '../list-pages/default-resources';
 import { TriggerTemplateModel } from '../../models';
 import EventListenersRow from './EventListenersRow';
+import { ListPageFilter } from '../list-pages/ListPageFilter';
 
 type TriggerTemplatesListProps = {
   namespace?: string;
@@ -22,6 +23,7 @@ const TriggerTemplatesList: React.FC<TriggerTemplatesListProps> = ({
   namespace,
   hideNameLabelFilters,
 }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { ns } = useParams();
   namespace = namespace || ns;
   const columns = useDefaultColumns();
@@ -49,6 +51,11 @@ const TriggerTemplatesList: React.FC<TriggerTemplatesListProps> = ({
         loadError={triggerTemplatesLoadError}
         Row={EventListenersRow}
         unfilteredData={staticData}
+        EmptyMsg={() => (
+          <div className="cp-text-align-center" id="no-resource-msg">
+            {t('Not found')}
+          </div>
+        )}
       />
     </ListPageBody>
   );

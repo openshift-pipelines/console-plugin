@@ -1,72 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  k8sGet,
+  consoleFetchJSON,
   K8sResourceCommon,
   MatchExpression,
   MatchLabels,
-  Selector,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { HttpError } from '@openshift-console/dynamic-plugin-sdk/lib/utils/error/http-error';
 import _ from 'lodash';
 import { RefObject, useEffect } from 'react';
 import {
   ALL_NAMESPACES_KEY,
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
+  TEKTON_RESULTS_FETCH_URL,
+  TEKTON_RESULTS_TASKRUN_LOGS_URL,
 } from '../../consts';
-import { RouteModel, TektonResultModel } from '../../models';
-import { PipelineRunKind, TaskRunKind } from '../../types';
-import { K8sResourceKind } from '../../types/openshift';
 import {
-  consoleProxyFetch,
-  consoleProxyFetchJSON,
-  ProxyRequest,
-} from './proxy';
+  DataType,
+  DevConsoleEndpointResponse,
+  PipelineRunKind,
+  RecordsList,
+  TaskRunKind,
+  TaskRunLogRequest,
+  TektonResultsOptions,
+  TRRequest,
+} from '../../types';
 
 // REST API spec
 // https://github.com/tektoncd/results/blob/main/docs/api/rest-api-spec.md
 
 // const URL_PREFIX = `/apis/results.tekton.dev/v1alpha2/parents/`;
 
-const MINIMUM_PAGE_SIZE = 5;
-const MAXIMUM_PAGE_SIZE = 10000;
-
-let cachedTektonResultsAPI: string = null;
-
-export type ResultRecord = {
-  name: string;
-  uid: string;
-  createTime: string;
-  updateTime: string;
-  etag: string;
-  data: {
-    // tekton.dev/v1.PipelineRun | tekton.dev/v1.TaskRun | results.tekton.dev/v1alpha2.Log
-    type: string;
-    value: string;
-  };
-};
-
-export type Log = {
-  result: {
-    name: string;
-    data: string;
-  };
-};
-
-export type RecordsList = {
-  nextPageToken?: string;
-  records: ResultRecord[];
-};
-
-export type TektonResultsOptions = {
-  pageSize?: number;
-  selector?: Selector;
-  // limit cannot be used in conjuction with pageSize and takes precedence
-  limit?: number;
-  filter?: string;
-  summary?: string;
-  data_type?: DataType;
-  groupBy?: string;
-};
+export const MINIMUM_PAGE_SIZE = 5;
+export const MAXIMUM_PAGE_SIZE = 10000;
 
 const throw404 = () => {
   // eslint-disable-next-line no-throw-literal
@@ -116,11 +82,6 @@ export const EQ = (left: string, right: string) =>
   EXP(left, `"${right}"`, '==');
 export const NEQ = (left: string, right: string) =>
   EXP(left, `"${right}"`, '!=');
-
-export enum DataType {
-  PipelineRun = 'tekton.dev/v1.PipelineRun',
-  TaskRun = 'tekton.dev/v1.TaskRun',
-}
 
 export const labelsToFilter = (labels?: MatchLabels): string =>
   labels
@@ -234,62 +195,66 @@ export const clearCache = () => {
 };
 const InFlightStore: { [key: string]: boolean } = {};
 
-// const getTRUrlPrefix = (): string => URL_PREFIX;
-
-export const getTektonResultsAPIUrl = async () => {
-  if (cachedTektonResultsAPI) {
-    return cachedTektonResultsAPI;
-  } else {
-    const cachedTektonResult: K8sResourceKind = await k8sGet({
-      model: TektonResultModel,
-      name: 'result',
-    });
-    const targetNamespace = cachedTektonResult?.spec?.targetNamespace;
-    const serverPort = cachedTektonResult?.spec?.server_port ?? '8080';
-    const tlsHostname = cachedTektonResult?.spec?.tls_hostname_override;
-    if (tlsHostname) {
-      cachedTektonResultsAPI = `${tlsHostname}:${serverPort}`;
-    } else if (targetNamespace && serverPort) {
-      cachedTektonResultsAPI = `tekton-results-api-service.${targetNamespace}.svc.cluster.local:${serverPort}`;
-    } else {
-      cachedTektonResultsAPI = `tekton-results-api-service.openshift-pipelines.svc.cluster.local:${serverPort}`;
-    }
-    return cachedTektonResultsAPI;
-  }
-};
-
-export const createTektonResultsUrl = async (
+export const fetchTektonResultsURLConfig = async (
   namespace: string,
-  dataType: DataType,
+  dataType?: DataType,
   filter?: string,
   options?: TektonResultsOptions,
   nextPageToken?: string,
-): Promise<string> => {
-  const tektonResultsAPI = await getTektonResultsAPIUrl();
-
-  const namespaceToSearch =
+): Promise<TRRequest> => {
+  const searchNamespace =
     namespace && namespace !== ALL_NAMESPACES_KEY ? namespace : '-';
-  const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespaceToSearch}/results/-/records?${new URLSearchParams(
-    {
-      // default sort should always be by `create_time desc`
-      // order_by: 'create_time desc', not supported yet
-      page_size: `${Math.max(
-        MINIMUM_PAGE_SIZE,
-        Math.min(
-          MAXIMUM_PAGE_SIZE,
-          options?.limit >= 0 ? options.limit : options?.pageSize ?? 50,
-        ),
-      )}`,
-      ...(nextPageToken ? { page_token: nextPageToken } : {}),
-      filter: AND(
-        EQ('data_type', dataType.toString()),
-        filter,
-        selectorToFilter(options?.selector),
-        options?.filter,
+  const searchParams = `${new URLSearchParams({
+    // default sort should always be by `create_time desc`
+    // order_by: 'create_time desc', not supported yet
+    page_size: `${Math.max(
+      MINIMUM_PAGE_SIZE,
+      Math.min(
+        MAXIMUM_PAGE_SIZE,
+        options?.limit >= 0 ? options.limit : options?.pageSize ?? 50,
       ),
-    },
-  ).toString()}`;
-  return URL;
+    )}`,
+    ...(nextPageToken ? { page_token: nextPageToken } : {}),
+    filter: AND(
+      EQ('data_type', dataType.toString()),
+      filter,
+      selectorToFilter(options?.selector),
+      options?.filter,
+    ),
+  }).toString()}`;
+  return { searchNamespace, searchParams };
+};
+
+/**
+ * Fetches the Tekton results from the Tekton Results API.
+ * @param tRRequest The request object containing the search namespace and search parameters
+ * @returns The parsed results list
+ */
+const fetchTektonResults = async (
+  tRRequest: TRRequest,
+): Promise<RecordsList> => {
+  const resultListResponse: DevConsoleEndpointResponse =
+    await consoleFetchJSON.post(TEKTON_RESULTS_FETCH_URL, tRRequest);
+
+  if (!resultListResponse.statusCode) {
+    throw new Error('Unexpected proxy response: Status code is missing!');
+  }
+  if (
+    resultListResponse.statusCode < 200 ||
+    resultListResponse.statusCode >= 300
+  ) {
+    throw new HttpError(
+      `Unexpected status code: ${resultListResponse.statusCode}`,
+      resultListResponse.statusCode,
+      null,
+      resultListResponse,
+    );
+  }
+  try {
+    return JSON.parse(resultListResponse.body) as RecordsList;
+  } catch (e) {
+    throw new Error('Failed to parse task details response body as JSON');
+  }
 };
 
 export const getFilteredRecord = async <R extends K8sResourceCommon>(
@@ -319,18 +284,20 @@ export const getFilteredRecord = async <R extends K8sResourceCommon>(
   InFlightStore[cacheKey] = true;
   const value = await (async (): Promise<[R[], RecordsList]> => {
     try {
-      const url = await createTektonResultsUrl(
-        namespace,
-        dataType,
-        filter,
-        options,
-        nextPageToken,
-      );
-      let list: RecordsList = await consoleProxyFetchJSON({
-        url,
-        method: 'GET',
+      const { searchNamespace, searchParams } =
+        await fetchTektonResultsURLConfig(
+          namespace,
+          dataType,
+          filter,
+          options,
+          nextPageToken,
+        );
+
+      let list: RecordsList = await fetchTektonResults({
         allowInsecure: true,
         allowAuthHeader: true,
+        searchNamespace,
+        searchParams,
       });
       if (options?.limit >= 0) {
         list = {
@@ -412,38 +379,6 @@ export const getTaskRuns = (
   cacheKey?: string,
 ) => getFilteredTaskRuns(namespace, '', options, nextPageToken, cacheKey);
 
-export const createTektonResultsSummaryUrl = async (
-  namespace: string,
-  options?: TektonResultsOptions,
-  nextPageToken?: string,
-): Promise<string> => {
-  const tektonResultsAPI = await getTektonResultsAPIUrl();
-  const namespaceToSearch =
-    namespace && namespace !== ALL_NAMESPACES_KEY ? namespace : '-';
-  const URL = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${namespaceToSearch}/results/-/records/summary?${new URLSearchParams(
-    {
-      summary: `${options?.summary}`,
-      ...(options?.groupBy ? { group_by: `${options.groupBy}` } : {}),
-      // default sort should always be by `create_time desc`
-      // order_by: 'create_time desc', not supported yet
-      page_size: `${Math.max(
-        MINIMUM_PAGE_SIZE,
-        Math.min(
-          MAXIMUM_PAGE_SIZE,
-          options?.limit >= 0 ? options.limit : options?.pageSize ?? 30,
-        ),
-      )}`,
-      ...(nextPageToken ? { page_token: nextPageToken } : {}),
-      filter: AND(
-        EQ('data_type', options.data_type?.toString()),
-        options.filter,
-        selectorToFilter(options?.selector),
-      ),
-    },
-  ).toString()}`;
-  return URL;
-};
-
 const isJSONString = (str: string): boolean => {
   try {
     JSON.parse(str);
@@ -453,44 +388,47 @@ const isJSONString = (str: string): boolean => {
   return true;
 };
 
-export const consoleProxyFetchLog = <T>(
-  proxyRequest: ProxyRequest,
+/**
+ * Fetches the task run logs from the Tekton Results API.
+ * @param taskRunLogRequest The request object containing the task run path.
+ * @returns The task run logs.
+ */
+const fetchTaskRunLogs = async <T>(
+  taskRunLogRequest: TaskRunLogRequest,
 ): Promise<T> => {
-  return consoleProxyFetch(proxyRequest).then((response) => {
-    return isJSONString(response.body)
-      ? JSON.parse(response.body)
-      : response.body;
-  });
-};
+  const taskRunLogResponse: DevConsoleEndpointResponse =
+    await consoleFetchJSON.post(
+      TEKTON_RESULTS_TASKRUN_LOGS_URL,
+      taskRunLogRequest,
+    );
 
-export const getTRURLHost = async () => {
-  const tektonResult: K8sResourceKind = await k8sGet({
-    model: TektonResultModel,
-    name: 'result',
-  });
-  const targetNamespace = tektonResult?.spec?.targetNamespace;
-  const route: K8sResourceKind = await k8sGet({
-    model: RouteModel,
-    name: 'tekton-results-api-service',
-    ns: targetNamespace,
-  });
-  return route?.spec.host;
+  if (!taskRunLogResponse.statusCode) {
+    throw new Error('Unexpected proxy response: Status code is missing!');
+  }
+  if (
+    taskRunLogResponse.statusCode < 200 ||
+    taskRunLogResponse.statusCode >= 300
+  ) {
+    throw new HttpError(
+      `Unexpected status code: ${taskRunLogResponse.statusCode}`,
+      taskRunLogResponse.statusCode,
+      null,
+      taskRunLogResponse,
+    );
+  }
+  return isJSONString(taskRunLogResponse.body)
+    ? JSON.parse(taskRunLogResponse.body)
+    : taskRunLogResponse.body;
 };
 
 export const getTaskRunLog = async (taskRunPath: string): Promise<string> => {
   if (!taskRunPath) {
     throw404();
   }
-  const tektonResultsAPI = await getTektonResultsAPIUrl();
-  const url = `https://${tektonResultsAPI}/apis/results.tekton.dev/v1alpha2/parents/${taskRunPath.replace(
-    '/records/',
-    '/logs/',
-  )}`;
-  return consoleProxyFetchLog({
-    url,
-    method: 'GET',
+  return fetchTaskRunLogs({
     allowInsecure: true,
     allowAuthHeader: true,
+    taskRunPath: taskRunPath.replace('/records/', '/logs/'),
   });
 };
 

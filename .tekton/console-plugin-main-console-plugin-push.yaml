@@ -28,13 +28,9 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/tekton-ecosystem-tenant/console-plugin-main/console-plugin:{{revision}}
+    value: quay.io/redhat-user-workloads/tekton-ecosystem-tenant/main/console-plugin-rhel9:{{revision}}
   - name: dockerfile
     value: .konflux/dockerfiles/console-plugin.Dockerfile
-  - name: build-platforms
-    value:
-    - linux/x86_64
-    - linux-m2xlarge/arm64
   - name: prefetch-input
     value: |
       {"type": "rpm", "path": ".konflux/rpms"}

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import './ApprovalRow.scss';
 import {
   ListPageBody,
-  ListPageFilter,
   RowFilter,
   VirtualizedTable,
   useListPageFilter,
@@ -19,6 +18,7 @@ import { useApprovalTasks, usePipelineRuns } from '../hooks/useTaskRuns';
 import { useParams } from 'react-router-dom-v5-compat';
 import useApprovalsColumns from './useApprovalsColumns';
 import ApprovalRow from './ApprovalRow';
+import { ListPageFilter } from '../list-pages/ListPageFilter';
 
 type ApprovalTasksListProps = {
   namespace: string;
@@ -103,10 +103,7 @@ const ApprovalTasksList: React.FC<ApprovalTasksListProps> = ({
         />
         <VirtualizedTable<ApprovalTaskKind>
           EmptyMsg={() => (
-            <div
-              className="pf-v5-u-text-align-center virtualized-table-empty-msg"
-              id="no-templates-msg"
-            >
+            <div className="cp-text-align-center" id="no-resource-msg">
               {t('No ApprovalTasks found')}
             </div>
           )}

@@ -5,7 +5,6 @@ import { SortByDirection } from '@patternfly/react-table';
 import {
   K8sResourceCommon,
   ListPageBody,
-  ListPageFilter,
   VirtualizedTable,
   getGroupVersionKindForModel,
   useK8sWatchResource,
@@ -17,6 +16,7 @@ import PipelineRow from './PipelineRow';
 import { useGetPipelineRuns } from '../hooks/useTektonResult';
 import { PipelineModel } from '../../models';
 import { PropPipelineData, augmentRunsToData } from '../utils/pipeline-augment';
+import { ListPageFilter } from '../list-pages/ListPageFilter';
 
 type PipelineListProps = {
   namespace?: string;
@@ -67,10 +67,7 @@ const PipelinesList: React.FC<PipelineListProps> = ({
       <VirtualizedTable<K8sResourceCommon>
         key={sortColumnIndex}
         EmptyMsg={() => (
-          <div
-            className="pf-v5-u-text-align-center virtualized-table-empty-msg"
-            id="no-templates-msg"
-          >
+          <div className="cp-text-align-center" id="no-resource-msg">
             {t('No Pipelines found')}
           </div>
         )}

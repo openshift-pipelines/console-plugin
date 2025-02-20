@@ -6,7 +6,6 @@ import {
   K8sResourceCommon,
   ListPageBody,
   ListPageCreateLink,
-  ListPageFilter,
   TableColumn,
   VirtualizedTable,
   getGroupVersionKindForModel,
@@ -20,6 +19,7 @@ import { ALL_NAMESPACES_KEY, TektonResourceLabel } from '../../consts';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useTaskRunsFilters } from './useTaskRunsFilters';
 import { useLoadMoreOnScroll } from '../utils/tekton-results';
+import { ListPageFilter } from '../list-pages/ListPageFilter';
 
 interface TaskRunsListPageProps {
   showTitle?: boolean;
@@ -174,10 +174,8 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
           Row={TaskRunsRow}
           unfilteredData={staticData}
           NoDataEmptyMsg={() => (
-            <div className="cos-status-box">
-              <div className="pf-v5-u-text-align-center">
-                {t('No TaskRuns found')}
-              </div>
+            <div className="cp-text-align-center" id="no-resource-msg">
+              {t('No TaskRuns found')}
             </div>
           )}
           sortColumnIndex={sortColumnIndex}

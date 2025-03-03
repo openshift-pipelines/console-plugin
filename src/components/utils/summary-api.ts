@@ -89,7 +89,6 @@ export const getResultsSummary = async (
     );
 
     let sData: SummaryResponse = await fetchResultsSummary({
-      allowInsecure: true,
       allowAuthHeader: true,
       searchNamespace,
       searchParams,

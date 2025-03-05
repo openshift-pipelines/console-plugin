@@ -294,7 +294,6 @@ export const getFilteredRecord = async <R extends K8sResourceCommon>(
         );
 
       let list: RecordsList = await fetchTektonResults({
-        allowAuthHeader: true,
         searchNamespace,
         searchParams,
       });
@@ -425,7 +424,6 @@ export const getTaskRunLog = async (taskRunPath: string): Promise<string> => {
     throw404();
   }
   return fetchTaskRunLogs({
-    allowAuthHeader: true,
     taskRunPath: taskRunPath.replace('/records/', '/logs/'),
   });
 };

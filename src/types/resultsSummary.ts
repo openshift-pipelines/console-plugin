@@ -1,6 +1,5 @@
 import { Selector } from '@openshift-console/dynamic-plugin-sdk';
 import { SummaryProps } from 'src/components/pipelines-overview/utils';
-import { DevConsoleEndpointRequest } from './backendAPI';
 
 export enum DataType {
   PipelineRun = 'tekton.dev/v1.PipelineRun',
@@ -23,11 +22,11 @@ export type ResultRecord = {
 export type TRRequest = {
   searchNamespace: string;
   searchParams: string;
-} & DevConsoleEndpointRequest;
+};
 
 export type TaskRunLogRequest = {
   taskRunPath: string;
-} & DevConsoleEndpointRequest;
+};
 
 export type Log = {
   result: {
@@ -55,7 +54,7 @@ export type TektonResultsOptions = {
 export type SummaryRequest = {
   searchNamespace: string;
   searchParams: string;
-} & DevConsoleEndpointRequest;
+};
 
 export type SummaryResponse = {
   summary: SummaryProps[];

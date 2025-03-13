@@ -10,7 +10,11 @@ import { getReferenceForModel } from '../pipelines-overview/utils';
 import './PipelineResourceRef.scss';
 
 const MODEL_KINDS = Object.values(models).reduce(
-  (acc, model: K8sKind) => ({ ...acc, [model.kind]: model }),
+  (acc, model: K8sKind) => ({
+    ...acc,
+    [`${model.kind}-${model.apiVersion}`]: model,
+    [model.kind]: model,
+  }),
   {},
 );
 
@@ -21,6 +25,7 @@ type PipelineResourceRefProps = {
   displayName?: string;
   largeIcon?: boolean;
   namespace?: string;
+  resourceApiVersion?: string;
 };
 
 const PipelineResourceRef: React.FC<PipelineResourceRefProps> = ({
@@ -30,8 +35,14 @@ const PipelineResourceRef: React.FC<PipelineResourceRefProps> = ({
   namespace,
   resourceKind,
   resourceName,
+  resourceApiVersion,
 }) => {
-  const model: K8sKind | undefined = MODEL_KINDS[resourceKind];
+  const modelKey = resourceApiVersion
+    ? `${resourceKind}-${resourceApiVersion}`
+    : resourceKind;
+  const model: K8sKind | undefined =
+    MODEL_KINDS[modelKey] || MODEL_KINDS[resourceKind];
+
   let kind = resourceKind;
   if (model) {
     kind = getReferenceForModel(model);

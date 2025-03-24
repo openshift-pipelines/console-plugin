@@ -192,10 +192,10 @@ const taskValidation = (
         name: yup.string().required(t('Required')),
         taskRef: yup
           .object({
-            name: yup.string().when('resolver', {
-              is: (resolver) => !resolver,
-              then: yup.string().required(t('Required')),
-              otherwise: yup.string().notRequired(),
+            name: yup.string().when('resolver', (resolver) => {
+              return !resolver
+                ? yup.string().required(t('Required'))
+                : yup.string().notRequired();
             }),
             kind: yup.string(),
             resolver: yup.string().oneOf(['cluster']).notRequired(),
@@ -207,10 +207,10 @@ const taskValidation = (
                   value: yup.string().required(t('Required')),
                 }),
               )
-              .when('resolver', {
-                is: (resolver) => !!resolver,
-                then: yup.array().min(1, t('Required')),
-                otherwise: yup.array().notRequired(),
+              .when('resolver', (resolver) => {
+                return resolver
+                  ? yup.array().min(1, t('Required'))
+                  : yup.array().notRequired();
               }),
           })
           .default(undefined),
@@ -355,9 +355,10 @@ export const validationSchema = (t: TFunction) =>
       const formYamlDefinition: any = yup.object({
         editorType: yup.string().oneOf(Object.values(EditorType)),
         yamlData: yup.string(),
-        formData: yup.mixed().when('editorType', {
-          is: EditorType.Form,
-          then: pipelineBuilderFormSchema(formValues, t),
+        formData: yup.mixed().when('editorType', () => {
+          if (EditorType.Form) {
+            return pipelineBuilderFormSchema(formValues, t);
+          }
         }),
       });
 

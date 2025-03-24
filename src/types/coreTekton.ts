@@ -30,6 +30,7 @@ export type TaskResult = {
 
 export type TektonTaskSpec = {
   metadata?: ObjectMetadata;
+  displayName?: string;
   description?: string;
   steps: TektonTaskSteps[];
   params?: TektonParam[];

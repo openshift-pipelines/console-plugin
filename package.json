@@ -98,7 +98,6 @@
     "pluralize": "^8.0.0",
     "popper.js": "^1.16.1",
     "prettier": "^2.7.1",
-    "prettier-stylelint": "^0.4.2",
     "react": "^17.0.1",
     "react-copy-to-clipboard": "5.x",
     "react-dnd": "^9.4.0",

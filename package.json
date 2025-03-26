@@ -87,7 +87,7 @@
     "@patternfly/react-virtualized-extension": "5.1.0",
     "react-router-dom": "5.3.x",
     "react-router-dom-v5-compat": "^6.11.2",
-    "resolve-url-loader": "2.x",
+    "resolve-url-loader": "5.0.0",
     "sass": "^1.42.1",
     "sass-loader": "^10.1.1",
     "style-loader": "^3.3.1",

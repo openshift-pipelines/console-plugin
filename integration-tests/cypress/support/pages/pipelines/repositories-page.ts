@@ -17,7 +17,7 @@ export const repositoriesPage = {
         'Last run time',
         'Last run duration',
         '',
-      ]).toContain($el.text());
+      ]).contains($el.text());
     });
   },
 
@@ -27,7 +27,7 @@ export const repositoriesPage = {
     cy.get('[title="Repository"]')
       .next('a')
       .then(($el) => {
-        expect($el.text()).toMatch(repoName);
+        expect($el.text()).match(repoName);
       });
   },
 };

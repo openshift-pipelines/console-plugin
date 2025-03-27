@@ -289,7 +289,7 @@ export const pipelinesPage = {
         'Last run status',
         'Last run time',
         '',
-      ]).toContain($el.text());
+      ]).contains($el.text());
     });
   },
 
@@ -305,7 +305,7 @@ export const pipelinesPage = {
     cy.get('[title="Pipeline"]')
       .next('a')
       .then(($el) => {
-        expect($el.text()).toMatch(pipelineName);
+        expect($el.text()).match(pipelineName);
       });
     // wait for the table to render after search
     // cy.get('tbody tr')
@@ -319,7 +319,7 @@ export const pipelinesPage = {
     cy.get('[title="Namespace"]')
       .next('a')
       .then(($el) => {
-        expect($el.text()).toMatch(namespace);
+        expect($el.text()).match(namespace);
       });
   },
 

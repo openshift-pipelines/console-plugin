@@ -21,6 +21,11 @@
       "react": ["./node_modules/react", "./node_modules/@types/react"]
     }
   },
-  "exclude": [".yarn", "**/node_modules", "**/integration-tests"],
+  "exclude": [
+    ".yarn",
+    "**/node_modules",
+    "**/integration-tests",
+    "./integration-tests/cypress.config.ts"
+  ],
   "include": ["src", "custom.d.ts"]
 }

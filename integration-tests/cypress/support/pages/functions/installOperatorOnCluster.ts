@@ -194,7 +194,7 @@ const performPostInstallationSteps = (operator: operators): void => {
       cy.request(
         'api/kubernetes/apis/operators.coreos.com/v1alpha1/namespaces/openshift-operators/subscriptions/openshift-pipelines-operator-rh',
       ).then((resp) => {
-        expect(resp.status).toEqual(200);
+        expect(resp.status).to.equal(200);
       });
       waitForCRDs(operators.PipelinesOperator);
       waitForDynamicPlugin();

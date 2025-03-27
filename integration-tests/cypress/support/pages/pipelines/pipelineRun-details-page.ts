@@ -40,9 +40,9 @@ export const pipelineRunDetailsPage = {
                 `Pipeline Run status is failed, the logs are as follows: ${logSnippet.text()}`,
               );
             });
-          expect(actualStatus.text()).toMatch(status);
+          expect(actualStatus.text()).match(status);
         } else {
-          expect(actualStatus.text()).toMatch(status);
+          expect(actualStatus.text()).match(status);
         }
       },
     );

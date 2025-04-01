@@ -45,7 +45,7 @@
     "@testing-library/react": "^12.1.2",
     "@types/cypress-axe": "^0.8.0",
     "@types/enzyme": "3.10.x",
-    "@types/jest": "^29.5.12",
+    "@types/jest": "^29.5.14",
     "@types/lodash-es": "4.17.x",
     "@types/node": "^18.0.0",
     "@types/react": "^17.0.37",

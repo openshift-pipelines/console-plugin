@@ -54,7 +54,7 @@
     "@types/react-router-dom": "^5.3.2",
     "@types/react-transition-group": "2.x",
     "@types/react-virtualized": "9.x",
-    "@typescript-eslint/eslint-plugin": "^5.14.0",
+    "@typescript-eslint/eslint-plugin": "^8.29.0",
     "@typescript-eslint/parser": "^5.14.0",
     "babel-jest": "^29.7.0",
     "babel-loader": "^8.2.1",

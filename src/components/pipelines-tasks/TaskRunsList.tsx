@@ -115,9 +115,13 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
   const ns = namespace === ALL_NAMESPACES_KEY ? '-' : namespace;
   const sortColumnIndex = !namespace ? 6 : 5;
   const parentName = props?.obj?.metadata?.name;
+  const parentUid = props?.obj?.metadata?.uid;
   const [taskRuns, loaded, loadError, nextPageToken] = useTaskRuns(
     ns,
     parentName,
+    undefined,
+    undefined,
+    parentUid,
   );
   const [staticData, filteredData, onFilterChange] = useListPageFilter(
     taskRuns,

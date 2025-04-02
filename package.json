@@ -133,7 +133,8 @@
   "dependencies": {
     "@types/express": "^4.17.18",
     "classnames": "^2.3.2",
-    "lodash-es": "^4.17.21"
+    "lodash-es": "^4.17.21",
+    "micromatch": "4.0.8"
   },
   "resolutions": {
     "webpack": "5.94.0"

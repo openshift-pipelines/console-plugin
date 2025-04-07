@@ -43,12 +43,12 @@ export const createGitWorkload = (
 };
 
 export const createGitWorkloadIfNotExistsOnTopologyPage = (
-  gitUrl: string = 'https://github.com/sclorg/nodejs-ex.git',
-  componentName: string = 'nodejs-ex-git',
-  resourceType: string = 'Deployment',
+  gitUrl = 'https://github.com/sclorg/nodejs-ex.git',
+  componentName = 'nodejs-ex-git',
+  resourceType = 'Deployment',
   appName?: string,
-  isPipelineSelected: boolean = false,
-  isServerlessFunction: boolean = false,
+  isPipelineSelected = false,
+  isServerlessFunction = false,
 ) => {
   navigateTo(devNavigationMenu.Topology);
   topologyPage.waitForLoad();

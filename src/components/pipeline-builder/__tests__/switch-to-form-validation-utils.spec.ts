@@ -1,5 +1,8 @@
 import { initialPipelineFormData } from '../const';
-import { hasMultipleErrors, withFormData } from './switch-to-form-validation-utils-data';
+import {
+  hasMultipleErrors,
+  withFormData,
+} from './switch-to-form-validation-utils-data';
 import {
   createSafeTask,
   embeddedTaskSpec,
@@ -14,11 +17,17 @@ const requiredMessage = 'Required';
 
 describe('Pipeline Builder YAML to Form switch validation schema', () => {
   it('should pass initial values', async () => {
-    await withFormData(formDataBasicPassState, '', {}).then(hasResults).catch(shouldHavePassed);
+    await withFormData(formDataBasicPassState, '', {})
+      .then(hasResults)
+      .catch(shouldHavePassed);
   });
 
   it('should pass if there is an invalid name', async () => {
-    await withFormData(formDataBasicPassState, 'metadata.name', '123NoTaVaLiDnAmE-')
+    await withFormData(
+      formDataBasicPassState,
+      'metadata.name',
+      '123NoTaVaLiDnAmE-',
+    )
       .then(hasResults)
       .catch(shouldHavePassed);
   });
@@ -103,7 +112,10 @@ describe('Pipeline Builder YAML to Form switch validation schema', () => {
   });
 
   it('should fail if resource is not an array', async () => {
-    await withFormData(formDataBasicPassState, 'spec.resources', { name: 'git-value', type: 'git' })
+    await withFormData(formDataBasicPassState, 'spec.resources', {
+      name: 'git-value',
+      type: 'git',
+    })
       .then(shouldHaveFailed)
       .catch(
         hasError(
@@ -138,13 +150,17 @@ describe('Pipeline Builder YAML to Form switch validation schema', () => {
   });
 
   it('should pass when provided with a valid workspace name', async () => {
-    await withFormData(formDataBasicPassState, 'spec.workspaces', [{ name: 'valid-name' }])
+    await withFormData(formDataBasicPassState, 'spec.workspaces', [
+      { name: 'valid-name' },
+    ])
       .then(hasResults)
       .catch(shouldHavePassed);
   });
 
   it('should pass when workspaces do not have a name', async () => {
-    await withFormData(formDataBasicPassState, 'spec.workspaces', [{ notName: 'not-valid' }])
+    await withFormData(formDataBasicPassState, 'spec.workspaces', [
+      { notName: 'not-valid' },
+    ])
       .then(hasResults)
       .catch(shouldHavePassed);
   });
@@ -173,13 +189,17 @@ describe('Tasks validation', () => {
   });
 
   it('should pass even if a task has an incomplete taskRef', async () => {
-    await withFormData(formDataBasicPassState, 'spec.tasks', [{ name: 'test', taskRef: {} }])
+    await withFormData(formDataBasicPassState, 'spec.tasks', [
+      { name: 'test', taskRef: {} },
+    ])
       .then(hasResults)
       .catch(shouldHavePassed);
   });
 
   it('should pass if provided a taskSpec and name', async () => {
-    await withFormData(formDataBasicPassState, 'spec.tasks', [{ name: 'test', taskSpec: {} }])
+    await withFormData(formDataBasicPassState, 'spec.tasks', [
+      { name: 'test', taskSpec: {} },
+    ])
       .then(hasResults)
       .catch(shouldHavePassed);
   });
@@ -195,7 +215,9 @@ describe('Tasks validation', () => {
   it('should fail if a task just has a name', async () => {
     await withFormData(formDataBasicPassState, 'spec.tasks', [{ name: 'test' }])
       .then(shouldHaveFailed)
-      .catch(hasError('spec.tasks[0]', 'TaskSpec or TaskRef must be provided.'));
+      .catch(
+        hasError('spec.tasks[0]', 'TaskSpec or TaskRef must be provided.'),
+      );
   });
 
   it('should fail if a task has a name of invalid type', async () => {
@@ -269,7 +291,11 @@ describe('Tasks validation', () => {
 describe('Validate Task Run Afters', () => {
   it('should fail if runAfter has invalid entry', async () => {
     await withFormData(formDataBasicPassState, 'spec.tasks', [
-      { name: 'test', runAfter: 'not-an-array', taskRef: { name: 'external-task' } },
+      {
+        name: 'test',
+        runAfter: 'not-an-array',
+        taskRef: { name: 'external-task' },
+      },
     ])
       .then(shouldHaveFailed)
       .catch(
@@ -287,10 +313,11 @@ describe('Validate Task Run Afters', () => {
       runAfter: ['other-task'],
       taskRef: { name: 'external-task' },
     };
-    await withFormData({ ...initialPipelineFormData, tasks: [firstTask] }, 'spec.tasks', [
-      firstTask,
-      secondTask,
-    ])
+    await withFormData(
+      { ...initialPipelineFormData, tasks: [firstTask] },
+      'spec.tasks',
+      [firstTask, secondTask],
+    )
       .then(shouldHaveFailed)
       .catch(hasError('spec.tasks[1].runAfter[0]', 'Invalid runAfter'));
   });
@@ -349,10 +376,11 @@ describe('Validate Task Run Afters', () => {
       runAfter: ['second-task'],
       taskRef: { name: 'second-task' },
     };
-    await withFormData({ ...initialPipelineFormData, tasks: [firstTask] }, 'spec.tasks', [
-      firstTask,
-      secondTask,
-    ])
+    await withFormData(
+      { ...initialPipelineFormData, tasks: [firstTask] },
+      'spec.tasks',
+      [firstTask, secondTask],
+    )
       .then(shouldHaveFailed)
       .catch(hasError('spec.tasks[1].runAfter[0]', 'Invalid runAfter'));
   });
@@ -492,7 +520,9 @@ describe('Validate Task Parameters', () => {
       {
         name: 'test-task',
         taskRef: { name: 'external-task' },
-        params: [{ name: { label: 'param-name' }, value: { label: 'param-value' } }],
+        params: [
+          { name: { label: 'param-name' }, value: { label: 'param-value' } },
+        ],
       },
     ];
     await withFormData(formDataBasicPassState, 'spec.tasks', tasks)
@@ -518,7 +548,12 @@ describe('Validate Task Parameters', () => {
       {
         name: 'test-task',
         taskRef: { name: 'external-task' },
-        params: [{ name: 'param-name', value: ['valid-param-value', ['invalid-param-value']] }],
+        params: [
+          {
+            name: 'param-name',
+            value: ['valid-param-value', ['invalid-param-value']],
+          },
+        ],
       },
     ];
     await withFormData(formDataBasicPassState, 'spec.tasks', tasks)
@@ -580,7 +615,10 @@ describe('Validate Resources', () => {
       {
         name: 'test-task',
         taskRef: { name: 'external-task' },
-        resources: { notInputs: 'not-input', outputs: [{ name: 'output', resource: 'image' }] },
+        resources: {
+          notInputs: 'not-input',
+          outputs: [{ name: 'output', resource: 'image' }],
+        },
       },
     ];
     await withFormData(formDataBasicPassState, 'spec.tasks', tasks)
@@ -891,8 +929,16 @@ describe('Validate Task When', () => {
         name: 'test-task',
         taskRef: { name: 'external-task' },
         when: [
-          { input: '$(params.test)', operator: 'in', values: ['test-values-one'] },
-          { input: '$(params.test)', operator: 'in', values: ['test-value-two'] },
+          {
+            input: '$(params.test)',
+            operator: 'in',
+            values: ['test-values-one'],
+          },
+          {
+            input: '$(params.test)',
+            operator: 'in',
+            values: ['test-value-two'],
+          },
         ],
       },
     ];
@@ -907,8 +953,16 @@ describe('Validate Task When', () => {
         name: 'test-task',
         taskRef: { name: 'external-task' },
         when: [
-          { notInput: 'not-input', operator: 'in', values: ['test-values-one'] },
-          { input: '$(params.test)', operator: 'in', values: ['test-value-two'] },
+          {
+            notInput: 'not-input',
+            operator: 'in',
+            values: ['test-values-one'],
+          },
+          {
+            input: '$(params.test)',
+            operator: 'in',
+            values: ['test-value-two'],
+          },
         ],
       },
     ];
@@ -923,8 +977,16 @@ describe('Validate Task When', () => {
         name: 'test-task',
         taskRef: { name: 'external-task' },
         when: [
-          { input: '$(params.test)', notOperator: 'not-operator', values: ['test-values-one'] },
-          { input: '$(params.test)', operator: 'in', values: ['test-value-two'] },
+          {
+            input: '$(params.test)',
+            notOperator: 'not-operator',
+            values: ['test-values-one'],
+          },
+          {
+            input: '$(params.test)',
+            operator: 'in',
+            values: ['test-value-two'],
+          },
         ],
       },
     ];
@@ -940,7 +1002,11 @@ describe('Validate Task When', () => {
         taskRef: { name: 'external-task' },
         when: [
           { input: '$(params.test)', operator: 'in', notValues: 'not-values' },
-          { input: '$(params.test)', operator: 'in', values: ['test-value-two'] },
+          {
+            input: '$(params.test)',
+            operator: 'in',
+            values: ['test-value-two'],
+          },
         ],
       },
     ];
@@ -954,7 +1020,11 @@ describe('Validate Task When', () => {
       {
         name: 'test-task',
         taskRef: { name: 'external-task' },
-        when: { input: '$(params.test)', operator: 'in', values: ['test-values-one'] },
+        when: {
+          input: '$(params.test)',
+          operator: 'in',
+          values: ['test-values-one'],
+        },
       },
     ];
     await withFormData(formDataBasicPassState, 'spec.tasks', tasks)
@@ -979,8 +1049,18 @@ describe('Validate Task When', () => {
         name: 'test-task',
         taskRef: { name: 'external-task' },
         when: [
-          { input: '$(params.test)', operator: 'in', values: ['test-values-one'] },
-          [{ input: '$(params.test)', operator: 'in', values: ['test-value-two'] }],
+          {
+            input: '$(params.test)',
+            operator: 'in',
+            values: ['test-values-one'],
+          },
+          [
+            {
+              input: '$(params.test)',
+              operator: 'in',
+              values: ['test-value-two'],
+            },
+          ],
         ],
       },
     ];
@@ -1008,9 +1088,21 @@ describe('Validate Task When', () => {
         name: 'test-task',
         taskRef: { name: 'external-task' },
         when: [
-          { input: ['$(params.test1)'], operator: 'in', values: ['test-values-one'] },
-          { input: '$(params.test2)', operator: ['or'], values: ['test-value-two'] },
-          { input: '$(params.test3)', operator: 'and', values: 'test-value-three' },
+          {
+            input: ['$(params.test1)'],
+            operator: 'in',
+            values: ['test-values-one'],
+          },
+          {
+            input: '$(params.test2)',
+            operator: ['or'],
+            values: ['test-value-two'],
+          },
+          {
+            input: '$(params.test3)',
+            operator: 'and',
+            values: 'test-value-three',
+          },
         ],
       },
     ];
@@ -1043,8 +1135,16 @@ describe('Validate Task When', () => {
         name: 'test-task',
         taskRef: { name: 'external-task' },
         when: [
-          { input: '$(params.test)', operator: 'in', values: ['test-values-one'] },
-          { input: '$(params.test)', operator: 'in', values: [{ test: 'test-value-two' }] },
+          {
+            input: '$(params.test)',
+            operator: 'in',
+            values: ['test-values-one'],
+          },
+          {
+            input: '$(params.test)',
+            operator: 'in',
+            values: [{ test: 'test-value-two' }],
+          },
         ],
       },
     ];

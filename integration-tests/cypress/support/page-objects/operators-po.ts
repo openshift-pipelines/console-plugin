@@ -28,7 +28,7 @@ export const operatorsPO = {
   },
   installOperators: {
     title: 'h1.co-m-pane__heading',
-    noOperatorsFound: '[data-test="msg-box-title"]',
+    noOperatorsFound: '[data-test="console-empty-state"]',
     noOperatorsDetails: '[data-test="msg-box-detail"]',
     search: 'input[data-test-id="item-filter"]',
     noOperatorFoundMessage: 'div.cos-status-box__title',

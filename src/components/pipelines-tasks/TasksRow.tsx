@@ -75,7 +75,8 @@ const TaskRow: React.FC<RowProps<TaskKind>> = ({
       <TableData activeColumnIDs={activeColumnIDs} id="name">
         <ResourceLink
           kind={getReferenceForModel(TaskModel)}
-          name={getTaskName(obj)}
+          name={obj.metadata.name}
+          displayName={getTaskName(obj)}
           namespace={obj.metadata.namespace}
         />
       </TableData>

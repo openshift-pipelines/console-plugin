@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { PageSection } from '@patternfly/react-core';
 import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router-dom-v5-compat';
@@ -377,7 +378,7 @@ const EventStream = ({
       : t('Showing most recent {{count}} event', { count });
 
   return (
-    <div className="co-m-pane__body">
+    <PageSection isFilled variant="light">
       <div className="co-sysevent-stream">
         <div className="co-sysevent-stream__status">
           <div className="co-sysevent-stream__timeline__btn-text">
@@ -406,7 +407,7 @@ const EventStream = ({
         )}
         {sysEventStatus}
       </div>
-    </div>
+    </PageSection>
   );
 };
 

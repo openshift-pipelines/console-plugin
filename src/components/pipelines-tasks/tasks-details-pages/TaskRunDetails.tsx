@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { PageSection } from '@patternfly/react-core';
 import { taskRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import TaskRunDetailsSection from './TaskRunDetailsSection';
 import { TaskRunModel } from '../../../models';
@@ -16,17 +17,17 @@ const TaskRunDetails: React.FC<TaskRunDetailsProps> = ({ obj: taskRun }) => {
 
   return (
     <>
-      <div className="co-m-pane__body">
+      <PageSection isFilled variant="light">
         <TaskRunDetailsSection taskRun={taskRun} />
-      </div>
+      </PageSection>
       {taskRun?.status?.taskResults || taskRun?.status?.results ? (
-        <div className="co-m-pane__body">
+        <PageSection isFilled variant="light">
           <ResultsList
             results={taskRun.status?.taskResults || taskRun.status?.results}
             resourceName={t(TaskRunModel.labelKey)}
             status={taskRunFilterReducer(taskRun)}
           />
-        </div>
+        </PageSection>
       ) : null}
     </>
   );

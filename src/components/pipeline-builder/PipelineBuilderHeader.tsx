@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Flex, FlexItem, PageSection, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import './PipelineBuilderHeader.scss';
@@ -11,11 +11,9 @@ const PipelineBuilderHeader: React.FC = () => {
     <div className="odc-pipeline-builder-header">
       <Flex className="odc-pipeline-builder-header__content">
         <FlexItem grow={{ default: 'grow' }}>
-          <div className="co-m-nav-title">
-            <h1 className="co-m-pane__heading odc-pipeline-builder-header__title">
-              {t('Pipeline builder')}
-            </h1>
-          </div>
+          <PageSection variant="light" isFilled className="pf-v5-u-pb-0">
+            <Title headingLevel="h2"> {t('Pipeline builder')}</Title>
+          </PageSection>
         </FlexItem>
       </Flex>
     </div>

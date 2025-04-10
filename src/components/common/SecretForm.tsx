@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TextInputTypes } from '@patternfly/react-core';
+import { TextInputTypes, Title } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -156,9 +156,7 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
 
   return (
     <div className="odc-secret-form">
-      <h1 className="co-section-heading-tertiary odc-secret-form__title">
-        {t('Create Secret')}
-      </h1>
+      <Title headingLevel="h2">{t('Create Secret')}</Title>
       <div className="form-group">
         <InputField
           type={TextInputTypes.text}

@@ -3,6 +3,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerContentBody,
+  PageSection,
 } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
@@ -236,41 +237,39 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
               onSubmit={handleSubmit}
             >
               <div className="opp-pipeline-builder-form__content">
-                <FormBody
-                  flexLayout
-                  disablePaneBody
-                  className="co-m-pane__body co-m-pane__body--no-top-margin"
-                >
-                  <PipelineQuickSearch
-                    namespace={namespace}
-                    viewContainer={contentRef.current}
-                    isOpen={menuOpen}
-                    callback={savedCallback.current}
-                    setIsOpen={(open) => setMenuOpen(open)}
-                    onUpdateTasks={onUpdateTasks}
-                    taskGroup={taskGroup}
-                  />
-                  <SyncedEditorField
-                    noMargin
-                    name="editorType"
-                    formContext={{
-                      name: 'formData',
-                      editor: formEditor,
-                      label: t('Pipeline builder'),
-                      sanitizeTo: (yamlPipeline: PipelineKind) =>
-                        sanitizeToForm(formData, yamlPipeline),
-                    }}
-                    yamlContext={{
-                      name: 'yamlData',
-                      editor: yamlEditor,
-                      sanitizeTo: () =>
-                        sanitizeToYaml(formData, namespace, existingPipeline),
-                    }}
-                    lastViewUserSettingKey={
-                      LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY
-                    }
-                  />
-                </FormBody>
+                <PageSection isFilled variant="light">
+                  <FormBody flexLayout disablePaneBody>
+                    <PipelineQuickSearch
+                      namespace={namespace}
+                      viewContainer={contentRef.current}
+                      isOpen={menuOpen}
+                      callback={savedCallback.current}
+                      setIsOpen={(open) => setMenuOpen(open)}
+                      onUpdateTasks={onUpdateTasks}
+                      taskGroup={taskGroup}
+                    />
+                    <SyncedEditorField
+                      noMargin
+                      name="editorType"
+                      formContext={{
+                        name: 'formData',
+                        editor: formEditor,
+                        label: t('Pipeline builder'),
+                        sanitizeTo: (yamlPipeline: PipelineKind) =>
+                          sanitizeToForm(formData, yamlPipeline),
+                      }}
+                      yamlContext={{
+                        name: 'yamlData',
+                        editor: yamlEditor,
+                        sanitizeTo: () =>
+                          sanitizeToYaml(formData, namespace, existingPipeline),
+                      }}
+                      lastViewUserSettingKey={
+                        LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY
+                      }
+                    />
+                  </FormBody>
+                </PageSection>
               </div>
               <FormFooter
                 handleReset={closeSidebarAndHandleReset}

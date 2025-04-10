@@ -17,7 +17,7 @@ metadata:
       ".tekton/console-plugin-1-15-console-plugin-pull-request.yaml".pathChanged())
   creationTimestamp: null
   labels:
-    appstudio.openshift.io/application: openshift-pipelines-1-15
+    appstudio.openshift.io/application: openshift-pipelines-core-1-15
     appstudio.openshift.io/component: console-plugin-1-15-console-plugin
     pipelines.appstudio.openshift.io/type: build
   name: console-plugin-1-15-console-plugin-on-pull-request

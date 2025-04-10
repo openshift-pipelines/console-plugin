@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Title } from '@patternfly/react-core';
 
 import TaskRunDetailsStatus from './TaskRunDetailsStatus';
-import { SectionHeading } from './headings';
 import { TaskRunModel } from '../../../models';
 import { ResourceSummary } from '../../details-page/details-page';
 import { TaskRunKind } from '../../../types';
@@ -17,11 +17,11 @@ const TaskRunDetailsSection: React.FC<TaskRunDetailsSectionProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <>
-      <SectionHeading
-        text={t('{{taskRunLabel}} details', {
+      <Title headingLevel="h2" className="pf-v5-u-mb-md">
+        {t('{{taskRunLabel}} details', {
           taskRunLabel: t(TaskRunModel.labelKey),
         })}
-      />
+      </Title>
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={taskRun} model={TaskRunModel} />

@@ -90,7 +90,7 @@ Then(
   'user is able to see the filtered results with pipelineRuns status {string}',
   (PipelineStatus: string) => {
     cy.get(pipelineRunsPO.pipelineRunsTable.status).each(($el) => {
-      expect($el.text()).toContain(PipelineStatus);
+      expect($el.text()).contains(PipelineStatus);
     });
   },
 );
@@ -257,7 +257,7 @@ Then('pipeline run is deleted from pipeline runs page', () => {
     .find('tr')
     .then(($ele) => {
       numOfPipelineRunsAfterDeletion = $ele.length;
-      expect(numOfPipelineRunsAfterDeletion).toBeLessThan(
+      expect(numOfPipelineRunsAfterDeletion).to.lessThan(
         numOfPipelineRunsBeforeDeletion,
       );
     });
@@ -611,7 +611,7 @@ Then(
       'VolumeClaimTemplate',
     ];
     cy.byLegacyTestID('dropdown-menu').each(($el) => {
-      expect(options).toContain($el.text());
+      expect(options).contains($el.text());
     });
     modal.cancel();
     modal.shouldBeClosed();

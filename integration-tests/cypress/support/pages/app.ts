@@ -49,7 +49,7 @@ export const app = {
     cy.request(
       '/api/kubernetes/apis/project.openshift.io/v1/projects?limit=250',
     ).then((resp) => {
-      expect(resp.status).toEqual(200);
+      expect(resp.status).to.equal(200);
     });
     app.waitForLoad();
   },

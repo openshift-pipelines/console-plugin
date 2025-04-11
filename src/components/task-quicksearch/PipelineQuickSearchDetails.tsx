@@ -83,7 +83,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
 
   React.useEffect(() => {
     resetVersions();
-    let mounted = true;
+    const mounted = true;
     if (
       isTektonHubTaskWithoutVersions(selectedItem) &&
       !isArtifactHubTask(selectedItem)

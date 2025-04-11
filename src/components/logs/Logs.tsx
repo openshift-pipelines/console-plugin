@@ -111,7 +111,7 @@ const Logs: React.FC<LogsProps> = ({
     onError: () => void,
     retryCount = 0,
   ) => {
-    let ws = new WSFactory(watchURL, wsOpts);
+    const ws = new WSFactory(watchURL, wsOpts);
     const handleError = () => {
       if (retryCount < 5) {
         setTimeout(() => {

@@ -87,7 +87,7 @@ describe('pipelineQuickSearchVersionDropdown', () => {
     const latest = screen.getByText('0.2');
     fireEvent.click(latest);
     act(() => {
-      expect(onChange).toBeCalledWith('0.2');
+      expect(onChange).toHaveBeenCalledWith('0.2');
     });
   });
 });

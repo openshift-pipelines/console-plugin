@@ -31,7 +31,7 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
   const editor = editorRef.current?.editor;
 
   const insertYamlContent = React.useCallback(
-    (id: string = 'default', yamlContent: string = '', kind) => {
+    (id = 'default', yamlContent = '', kind) => {
       const yaml = sanitizeYamlContent
         ? sanitizeYamlContent(id, yamlContent, kind)
         : yamlContent;
@@ -73,7 +73,7 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
   );
 
   const replaceYamlContent = React.useCallback(
-    (id: string = 'default', yamlContent: string = '', kind: string) => {
+    (id = 'default', yamlContent = '', kind: string) => {
       const yaml = sanitizeYamlContent
         ? sanitizeYamlContent(id, yamlContent, kind)
         : yamlContent;
@@ -83,7 +83,7 @@ const CodeEditorSidebar: React.FC<CodeEditorSidebarProps> = ({
   );
 
   const downloadYamlContent = React.useCallback(
-    (id: string = 'default', yamlContent: string = '', kind: string) => {
+    (id = 'default', yamlContent = '', kind: string) => {
       try {
         const yaml = sanitizeYamlContent
           ? sanitizeYamlContent(id, yamlContent, kind)

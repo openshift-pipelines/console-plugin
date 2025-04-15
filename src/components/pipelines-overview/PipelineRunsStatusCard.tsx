@@ -35,11 +35,11 @@ import {
   monthYear,
 } from './dateTime';
 import { getFilter, useInterval } from './utils';
-import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
-import { DataType } from '../utils/tekton-results';
+import { getResultsSummary } from '../utils/summary-api';
 import './PipelinesOverview.scss';
 import { LoadingInline } from '../Loading';
 import { ALL_NAMESPACES_KEY } from '../../consts';
+import { DataType, SummaryResponse } from '../../types';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 
 interface PipelinesRunsStatusCardProps {

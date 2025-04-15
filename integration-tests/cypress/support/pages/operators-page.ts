@@ -52,10 +52,13 @@ export const operatorsPage = {
     cy.get('.co-installed-operators').should('be.visible');
     cy.get('body').then(($body) => {
       if (
-        $body.find(operatorsPO.installOperators.noOperatorsDetails).length === 0
+        $body.find(operatorsPO.installOperators.noOperatorsFound).length === 0
       ) {
+        cy.get(operatorsPO.installOperators.search).clear();
         /* eslint-disable-next-line cypress/unsafe-to-chain-command */
-        cy.get(operatorsPO.installOperators.search).clear().type(operatorName);
+        cy.get(operatorsPO.installOperators.search)
+          .should('be.enabled')
+          .type(operatorName);
       } else {
         cy.log(
           `${operatorName} operator is not installed in this cluster, so lets install it from operator Hub`,

@@ -216,7 +216,7 @@ export const pipelineRunsPage = {
           cy.get('tbody tr')
             .eq(index)
             .within(() => {
-              cy.get(`button[data-test="kebab-button"]`)
+              cy.get(`button[data-test-id="kebab-button"]`)
                 .should('be.visible')
                 .click({ force: true });
             });

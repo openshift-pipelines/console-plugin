@@ -15,6 +15,7 @@ export const addPage = {
         cy.testA11y('Import from Git Page');
         detailsPage.titleShouldContain(pageTitle.Git);
         break;
+      case 'Software Catalog':
       case 'Developer Catalog':
       case 'From Catalog':
       case addOptions.DeveloperCatalog:

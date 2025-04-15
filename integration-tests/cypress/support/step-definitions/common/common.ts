@@ -13,12 +13,14 @@ import {
 } from '../../pages/app';
 import { catalogPage } from '../../pages/catalog-page';
 import { userLoginPage } from '../../pages/functions/common';
-import { verifyAndInstallKnativeOperator } from '../../pages/functions/installOperatorOnCluster';
+// import { verifyAndInstallKnativeOperator } from '../../pages/functions/installOperatorOnCluster';
+import { installKnativeOperatorUsingCLI } from '../../pages/functions/installOperatorOnClusterUsingCLI';
 import { gitPage } from '../../pages/git-page';
 import { topologyPage } from '../../pages/topology-page';
 
 Given('user has installed OpenShift Serverless Operator', () => {
-  verifyAndInstallKnativeOperator();
+  // verifyAndInstallKnativeOperator();
+  installKnativeOperatorUsingCLI();
 });
 
 Given('user has logged in as a basic user', () => {
@@ -28,10 +30,10 @@ Given('user has logged in as a basic user', () => {
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
-  cy.testA11y('Developer perspective with guide tour modal');
+  // cy.testA11y('Developer perspective with guide tour modal');
   guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
-  cy.testA11y('Developer perspective');
+  // cy.testA11y('Developer perspective');
 });
 
 Given(

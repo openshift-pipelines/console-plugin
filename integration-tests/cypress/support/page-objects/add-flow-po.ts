@@ -35,7 +35,7 @@ export const catalogPO = {
     builderImage: '[data-test="tab BuilderImage"]',
   },
   cards: {
-    nodeJsBuilderImage: 'a[data-test="BuilderImage-Node.js"]',
+    nodeJsBuilderImage: '[data-test="BuilderImage-Node.js"]',
   },
   sidePane: {
     dialog: '[role="dialog"]',

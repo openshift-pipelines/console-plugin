@@ -2,8 +2,11 @@
   &__title {
     font-size: var(--pf-v5-global--FontSize--md);
     height: 33px; // fixed height header to avoid actions from bouncing the header
-    margin: 0;
+    margin: 0 !important;
     padding: 0 var(--pf-v5-global--spacer--lg);
+    display: inline-flex;
+    justify-content: space-between;
+    width: 100%;
   }
 
   &__shortcuts {

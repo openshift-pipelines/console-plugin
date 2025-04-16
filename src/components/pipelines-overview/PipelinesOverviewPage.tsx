@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Flex, FlexItem, PageSection, Title } from '@patternfly/react-core';
 import PipelineRunsStatusCard from './PipelineRunsStatusCard';
 import {
   useActiveNamespace,
@@ -54,11 +54,9 @@ const PipelinesOverviewPage: React.FC = () => {
 
   return (
     <>
-      <div className="co-m-nav-title">
-        <h1 className="co-m-pane__heading">
-          <span>{t('Overview')}</span>
-        </h1>
-      </div>
+      <PageSection variant="light" isFilled className="pf-v5-u-pl-md">
+        <Title headingLevel="h2"> {t('Overview')}</Title>
+      </PageSection>
       <Flex className="project-dropdown-label__flex">
         <FlexItem>
           <NameSpaceDropdown

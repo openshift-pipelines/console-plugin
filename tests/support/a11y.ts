@@ -1,6 +1,5 @@
 import { Result } from 'axe-core';
 import 'cypress-axe';
-import 'cypress-jest-adapter';
 
 declare global {
   namespace Cypress {

@@ -59,7 +59,10 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (
         />
       </FormGroup>
 
-      <FormGroup label={t('Parameters')}>
+      <FormGroup
+        label={t('Parameters')}
+        className="pipelines-console-plugin__page-section-width"
+      >
         <PipelineParameters
           fieldName="formData.params"
           addLabel={t('Add parameter')}
@@ -71,6 +74,7 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (
           valueFieldName="default"
           emptyMessage={t('No parameters are associated with this Pipeline.')}
           emptyValues={{ name: '', description: '', default: '' }}
+          className="pf-v5-u-p-0"
         />
       </FormGroup>
 

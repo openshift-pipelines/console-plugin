@@ -15,6 +15,7 @@ type PipelineParametersProps = {
   fieldName: string;
   emptyValues: { [name: string]: string };
   isReadOnly?: boolean;
+  className?: string;
 };
 
 const PipelineParameters: React.FC<PipelineParametersProps> = ({
@@ -29,9 +30,10 @@ const PipelineParameters: React.FC<PipelineParametersProps> = ({
   fieldName,
   emptyValues,
   isReadOnly = false,
+  className,
 }) => {
   return (
-    <PageSection variant="light" isFilled>
+    <PageSection variant="light" isFilled className={className}>
       <MultiColumnField
         data-test="pipeline-parameters"
         name={fieldName}

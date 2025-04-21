@@ -13,6 +13,8 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { ResourceName } from './ResourceName';
 
+import './StorageClassDropdown.scss';
+
 export type StorageClassDropdownInnerState = {
   items: any;
   name: string;
@@ -269,6 +271,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
               dataTest={this.props?.['data-test']}
               noSelection={noSelection}
               menuClassName="dropdown-menu--text-wrap"
+              dropDownContentClassName="odc-pipelines-storageclass-dropdown"
             />
             {describedBy && (
               <p className="help-block" id={describedBy}>

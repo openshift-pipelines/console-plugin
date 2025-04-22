@@ -406,6 +406,7 @@ class Dropdown_ extends DropdownMixin {
       menuClassName,
       storageKey,
       dropDownClassName,
+      dropDownContentClassName,
       titlePrefix,
       describedBy,
       disabled,
@@ -504,7 +505,12 @@ class Dropdown_ extends DropdownMixin {
               disabled={disabled}
               data-test={this.props.dataTest}
             >
-              <div className="pf-v5-c-dropdown__content-wrap">
+              <div
+                className={classNames(
+                  'pf-v5-c-dropdown__content-wrap',
+                  dropDownContentClassName,
+                )}
+              >
                 <span className="pf-v5-c-dropdown__toggle-text">
                   {titlePrefix && `${titlePrefix}: `}
                   {title}
@@ -627,6 +633,7 @@ Dropdown.propTypes = {
   canFavorite: PropTypes.bool,
   className: PropTypes.string,
   dropDownClassName: PropTypes.string,
+  dropDownContentClassName: PropTypes.string,
   enableBookmarks: PropTypes.bool,
   headerBefore: PropTypes.objectOf(PropTypes.string),
   items: PropTypes.object.isRequired,

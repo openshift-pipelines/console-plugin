@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { PageSection, Title } from '@patternfly/react-core';
 import {
   ResourceSidebarSnippets,
   ResourceSidebarSamples,
@@ -34,17 +35,17 @@ const ResourceSidebarWrapper: React.FC<{
       className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm hidden-xs"
       data-test="resource-sidebar"
     >
-      <div className="co-m-pane__body co-p-has-sidebar__sidebar-body">
+      <PageSection variant="light">
         <CloseButton
           // ClassName="co-p-has-sidebar__close-button"
           // ariaLabel={t('Close')}
           onClick={toggleSidebar}
         />
-        <h2 className="co-p-has-sidebar__sidebar-heading text-capitalize">
+        <Title headingLevel="h2" className="text-capitalize">
           {label}
-        </h2>
+        </Title>
         {children}
-      </div>
+      </PageSection>
     </div>
   );
 };

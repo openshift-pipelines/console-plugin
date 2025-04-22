@@ -18,3 +18,21 @@
 .cp-text-align-center {
   text-align: center !important;
 }
+
+.pipelines-console-plugin__page-section-width {
+  @media (min-width: 769px) {
+    max-width: 650px;
+  }
+
+  @media (min-width: 992px) {
+    min-width: 650px;
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 50%;
+  }
+}
+
+.pipelines-console-plugin__background-transparent {
+  background-color: transparent;
+}

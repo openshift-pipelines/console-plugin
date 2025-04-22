@@ -6,6 +6,7 @@ import {
   DropdownList,
   MenuToggle,
   MenuToggleElement,
+  Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { TaskKind } from '../../../types';
@@ -37,43 +38,38 @@ const TaskSidebarHeader: React.FC<TaskSidebarHeaderProps> = ({
 
   return (
     <div className="opp-task-sidebar-header">
-      <div className="opp-task-sidebar-header__title">
-        <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name co-resource-item">
-            <PipelineResourceRef
-              resourceKind={taskResource.kind}
-              resourceName={taskResource.metadata.name}
-              largeIcon
-              disableLink
-            />
-          </div>
-          <div className="co-actions">
-            <Dropdown
-              isOpen={isOpen}
-              onSelect={onSelect}
-              onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-              toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-                <MenuToggle
-                  ref={toggleRef}
-                  onClick={onToggleClick}
-                  isExpanded={isOpen}
-                >
-                  {t('Actions')}
-                </MenuToggle>
-              )}
-            >
-              <DropdownList>
-                <DropdownItem
-                  key="remove-task"
-                  onClick={() => removeThisTask()}
-                >
-                  {t('Remove task')}
-                </DropdownItem>
-              </DropdownList>
-            </Dropdown>
-          </div>
-        </h1>
-      </div>
+      <Title headingLevel="h2" className="opp-task-sidebar-header__title">
+        <div className="co-m-pane__name co-resource-item">
+          <PipelineResourceRef
+            resourceKind={taskResource.kind}
+            resourceName={taskResource.metadata.name}
+            largeIcon
+            disableLink
+          />
+        </div>
+        <div className="co-actions">
+          <Dropdown
+            isOpen={isOpen}
+            onSelect={onSelect}
+            onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
+            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+              <MenuToggle
+                ref={toggleRef}
+                onClick={onToggleClick}
+                isExpanded={isOpen}
+              >
+                {t('Actions')}
+              </MenuToggle>
+            )}
+          >
+            <DropdownList>
+              <DropdownItem key="remove-task" onClick={() => removeThisTask()}>
+                {t('Remove task')}
+              </DropdownItem>
+            </DropdownList>
+          </Dropdown>
+        </div>
+      </Title>
       <div className="opp-task-sidebar-header__shortcuts clearfix">
         <TaskSidebarShortcuts />
       </div>

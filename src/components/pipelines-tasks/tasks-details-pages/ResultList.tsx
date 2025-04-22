@@ -4,11 +4,11 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
+  Title,
 } from '@patternfly/react-core';
 import { Table, Thead, Tbody, Th, Td, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ComputedStatus, TektonResultsRun } from '../../../types';
-import { SectionHeading } from './headings';
 import { handleURLs } from '../../utils/render-utils';
 
 export interface ResultsListProps {
@@ -27,7 +27,9 @@ const ResultsList: React.FC<ResultsListProps> = ({
 
   return (
     <>
-      <SectionHeading text={t('{{resourceName}} results', { resourceName })} />
+      <Title headingLevel="h2">
+        {t('{{resourceName}} results', { resourceName })}
+      </Title>
       {status !== ComputedStatus.Failed ? (
         <Table
           aria-label={t('{{resourceName}} results', {

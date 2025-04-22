@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { PageSection, Title } from '@patternfly/react-core';
 
 import PipelineVisualization from './PipelineVisualization';
-import { SectionHeading } from '../pipelines-tasks/tasks-details-pages/headings';
 import { ResourceSummary } from '../details-page/details-page';
 import DynamicResourceLinkList from '../triggers-details/DynamicResourceLinkList';
 import { WorkspaceDefinitionList } from '../pipelines-tasks';
@@ -26,8 +26,8 @@ const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({
 
   return (
     <>
-      <div className="co-m-pane__body">
-        <SectionHeading text={t('Pipeline details')} />
+      <PageSection isFilled variant="light">
+        <Title headingLevel="h2"> {t('Pipeline details')}</Title>
         <PipelineVisualization pipeline={pipeline} />
         <div className="row">
           <div className="col-sm-6">
@@ -52,7 +52,7 @@ const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({
             <WorkspaceDefinitionList obj={pipeline} />
           </div>
         </div>
-      </div>
+      </PageSection>
     </>
   );
 };

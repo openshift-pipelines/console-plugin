@@ -153,7 +153,7 @@ Cypress.Commands.add('checkErrors', () => {
 
 Cypress.Commands.add(
   'waitUntilEnabled',
-  (selector: string, timeout: number = 20000): any => {
+  (selector: string, timeout = 20000): any => {
     const start = new Date().getTime();
 
     return cy.get(selector).then(($el) => {

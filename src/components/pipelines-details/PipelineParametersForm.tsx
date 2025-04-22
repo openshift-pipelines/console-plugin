@@ -34,7 +34,7 @@ const PipelineParametersForm: React.FC<PipelineParametersFormProps> = ({
       <PageSection
         isFilled
         variant="light"
-        className="pipelines-console-plugin__page-section-width pf-v5-u-p-0"
+        className="pipelines-console-plugin__page-section-width pf-v5-u-p-0 pipelines-console-plugin__background-transparent"
       >
         <PipelineParameters
           fieldName="parameters"
@@ -48,6 +48,7 @@ const PipelineParametersForm: React.FC<PipelineParametersFormProps> = ({
           valueFieldName="default"
           emptyMessage={t('No parameters are associated with this Pipeline.')}
           emptyValues={{ name: '', description: '', default: '' }}
+          className="pipelines-console-plugin__background-transparent"
         />
       </PageSection>
       {pipelineParameterAccess && (

@@ -24,7 +24,7 @@ const PipelineRunParametersForm: React.FC<PipelineRunParametersFormProps> = ({
           <PageSection
             variant="light"
             isFilled
-            className="pipelines-console-plugin__page-section-width pf-v5-u-p-0"
+            className="pipelines-console-plugin__page-section-width pf-v5-u-p-0 pipelines-console-plugin__background-transparent"
           >
             <PipelineRunParameters
               fieldName="parameters"
@@ -40,6 +40,7 @@ const PipelineRunParametersForm: React.FC<PipelineRunParametersFormProps> = ({
                 name: '',
                 value: '',
               }}
+              className="pipelines-console-plugin__background-transparent"
             />
           </PageSection>
         )}

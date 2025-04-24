@@ -6,7 +6,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { adjustToStartOfWeek } from '../pipelines-metrics/utils';
 
@@ -287,9 +287,10 @@ export const useQueryParams = (param) => {
     value,
   } = param;
   const [isLoaded, setIsLoaded] = React.useState(0);
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
   const queryParams = {};
-  history.location.search
+  location.search
     .substring(1)
     ?.split('&')
     .forEach((_) => {
@@ -298,10 +299,10 @@ export const useQueryParams = (param) => {
     });
 
   function setQueryParams(key?: string, value?: string) {
-    const path = history.location.pathname;
+    const path = location.pathname;
 
     if (key && value) queryParams[key] = value;
-    history.push(
+    navigate(
       `${path}?${Object.keys(queryParams)
         .map((k) => {
           const v = queryParams[k];

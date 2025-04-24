@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { DropdownItem } from '@patternfly/react-core';
 import {
@@ -23,7 +23,7 @@ export const K8sCommonKebabMenu = (obj: K8sResourceCommon, model: K8sModel) => {
   const launchDeleteModal = useDeleteModal(obj);
   const launchAnnotationsModal = useAnnotationsModal(obj);
   const launchLabelsModal = useLabelsModal(obj);
-  const history = useHistory();
+  const navigate = useNavigate();
   const { name, namespace } = obj.metadata;
 
   const canEditResource = useAccessReview({
@@ -71,7 +71,7 @@ export const K8sCommonKebabMenu = (obj: K8sResourceCommon, model: K8sModel) => {
     <DropdownItem
       key={KEBAB_ACTION_EDIT_ID}
       component="button"
-      onClick={() => history.push(editURL)}
+      onClick={() => navigate(editURL)}
       isDisabled={!canEditResource[0]}
       data-test-action={KEBAB_ACTION_EDIT_ID}
     >

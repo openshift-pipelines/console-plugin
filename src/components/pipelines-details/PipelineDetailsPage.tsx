@@ -1,7 +1,6 @@
 import { BreadcrumbItem, Text, TextVariants } from '@patternfly/react-core';
-import { Link, useHistory } from 'react-router-dom';
 import * as React from 'react';
-import { useNavigate, useParams } from 'react-router-dom-v5-compat';
+import { Link, useNavigate, useParams } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import {
   getGroupVersionKindForModel,
@@ -38,7 +37,6 @@ import { ErrorPage404 } from '../common/error';
 const PipelineDetailsPage = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const params = useParams();
-  const history = useHistory();
   const navigate = useNavigate();
   const { name, ns: namespace } = params;
   const [pipeline, loaded, loadError] = useK8sWatchResource<PipelineKind>({
@@ -205,7 +203,7 @@ const PipelineDetailsPage = () => {
           label: t('Edit {{resourceKind}}', {
             resourceKind: PipelineModel.kind,
           }),
-          onClick: () => history.push(editURL),
+          onClick: () => navigate(editURL),
           disabled: !canEditResource[0],
         },
         {

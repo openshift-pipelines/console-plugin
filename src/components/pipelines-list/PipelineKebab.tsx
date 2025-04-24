@@ -35,7 +35,6 @@ import {
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { errorModal } from '../modals/error-modal';
 import { getPipelineRunData } from '../start-pipeline/utils';
-import { useHistory } from 'react-router-dom';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { rerunPipeline } from '../utils/pipelines-actions';
 import { usePipelineTriggerTemplateNames } from '../utils/triggers';
@@ -62,7 +61,6 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({ pipeline }) => {
   const launchLabelsModal = useLabelsModal(pipeline);
   const launchModal = useModal();
   const navigate = useNavigate();
-  const history = useHistory();
   const [isOpen, setIsOpen] = React.useState(false);
   const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
   const onToggle = () => {
@@ -215,7 +213,7 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({ pipeline }) => {
     <DropdownItem
       key={KEBAB_ACTION_EDIT_ID}
       component="button"
-      onClick={() => history.push(editURL)}
+      onClick={() => navigate(editURL)}
       isDisabled={!canEditResource}
       data-test-action={KEBAB_ACTION_EDIT_ID}
     >

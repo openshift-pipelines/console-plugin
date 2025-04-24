@@ -8,7 +8,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { PipelineRunKind, RepositoryKind, TaskRunKind } from '../../types';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { PipelineRunModel, RepositoryModel } from '../../models';
 import { getLatestRun } from '../utils/pipeline-augment';
 import { getTaskRunsOfPipelineRun } from '../hooks/useTaskRuns';

@@ -26,7 +26,11 @@ export const getTRLogSnippet = (taskRun: TaskRunKind): CombinedErrorDetails => {
   }
   const isKnownReason = (reason: string): boolean => {
     // known reasons https://tekton.dev/vault/pipelines-v0.21.0/taskruns/#monitoring-execution-status
-    return ['TaskRunCancelled', 'TaskRunTimeout'].includes(reason);
+    return [
+      'TaskRunCancelled',
+      'TaskRunTimeout',
+      'TaskRunImagePullFailed',
+    ].includes(reason);
   };
 
   if (isKnownReason(succeededCondition?.reason)) {

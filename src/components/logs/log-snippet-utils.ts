@@ -27,5 +27,6 @@ export const taskRunSnippetMessage = (
     title: t('Failure on task {{taskName}} - check logs for details.', {
       taskName,
     }),
+    staticMessage: joinConditions(taskRunStatus.conditions),
   };
 };

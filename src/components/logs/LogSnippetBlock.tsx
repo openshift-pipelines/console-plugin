@@ -19,6 +19,7 @@ const LogSnippetBlock: React.FC<LogSnippetBlockProps> = ({
       namespace={namespace}
       podName={logDetails.podName}
       title={logDetails.title}
+      staticMessage={logDetails.staticMessage}
     >
       {children}
     </LogSnippetFromPod>

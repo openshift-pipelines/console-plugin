@@ -12,6 +12,7 @@ type LogSnippetFromPodProps = {
   namespace: string;
   podName: string;
   title: string;
+  staticMessage?: string;
 };
 
 const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
@@ -20,6 +21,7 @@ const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
   namespace,
   podName,
   title,
+  staticMessage,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
@@ -49,7 +51,7 @@ const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
   if (logError) {
     return (
       <Alert isInline title={title} variant="danger">
-        {logError}
+        {staticMessage ? staticMessage : logError}
       </Alert>
     );
   }

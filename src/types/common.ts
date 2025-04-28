@@ -396,3 +396,10 @@ export type CommonPipelineModalFormikValues = FormikValues & {
   parameters: ModalParameter[];
   workspaces: PipelineModalFormWorkspace[];
 };
+
+export enum ImportStrategy {
+  S2I,
+  DOCKERFILE,
+  DEVFILE,
+  SERVERLESS_FUNCTION,
+}

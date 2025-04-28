@@ -34,6 +34,7 @@
     "@babel/preset-typescript": "^7.24.7",
     "@badeball/cypress-cucumber-preprocessor": "latest",
     "@cypress/webpack-preprocessor": "^5.15.5",
+    "@octokit/rest": "^16.30.1",
     "@openshift-console/dynamic-plugin-sdk": "1.4.0",
     "@openshift-console/dynamic-plugin-sdk-webpack": "1.1.1",
     "@openshift/dynamic-plugin-sdk": "^4.0.0",
@@ -72,6 +73,7 @@
     "cypress-axe": "^0.12.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-multi-reporters": "^1.6.2",
+    "docker-file-parser": "^1.0.4",
     "enzyme": "3.10.x",
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.5.0",
@@ -82,6 +84,8 @@
     "file-saver": "1.3.x",
     "formik": "2.0.3",
     "fuzzysearch": "1.0.x",
+    "git-url-parse": "^11.4.0",
+    "gitlab": "10.0.1",
     "i18next-parser": "^3.11.0",
     "jest": "30.0.0-alpha.7",
     "jest-canvas-mock": "^2.5.2",
@@ -93,6 +97,7 @@
     "mochawesome-merge": "^4.3.0",
     "monaco-editor": "^0.28.1",
     "openapi-typescript": "^6.7.0",
+    "parse-bitbucket-url": "^0.3.0",
     "pluralize": "^8.0.0",
     "popper.js": "^1.16.1",
     "prettier": "^2.7.1",
@@ -135,6 +140,7 @@
       "pipelinesComponent": "./components/pipelines-overview",
       "pipelinesList": "./components/pipelines-list",
       "pipelineRunsList": "./components/pipelineRuns-list",
+      "repositoriesForm": "./components/repositories",
       "repositoriesList": "./components/repositories-list",
       "approvalsList": "./components/approval-tasks",
       "metricsComponent": "./components/pipelines-metrics",
@@ -165,7 +171,8 @@
     "lodash-es": "^4.17.21",
     "micromatch": "4.0.8",
     "path-browserify": "^1.0.1",
-    "stream-browserify": "^3.0.0"
+    "stream-browserify": "^3.0.0",
+    "url": "^0.11.4"
   },
   "resolutions": {
     "webpack": "5.94.0"

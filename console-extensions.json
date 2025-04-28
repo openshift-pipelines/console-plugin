@@ -1253,5 +1253,21 @@
         "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
       ]
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/k8s/ns/:ns/pipelinesascode.tekton.dev~v1alpha1~Repository/~new/form",
+      "component": {
+        "$codeRef": "repositoriesForm.RepositoryFormPage"
+      }
+    },
+    "flags": {
+      "required": [
+        "OPENSHIFT_PIPELINE",
+        "HIDE_STATIC_PIPELINE_PLUGIN_REPOSITORY_FORM"
+      ]
+    }
   }
 ]

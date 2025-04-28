@@ -2,6 +2,7 @@ node_modules/
 dist/
 /coverage
 .devcontainer/dev.env
+integration-tests/gui_test_screenshots
 integration-tests/videos
 integration-tests/screenshots
 yarn-error.log

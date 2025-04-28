@@ -10,6 +10,7 @@ import {
   checkKnativeOperatorStatus,
   checkPipelineOperatorStatus,
 } from './checkOperatorStatus';
+import { waitForDynamicPlugin } from './installOperatorOnCluster';
 import {
   createKnativeEventingUsingCLI,
   createKnativeKafkaUsingCLI,
@@ -34,6 +35,7 @@ export const performPostInstallationSteps = (operator: operators): void => {
   switch (operator) {
     case operators.PipelinesOperator:
       checkPipelineOperatorStatus();
+      waitForDynamicPlugin();
       break;
     case operators.ServerlessOperator:
       cy.wait(40000);

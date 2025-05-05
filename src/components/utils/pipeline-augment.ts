@@ -311,7 +311,7 @@ export const getTaskStatus = (
 };
 
 export const getTaskName = (task: TaskKind): string => {
-  return task.spec.displayName || task.metadata?.name || 'anonymous-task';
+  return task?.spec?.displayName || task?.metadata?.name || 'anonymous-task';
 };
 
 export const getResourceModelFromTaskKind = (kind: string): K8sKind => {

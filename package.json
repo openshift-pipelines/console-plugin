@@ -154,7 +154,8 @@
       "toastContext": "./components/toast",
       "pipelineApprovalContext": "./components/approval-tasks/approval-notification",
       "pipelineBuilder": "./components/pipeline-builder",
-      "catalog": "./components/catalog"
+      "catalog": "./components/catalog",
+      "taskDetails": "./components/tasks"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

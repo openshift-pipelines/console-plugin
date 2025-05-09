@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageSection, Title } from '@patternfly/react-core';
+import { Flex, FlexItem, Tab, Title } from '@patternfly/react-core';
 import {
   ResourceSidebarSnippets,
   ResourceSidebarSamples,
@@ -14,9 +14,14 @@ import { K8sKind } from '@openshift-console/dynamic-plugin-sdk';
 import { CloseButton } from '@patternfly/react-component-groups';
 import { definitionFor } from '../swagger';
 import { SimpleTabNav } from './simple-tab-nav';
+import PaneBody from '../../layout/PaneBody';
+
+import '../CodeEditorField.scss';
 
 const sidebarScrollTop = () => {
-  document.getElementsByClassName('co-p-has-sidebar__sidebar')[0].scrollTop = 0;
+  document.getElementsByClassName(
+    'odc-p-has-sidebar__sidebar',
+  )[0].scrollTop = 0;
 };
 
 type Tab = {
@@ -35,17 +40,17 @@ const ResourceSidebarWrapper: React.FC<{
       className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm hidden-xs"
       data-test="resource-sidebar"
     >
-      <PageSection variant="light">
-        <CloseButton
-          // ClassName="co-p-has-sidebar__close-button"
-          // ariaLabel={t('Close')}
-          onClick={toggleSidebar}
-        />
-        <Title headingLevel="h2" className="text-capitalize">
-          {label}
-        </Title>
+      <PaneBody className="odc-p-has-sidebar__sidebar-body">
+        <Flex flexWrap={{ default: 'nowrap' }}>
+          <FlexItem grow={{ default: 'grow' }}>
+            <Title headingLevel="h2" className="text-capitalize">
+              {label}
+            </Title>
+          </FlexItem>
+          <CloseButton onClick={toggleSidebar} />
+        </Flex>
         {children}
-      </PageSection>
+      </PaneBody>
     </div>
   );
 };
@@ -145,6 +150,8 @@ export const ResourceSidebar: React.FC<{
     <ResourceSidebarWrapper label={label} toggleSidebar={toggleSidebar}>
       {tabs.length > 0 ? (
         <SimpleTabNav
+          withinSidebar
+          noInset
           tabs={tabs}
           tabProps={{
             downloadSampleYaml,
@@ -155,7 +162,7 @@ export const ResourceSidebar: React.FC<{
             samples,
             snippets,
           }}
-          additionalClassNames="co-m-horizontal-nav__menu--within-sidebar"
+          additionalClassNames="pf-v5-u-my-md"
         />
       ) : (
         <ResourceSchema schema={schema} kindObj={kindObj} />

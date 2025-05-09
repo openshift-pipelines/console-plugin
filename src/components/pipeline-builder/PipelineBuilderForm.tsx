@@ -236,41 +236,43 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
               className="opp-pipeline-builder-form"
               onSubmit={handleSubmit}
             >
-              <div className="opp-pipeline-builder-form__content">
-                <PageSection isFilled variant="light">
-                  <FormBody flexLayout disablePaneBody>
-                    <PipelineQuickSearch
-                      namespace={namespace}
-                      viewContainer={contentRef.current}
-                      isOpen={menuOpen}
-                      callback={savedCallback.current}
-                      setIsOpen={(open) => setMenuOpen(open)}
-                      onUpdateTasks={onUpdateTasks}
-                      taskGroup={taskGroup}
-                    />
-                    <SyncedEditorField
-                      noMargin
-                      name="editorType"
-                      formContext={{
-                        name: 'formData',
-                        editor: formEditor,
-                        label: t('Pipeline builder'),
-                        sanitizeTo: (yamlPipeline: PipelineKind) =>
-                          sanitizeToForm(formData, yamlPipeline),
-                      }}
-                      yamlContext={{
-                        name: 'yamlData',
-                        editor: yamlEditor,
-                        sanitizeTo: () =>
-                          sanitizeToYaml(formData, namespace, existingPipeline),
-                      }}
-                      lastViewUserSettingKey={
-                        LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY
-                      }
-                    />
-                  </FormBody>
-                </PageSection>
-              </div>
+              <PageSection isFilled variant="light">
+                <FormBody
+                  flexLayout
+                  disablePaneBody
+                  className="opp-pipeline-builder-form"
+                >
+                  <PipelineQuickSearch
+                    namespace={namespace}
+                    viewContainer={contentRef.current}
+                    isOpen={menuOpen}
+                    callback={savedCallback.current}
+                    setIsOpen={(open) => setMenuOpen(open)}
+                    onUpdateTasks={onUpdateTasks}
+                    taskGroup={taskGroup}
+                  />
+                  <SyncedEditorField
+                    noMargin
+                    name="editorType"
+                    formContext={{
+                      name: 'formData',
+                      editor: formEditor,
+                      label: t('Pipeline builder'),
+                      sanitizeTo: (yamlPipeline: PipelineKind) =>
+                        sanitizeToForm(formData, yamlPipeline),
+                    }}
+                    yamlContext={{
+                      name: 'yamlData',
+                      editor: yamlEditor,
+                      sanitizeTo: () =>
+                        sanitizeToYaml(formData, namespace, existingPipeline),
+                    }}
+                    lastViewUserSettingKey={
+                      LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY
+                    }
+                  />
+                </FormBody>
+              </PageSection>
               <FormFooter
                 handleReset={closeSidebarAndHandleReset}
                 errorMessage={status?.submitError}

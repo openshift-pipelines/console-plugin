@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Button, Level, LevelItem } from '@patternfly/react-core';
+import { Button, Level, LevelItem, Title } from '@patternfly/react-core';
 import MonacoEditor from 'react-monaco-editor';
 import { ChevronDownIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-down-icon';
 import { ChevronRightIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-right-icon';
@@ -22,9 +22,12 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <li className="co-resource-sidebar-item">
-      <h3 className="h4">
-        <span className="text-uppercase">{highlightText}</span> {title}
-      </h3>
+      <Title headingLevel="h3" size="lg" className="pf-v5-u-mb-sm">
+        <span className="pf-v5-u-text-transform-uppercase">
+          {highlightText}
+        </span>{' '}
+        {title}
+      </Title>
       {img && (
         <img
           src={img}
@@ -139,9 +142,12 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
 
   return (
     <li className="co-resource-sidebar-item">
-      <h3 className="h4">
-        <span className="text-uppercase">{highlightText}</span> {title}
-      </h3>
+      <Title headingLevel="h3" size="lg" className="pf-v5-u-mb-sm">
+        <span className="pf-v5-u-text-transform-uppercase">
+          {highlightText}
+        </span>{' '}
+        {title}
+      </Title>
       <p>{description}</p>
       <Level>
         <LevelItem>

@@ -1,100 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import * as _ from 'lodash-es';
-import { withTranslation } from 'react-i18next';
-
-class SimpleTab extends React.PureComponent<SimpleTabProps> {
-  constructor(props) {
-    super(props);
-    this.onClick = this.onClick.bind(this);
-  }
-
-  onClick() {
-    this.props.onClick(this.props.title);
-  }
-
-  render() {
-    const { active, title } = this.props;
-    const className = classNames('co-m-horizontal-nav__menu-item', {
-      'co-m-horizontal-nav-item--active': active,
-    });
-    return (
-      <li className={className} data-test-id={`horizontal-link-${title}`}>
-        <button onClick={this.onClick} type="button">
-          {title}
-        </button>
-      </li>
-    );
-  }
-}
-
-class SimpleTabNav_ extends React.Component<
-  SimpleTabNavProps,
-  SimpleTabNavState
-> {
-  constructor(props) {
-    super(props);
-    this.state = { selectedTab: props.selectedTab };
-  }
-
-  onClickTab = (name) => {
-    this.props.onClickTab && this.props.onClickTab(name);
-    this.setState({
-      selectedTab: name,
-    });
-  };
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const selectedTab = (
-      _.find(nextProps.tabs, { name: prevState.selectedTab }) ||
-      _.find(nextProps.tabs, { name: nextProps.selectedTab }) ||
-      _.head(nextProps.tabs)
-    ).name;
-    if (prevState.selectedTab !== selectedTab) {
-      return {
-        selectedTab,
-      };
-    }
-    return null;
-  }
-
-  render() {
-    const { tabs, tabProps, additionalClassNames } = this.props;
-    const { selectedTab } = this.state;
-    const selectedTabData = _.find(tabs, { name: selectedTab }) || _.head(tabs);
-    const content =
-      !React.isValidElement(selectedTabData.component) &&
-      !Array.isArray(selectedTabData.component)
-        ? React.createElement(selectedTabData.component, tabProps)
-        : selectedTabData.component;
-
-    return (
-      <>
-        <ul
-          className={classNames(
-            'co-m-horizontal-nav__menu',
-            additionalClassNames,
-          )}
-        >
-          {_.map(tabs, (tab) => (
-            <SimpleTab
-              key={tab.name}
-              active={selectedTabData.name === tab.name}
-              onClick={this.onClickTab}
-              title={tab.name}
-              data-test={`horizonta-link-${tab.name}`}
-            />
-          ))}
-        </ul>
-        {content}
-      </>
-    );
-  }
-}
-
-export const SimpleTabNav = withTranslation()(
-  SimpleTabNav_,
-) as React.FC<SimpleTabNavProps>;
+import { Tabs, Tab } from '@patternfly/react-core';
 
 export type Tab = {
   name: string;
@@ -104,17 +10,64 @@ export type Tab = {
 type SimpleTabNavProps = {
   onClickTab?: (name: string) => void;
   selectedTab?: string;
-  tabProps: any;
+  tabProps?: any;
   tabs: Tab[];
   additionalClassNames?: string;
+  withinSidebar?: boolean;
+  noInset?: boolean;
 };
 
-type SimpleTabNavState = {
-  selectedTab: string;
-};
+export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
+  onClickTab,
+  selectedTab,
+  tabProps = null,
+  tabs,
+  additionalClassNames,
+  withinSidebar,
+  noInset,
+}) => {
+  const [activeKey, setActiveKey] = React.useState<string>(
+    selectedTab || tabs[0]?.name,
+  );
 
-type SimpleTabProps = {
-  active: boolean;
-  onClick: (title: string) => void;
-  title: string;
+  const handleTabClick = (_e, tabIndex: string) => {
+    setActiveKey(tabIndex);
+    onClickTab && onClickTab(tabIndex);
+  };
+
+  return (
+    <div>
+      <Tabs
+        activeKey={activeKey}
+        onSelect={handleTabClick}
+        className={classNames(
+          { 'pf-u-mb-md': withinSidebar },
+          additionalClassNames,
+        )}
+        unmountOnExit
+      >
+        {tabs.map((tab) => {
+          const content =
+            !React.isValidElement(tab.component) &&
+            !Array.isArray(tab.component)
+              ? React.createElement(
+                  tab.component as React.FunctionComponent,
+                  tabProps,
+                )
+              : tab.component;
+
+          return (
+            <Tab
+              key={tab.name}
+              eventKey={tab.name}
+              title={tab.name}
+              data-test={`horizontal-link-${tab.name}`}
+            >
+              {content}
+            </Tab>
+          );
+        })}
+      </Tabs>
+    </div>
+  );
 };

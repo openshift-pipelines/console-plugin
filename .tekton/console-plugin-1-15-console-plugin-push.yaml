@@ -30,12 +30,14 @@ spec:
   - name: output-image
     value: quay.io/redhat-user-workloads/tekton-ecosystem-tenant/1-15/console-plugin-rhel8:{{revision}}
   - name: dockerfile
-    value: .konflux/dockerfiles/console-plugin.Dockerfile
+    value: .konflux/dockerfiles/console-plugin.Dockerfile    
   - name: prefetch-input
     value: |
       {"type": "rpm", "path": ".konflux/rpms"}
   pipelineRef:
     name: docker-build-ta
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-console-plugin-1-15-console-plugin
   workspaces:
   - name: git-auth
     secret:

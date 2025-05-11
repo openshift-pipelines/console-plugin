@@ -1,5 +1,5 @@
-ARG BUILDER=registry.redhat.io/ubi8/nodejs-18@sha256:84932815119868d5c48100e5cd764cf00edaaf9aedb9df4726a8cafd899f8a6b
-ARG RUNTIME=registry.redhat.io/ubi8/nginx-124@sha256:6a5792cafa3de88ea00ef17bcaa40a4349cac8ec59e5c438b0b8ad2730e5922d
+ARG BUILDER=registry.redhat.io/ubi8/nodejs-18@sha256:0c6e5d4e57defdbb03b32f0c175bcf458d5a8a84cc7fd076910752614569cbbd
+ARG RUNTIME=registry.redhat.io/ubi8/nginx-124@sha256:b02afddd2dd7d754bda1226fe3141f4b934f1e2fab3a1ed1ddc9bd476a8ee3e6
 
 FROM $BUILDER AS builder-ui
 
@@ -10,7 +10,7 @@ COPY .konflux/yarn.lock .
 COPY .konflux/package.json .
 RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
 RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
-    yarn build    
+    yarn build
 
 FROM $RUNTIME
 ARG VERSION=console-plugin-1.15.3

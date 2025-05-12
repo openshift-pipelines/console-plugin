@@ -1,5 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { ApprovalTaskKind } from '../../../types';
 
 export interface TaskDescriptionProps {
@@ -12,10 +17,12 @@ const TaskDescription: React.FC<TaskDescriptionProps> = ({ obj }) => {
     return null;
 
   return (
-    <dl data-test-id="approval-task-description">
-      <dt>{t('Description')}</dt>
-      <dd>{obj.spec?.description}</dd>
-    </dl>
+    <DescriptionListGroup data-test-id="approval-task-description">
+      <DescriptionListTerm>{t('Description')}</DescriptionListTerm>
+      <DescriptionListDescription>
+        {obj.spec?.description}
+      </DescriptionListDescription>
+    </DescriptionListGroup>
   );
 };
 

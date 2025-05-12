@@ -11,7 +11,7 @@ const EventListenerURL: React.FC<EventListenerURLProps> = ({ obj }) => {
   const routeURL = useEventListenerURL(obj, obj?.metadata.namespace);
   return (
     routeURL && (
-      <div className="odc-event-listener-url">
+      <div>
         <ClipboardCopy variant={ClipboardCopyVariant.inlineCompact}>
           {routeURL}
         </ClipboardCopy>

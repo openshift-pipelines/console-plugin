@@ -8,6 +8,10 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Button,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTermHelpText,
+  DescriptionListTermHelpTextButton,
   Popover,
   Split,
   SplitItem,
@@ -16,6 +20,7 @@ import {
   K8sModel,
   K8sResourceKind,
 } from '@openshift-console/dynamic-plugin-sdk';
+import './details-item.scss';
 
 export const PropertyPath: React.FC<{
   kind: string;
@@ -86,67 +91,65 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   const editable = onEdit && canEdit;
   return hide ? null : (
     <>
-      <dt
-        className={classnames('details-item__label', labelClassName)}
-        data-test-selector={`details-item-label__${label}`}
-      >
-        <Split>
-          <SplitItem className="details-item__label">
-            {popoverContent || path ? (
-              <Popover
-                headerContent={<div>{label}</div>}
-                {...(popoverContent && {
-                  bodyContent: (
-                    <LinkifyExternal>
-                      <div className="co-pre-line">{popoverContent}</div>
-                    </LinkifyExternal>
-                  ),
-                })}
-                {...(path && {
-                  footerContent: (
-                    <PropertyPath kind={model?.kind} path={path} />
-                  ),
-                })}
-                maxWidth="30rem"
-              >
-                <Button
-                  data-test={label}
-                  variant="plain"
-                  className="details-item__popover-button"
+      <DescriptionListGroup>
+        <DescriptionListTermHelpText
+          data-test-selector={`details-item-label__${label}`}
+          className={labelClassName}
+        >
+          <Split>
+            <SplitItem className="details-item__label">
+              {popoverContent || path ? (
+                <Popover
+                  headerContent={<div>{label}</div>}
+                  {...(popoverContent && {
+                    bodyContent: (
+                      <LinkifyExternal>
+                        <div className="co-pre-line">{popoverContent}</div>
+                      </LinkifyExternal>
+                    ),
+                  })}
+                  {...(path && {
+                    footerContent: (
+                      <PropertyPath kind={model?.kind} path={path} />
+                    ),
+                  })}
+                  maxWidth="30rem"
                 >
-                  {label}
-                </Button>
-              </Popover>
-            ) : (
-              label
+                  <DescriptionListTermHelpTextButton data-test={label}>
+                    {label}
+                  </DescriptionListTermHelpTextButton>
+                </Popover>
+              ) : (
+                label
+              )}
+            </SplitItem>
+            {editable && editAsGroup && (
+              <>
+                <SplitItem isFilled />
+                <SplitItem>
+                  <EditButton testId={label} onClick={onEdit}>
+                    {t('Edit')}
+                  </EditButton>
+                </SplitItem>
+              </>
             )}
-          </SplitItem>
-          {editable && editAsGroup && (
-            <>
-              <SplitItem isFilled />
-              <SplitItem>
-                <EditButton testId={label} onClick={onEdit}>
-                  {t('Edit')}
-                </EditButton>
-              </SplitItem>
-            </>
+          </Split>
+        </DescriptionListTermHelpText>
+        <DescriptionListDescription
+          className={classnames('editable-label-group', valueClassName, {
+            'details-item__value--group': editable && editAsGroup,
+          })}
+          data-test-selector={`details-item-value__${label}`}
+        >
+          {editable && !editAsGroup ? (
+            <EditButton testId={label} onClick={onEdit}>
+              {value}
+            </EditButton>
+          ) : (
+            value
           )}
-        </Split>
-      </dt>
-      <dd
-        className={classnames('details-item__value', valueClassName, {
-          'details-item__value--group': editable && editAsGroup,
-        })}
-        data-test-selector={`details-item-value__${label}`}
-      >
-        {editable && !editAsGroup ? (
-          <EditButton testId={label} onClick={onEdit}>
-            {value}
-          </EditButton>
-        ) : (
-          value
-        )}
-      </dd>
+        </DescriptionListDescription>
+      </DescriptionListGroup>
     </>
   );
 };

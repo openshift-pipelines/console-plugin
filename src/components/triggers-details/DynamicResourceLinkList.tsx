@@ -1,5 +1,11 @@
 import * as React from 'react';
 import classNames from 'classnames';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import PipelineResourceRef from './PipelineResourceRef';
 
 import './DynamicResourceLinkList.scss';
@@ -35,38 +41,40 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
         'odc-dynamic-resource-link-list--addSpaceBelow': !removeSpaceBelow,
       })}
     >
-      <dl>
-        {title && <dt>{title}</dt>}
-        <dd>
-          {links.map(
-            ({
-              name,
-              resourceKind,
-              qualifier = '',
-              disableLink = false,
-              namespace: namespaceForTask,
-              resourceApiVersion,
-            }) => {
-              let linkName = qualifier;
-              if (qualifier?.length > 0 && name !== qualifier) {
-                linkName += ` (${name})`;
-              }
-              return (
-                <div key={`${resourceKind}/${linkName}`}>
-                  <PipelineResourceRef
-                    resourceKind={resourceKind}
-                    resourceName={name}
-                    displayName={linkName}
-                    namespace={namespaceForTask || namespace}
-                    disableLink={disableLink}
-                    resourceApiVersion={resourceApiVersion}
-                  />
-                </div>
-              );
-            },
-          )}
-        </dd>
-      </dl>
+      <DescriptionList>
+        <DescriptionListGroup>
+          {title && <DescriptionListTerm>{title}</DescriptionListTerm>}
+          <DescriptionListDescription>
+            {links.map(
+              ({
+                name,
+                resourceKind,
+                qualifier = '',
+                disableLink = false,
+                namespace: namespaceForTask,
+                resourceApiVersion,
+              }) => {
+                let linkName = qualifier;
+                if (qualifier?.length > 0 && name !== qualifier) {
+                  linkName += ` (${name})`;
+                }
+                return (
+                  <div key={`${resourceKind}/${linkName}`}>
+                    <PipelineResourceRef
+                      resourceKind={resourceKind}
+                      resourceName={name}
+                      displayName={linkName}
+                      namespace={namespaceForTask || namespace}
+                      disableLink={disableLink}
+                      resourceApiVersion={resourceApiVersion}
+                    />
+                  </div>
+                );
+              },
+            )}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
     </div>
   );
 };

@@ -2,6 +2,11 @@ import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
+import {
   ConfigMapModel,
   PersistentVolumeClaimModel,
   SecretModel,
@@ -75,10 +80,12 @@ const WorkspaceResourcesSection: React.FC<WorkspaceResourcesSectionProps> = ({
   if (workspacesRenders.length === 0) return null;
 
   return (
-    <dl data-test-id="workspace-resources-section">
-      <dt>{t('Workspace Resources')}</dt>
-      <dd>{workspacesRenders}</dd>
-    </dl>
+    <DescriptionListGroup data-test-id="workspace-resources-section">
+      <DescriptionListTerm>{t('Workspace Resources')}</DescriptionListTerm>
+      <DescriptionListDescription>
+        {workspacesRenders}
+      </DescriptionListDescription>
+    </DescriptionListGroup>
   );
 };
 

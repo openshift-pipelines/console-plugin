@@ -1,5 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { PipelineRunKind } from '../../types';
 import { StartedByAnnotation, StartedByLabel } from '../../consts';
 import {
@@ -43,10 +49,12 @@ const TriggeredBySection: React.FC<TriggeredByProps> = (props) => {
   }
 
   return (
-    <dl>
-      <dt>{t('Triggered by')}:</dt>
-      <dd>{value}</dd>
-    </dl>
+    <DescriptionList className="pf-v5-u-mt-md">
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('Triggered by')}:</DescriptionListTerm>
+        <DescriptionListDescription>{value}</DescriptionListDescription>
+      </DescriptionListGroup>
+    </DescriptionList>
   );
 };
 

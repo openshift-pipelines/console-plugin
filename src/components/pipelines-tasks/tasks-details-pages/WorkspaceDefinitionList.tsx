@@ -1,5 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { PipelineKind, TaskKind } from '../../../types';
 
 export interface WorkspaceDefinitionListProps {
@@ -14,23 +20,25 @@ const WorkspaceDefinitionList: React.FC<WorkspaceDefinitionListProps> = ({
     return null;
 
   return (
-    <dl data-test-id="workspace-definition-section">
-      <dt>{t('Workspaces')}</dt>
-      <dd>
-        {obj.spec.workspaces.map((workspace) => (
-          <div
-            key={workspace.name}
-            data-test-id={`workspace-definition${
-              workspace?.optional ? '-optional' : ''
-            }`}
-          >
-            {workspace?.optional
-              ? `${workspace.name} (${t('optional')})`
-              : `${workspace.name}`}
-          </div>
-        ))}
-      </dd>
-    </dl>
+    <DescriptionList data-test-id="workspace-definition-section">
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('Workspaces')}</DescriptionListTerm>
+        <DescriptionListDescription>
+          {obj.spec.workspaces.map((workspace) => (
+            <div
+              key={workspace.name}
+              data-test-id={`workspace-definition${
+                workspace?.optional ? '-optional' : ''
+              }`}
+            >
+              {workspace?.optional
+                ? `${workspace.name} (${t('optional')})`
+                : `${workspace.name}`}
+            </div>
+          ))}
+        </DescriptionListDescription>
+      </DescriptionListGroup>
+    </DescriptionList>
   );
 };
 

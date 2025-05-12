@@ -20,6 +20,7 @@ const TriggerTemplatePipelines: React.FC<TriggerTemplatePipelinesProps> = ({
         name,
       }))}
       namespace={namespace}
+      removeSpaceBelow
     />
   );
 };

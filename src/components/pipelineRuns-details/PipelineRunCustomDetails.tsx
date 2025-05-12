@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { ClipboardCopy } from '@patternfly/react-core';
+import {
+  ClipboardCopy,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
@@ -48,38 +54,43 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({
   const isExternalLink = hasExternalLink(sbomTaskRun);
   return (
     <>
-      <dl>
-        <dt>{t('Status')}</dt>
-        <dd>
-          <Status
-            status={pipelineRunFilterReducer(pipelineRun)}
-            title={pipelineRunTitleFilterReducer(pipelineRun)}
+      <DescriptionList>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('Status')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Status
+              status={pipelineRunFilterReducer(pipelineRun)}
+              title={pipelineRunTitleFilterReducer(pipelineRun)}
+            />
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+        {taskRunsLoaded && (
+          <RunDetailsErrorLog
+            logDetails={getPLRLogSnippet(pipelineRun, taskRuns)}
+            namespace={pipelineRun.metadata.namespace}
           />
-        </dd>
-      </dl>
-      {taskRunsLoaded && (
-        <RunDetailsErrorLog
-          logDetails={getPLRLogSnippet(pipelineRun, taskRuns)}
-          namespace={pipelineRun.metadata.namespace}
-        />
-      )}
-      <dl>
-        <dt>{t('Vulnerabilities')}</dt>
-        <dd>
-          <PipelineRunVulnerabilities pipelineRun={pipelineRun} />
-        </dd>
-      </dl>
-      <dl>
-        <dt>{t('Pipeline')}</dt>
-        <dd>
-          <PipelineResourceRef
-            {...convertBackingPipelineToPipelineResourceRefProps(pipelineRun)}
-          />
-        </dd>
+        )}
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('Vulnerabilities')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <PipelineRunVulnerabilities pipelineRun={pipelineRun} />
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('Pipeline')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <PipelineResourceRef
+              {...convertBackingPipelineToPipelineResourceRefProps(pipelineRun)}
+            />
+          </DescriptionListDescription>
+        </DescriptionListGroup>
         {buildImage && sbomTaskRun && (
-          <>
-            <dt data-test="download-sbom">{t('Download SBOM')}</dt>
-            <dd>
+          <DescriptionListGroup>
+            <DescriptionListTerm data-test="download-sbom">
+              {t('Download SBOM')}
+            </DescriptionListTerm>
+            <DescriptionListDescription>
               <ClipboardCopy
                 isReadOnly
                 hoverTip={t('Copy')}
@@ -90,13 +101,15 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({
               <ExternalLink href="https://docs.sigstore.dev/cosign/installation">
                 {t('Install Cosign')}
               </ExternalLink>
-            </dd>
-          </>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
         )}
         {sbomTaskRun && (
-          <>
-            <dt data-test="view-sbom">{t('SBOM')}</dt>
-            <dd>
+          <DescriptionListGroup>
+            <DescriptionListTerm data-test="view-sbom">
+              {t('SBOM')}
+            </DescriptionListTerm>
+            <DescriptionListDescription>
               {isExternalLink &&
               linkToSbom &&
               (linkToSbom.startsWith('http://') ||
@@ -113,29 +126,36 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({
                   {t('View SBOM')}
                 </Link>
               )}
-            </dd>
-          </>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
         )}
-      </dl>
-
-      <dl>
-        <dt>{t('Start time')}</dt>
-        <dd>
-          <Timestamp timestamp={pipelineRun?.status?.startTime} />
-        </dd>
-        <dt>{t('Completion time')}</dt>
-        <dd>
-          <Timestamp timestamp={pipelineRun?.status?.completionTime} />
-        </dd>
-        <dt>{t('Duration')}</dt>
-        <dd>{pipelineRunDuration(pipelineRun)}</dd>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('Start time')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Timestamp timestamp={pipelineRun?.status?.startTime} />
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('Completion time')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            <Timestamp timestamp={pipelineRun?.status?.completionTime} />
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('Duration')}</DescriptionListTerm>
+          <DescriptionListDescription>
+            {pipelineRunDuration(pipelineRun)}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
         {pipelineRun.spec?.timeouts && (
-          <>
-            <dt>{t('Timeouts')}</dt>
-            <dd>{pipelineRun.spec?.timeouts?.pipeline}</dd>
-          </>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('Timeouts')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              {pipelineRun.spec?.timeouts?.pipeline}
+            </DescriptionListDescription>
+          </DescriptionListGroup>
         )}
-      </dl>
+      </DescriptionList>
       <TriggeredBySection pipelineRun={pipelineRun} />
       <RepositoryLinkList pipelineRun={pipelineRun} />
       <WorkspaceResourceLinkList

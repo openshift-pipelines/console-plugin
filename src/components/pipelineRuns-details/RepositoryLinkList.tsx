@@ -1,6 +1,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
+import {
+  ClipboardCopy,
+  ClipboardCopyVariant,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { RepositoryModel } from '../../models';
 import { PipelineRunKind } from '../../types';
 import {
@@ -21,7 +29,6 @@ import {
   sanitizeBranchName,
 } from '../utils/repository-utils';
 import { truncateMiddle } from '../utils/common-utils';
-import { ClipboardCopy, ClipboardCopyVariant } from '@patternfly/react-core';
 
 export type RepositoryLinkListProps = {
   pipelineRun: PipelineRunKind;
@@ -46,41 +53,45 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({
   if (!repoName) return null;
 
   return (
-    <dl>
-      <dt>{t('Repository')}</dt>
-      <dd>
-        <div>
-          <ResourceIcon
-            groupVersionKind={getGroupVersionKindForModel(RepositoryModel)}
-          />
-          <Link
-            data-test="pl-repository-link"
-            to={`/k8s/ns/${
-              pipelineRun.metadata.namespace
-            }/${getReferenceForModel(RepositoryModel)}/${repoName}/Runs`}
-            className="co-resource-item__resource-name"
-          >
-            {repoName}
-          </Link>
-        </div>
-        {repoURL && (
-          <ExternalLink href={repoURL}>
-            {getGitProviderIcon(repoURL)} {repoURL}
-          </ExternalLink>
-        )}
-      </dd>
+    <DescriptionList className="pf-v5-u-mt-md">
+      <DescriptionListGroup>
+        <DescriptionListTerm>{t('Repository')}</DescriptionListTerm>
+        <DescriptionListDescription>
+          <div>
+            <ResourceIcon
+              groupVersionKind={getGroupVersionKindForModel(RepositoryModel)}
+            />
+            <Link
+              data-test="pl-repository-link"
+              to={`/k8s/ns/${
+                pipelineRun.metadata.namespace
+              }/${getReferenceForModel(RepositoryModel)}/${repoName}/Runs`}
+              className="co-resource-item__resource-name"
+            >
+              {repoName}
+            </Link>
+          </div>
+          {repoURL && (
+            <ExternalLink href={repoURL}>
+              {getGitProviderIcon(repoURL)} {repoURL}
+            </ExternalLink>
+          )}
+        </DescriptionListDescription>
+      </DescriptionListGroup>
       {branchName && (
-        <>
-          <dt>{t(getLabelValue(branchName, t))}</dt>
-          <dd data-test="pl-repository-branch">
+        <DescriptionListGroup>
+          <DescriptionListTerm>
+            {t(getLabelValue(branchName, t))}
+          </DescriptionListTerm>
+          <DescriptionListDescription data-test="pl-repository-branch">
             {sanitizeBranchName(branchName)}
-          </dd>
-        </>
+          </DescriptionListDescription>
+        </DescriptionListGroup>
       )}
       {plrLabels?.[RepositoryLabels[RepositoryFields.SHA]] && (
-        <>
-          <dt>{t('Commit id')}</dt>
-          <dd>
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('Commit id')}</DescriptionListTerm>
+          <DescriptionListDescription>
             {shaURL ? (
               <ExternalLink href={shaURL} data-test="pl-sha-url">
                 {truncateMiddle(
@@ -100,18 +111,18 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({
                 {plrLabels[RepositoryLabels[RepositoryFields.SHA]]}
               </ClipboardCopy>
             )}
-          </dd>
-        </>
+          </DescriptionListDescription>
+        </DescriptionListGroup>
       )}
       {plrLabels?.[RepositoryLabels[RepositoryFields.EVENT_TYPE]] && (
-        <>
-          <dt>{t('Event type')}</dt>
-          <dd data-test="pl-event-type">
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('Event type')}</DescriptionListTerm>
+          <DescriptionListDescription data-test="pl-event-type">
             {plrLabels[RepositoryLabels[RepositoryFields.EVENT_TYPE]]}
-          </dd>
-        </>
+          </DescriptionListDescription>
+        </DescriptionListGroup>
       )}
-    </dl>
+    </DescriptionList>
   );
 };
 

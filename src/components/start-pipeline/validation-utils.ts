@@ -144,17 +144,40 @@ const commonPipelineSchema = () =>
     parameters: yup.array().of(
       yup.object().shape({
         name: yup.string().required(t('Required')),
-        default: yup.string(),
+        type: yup.string().oneOf(['string', 'array']).required(),
+        default: yup.mixed(),
         description: yup.string(),
-        value: yup
-          .string()
-          .test(
-            'test-if-param-can-be-empty',
-            t('Required'),
-            function (value: string) {
-              return paramIsRequired(this.parent) ? !!value : true;
-            },
-          ),
+        value: yup.mixed().when('type', ([type], schema, context) => {
+          const parent = context?.parent;
+          if (type === 'array') {
+            return yup
+              .array()
+              .of(
+                yup
+                  .string()
+                  .test(
+                    'test-array-item-required',
+                    t('Required'),
+                    function (value) {
+                      return paramIsRequired(parent) ? !!value : true;
+                    },
+                  ),
+              )
+              .min(1, t('Required'))
+              .test('test-if-array-required', t('Required'), function (value) {
+                return paramIsRequired(parent) ? value?.length > 0 : true;
+              });
+          }
+          return yup
+            .string()
+            .test(
+              'test-if-param-can-be-empty',
+              t('Required'),
+              function (value) {
+                return paramIsRequired(parent) ? !!value : true;
+              },
+            );
+        }),
       }),
     ),
     resources: formResources(),

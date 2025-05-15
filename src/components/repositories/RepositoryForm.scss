@@ -1,0 +1,29 @@
+.opp-repository-form {
+  &__body {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    padding: var(--pf-v5-global--spacer--md);
+  }
+}
+
+.pipelines-console-plugin__page-section-width {
+  @media (min-width: 769px) {
+    max-width: 650px;
+  }
+
+  @media (min-width: 992px) {
+    min-width: 650px;
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 50%;
+  }
+}
+
+.pipelines-console-plugin__flexBetween {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1 1 auto;
+}

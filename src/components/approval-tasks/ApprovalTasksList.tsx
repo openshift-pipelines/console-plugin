@@ -7,7 +7,7 @@ import {
   VirtualizedTable,
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { ApprovalTaskKind } from 'src/types';
+import { ApprovalTaskKind } from '../../types';
 import {
   getApprovalStatus,
   getApprovalStatusInfo,

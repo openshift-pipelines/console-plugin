@@ -14,9 +14,10 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
+import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import { SummaryProps, getFilter, useInterval } from './utils';
 import { getResultsSummary } from '../utils/summary-api';
-import { DataType } from '../utils/tekton-results';
+import { DataType, FLAGS } from '../../types';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { formatTime, getDropDownDate } from './dateTime';
 import { LoadingInline } from '../Loading';
@@ -42,6 +43,7 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
   kind,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const [summaryData, setSummaryData] = React.useState<SummaryProps>({});
   const [loaded, setLoaded] = React.useState(false);
   if (namespace == ALL_NAMESPACES_KEY) {
@@ -55,11 +57,16 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
   const date = getDropDownDate(timespan).toISOString();
 
   const getSummaryData = () => {
-    getResultsSummary(namespace, {
-      summary: 'total_duration,avg_duration,max_duration',
-      data_type: DataType?.PipelineRun,
-      filter: getFilter(date, parentName, kind),
-    })
+    getResultsSummary(
+      namespace,
+      {
+        summary: 'total_duration,avg_duration,max_duration',
+        data_type: DataType?.PipelineRun,
+        filter: getFilter(date, parentName, kind),
+      },
+      undefined,
+      isDevConsoleProxyAvailable,
+    )
       .then((response) => {
         setLoaded(true);
         setSummaryData(response.summary?.[0]);

@@ -26,6 +26,7 @@ import { chart_color_black_500 as cancelledColor } from '@patternfly/react-token
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
 import { global_danger_color_100 as failureColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
 import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
+import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import {
   formatDate,
   getDropDownDate,
@@ -35,11 +36,11 @@ import {
   monthYear,
 } from './dateTime';
 import { getFilter, useInterval } from './utils';
-import { SummaryResponse, getResultsSummary } from '../utils/summary-api';
-import { DataType } from '../utils/tekton-results';
+import { getResultsSummary } from '../utils/summary-api';
 import './PipelinesOverview.scss';
 import { LoadingInline } from '../Loading';
 import { ALL_NAMESPACES_KEY } from '../../consts';
+import { DataType, FLAGS, SummaryResponse } from '../../types';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 
 interface PipelinesRunsStatusCardProps {
@@ -98,6 +99,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
   kind,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const [data, setData] = React.useState<SummaryResponse>();
   const [data2, setData2] = React.useState<SummaryResponse>();
   const [loaded, setLoaded] = React.useState(false);
@@ -123,7 +125,12 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
     };
     groupBy && (summaryOpt['groupBy'] = groupBy);
 
-    getResultsSummary(namespace, summaryOpt)
+    getResultsSummary(
+      namespace,
+      summaryOpt,
+      undefined,
+      isDevConsoleProxyAvailable,
+    )
       .then((d) => {
         setLoaded(true);
         setData(d);

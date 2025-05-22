@@ -18,6 +18,8 @@ import {
 } from '@patternfly/react-core';
 import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import { K8sCommonKebabMenu } from '../utils/k8s-common-kebab-menu';
+import { TaskKind } from '../../types';
+import { getTaskName } from '../utils/pipeline-augment';
 
 type TasksKebabProps = {
   obj: K8sResourceCommon;
@@ -62,10 +64,7 @@ const TaskKebab: React.FC<TasksKebabProps> = ({ obj }) => {
   );
 };
 
-const TaskRow: React.FC<RowProps<K8sResourceCommon>> = ({
-  activeColumnIDs,
-  obj,
-}) => {
+const TaskRow: React.FC<RowProps<TaskKind>> = ({ activeColumnIDs, obj }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return (
@@ -74,6 +73,7 @@ const TaskRow: React.FC<RowProps<K8sResourceCommon>> = ({
         <ResourceLink
           kind={getReferenceForModel(TaskModel)}
           name={obj.metadata.name}
+          displayName={getTaskName(obj)}
           namespace={obj.metadata.namespace}
         />
       </TableData>

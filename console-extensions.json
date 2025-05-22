@@ -1034,6 +1034,34 @@
     }
   },
   {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "Task"
+      },
+      "component": { "$codeRef": "taskDetails.TaskDetailsPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TASK_DETAILS"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Task"
+      },
+      "component": { "$codeRef": "taskDetails.TaskDetailsPage" }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_TASK_DETAILS"]
+    }
+  },
+  {
     "type": "console.tab/horizontalNav",
     "properties": {
       "id": "Output",

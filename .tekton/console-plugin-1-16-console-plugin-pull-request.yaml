@@ -42,6 +42,8 @@ spec:
       {"type": "rpm", "path": ".konflux/rpms"}
   pipelineRef:
     name: docker-build-ta
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-console-plugin-1-16-console-plugin
   workspaces:
   - name: git-auth
     secret:

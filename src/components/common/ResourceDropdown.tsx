@@ -68,6 +68,7 @@ export interface ResourceDropdownProps {
   dropDownClassName?: string;
   menuClassName?: string;
   buttonClassName?: string;
+  dropDownContentClassName?: string;
   title?: React.ReactNode;
   titlePrefix?: string;
   allApplicationsKey?: string;
@@ -353,6 +354,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
         dropDownClassName={this.props.dropDownClassName}
         menuClassName={this.props.menuClassName}
         buttonClassName={this.props.buttonClassName}
+        dropDownContentClassName={this.props.dropDownContentClassName}
         titlePrefix={this.props.titlePrefix}
         autocompleteFilter={this.props.autocompleteFilter || fuzzy}
         actionItems={this.props.actionItems}

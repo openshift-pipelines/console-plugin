@@ -35,7 +35,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   disableKeyboardOpen = false,
   detailsRenderer,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   const isLimitedList = limitItemCount > 0;
   const searchCatalog = React.useCallback(

@@ -9,8 +9,8 @@ import {
 import * as _ from 'lodash';
 import { TektonConfigModel } from '../../models';
 import { useK8sGet } from '../hooks/use-k8sGet-hook';
+import * as catalogImg from '../imgs/catalog-icon.svg';
 import { TEKTON_HUB_INTEGRATION_KEY, TektonHubTask } from './apis/tektonHub';
-import * as catalogImg from './imgs/catalog-icon.svg';
 
 enum CatalogVisibilityState {
   Enabled = 'Enabled',

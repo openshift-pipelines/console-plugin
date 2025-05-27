@@ -171,6 +171,8 @@ export const FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK =
   'OPENSHIFT_PIPELINE_APPROVAL_TASK';
 export const PAC_INFO = 'pipelines-as-code-info';
 export const PIPELINE_NAMESPACE = 'openshift-pipelines';
+export const PIPELINERUN_TEMPLATE_NAMESPACE = 'openshift';
+export const PAC_TEMPLATE_DEFAULT = 'pipelines-as-code-pipelinerun-generic';
 
 export enum StartedByLabel {
   triggers = 'triggers.tekton.dev/eventlistener',

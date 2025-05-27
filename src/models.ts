@@ -53,7 +53,7 @@ export const PipelineModelV1Beta1 = {
   color,
 };
 
-export const RepositoryModel = {
+export const RepositoryModel: K8sKind = {
   apiGroup: 'pipelinesascode.tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Repository',

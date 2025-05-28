@@ -1,5 +1,5 @@
-ARG BUILDER=registry.redhat.io/ubi9/nodejs-18@sha256:4c71d9a21ab7c87c3de4d9e49228fb9724142c40e21503e2d9a1e291941478f6
-ARG RUNTIME=registry.access.redhat.com/ubi9/nginx-124@sha256:6465906193329d883dfe2de4077e5618420fa39885107f6dacd87fe00629ef4c
+ARG BUILDER=registry.redhat.io/ubi9/nodejs-18@sha256:01197aaa92c0f9230f4fbb3e58a9154e31006a1b377f4be2f1901a7977f49c34
+ARG RUNTIME=registry.access.redhat.com/ubi9/nginx-124@sha256:8f3028866a8e2d8fafea39b0fc49f523a46ec645d11507c2a04bedf93c79142d
 
 FROM $BUILDER AS builder-ui
 
@@ -8,11 +8,12 @@ COPY . .
 RUN npm install -g yarn-1.22.22.tgz
 RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
 COPY .konflux/yarn.lock .
+COPY .konflux/package.json .
 RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
-    yarn build
+    NODE_OPTIONS=--enable-fips yarn build
 
 FROM $RUNTIME
-ARG VERSION=console-plugin-main
+ARG VERSION=console-plugin-1.19.0
 
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/dist /usr/share/nginx/html
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/nginx.conf /etc/nginx/nginx.conf

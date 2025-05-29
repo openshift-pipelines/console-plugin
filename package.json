@@ -155,7 +155,8 @@
       "pipelineApprovalContext": "./components/approval-tasks/approval-notification",
       "pipelineBuilder": "./components/pipeline-builder",
       "catalog": "./components/catalog",
-      "taskDetails": "./components/tasks"
+      "taskDetails": "./components/tasks",
+      "pacComponent": "./components/pac/"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

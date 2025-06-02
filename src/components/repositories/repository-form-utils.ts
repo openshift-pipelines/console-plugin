@@ -1,4 +1,3 @@
-import GitUrlParse from 'git-url-parse';
 import { TFunction } from 'i18next';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
@@ -235,7 +234,13 @@ export const createRepositoryResources = async (
     });
   }
 
-  const gitHost = GitUrlParse(gitUrl).source;
+  const gitHost = new URL(
+    gitUrl
+      .replace(/^git\+/, '')
+      .replace(/\.git$/, '')
+      .replace(/^git@([^:]+):/, 'https://$1/')
+      .replace(/^ssh:\/\//, 'https://'),
+  ).hostname;
   const secretRef = secret || secretObj;
 
   const data = {

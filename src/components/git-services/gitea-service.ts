@@ -1,4 +1,3 @@
-import * as GitUrlParse from 'git-url-parse';
 import { Base64 } from 'js-base64';
 import * as _ from 'lodash';
 
@@ -14,6 +13,7 @@ import {
   RepoStatus,
 } from './types';
 import { definitions } from './types/generated/gitea';
+import { parseGitUrl } from './utils/common';
 
 export class GiteaService extends BaseService {
   private readonly metadata: RepoMetadata;
@@ -68,9 +68,10 @@ export class GiteaService extends BaseService {
     const {
       name,
       owner,
-      resource,
-      full_name: fullName,
-    } = GitUrlParse(this.gitsource.url);
+      source: resource,
+      fullName,
+    } = parseGitUrl(this.gitsource.url);
+
     const contextDir = this.gitsource.contextDir?.replace(/\/$/, '') || '';
     const host = `https://${resource}`;
     return {

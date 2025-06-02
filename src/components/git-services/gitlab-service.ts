@@ -1,5 +1,4 @@
 import { consoleFetchJSON } from '@openshift-console/dynamic-plugin-sdk';
-import * as GitUrlParse from 'git-url-parse';
 import { Gitlab } from 'gitlab';
 import i18n from 'i18next';
 import { Base64 } from 'js-base64';
@@ -14,6 +13,7 @@ import {
   RepoMetadata,
   RepoStatus,
 } from './types';
+import { parseGitUrl } from './utils/common';
 
 type GitlabRepo = {
   id: number;
@@ -86,9 +86,10 @@ export class GitlabService extends BaseService {
     const {
       name,
       owner,
-      resource,
-      full_name: fullName,
-    } = GitUrlParse(this.gitsource.url);
+      source: resource,
+      fullName,
+    } = parseGitUrl(this.gitsource.url);
+
     const contextDir = removeLeadingSlash(this.gitsource.contextDir);
     const host = `https://${resource}`;
     return {

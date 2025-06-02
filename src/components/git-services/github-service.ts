@@ -1,5 +1,4 @@
-import { Octokit } from '@octokit/rest';
-import * as GitUrlParse from 'git-url-parse';
+import { Octokit } from '@octokit/core';
 import { Base64 } from 'js-base64';
 
 import { consoleFetchJSON } from '@openshift-console/dynamic-plugin-sdk';
@@ -14,6 +13,7 @@ import {
   RepoMetadata,
   RepoStatus,
 } from './types';
+import { parseGitUrl } from './utils/common';
 
 type GHWebhookBody = {
   name: string;
@@ -36,6 +36,7 @@ type GithubWebhookRequest = {
 };
 
 export const GITHUB_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/github';
+
 export class GithubService extends BaseService {
   private readonly client: Octokit;
 
@@ -47,12 +48,13 @@ export class GithubService extends BaseService {
     this.metadata = this.getRepoMetadata();
     const baseUrl =
       this.metadata.host === 'github.com'
-        ? null
+        ? undefined
         : `https://${this.metadata.host}/api/v3`;
-    this.client = new Octokit({ ...authOpts, baseUrl });
+
+    this.client = new Octokit({ auth: authOpts?.auth, baseUrl });
   }
 
-  protected getAuthProvider = (): Octokit.Options => {
+  protected getAuthProvider = (): { auth: string } | null => {
     switch (this.gitsource.secretType) {
       case GitSecretType.PERSONAL_ACCESS_TOKEN:
       case GitSecretType.BASIC_AUTH:
@@ -64,7 +66,7 @@ export class GithubService extends BaseService {
   };
 
   protected getRepoMetadata = (): RepoMetadata => {
-    const { name, owner, source } = GitUrlParse(this.gitsource.url);
+    const { name, owner, source } = parseGitUrl(this.gitsource.url);
     const contextDir = this.gitsource.contextDir?.replace(/\/$/, '') || '';
     return {
       repoName: name,
@@ -79,44 +81,38 @@ export class GithubService extends BaseService {
 
   isRepoReachable = async (): Promise<RepoStatus> => {
     try {
-      const resp = await this.client.repos.get({
+      const resp = await this.client.request('GET /repos/{owner}/{repo}', {
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
       });
-
-      if (resp.status === 200) {
-        return RepoStatus.Reachable;
-      }
-    } catch (e) {
+      return resp.status === 200
+        ? RepoStatus.Reachable
+        : RepoStatus.Unreachable;
+    } catch (e: any) {
       switch (e.status) {
-        case 403: {
+        case 403:
           return RepoStatus.RateLimitExceeded;
-        }
-        case 404: {
+        case 404:
           return RepoStatus.PrivateRepo;
-        }
-        case 422: {
+        case 422:
           return RepoStatus.InvalidGitTypeSelected;
-        }
-        default: {
+        default:
           return RepoStatus.Unreachable;
-        }
       }
     }
-    return RepoStatus.Unreachable;
   };
 
   getRepoBranchList = async (): Promise<BranchList> => {
     try {
-      const resp = await this.client.repos.listBranches({
-        owner: this.metadata.owner,
-        repo: this.metadata.repoName,
-      });
-      const list = resp.data.map((r) => {
-        return r.name;
-      });
-      return { branches: list };
-    } catch (e) {
+      const resp = await this.client.request(
+        'GET /repos/{owner}/{repo}/branches',
+        {
+          owner: this.metadata.owner,
+          repo: this.metadata.repoName,
+        },
+      );
+      return { branches: resp.data.map((b: any) => b.name) };
+    } catch {
       return { branches: [] };
     }
   };
@@ -125,37 +121,40 @@ export class GithubService extends BaseService {
     specificPath?: string;
   }): Promise<RepoFileList> => {
     try {
-      const resp = await this.client.repos.getContents({
-        owner: this.metadata.owner,
-        repo: this.metadata.repoName,
-        ...(params && params?.specificPath
-          ? { path: `${this.metadata.contextDir}/${params.specificPath}` }
-          : { path: this.metadata.contextDir }),
-        ...(this.metadata.defaultBranch
-          ? { ref: this.metadata.defaultBranch }
-          : {}),
-      });
-      let files = [];
-      if (resp.status === 200 && Array.isArray(resp.data)) {
-        files = resp.data.map((t) => t.name);
+      const path = params?.specificPath
+        ? `${this.metadata.contextDir}/${params.specificPath}`
+        : this.metadata.contextDir;
+
+      const resp = await this.client.request(
+        'GET /repos/{owner}/{repo}/contents/{path}',
+        {
+          owner: this.metadata.owner,
+          repo: this.metadata.repoName,
+          path,
+          ref: this.metadata.defaultBranch,
+        },
+      );
+
+      if (Array.isArray(resp.data)) {
+        return { files: resp.data.map((item: any) => item.name) };
       }
-      return { files };
-    } catch (e) {
+      return { files: [] };
+    } catch {
       return { files: [] };
     }
   };
 
   getRepoLanguageList = async (): Promise<RepoLanguageList> => {
     try {
-      const resp = await this.client.repos.listLanguages({
-        owner: this.metadata.owner,
-        repo: this.metadata.repoName,
-      });
-      if (resp.status === 200) {
-        return { languages: Object.keys(resp.data) };
-      }
-      return { languages: [] };
-    } catch (e) {
+      const resp = await this.client.request(
+        'GET /repos/{owner}/{repo}/languages',
+        {
+          owner: this.metadata.owner,
+          repo: this.metadata.repoName,
+        },
+      );
+      return { languages: Object.keys(resp.data) };
+    } catch {
       return { languages: [] };
     }
   };
@@ -171,6 +170,7 @@ export class GithubService extends BaseService {
       Authorization: `Bearer ${token}`,
       'X-GitHub-Api-Version': '2022-11-28',
     });
+
     const body: GHWebhookBody = {
       name: 'web',
       active: true,
@@ -182,9 +182,10 @@ export class GithubService extends BaseService {
       },
       events: ['push', 'pull_request'],
     };
+
     const AddWebhookBaseURL =
       this.metadata.host === 'github.com'
-        ? `https://api.github.com`
+        ? 'https://api.github.com'
         : `https://${this.metadata.host}/api/v3`;
 
     const webhookRequestBody: GithubWebhookRequest = {
@@ -200,6 +201,7 @@ export class GithubService extends BaseService {
         GITHUB_WEBHOOK_BACKEND_URL,
         webhookRequestBody,
       );
+
     if (!webhookResponse.statusCode) {
       throw new Error('Unexpected proxy response: Status code is missing!');
     }
@@ -209,36 +211,38 @@ export class GithubService extends BaseService {
 
   isFilePresent = async (path: string): Promise<boolean> => {
     try {
-      const resp = await this.client.repos.getContents({
-        owner: this.metadata.owner,
-        repo: this.metadata.repoName,
-        path,
-        ...(this.metadata.defaultBranch
-          ? { ref: this.metadata.defaultBranch }
-          : {}),
-      });
+      const resp = await this.client.request(
+        'GET /repos/{owner}/{repo}/contents/{path}',
+        {
+          owner: this.metadata.owner,
+          repo: this.metadata.repoName,
+          path,
+          ref: this.metadata.defaultBranch,
+        },
+      );
       return resp.status === 200;
-    } catch (e) {
+    } catch {
       return false;
     }
   };
 
   getFileContent = async (path: string): Promise<string | null> => {
     try {
-      const resp = await this.client.repos.getContents({
-        owner: this.metadata.owner,
-        repo: this.metadata.repoName,
-        path,
-        ...(this.metadata.defaultBranch
-          ? { ref: this.metadata.defaultBranch }
-          : {}),
-      });
-      if (resp.status === 200) {
-        // eslint-disable-next-line dot-notation
-        return Buffer.from(resp.data['content'], 'base64').toString();
+      const resp = await this.client.request(
+        'GET /repos/{owner}/{repo}/contents/{path}',
+        {
+          owner: this.metadata.owner,
+          repo: this.metadata.repoName,
+          path,
+          ref: this.metadata.defaultBranch,
+        },
+      );
+
+      if (resp.status === 200 && 'content' in resp.data) {
+        return Buffer.from(resp.data.content, 'base64').toString();
       }
       return null;
-    } catch (e) {
+    } catch {
       return null;
     }
   };

@@ -12,7 +12,7 @@ RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
     NODE_OPTIONS=--enable-fips yarn build
 
 FROM $RUNTIME
-ARG VERSION=console-plugin-main
+ARG VERSION=console-plugin-1.19
 
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/dist /usr/share/nginx/html
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/nginx.conf /etc/nginx/nginx.conf

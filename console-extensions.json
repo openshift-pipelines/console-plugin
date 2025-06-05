@@ -19,6 +19,105 @@
         "kind": "Pipeline"
       },
       "flag": "OPENSHIFT_PIPELINE"
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "pipelinesascode.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "Repository"
+      },
+      "flag": "OPENSHIFT_PIPELINE_AS_CODE"
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "Pipeline"
+      },
+      "flag": "OPENSHIFT_PIPELINE_V1BETA1"
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
+    }
+  },
+  {
+    "type": "console.yaml-template",
+    "properties": {
+      "name": "default",
+      "model": {
+        "group": "tekton.dev",
+        "kind": "Pipeline",
+        "version": "v1"
+      },
+      "template": { "$codeRef": "yamlTemplates.newPipelineTemplate" }
+    },
+    "flags": {
+      "required": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_YAML_TEMPLATE_EXTENSION"
+      ]
+    }
+  },
+  {
+    "type": "console.yaml-template",
+    "properties": {
+      "name": "default",
+      "model": {
+        "group": "tekton.dev",
+        "kind": "Task",
+        "version": "v1"
+      },
+      "template": { "$codeRef": "yamlTemplates.newTaskTemplate" }
+    },
+    "flags": {
+      "required": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_YAML_TEMPLATE_EXTENSION"
+      ]
+    }
+  },
+  {
+    "type": "console.yaml-template",
+    "properties": {
+      "name": "default",
+      "model": {
+        "group": "tekton.dev",
+        "kind": "TaskRunModel",
+        "version": "v1"
+      },
+      "template": { "$codeRef": "yamlTemplates.newTaskRunTemplate" }
+    },
+    "flags": {
+      "required": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_YAML_TEMPLATE_EXTENSION"
+      ]
+    }
+  },
+  {
+    "type": "console.yaml-template",
+    "properties": {
+      "name": "default",
+      "model": {
+        "group": "tekton.dev",
+        "kind": "PipelineResource",
+        "version": "v1"
+      },
+      "template": { "$codeRef": "yamlTemplates.newPipelineResourceTemplate" }
+    },
+    "flags": {
+      "required": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_YAML_TEMPLATE_EXTENSION"
+      ]
     }
   },
   {
@@ -1171,7 +1270,8 @@
     "flags": {
       "required": [
         "OPENSHIFT_PIPELINE",
-        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
+        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER",
+        "HIDE_STATIC_PIPELINE_PLUGIN_DEVCONSOLE_ADD_ACTION_EXTENSION"
       ]
     },
     "properties": {

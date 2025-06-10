@@ -148,7 +148,7 @@ const commonPipelineSchema = () =>
         default: yup.mixed(),
         description: yup.string(),
         value: yup.mixed().when('type', ([type], schema, context) => {
-          const parent = context?.parent;
+          const parent = (context as any)?.from?.[0]?.value || context?.parent;
           if (type === 'array') {
             return yup
               .array()

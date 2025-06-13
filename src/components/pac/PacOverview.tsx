@@ -71,6 +71,7 @@ const PacOverview: React.FC<PacOverviewProps> = ({
             <Alert
               variant="danger"
               title={t('Something unexpected happened!!')}
+              data-testId="danger-alert"
             >
               {loadError?.message && <p>{loadError.message}</p>}
             </Alert>
@@ -109,6 +110,7 @@ const PacOverview: React.FC<PacOverviewProps> = ({
                   onClose={() => setAlertVisible(false)}
                 />
               }
+              data-testId="success-alert"
             >
               {annotations?.appUrl && (
                 <Trans t={t} ns="plugin__pipelines-console-plugin">
@@ -123,7 +125,10 @@ const PacOverview: React.FC<PacOverviewProps> = ({
             </Alert>
           )}
           {!showSuccessAlert && annotations?.appUrl && (
-            <Hint className="pipelines-console-plugin__background-transparent opp-github-app-hint-section">
+            <Hint
+              className="pipelines-console-plugin__background-transparent opp-github-app-hint-section"
+              data-testid="hint-section-id"
+            >
               <HintBody>
                 <Trans t={t} ns="plugin__pipelines-console-plugin">
                   Use this{' '}

@@ -1,39 +1,63 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { Formik } from 'formik';
+import { configure, render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
 import { usePacGHManifest } from '../hooks/usePacGHManifest';
 import PacForm from '../PacForm';
-import { LoadingBox } from '../../status/status-box';
-import { PageSection } from '@patternfly/react-core';
+
+configure({ testIdAttribute: 'data-test' });
 
 jest.mock('../hooks/usePacGHManifest', () => ({
   usePacGHManifest: jest.fn(),
 }));
 
-type PacFormProps = React.ComponentProps<typeof PacForm>;
+jest.mock('@openshift-console/dynamic-plugin-sdk', () => ({
+  NamespaceBar: () => <div data-test="mock-namespace-bar" />,
+  ListPageHeader: () => <div data-test="mock-list-page-header" />,
+}));
+
+jest.mock('../../common/LinkTo', () => ({
+  LinkTo: () => 'a',
+}));
 const mockUsePacGHManifest = usePacGHManifest as jest.Mock;
 
 describe('PacForm', () => {
-  let wrapper: ShallowWrapper<PacFormProps>;
-  let pacFormProps: PacFormProps;
+  const defaultProps = {
+    namespace: 'openshift-pipelines',
+  };
 
   beforeEach(() => {
-    pacFormProps = {
-      namespace: 'openshift-pipelines',
+    jest.clearAllMocks();
+  });
+
+  beforeAll(() => {
+    global.ResizeObserver = class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
     };
   });
 
-  it('should show loading if manifest is not loaded', () => {
+  it('Should show loading if manifest is not loaded', () => {
     mockUsePacGHManifest.mockReturnValue({ loaded: false, manifestData: {} });
-    wrapper = shallow(<PacForm {...pacFormProps} />);
-    expect(wrapper.find(LoadingBox).exists()).toBe(true);
+
+    render(<PacForm {...defaultProps} />);
+    const loadingBox = screen.getByTestId('loading-indicator');
+    expect(loadingBox).toBeDefined();
   });
 
-  it('should show form if manifest is loaded', () => {
+  it('Should render form if manifest is loaded', () => {
     mockUsePacGHManifest.mockReturnValue({ loaded: true, manifestData: {} });
-    wrapper = shallow(<PacForm {...pacFormProps} />);
-    expect(wrapper.find(PageSection).exists()).toBe(true);
-    expect(wrapper.find(Formik).exists()).toBe(true);
+
+    render(
+      <MemoryRouter>
+        <PacForm {...defaultProps} />
+      </MemoryRouter>,
+    );
+    const pageSection = screen.getByTestId('pac-form-page-section');
+    const form = screen.getByTestId('form-setup-github-app');
+
+    expect(pageSection).toBeDefined();
+    expect(form).toBeDefined();
   });
 });

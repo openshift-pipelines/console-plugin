@@ -350,6 +350,19 @@
     }
   },
   {
+    "type": "console.page/route",
+    "properties": {
+      "exact": false,
+      "path": ["/pac/all-namespaces", "/pac/ns/:ns"],
+      "component": {
+        "$codeRef": "pacComponent.PacPage"
+      }
+    },
+    "flags": {
+      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_PAC_FORM"]
+    }
+  },
+  {
     "type": "console.page/resource/list",
     "properties": {
       "model": {

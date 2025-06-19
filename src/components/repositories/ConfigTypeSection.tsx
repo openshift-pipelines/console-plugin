@@ -42,8 +42,7 @@ const ConfigTypeSection: React.FC<ConfigTypeSectionProps> = ({
           'A GitHub App is already set up for this cluster. To use it, install the GitHub app on your personal account or GitHub organization.',
         )}
       </Text>
-      <br />
-      <FormSection>
+      <FormSection className="pf-v5-u-mt-0">
         <FormGroup fieldId="method">
           <Flex>
             <FlexItem span={3}>

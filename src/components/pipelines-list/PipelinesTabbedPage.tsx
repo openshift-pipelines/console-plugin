@@ -10,6 +10,7 @@ import {
   PipelineModel,
   PipelineRunModel,
   RepositoryModel,
+  SecretModel,
 } from '../../models';
 import { RepositoriesList } from '../repositories-list';
 import { PipelinesList } from '../pipelines-list';
@@ -17,15 +18,20 @@ import { PipelineRunsList } from '../pipelineRuns-list';
 import {
   FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK,
   FLAG_OPENSHIFT_PIPELINE_AS_CODE,
+  PIPELINE_NAMESPACE,
 } from '../../consts';
 import {
   MenuAction,
   MenuActions,
+  SecondaryButtonAction,
 } from '../multi-tab-list/multi-tab-list-page-types';
 import { MultiTabListPage } from '../multi-tab-list';
 import AllProjectsPage from '../projects-list/AllProjectsPage';
 import { useLocation, useParams } from 'react-router-dom-v5-compat';
 import { ApprovalTasksList } from '../approval-tasks';
+import { useK8sGet } from '../hooks/use-k8sGet-hook';
+import { SecretKind } from '../../types';
+import { PAC_SECRET_NAME } from '../pac/const';
 
 type PageContentsProps = {
   namespace: string;
@@ -39,6 +45,9 @@ export const PageContents: React.FC<PageContentsProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
   const isApprovalTaskEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK);
+
+  const [pacSecretData, pacSecretDataLoaded, pacSecretDataError] =
+    useK8sGet<SecretKind>(SecretModel, PAC_SECRET_NAME, PIPELINE_NAMESPACE);
 
   const menuActions: MenuActions = {
     pipeline: {
@@ -88,6 +97,14 @@ export const PageContents: React.FC<PageContentsProps> = ({
       : []),
   ];
 
+  const secondaryButtonAction: SecondaryButtonAction = {
+    href: `/pac/ns/${PIPELINE_NAMESPACE}`,
+    label:
+      pacSecretDataLoaded && !pacSecretDataError && pacSecretData
+        ? t('View GitHub App')
+        : t('Setup GitHub App'),
+  };
+
   return perspective === 'dev' ? (
     namespace ? (
       <MultiTabListPage
@@ -95,6 +112,7 @@ export const PageContents: React.FC<PageContentsProps> = ({
         title={t('Pipelines')}
         menuActions={menuActions}
         telemetryPrefix="Pipelines"
+        secondaryButtonAction={secondaryButtonAction}
       />
     ) : (
       <AllProjectsPage />
@@ -105,6 +123,7 @@ export const PageContents: React.FC<PageContentsProps> = ({
       title={t('Pipelines')}
       menuActions={menuActions}
       telemetryPrefix="Pipelines"
+      secondaryButtonAction={secondaryButtonAction}
     />
   );
 };

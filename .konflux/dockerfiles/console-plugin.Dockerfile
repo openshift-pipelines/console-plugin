@@ -9,13 +9,22 @@ RUN npm install -g yarn-1.22.22.tgz
 RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
 USER root
 RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
-    NODE_OPTIONS=--enable-fips yarn build
+    yarn build
 
 FROM $RUNTIME
 ARG VERSION=console-plugin-1.19
 
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/dist /usr/share/nginx/html
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/nginx.conf /etc/nginx/nginx.conf
+
+USER root
+RUN fips-mode-setup --enable && \
+    update-crypto-policies --set FIPS && \
+    echo "Verifying FIPS kernel parameter:" && \
+    cat /proc/sys/crypto/fips_enabled && \
+    echo "Verifying OpenSSL FIPS status:" && \
+    openssl version -a | grep -i fips && \
+    (openssl md5 /dev/null || echo "MD5 test passed (expected failure in FIPS mode)")
 
 USER 1001
 

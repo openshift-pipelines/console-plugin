@@ -7,7 +7,18 @@ WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .
 RUN npm install -g yarn-1.22.22.tgz
 RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
+
 USER root
+
+# Enable FIPS mode during build process
+RUN fips-mode-setup --enable && \
+    update-crypto-policies --set FIPS && \
+    echo "Build stage - Verifying FIPS kernel parameter:" && \
+    cat /proc/sys/crypto/fips_enabled && \
+    echo "Build stage - Verifying OpenSSL FIPS status:" && \
+    openssl version -a | grep -i fips && \
+    (openssl md5 /dev/null || echo "MD5 test passed (expected failure in FIPS mode)")
+
 RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
     yarn build
 
@@ -18,11 +29,12 @@ COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/dis
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/nginx.conf /etc/nginx/nginx.conf
 
 USER root
+# Enable FIPS mode in runtime container
 RUN fips-mode-setup --enable && \
     update-crypto-policies --set FIPS && \
-    echo "Verifying FIPS kernel parameter:" && \
+    echo "Runtime stage - Verifying FIPS kernel parameter:" && \
     cat /proc/sys/crypto/fips_enabled && \
-    echo "Verifying OpenSSL FIPS status:" && \
+    echo "Runtime stage - Verifying OpenSSL FIPS status:" && \
     openssl version -a | grep -i fips && \
     (openssl md5 /dev/null || echo "MD5 test passed (expected failure in FIPS mode)")
 

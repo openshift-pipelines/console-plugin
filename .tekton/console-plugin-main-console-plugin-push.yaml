@@ -37,7 +37,7 @@ spec:
       - linux-m2xlarge/arm64
   - name: prefetch-input
     value: |
-      {"type": "rpm", "path": ".konflux/rpms"}
+      [{"type": "rpm", "path": ".konflux/rpms"}, {"type": "yarn"}]
   pipelineRef:
     name: docker-build-ta
   taskRunTemplate:

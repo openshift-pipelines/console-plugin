@@ -7,9 +7,9 @@ WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .
 RUN npm install -g yarn-1.22.22.tgz
 RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
-COPY .konflux/yarn.lock .
+USER root
 RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
-    yarn build
+    NODE_OPTIONS=--enable-fips yarn build
 
 FROM $RUNTIME
 ARG VERSION=console-plugin-main

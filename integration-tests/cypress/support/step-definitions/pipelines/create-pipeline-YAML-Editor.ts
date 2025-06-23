@@ -1,18 +1,9 @@
-import { Given, Then, When } from '@badeball/cypress-cucumber-preprocessor';
+import { Then, When } from '@badeball/cypress-cucumber-preprocessor';
 import * as yamlEditor from '../../../../../tests/views/yaml-editor';
 import { devNavigationMenu } from '../../constants/global';
 import { pipelineBuilderPO } from '../../page-objects/pipelines-po';
 import { navigateTo } from '../../pages/app';
-import {
-  pipelinesPage,
-  startPipelineInPipelinesPage,
-} from '../../pages/pipelines/pipelines-page';
-
-Given('user is at {string} on Pipeline Builder page', (view: string) => {
-  navigateTo(devNavigationMenu.Pipelines);
-  pipelinesPage.clickOnCreatePipeline();
-  startPipelineInPipelinesPage.selectView(view);
-});
+import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
 
 When(
   'user creates pipeline resource using YAML editor from {string}',

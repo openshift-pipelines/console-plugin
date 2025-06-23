@@ -7,7 +7,8 @@ import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
 Given(
   'user creates PipelineRun and TaskRun resources using YAML editor from {string}',
   (yamlLocation: string) => {
-    cy.get('[data-test="import-yaml"]').click();
+    cy.get('[data-test="quick-create-dropdown"]').click();
+    cy.get('[data-test="qc-import-yaml"]').click();
     cy.get('.yaml-editor').should('be.visible');
     cy.readFile(yamlLocation).then((yaml) => {
       yamlEditor.setEditorContent(yaml);
@@ -54,13 +55,13 @@ When('user clicks the filter dropdown', () => {
 });
 
 Then('user is able to see Data Source filter group', () => {
-  cy.get('#Data-source').should('be.visible');
+  cy.get('section h1').contains('Data source').should('be.visible');
 });
 
 When('user selects Archived data in Data Source filter group', () => {
-  cy.get('#Data-source').should('be.visible');
-  cy.get('label[data-test-row-filter="archived-data"]').click();
-  cy.get('label[data-test-row-filter="cluster-data"]').click();
+  cy.get('section h1').contains('Data source').should('be.visible');
+  cy.get('[data-test-row-filter="archived-data"]').click();
+  cy.get('[data-test-row-filter="cluster-data"]').click();
 });
 
 When('user deletes a PipelineRun', () => {
@@ -75,7 +76,7 @@ When('user deletes a PipelineRun', () => {
 });
 
 Then('user is able to see count in Cluster data', () => {
-  cy.get('label[data-test-row-filter="cluster-data"]')
+  cy.get('[data-test-row-filter="cluster-data"]')
     .find('span.pf-v5-c-badge.pf-m-read')
     .invoke('text')
     .then((text) => {
@@ -92,11 +93,9 @@ Given('user navigates to TaskRun list page', () => {
         .click();
     } else {
       cy.get('[data-test-id="search-header"]').click();
-      cy.get('[aria-label="Options menu"]').click();
-      cy.get('[placeholder="Select Resource"]')
-        .should('be.visible')
-        .type('TaskRun');
-      cy.get('[data-filter-text="TRTaskRun"]').click();
+      cy.get('[id="resource-dropdown"]').click();
+      cy.get('[placeholder="Resources"]').should('be.visible').type('TaskRun');
+      cy.get('[id="resource-dropdown-tekton.dev~v1~TaskRun"]').click();
       cy.get('.co-search-group__pin-toggle').should('be.visible').click();
       /* eslint-disable-next-line cypress/no-unnecessary-waiting */
       cy.wait(3000);
@@ -109,7 +108,7 @@ Given('user navigates to TaskRun list page', () => {
 });
 
 Then('user is able to see count in Archived data', () => {
-  cy.get('label[data-test-row-filter="archived-data"]')
+  cy.get('[data-test-row-filter="archived-data"]')
     .find('span.pf-v5-c-badge.pf-m-read')
     .invoke('text')
     .then((text) => {
@@ -122,7 +121,7 @@ Then('user is able to see no count in Cluster data', () => {
   cy.byLegacyTestID('filter-dropdown-toggle').within(() => {
     cy.get('button').click();
   });
-  cy.get('label[data-test-row-filter="cluster-data"]')
+  cy.get('[data-test-row-filter="cluster-data"]')
     .find('span.pf-v5-c-badge.pf-m-read')
     .invoke('text')
     .then((text) => {
@@ -142,7 +141,8 @@ Then('user is able to see the list of Archived data', () => {
 Given(
   'user created PAC repository and pipelinerun using {string}',
   (yamlLocation: string) => {
-    cy.get('[data-test="import-yaml"]').click();
+    cy.get('[data-test="quick-create-dropdown"]').click();
+    cy.get('[data-test="qc-import-yaml"]').click();
     cy.get('.yaml-editor').should('be.visible');
     cy.readFile(yamlLocation).then((yaml) => {
       yamlEditor.setEditorContent(yaml);

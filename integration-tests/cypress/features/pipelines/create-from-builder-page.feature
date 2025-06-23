@@ -123,7 +123,7 @@ Feature: Create the pipeline from builder page
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
               And user clicks Add task button under Tasks section
-              And user searches and select "<task_name>" in the list of items based on the "Community" provider in quick search bar
+              And user searches and select "<task_name>" in the list of items based on the "TektonHub" provider in quick search bar
               And user clicks on Install and add button
               And user clicks Create button on Pipeline Builder page
              Then user will be redirected to Pipeline Details page with header name "<pipeline_name>"
@@ -137,7 +137,7 @@ Feature: Create the pipeline from builder page
         Scenario: Upgrade tasks that are already installed on the cluster in pipeline builder page: P-02-TC10
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-client"
-              And user installs and removes "openshift-client" of "Community" provider
+              And user installs and removes "openshift-client" of "TektonHub" provider
               And user clicks Add task button under Tasks section
               And user searches "openshift-client" in quick search bar
               And user changes version to "0.1"
@@ -225,7 +225,7 @@ Feature: Create the pipeline from builder page
               And user is able to see finally tasks "tkn" and "kn" mentioned under "Finally tasks" section in the Pipeline details page
 
 
-        @regression
+        @regression @broken-test
         Scenario: When expression in the Pipeline Builder: P-02-TC16
             Given user is at Pipeline Builder page
               And user has chain of 3 tasks created in series
@@ -292,7 +292,7 @@ Feature: Create the pipeline from builder page
         Scenario: Code assistance for referencing Context-based values in the Pipeline Builder: P-02-TC20
             Given user is at pipelines page
              When user clicks on import YAML button
-              And user enters yaml content from yaml file "pipelineRun-using_context_variables.yaml" in the editor
+              And user enters yaml content from yaml file "pipelines-workspaces/pipelineRun-using_context_variables.yaml" in the editor
         # user uses yaml content "pipelineRun-using_context_variables.yaml"
               And user clicks on Create button
               And user clicks on Logs tab in PipelineRun details page
@@ -303,10 +303,10 @@ Feature: Create the pipeline from builder page
         Scenario: Code assistance for referencing Task Results in the Pipeline Builder: P-02-TC21
             Given user has imported YAML "task-sum.yaml" and "task-multiply.yaml"
         # user uses yaml content "sum-and-multiply-pipeline/task-sum.yaml" and "sum-and-multiply-pipeline/task-multiply.yaml" in editor
-              And user is at YAML view of Pipeline Builder page
+             When user clicks on import YAML button
              When user enters the yaml content from yaml file "sum-and-multiply-pipeline.yaml"
         # user uses yaml content "sum-and-multiply-pipeline/sum-and-multiply-pipeline.yaml"
-              And user clicks on Create
+              And user clicks on Create button
               And user clicks on import YAML button
               And user enters yaml content from yaml file "pipelineRun-sum-and-multiply-pipeline.yaml"
         # user uses yaml content "sum-and-multiply-pipeline/pipelineRun-sum-and-multiply-pipeline.yaml"
@@ -340,10 +340,15 @@ Feature: Create the pipeline from builder page
               And user searches a tasks that is available in the local tektonhub instance
              Then user will see the intended community task
 
-        @regression
+        # Marked following test broken due to issue https://issues.redhat.com/browse/OCPBUGS-59536
+        @regression @broken-test
         Scenario Outline: Start pipeline with parameter of type array: P-02-TC24
-            Given user is at "YAML View" on Pipeline Builder page
-             When user creates pipeline resource using YAML editor from "<pipeline_yaml>"
+            # Given user is at "YAML View" on Pipeline Builder page
+            Given user is at pipelines page
+             When user clicks on import YAML button
+              And user enters yaml content from yaml file "<pipeline_yaml>" in the editor
+              And user clicks on Create button
+            #  When user creates pipeline resource using YAML editor from "<pipeline_yaml>"
               And user will see pipeline "<pipeline_name>" in pipelines page
               And user selects "Start" from the kebab menu for "<pipeline_name>"
               And user will see array type parameter "param1" field
@@ -355,8 +360,8 @@ Feature: Create the pipeline from builder page
               And user see the pipeline succeeded
 
         Examples:
-                  | pipeline_yaml                                | pipeline_name                 |
-                  | testData/pipelineWithParameterTypeArray.yaml | pipeline-with-array-parameter |
+                  | pipeline_yaml                       | pipeline_name                 |
+                  | pipelineWithParameterTypeArray.yaml | pipeline-with-array-parameter |
 
         # Issue with install tasks provided by ArtifactHub
         @regression @broken-test

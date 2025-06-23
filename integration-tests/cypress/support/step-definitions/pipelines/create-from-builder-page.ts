@@ -183,7 +183,11 @@ When('user edits the Workspace name as {string}', (workspaceName: string) => {
 When(
   'user selects the {string} workspace in the Output of Workspaces in cluster task sidebar',
   (workspaceName: string) => {
-    pipelineBuilderSidePane.selectWorkspace(workspaceName);
+    // pipelineBuilderSidePane.selectWorkspace(workspaceName);
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.get(pipelineBuilderPO.formView.sidePane.workspacesOutput)
+      .scrollIntoView()
+      .select(workspaceName);
   },
 );
 
@@ -217,7 +221,7 @@ When(
   'user selects the {string} task from finally task list',
   (finallyTask: string) => {
     cy.exec(
-      `oc apply -f testData/pipelines-workspaces/pipeline-task-${finallyTask}.yaml -n ${Cypress.env(
+      `oc apply -f cypress/testData/pipelines-workspaces/pipeline-task-${finallyTask}.yaml -n ${Cypress.env(
         'NAMESPACE',
       )}`,
       {
@@ -255,7 +259,7 @@ Then(
 Given('user has chain of 3 tasks created in series', () => {
   cy.get(pipelineBuilderPO.yamlView.switchToYAMLView).click();
   cy.exec(
-    `oc apply -f testData/pipelines-workspaces/sum-and-multiply-pipeline/task-sum.yaml -n ${Cypress.env(
+    `oc apply -f cypress/testData/pipelines-workspaces/sum-and-multiply-pipeline/task-sum.yaml -n ${Cypress.env(
       'NAMESPACE',
     )}`,
     {
@@ -265,7 +269,7 @@ Given('user has chain of 3 tasks created in series', () => {
     cy.log(result.stdout);
   });
   cy.exec(
-    `oc apply -f testData/pipelines-workspaces/sum-and-multiply-pipeline/task-multiply.yaml -n ${Cypress.env(
+    `oc apply -f cypress/testData/pipelines-workspaces/sum-and-multiply-pipeline/task-multiply.yaml -n ${Cypress.env(
       'NAMESPACE',
     )}`,
     {
@@ -275,10 +279,12 @@ Given('user has chain of 3 tasks created in series', () => {
     cy.log(result.stdout);
   });
   cy.fixture(
-    `pipelines-workspaces/sum-and-multiply-pipeline/sum-and-multiply-pipeline.yaml`,
+    `pipelines-workspaces/sum-and-multiply-pipeline/sum-and-multiply-pipeline.yaml.txt`,
   ).then((yaml) => {
     /* eslint-disable-next-line cypress/unsafe-to-chain-command */
     cy.get(pipelineBuilderPO.yamlCreatePipeline.yamlEditor).click().focused();
+    cy.log(yaml);
+    pipelinesPage.clearYAMLEditor();
     yamlEditor.setEditorContent(yaml);
   });
   cy.get(pipelineBuilderPO.formView.switchToFormView).click();
@@ -406,10 +412,6 @@ When('user enters the value as {string}', (value: string) => {
   });
 });
 
-When('user clicks Create button on Pipeline Builder page', () => {
-  pipelineBuilderPage.clickCreateButton();
-});
-
 Then(
   'user will see tooltip saying {string} while scrolling over diamond structure before conditional task',
   (value: string) => {
@@ -424,9 +426,13 @@ When('user selects {string} from Select task list', (task: string) => {
   pipelineBuilderPage.selectTask(task);
 });
 
-// When('user enters pipeline name as {string}', (pipelineName: string) => {
-//   pipelineBuilderPage.enterPipelineName(pipelineName);
-// });
+When(
+  'user selects {string} from the kebab menu for {string}',
+  (option: string, pipelineName: string) => {
+    pipelinesPage.search(pipelineName);
+    pipelinesPage.selectActionForPipeline(pipelineName, option);
+  },
+);
 
 When('user clicks on Add Parameter', () => {
   cy.get('[data-test="pipeline-parameters"]').as('pipelineParameters');
@@ -465,7 +471,10 @@ When('user clicks on {string} task node', (task: string) => {
 });
 
 When('user enters url under Parameters section {string}', (url: string) => {
-  cy.get('[data-test="parameter url"] [data-test~="value"]').type(url);
+  cy.get('[data-test="parameter URL"] [data-test~="value"]').type(url);
+  // cy.get(
+  //   '[data-test~="value"][data-test*="formData.tasks.0.params.0.value"]',
+  // ).type(url);
 });
 
 When(
@@ -480,7 +489,7 @@ When(
 
 Given('user has applied yaml {string}', (yamlFile: string) => {
   cy.exec(
-    `oc apply -f testData/pipelines-workspaces/using-optional-workspaces-in-when-expressions-pipelineRun/${yamlFile} -n ${Cypress.env(
+    `oc apply -f cypress/testData/pipelines-workspaces/using-optional-workspaces-in-when-expressions-pipelineRun/${yamlFile} -n ${Cypress.env(
       'NAMESPACE',
     )}`,
     {
@@ -492,9 +501,19 @@ Given('user has applied yaml {string}', (yamlFile: string) => {
 });
 
 Given('user is at YAML view', () => {
-  cy.get('[data-test="import-yaml"]').click();
+  cy.get('[data-test="item import-yaml"]').click();
   cy.get('.yaml-editor').should('be.visible');
 });
+
+When(
+  'user creates pipeline resource using YAML editor from {string}',
+  (yamlLocation: string) => {
+    yamlEditor.isLoaded();
+    pipelinesPage.clearYAMLEditor();
+    pipelinesPage.setEditorContent(yamlLocation);
+    cy.get(pipelineBuilderPO.create).click();
+  },
+);
 
 When('user pastes the {string} code', (yamlFile: string) => {
   cy.fixture(
@@ -506,6 +525,7 @@ When('user pastes the {string} code', (yamlFile: string) => {
 
 When('user clicks on Create button', () => {
   cy.get('[data-test="save-changes"]').click();
+  cy.byTestID('breadcrumb-link').should('contain', 'Pipeline');
 });
 
 When('user clicks on Logs tab in PipelineRun details page', () => {
@@ -516,20 +536,25 @@ Then('user will be able to see the output in print-motd task', () => {
   cy.get(pipelineRunDetailsPO.logs.logPage).should('be.visible');
 });
 
-// Given('user is at pipelines page', () => {
-//   navigateTo(devNavigationMenu.Pipelines);
-//   cy.get(pipelinesPO.pipelinesTab).click();
-// });
+Then('user will be redirected to Pipeline Run Details page', () => {
+  pipelineRunDetailsPage.verifyTitle();
+  pipelineRunDetailsPage.selectTab('Details');
+});
+
+Then('user navigates to pipelineRun parameters tab', () => {
+  pipelineRunDetailsPage.selectTab('Parameters');
+});
 
 When('user clicks on import YAML button', () => {
-  cy.get('[data-test="import-yaml"]').click();
+  cy.get('[data-test="quick-create-dropdown"]').click();
+  cy.get('[data-test="qc-import-yaml"]').click();
   cy.get('.yaml-editor').should('be.visible');
 });
 
 When(
   'user enters yaml content from yaml file {string} in the editor',
   (yamlFile: string) => {
-    cy.fixture(`pipelines-workspaces/${yamlFile}`).then((yaml) => {
+    cy.fixture(`${yamlFile}`).then((yaml) => {
       yamlEditor.setEditorContent(yaml);
     });
   },
@@ -552,7 +577,7 @@ Given(
   'user has imported YAML {string} and {string}',
   (task1: string, task2: string) => {
     cy.exec(
-      `oc apply -f testData/pipelines-workspaces/sum-and-multiply-pipeline/${task1} -n ${Cypress.env(
+      `oc apply -f cypress/testData/pipelines-workspaces/sum-and-multiply-pipeline/${task1} -n ${Cypress.env(
         'NAMESPACE',
       )}`,
       {
@@ -562,7 +587,7 @@ Given(
       cy.log(result.stdout);
     });
     cy.exec(
-      `oc apply -f testData/pipelines-workspaces/sum-and-multiply-pipeline/${task2} -n ${Cypress.env(
+      `oc apply -f cypress/testData/pipelines-workspaces/sum-and-multiply-pipeline/${task2} -n ${Cypress.env(
         'NAMESPACE',
       )}`,
       {
@@ -663,7 +688,7 @@ When('user hovers over the newly added task', () => {
   cy.mouseHover('[data-test="task-list"]');
   /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.get('[data-test="task-list"] .odc-task-list-node__trigger-underline')
-    .trigger('mouseenter')
+    .trigger('mouseenter', { force: true })
     .invoke('show');
 });
 
@@ -693,9 +718,9 @@ When(
     pipelineBuilderPage.clickAddTask();
     cy.get(pipelineBuilderPO.formView.quickSearch).type(task);
     cy.get('[aria-label="Quick search list"]').should('be.visible');
-    cy.get(
-      pipelineBuilderPO.formView.quickSearchListItem(task, provider),
-    ).click();
+    cy.get(pipelineBuilderPO.formView.quickSearchListItem(task, provider))
+      .eq(0)
+      .click();
     cy.byTestID('task-cta').click();
     pipelineBuilderPage.clickOnTask(task);
     pipelineBuilderSidePane.removeTask();
@@ -704,8 +729,8 @@ When(
 
 When('user changes version to {string}', (menuItem: string) => {
   cy.get(pipelineBuilderPO.formView.versionTask).click();
-  cy.get("[role='menu']")
-    .find('li')
+  cy.get('[role="listbox"]')
+    .find('li button')
     .contains(menuItem)
     .should('be.visible')
     .click();
@@ -742,7 +767,6 @@ Then('user see the added parameter value', () => {
 });
 
 When('user will see pipeline {string} in pipelines page', (name: string) => {
-  navigateTo(devNavigationMenu.Add);
   navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.search(name);
 });

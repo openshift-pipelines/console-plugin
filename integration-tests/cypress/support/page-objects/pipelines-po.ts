@@ -1,5 +1,5 @@
 export const pipelineBuilderPO = {
-  title: '.odc-pipeline-builder-header h1',
+  title: '.odc-pipeline-builder-header h2', //Updated with pipeline version 1.19
   create: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
   // pipeline: '#pipeline-link',
@@ -17,17 +17,17 @@ export const pipelineBuilderPO = {
     name: '#form-input-formData-name-field',
     taskDropdown: '[data-id="initial-node"]',
     quickSearch: '[data-test="quick-search-bar"]',
-    versionTask: '[data-test="task-version-toggle"]',
+    versionTask: '[data-test="task-version"]',
     addInstallTask: '[data-test="task-cta"]',
     task: '[data-type="builder"] .odc-pipeline-vis-task',
     plusTaskIcon: 'g.odc-plus-node-decorator',
     deleteTaskIcon: '[data-id="delete-task"]',
     seriesTask: '[data-id^="has-run-after-"][data-kind="node"]',
     parallelTask: '[data-id^="shared-parallel-"][data-kind="node"]',
-    sectionTitle: '.odc-pipeline-builder-page h2',
+    sectionTitle: '.odc-pipeline-builder-page [class*="form__label-text"]',
     addResourcesLink: '[data-test="add-action"]',
-    quickSearchListItem(itemName: string, itemType: string): string {
-      return `[data-test="item-name-${itemName}-${itemType}"]`;
+    quickSearchListItem(itemName: string, itemProvider: string): string {
+      return `[data-test="item-name-${itemName}-${itemProvider}-secondary-label"]`;
     },
     addParams: {
       name: '#form-input-formData-params-0-name-field',
@@ -45,16 +45,16 @@ export const pipelineBuilderPO = {
         'select[id*="form-dropdown-formData-resources-0-type-field"]',
       workSpace:
         '.odc-task-sidebar__workspace [data-test-id="dropdown-button"] span',
-      parameterUrl: '[data-test="value formData.tasks.0.params.0.value"]',
-      parameterUrlHelper: '[data-test="parameter url"]',
+      parameterUrl: '[data-test="parameter URL"] [data-test~="value"]',
+      parameterUrlHelper: '[data-test="parameter URL"]',
       parameterRevision: '[data-test="value formData.tasks.0.params.1.value"]',
       parameterRevisionHelper: '[data-test="parameter revision"]',
-      imageName: '#form-input-formData-tasks-0-params-3-value-field',
+      imageName: '[data-test="value formData.tasks.0.params.0.value"]',
       script: '#SCRIPT',
       args: '#ARGS-0',
-      actions: '[data-test-id="actions-menu-button"]',
-      workspaces:
-        '#form-dropdown-formData-tasks-0-workspaces-0-workspace-field',
+      actions: 'button[class*="menu-toggle"]',
+      workspacesSource: '[data-test="workspaces source"]',
+      workspacesOutput: '[data-test="workspaces output"]',
       whenExpression: '[data-test="when-expression"]',
       addWhenExpression:
         '[data-test="when-expression"] [data-test="add-action"]',
@@ -102,7 +102,7 @@ export const createRepositoryPO = {
 };
 
 export const pipelineDetailsPO = {
-  title: '[data-test-section-heading="Pipeline details"]',
+  title: '[aria-label="Breadcrumb"]',
   detailsTab: '[data-test-id$="Details"]',
   metricsTab: '[data-test-id="horizontal-link-Metrics"]',
   yamlTab: '[data-test-id$="YAML"]',
@@ -149,6 +149,8 @@ export const pipelineDetailsPO = {
     timeRange: '',
     refreshInterval: '',
     graphTitle: '[class$="card__title"]',
+    pipelineRunStatus:
+      '.pipeline-overview__pipelinerun-status-card__donut-chart-div',
   },
   pipelineRuns: {
     pipelineRunIcon: '[title="PipelineRun"]',
@@ -279,7 +281,7 @@ export const pipelinesPO = {
     table: 'table[role="grid"]',
     pipelineName: 'tr td:nth-child(1)',
     pipelineRunName: 'tr td:nth-child(2)',
-    kebabMenu: '[data-test-id="kebab-button"]',
+    kebabMenu: '[data-test="kebab-button"]',
     columnValues: '[aria-label="Pipelines"] tbody tr td',
     columnNames: 'div[aria-label="Pipelines"] thead tr th',
     pipelineRunIcon: '[title="PipelineRun"]',

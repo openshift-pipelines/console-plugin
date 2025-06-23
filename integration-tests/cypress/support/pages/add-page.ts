@@ -28,7 +28,7 @@ export const addPage = {
         /* eslint-disable-next-line cypress/no-unnecessary-waiting */
         cy.wait(3000);
         cy.byTestID('item pipeline').click();
-        cy.get('.odc-pipeline-builder-header__title').should(
+        cy.get('.odc-pipeline-builder-header__content').should(
           'have.text',
           pageTitle.PipelineBuilder,
         );

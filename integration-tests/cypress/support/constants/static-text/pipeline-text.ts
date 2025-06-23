@@ -6,7 +6,7 @@ export const pipelineBuilderText = {
     Resources: 'Resources',
     Workspaces: 'Workspaces',
     sidePane: {
-      ParameterUrlHelper: 'Repository URL to clone from.',
+      ParameterUrlHelper: 'Git repository URL.',
       ParameterRevisionHelper:
         'Revision to checkout. (branch, tag, sha, ref, etc...)',
     },

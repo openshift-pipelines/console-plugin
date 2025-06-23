@@ -15,7 +15,7 @@
     "lint": "eslint ./src ./integration-tests --fix &&  stylelint \"src/**/*.css\" --allow-empty-input --fix",
     "gherkin-lint": "./node_modules/.bin/gherkin-lint -c ./integration-tests/.gherkin-lintrc ./integration-tests/features",
     "test-cypress": "cd integration-tests && cypress open --env openshift=true",
-    "test-cypress-headless": "cd integration-tests && node --max-old-space-size=4096 ../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=electron} --headless cypress:cli,cypress:server:specs --spec \"cypress/features/pipelines/create-from-add-options.feature\" \"cypress/features/pipelines/pipeline-overview.feature\"",
+    "test-cypress-headless": "cd integration-tests && node --max-old-space-size=4096 ../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=electron} --headless cypress:cli,cypress:server:specs --spec \"cypress/features/pipelines/create-from-add-options.feature\" \"cypress/features/pipelines/pipeline-overview.feature\" \"cypress/features/pipelines/create-from-builder-page.feature\" \"cypress/features/pipelines/data-source-filter.feature\"  \"cypress/features/pipelines/pipeline-metrics.feature\" ",
     "cypress-merge": "mochawesome-merge ./integration-tests/screenshots/cypress_report*.json > ./integration-tests/screenshots/cypress.json",
     "cypress-generate": "marge -o ./integration-tests/screenshots/ -f cypress-report -t 'OpenShift Console Plugin Template Cypress Test Results' -p 'OpenShift Cypress Plugin Template Test Results' --showPassed false --assetsDir ./integration-tests/screenshots/cypress/assets ./integration-tests/screenshots/cypress.json",
     "cypress-postreport": "yarn cypress-merge && yarn cypress-generate",

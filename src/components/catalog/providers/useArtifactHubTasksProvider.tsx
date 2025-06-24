@@ -15,7 +15,7 @@ import { useTektonHubIntegration } from '../catalog-utils';
 import { t } from '../../utils/common-utils';
 import { ArtifactHubTask, FLAGS } from '../../../types';
 
-const normalizeArtifactHubTasks = (
+export const normalizeArtifactHubTasks = (
   artifactHubTasks: ArtifactHubTask[],
 ): CatalogItem<any>[] => {
   const normalizedArtifactHubTasks: CatalogItem<ArtifactHubTask>[] =

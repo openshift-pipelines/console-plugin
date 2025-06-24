@@ -406,9 +406,9 @@ When('user enters the value as {string}', (value: string) => {
   });
 });
 
-When('user clicks Create button on Pipeline Builder page', () => {
-  pipelineBuilderPage.clickCreateButton();
-});
+// When('user clicks Create button on Pipeline Builder page', () => {
+//   pipelineBuilderPage.clickCreateButton();
+// });
 
 Then(
   'user will see tooltip saying {string} while scrolling over diamond structure before conditional task',
@@ -492,7 +492,7 @@ Given('user has applied yaml {string}', (yamlFile: string) => {
 });
 
 Given('user is at YAML view', () => {
-  cy.get('[data-test="import-yaml"]').click();
+  cy.get('[data-test="item import-yaml"]').click();
   cy.get('.yaml-editor').should('be.visible');
 });
 
@@ -663,7 +663,7 @@ When('user hovers over the newly added task', () => {
   cy.mouseHover('[data-test="task-list"]');
   /* eslint-disable-next-line cypress/unsafe-to-chain-command */
   cy.get('[data-test="task-list"] .odc-task-list-node__trigger-underline')
-    .trigger('mouseenter')
+    .trigger('mouseenter', { force: true })
     .invoke('show');
 });
 
@@ -693,9 +693,9 @@ When(
     pipelineBuilderPage.clickAddTask();
     cy.get(pipelineBuilderPO.formView.quickSearch).type(task);
     cy.get('[aria-label="Quick search list"]').should('be.visible');
-    cy.get(
-      pipelineBuilderPO.formView.quickSearchListItem(task, provider),
-    ).click();
+    cy.get(pipelineBuilderPO.formView.quickSearchListItem(task, provider))
+      .eq(0)
+      .click();
     cy.byTestID('task-cta').click();
     pipelineBuilderPage.clickOnTask(task);
     pipelineBuilderSidePane.removeTask();

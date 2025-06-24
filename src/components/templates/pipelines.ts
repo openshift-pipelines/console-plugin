@@ -7,23 +7,27 @@ spec:
   params:
     - name: paramName
       type: string
-  resources:
-    - name: app-git
-      type: git
-    - name: app-image
-      type: image
+    - name: IMAGE
+      type: string
+  workspaces:
+    - name: source-workspace
   tasks:
     - name: build-app
       taskRef:
-        name: s2i-java-11
-        kind: ClusterTask
-      resources:
-        inputs:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: s2i-java
+          - name: namespace
+            value: openshift-pipelines
+      workspaces:
         - name: source
-          resource: app-git
-        outputs:
-        - name: image
-          resource: app-image
+          workspace: source-workspace
+      params:
+        - name: IMAGE
+          value: $(params.IMAGE)
 `;
 
 export const newPipelineResourceTemplate = `

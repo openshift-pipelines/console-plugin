@@ -1,4 +1,5 @@
-@pipelines
+#  Following tests has been marked broken due to the following issue https://issues.redhat.com/browse/SRVKP-7859
+@pipelines @broken-test
 Feature: Pipelines overview page
               As a developer, I would like to view pipeline overview page in Administrator view 
 
@@ -23,16 +24,14 @@ Feature: Pipelines overview page
              Then user can see PipelineRun status, Duration, Total runs, Number of PipelineRuns charts
 
 
-     #  Following test has been marked broken due to the following issue https://issues.redhat.com/browse/SRVKP-7859
-        @regression @broken-test
+        @regression
         Scenario: Pipeline details page from overview page task runs: P-13-TC02
              When user selects "aut-pipelines-overview" in Project dropdown
              When user clicks on Pipeline "pipe-one" in pipeline overview table
              Then user will be redirected to Pipeline Details page with header name "pipe-one"
 
 
-     #  Following test has been marked broken due to the following issue https://issues.redhat.com/browse/SRVKP-7859
-        @regression @broken-test
+        @regression
         Scenario: Pipeline run details page from overview page task runs: P-13-TC02
              When user selects "aut-pipelines-overview" in Project dropdown
              When user clicks on Total Pipelineruns number of "pipe-one" in pipeline overview table

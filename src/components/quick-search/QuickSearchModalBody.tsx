@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { debounce } from 'lodash-es';
+import { useHistory } from 'react-router';
 import { ResizeDirection } from 're-resizable';
 import { Rnd } from 'react-rnd';
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
@@ -13,7 +15,8 @@ import {
   removeQueryArgument,
   setQueryArgument,
 } from '../utils/router';
-import { useHistory } from 'react-router';
+import { fetchArtifactHubTasks } from '../catalog/apis/artifactHub';
+import { normalizeArtifactHubTasks } from '../catalog/providers/useArtifactHubTasksProvider';
 
 import './QuickSearchModalBody.scss';
 
@@ -113,17 +116,6 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   }, []);
 
   React.useEffect(() => {
-    if (searchTerm) {
-      const { filteredItems, viewAllLinks, catalogItemTypes } =
-        searchCatalog(searchTerm);
-      setCatalogItems(filteredItems);
-      setCatalogTypes(catalogItemTypes);
-      setViewAll(viewAllLinks);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchCatalog]);
-
-  React.useEffect(() => {
     if (catalogItems && !selectedItemId) {
       setSelectedItemId(catalogItems[0]?.uid);
       setSelectedItem(catalogItems[0]);
@@ -150,24 +142,60 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     setTimeout(() => setIsRndActive(false), 0);
   };
 
+  const searchVersion = React.useRef(0);
+
+  const handleSearch = React.useCallback(
+    async (value: string) => {
+      const currentVersion = ++searchVersion.current;
+
+      if (!value) {
+        setCatalogItems(null);
+        removeQueryArgument('catalogSearch');
+        return;
+      }
+
+      const [artifactHubResults, catalogResults] = await Promise.all([
+        fetchArtifactHubTasks(value),
+        searchCatalog(value),
+      ]);
+
+      // Ignore results if a newer search version has started
+      if (currentVersion !== searchVersion.current) return;
+
+      const normalizedArtifactHubItems =
+        normalizeArtifactHubTasks(artifactHubResults);
+      const { filteredItems, viewAllLinks, catalogItemTypes } = catalogResults;
+
+      const mergedItems = [
+        ...normalizedArtifactHubItems,
+        ...filteredItems,
+      ].filter(
+        (item, index, self) =>
+          index ===
+          self.findIndex(
+            (i) =>
+              i.name === item.name && i.data?.version === item.data?.version,
+          ),
+      );
+      setCatalogItems(mergedItems);
+      setCatalogTypes(catalogItemTypes);
+      setViewAll(viewAllLinks);
+      setQueryArgument('catalogSearch', value);
+    },
+    [searchCatalog],
+  );
+
+  const debouncedHandleSearch = React.useMemo(
+    () => debounce(handleSearch, 300),
+    [handleSearch],
+  );
+
   const onSearch = React.useCallback(
     (_event: React.FormEvent<HTMLInputElement>, value: string) => {
       setSearchTerm(value);
-      if (value) {
-        const { filteredItems, viewAllLinks, catalogItemTypes } =
-          searchCatalog(value);
-        setCatalogItems(filteredItems);
-        setCatalogTypes(catalogItemTypes);
-        setViewAll(viewAllLinks);
-        setQueryArgument('catalogSearch', value);
-      } else {
-        setCatalogItems(null);
-        removeQueryArgument('catalogSearch');
-      }
-      setSelectedItemId('');
-      setSelectedItem(null);
+      debouncedHandleSearch(value);
     },
-    [searchCatalog],
+    [debouncedHandleSearch],
   );
 
   const onCancel = React.useCallback(() => {

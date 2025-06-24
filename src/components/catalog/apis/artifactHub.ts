@@ -182,3 +182,21 @@ export const updateArtifactHubTask = async (
     throw err;
   }
 };
+
+export const fetchArtifactHubTasks = async (
+  query: string,
+  limit: number = 20,
+): Promise<ArtifactHubTask[]> => {
+  try {
+    const response = await fetch(
+      `${ARTIFACTHUB_API_BASE_URL}/packages/search?ts_query_web=${encodeURIComponent(
+        query,
+      )}&facets=false&sort=relevance&limit=${limit}&offset=0`,
+    );
+    const data = await response.json();
+    return data.packages || [];
+  } catch (error) {
+    console.warn('Error searching Artifact Hub tasks:', error);
+    return [];
+  }
+};

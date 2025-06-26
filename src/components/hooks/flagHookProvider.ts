@@ -102,19 +102,19 @@ export const useFlagHookProvider = (setFeatureFlag: SetFeatureFlag) => {
   setFeatureFlag(FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER, true);
   setFeatureFlag(
     FLAG_HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION,
-    false,
+    true,
   );
   setFeatureFlag(
     FLAG_HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_PAGE_ROUTE_EXTENSION,
-    false,
+    true,
   );
   setFeatureFlag(
     FLAG_HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_YAML_TEMPLATE_EXTENSION,
-    false,
+    true,
   );
   setFeatureFlag(
     FLAG_HIDE_STATIC_PIPELINE_PLUGIN_DEVCONSOLE_ADD_ACTION_EXTENSION,
-    false,
+    true,
   );
   setFeatureFlag(FLAG_HIDE_STATIC_PIPELINE_PLUGIN_REPOSITORY_FORM, true);
   setFeatureFlag(FLAG_HIDE_STATIC_PIPELINE_PLUGIN_PAC_FORM, true);

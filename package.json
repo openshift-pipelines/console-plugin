@@ -156,7 +156,8 @@
       "pipelineBuilder": "./components/pipeline-builder",
       "catalog": "./components/catalog",
       "taskDetails": "./components/tasks",
-      "pacComponent": "./components/pac/"
+      "pacComponent": "./components/pac/",
+      "yamlTemplates": "./components/templates"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

@@ -1410,5 +1410,68 @@
         "HIDE_STATIC_PIPELINE_PLUGIN_REPOSITORY_FORM"
       ]
     }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "pipeline-topology-model-factory",
+      "priority": 800,
+      "resources": {
+        "pipelines": {
+          "model": {
+            "kind": "Pipeline",
+            "group": "tekton.dev",
+            "version": "v1"
+          },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        },
+        "pipelineRuns": {
+          "model": {
+            "kind": "PipelineRun",
+            "group": "tekton.dev",
+            "version": "v1"
+          },
+          "opts": { "isList": true, "optional": true, "namespaced": true }
+        }
+      },
+      "getDataModelReconciler": {
+        "$codeRef": "topology.getPipelinesDataModelReconciler"
+      }
+    },
+    "flags": {
+      "required": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_TOPOLOGY_DATA_FACTORY_EXTENSION"
+      ]
+    }
+  },
+  {
+    "type": "console.topology/decorator/provider",
+    "properties": {
+      "id": "pipeline-run-decorator",
+      "priority": 100,
+      "quadrant": "lowerLeft",
+      "decorator": { "$codeRef": "topology.getPipelineRunDecorator" }
+    },
+    "flags": {
+      "required": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_TOPOLOGY_DECORATOR_PROVIDER_EXTENSION"
+      ]
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-pipelines-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "insertBefore": "topology-tab-section-network-overview",
+      "provider": {
+        "$codeRef": "topology.usePipelinesSideBarTabSection"
+      }
+    },
+    "flags": {
+      "required": [
+        "HIDE_STATIC_PIPELINE_PLUGIN_TOPOLOGY_DETAILS_TABSECTION_EXTENSION"
+      ]
+    }
   }
 ]

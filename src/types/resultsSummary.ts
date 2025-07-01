@@ -1,5 +1,5 @@
 import { Selector } from '@openshift-console/dynamic-plugin-sdk';
-import { SummaryProps } from 'src/components/pipelines-overview/utils';
+import { SummaryProps } from '../components/pipelines-overview/utils';
 
 export enum DataType {
   PipelineRun = 'tekton.dev/v1.PipelineRun',

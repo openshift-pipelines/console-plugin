@@ -157,7 +157,8 @@
       "catalog": "./components/catalog",
       "taskDetails": "./components/tasks",
       "pacComponent": "./components/pac/",
-      "yamlTemplates": "./components/templates"
+      "yamlTemplates": "./components/templates",
+      "topology": "./components/topology"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

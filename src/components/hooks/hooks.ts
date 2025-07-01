@@ -1,8 +1,10 @@
 import {
+  K8sResourceCommon,
   WatchK8sResource,
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { SDKStoreState } from '@openshift-console/dynamic-plugin-sdk/lib/app/redux-types';
+import { merge } from 'lodash-es';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
@@ -59,4 +61,21 @@ export const useUserAnnotationForManualStart = () => {
   return {
     [StartedByAnnotation.user]: user.username,
   };
+};
+
+type AnnotationMap = { [annotationKey: string]: string };
+
+const mergeAnnotationsWithResource = (
+  annotations: AnnotationMap,
+  resource: K8sResourceCommon,
+) => {
+  return merge({}, resource, { metadata: { annotations }, spec: {} });
+};
+
+export const usePipelineRunWithUserAnnotation = (
+  plr: PipelineRunKind,
+): PipelineRunKind => {
+  const annotations = useUserAnnotationForManualStart();
+
+  return plr && mergeAnnotationsWithResource(annotations, plr);
 };

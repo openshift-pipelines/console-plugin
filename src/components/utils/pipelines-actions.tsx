@@ -74,6 +74,49 @@ export const rerunPipeline: KebabAction = (
     .catch((err) => modal(ModalErrorContent, { error: err.message }));
 };
 
+export const rerunPipelineAction: KebabAction = (
+  kind: K8sKind,
+  pipelineRun: PipelineRunKind,
+  modal?: any,
+  customData: RerunPipelineData = {},
+) => {
+  // t('Start last run')
+  const { labelKey = 'Start last run', onComplete } = customData;
+  const sharedProps = { labelKey, accessReview: {} };
+
+  if (
+    !pipelineRun ||
+    !_.has(pipelineRun, 'metadata.name') ||
+    !_.has(pipelineRun, 'metadata.namespace')
+  ) {
+    return sharedProps;
+  }
+  return {
+    ...sharedProps,
+    callback: () => {
+      k8sCreate({
+        model: returnValidPipelineRunModel(pipelineRun),
+        data: getPipelineRunData(null, pipelineRun),
+      })
+        .then((res) => {
+          if (typeof onComplete === 'function') {
+            onComplete(res);
+          }
+        })
+        .catch((err) => {
+          modal(ModalErrorContent, { error: err.message });
+        });
+    },
+    accessReview: {
+      group: kind.apiGroup,
+      resource: kind.plural,
+      name: pipelineRun.metadata.name,
+      namespace: pipelineRun.metadata.namespace,
+      verb: 'create',
+    },
+  };
+};
+
 export const rerunPipelineAndRedirect: KebabAction = (
   kind: K8sKind,
   pipelineRun: PipelineRunKind,
@@ -84,4 +127,11 @@ export const rerunPipelineAndRedirect: KebabAction = (
     // t('Start last run')
     labelKey: 'Start last run',
   });
+};
+
+export const rerunPipelineAndStay: KebabAction = (
+  kind: K8sKind,
+  pipelineRun: PipelineRunKind,
+) => {
+  return rerunPipelineAction(kind, pipelineRun);
 };

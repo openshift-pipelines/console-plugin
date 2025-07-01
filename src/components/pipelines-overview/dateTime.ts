@@ -2,6 +2,9 @@ import * as _ from 'lodash-es';
 import { t } from '../utils/common-utils';
 import { getLastLanguage } from './utils';
 
+export const maxClockSkewMS = -60000;
+const lang = getLastLanguage();
+
 // Conversions between units and milliseconds
 const s = 1000;
 const m = s * 60;
@@ -239,6 +242,18 @@ export const timeToMinutes = (timeString: string): number => {
   }
 };
 
+export const getDurationValues = (ms: number) => {
+  const milliseconds = Math.max(ms ?? 0, 0);
+  let seconds = Math.floor(milliseconds / 1000);
+  let minutes = Math.floor(seconds / 60);
+  seconds %= 60;
+  let hours = Math.floor(minutes / 60);
+  minutes %= 60;
+  const days = Math.floor(hours / 24);
+  hours %= 24;
+  return { days, hours, minutes, seconds };
+};
+
 export const getDuration = (seconds: number, long?: boolean): string => {
   if (seconds === 0) {
     return t('less than a sec');
@@ -274,4 +289,77 @@ export const getDuration = (seconds: number, long?: boolean): string => {
   }
 
   return duration.trim();
+};
+
+export const dateTimeFormatter = (langArg?: string) =>
+  new Intl.DateTimeFormat(langArg ?? lang, {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    year: 'numeric',
+  });
+
+export const relativeTimeFormatter = (langArg?: string) =>
+  Intl.RelativeTimeFormat
+    ? new Intl.RelativeTimeFormat(langArg ?? lang ?? 'en')
+    : null;
+
+export const fromNow = (
+  dateTime: string | Date,
+  now?: Date,
+  options?,
+  langArg?: string,
+) => {
+  // Check for null. If dateTime is null, it returns incorrect date Jan 1 1970.
+  if (!dateTime) {
+    return '-';
+  }
+
+  const d = new Date(dateTime);
+  const ms = (now ?? new Date()).getTime() - d.getTime();
+  const justNow = t('Just now');
+
+  // If the event occurred less than one minute in the future, assume it's clock drift and show "Just now."
+  if (!options?.omitSuffix && ms < 60000 && ms > maxClockSkewMS) {
+    return justNow;
+  }
+
+  // Do not attempt to handle other dates in the future.
+  if (ms < 0) {
+    return '-';
+  }
+
+  const { days, hours, minutes } = getDurationValues(ms);
+
+  if (options?.omitSuffix) {
+    if (days) {
+      return t('{{count}} day', { count: days });
+    }
+    if (hours) {
+      return t('{{count}} hour', { count: hours });
+    }
+    return t('{{count}} minute', { count: minutes });
+  }
+
+  // Fallback to normal date/time formatting if Intl.RelativeTimeFormat is not
+  // available. This is the case for older Safari versions.
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat#browser_compatibility
+  if (!relativeTimeFormatter(langArg)) {
+    return dateTimeFormatter().format(d);
+  }
+
+  if (!days && !hours && !minutes) {
+    return justNow;
+  }
+
+  if (days) {
+    return relativeTimeFormatter(langArg).format(-days, 'day');
+  }
+
+  if (hours) {
+    return relativeTimeFormatter(langArg).format(-hours, 'hour');
+  }
+
+  return relativeTimeFormatter(langArg).format(-minutes, 'minute');
 };

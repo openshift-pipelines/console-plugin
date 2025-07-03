@@ -7,6 +7,7 @@ import {
   QuickSearchProviders,
 } from './utils/quick-search-types';
 import { quickSearch } from './utils/quick-search-utils';
+import { TaskSearchCallback } from '../pipeline-builder/types';
 
 type QuickSearchControllerProps = {
   namespace: string;
@@ -20,6 +21,8 @@ type QuickSearchControllerProps = {
   disableKeyboardOpen?: boolean;
   setIsOpen: (isOpen: boolean) => void;
   detailsRenderer?: DetailsRendererFunction;
+  callback?: TaskSearchCallback;
+  setFailedTasks?: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
@@ -34,6 +37,8 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   setIsOpen,
   disableKeyboardOpen = false,
   detailsRenderer,
+  callback,
+  setFailedTasks,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
@@ -114,6 +119,8 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
       searchCatalog={searchCatalog}
       viewContainer={viewContainer}
       detailsRenderer={detailsRenderer}
+      callback={callback}
+      setFailedTasks={setFailedTasks}
     />
   );
 };

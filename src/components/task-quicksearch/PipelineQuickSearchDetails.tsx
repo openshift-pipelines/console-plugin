@@ -43,6 +43,9 @@ import './PipelineQuickSearchDetails.scss';
 const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
   selectedItem,
   closeModal,
+  namespace,
+  callback,
+  setFailedTasks,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const history = useHistory();
@@ -192,6 +195,11 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
                 onClick={(e) => {
                   handleCta(e, selectedItem, closeModal, history, {
                     selectedVersion,
+                    selectedItem,
+                    isDevConsoleProxyAvailable,
+                    namespace,
+                    callback,
+                    setFailedTasks,
                   });
                 }}
               >

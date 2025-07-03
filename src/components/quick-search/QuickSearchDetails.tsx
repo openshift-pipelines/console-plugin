@@ -5,17 +5,21 @@ import {
   TextContent,
   Title,
 } from '@patternfly/react-core';
+import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
 import CatalogBadges from '../catalog/CatalogBadges';
 import { handleCta } from './utils/quick-search-utils';
-import { useHistory } from 'react-router';
+import { TaskSearchCallback } from '../pipeline-builder/types';
 
 import './QuickSearchDetails.scss';
 
 export type QuickSearchDetailsRendererProps = {
   selectedItem: CatalogItem;
   closeModal: () => void;
+  namespace?: string;
+  callback?: TaskSearchCallback;
+  setFailedTasks?: React.Dispatch<React.SetStateAction<string[]>>;
 };
 export type DetailsRendererFunction = (
   props: QuickSearchDetailsRendererProps,
@@ -29,6 +33,9 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
   selectedItem,
   closeModal,
   detailsRenderer,
+  namespace,
+  callback,
+  setFailedTasks,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const history = useHistory();
@@ -69,7 +76,13 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
 
   return (
     <div className="ocs-quick-search-details">
-      {detailsContentRenderer({ selectedItem, closeModal })}
+      {detailsContentRenderer({
+        selectedItem,
+        closeModal,
+        namespace,
+        callback,
+        setFailedTasks,
+      })}
     </div>
   );
 };

@@ -12,7 +12,7 @@ export const handleCta = async (
   item: CatalogItem,
   closeModal: () => void,
   history,
-  callbackProps: { [key: string]: string } = {},
+  callbackProps: { [key: string]: any } = {},
 ) => {
   e.preventDefault();
   const { href, callback } = item.cta;

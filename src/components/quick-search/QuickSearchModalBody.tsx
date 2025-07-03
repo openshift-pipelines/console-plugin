@@ -17,6 +17,8 @@ import {
 } from '../utils/router';
 import { fetchArtifactHubTasks } from '../catalog/apis/artifactHub';
 import { normalizeArtifactHubTasks } from '../catalog/providers/useArtifactHubTasksProvider';
+import { TaskSearchCallback } from '../pipeline-builder/types';
+import useTasksProvider from '../catalog/providers/useTasksProvider';
 
 import './QuickSearchModalBody.scss';
 
@@ -30,7 +32,9 @@ interface QuickSearchModalBodyProps {
   icon?: React.ReactNode;
   detailsRenderer?: DetailsRendererFunction;
   maxDimension?: { maxHeight: number; maxWidth: number };
-  viewContainer?: HTMLElement; // pass the html container element to specify the movement boundary
+  viewContainer?: HTMLElement; // pass the html container element to specifythe movement boundary
+  callback?: TaskSearchCallback;
+  setFailedTasks?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
@@ -44,6 +48,8 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   detailsRenderer,
   maxDimension,
   viewContainer,
+  callback,
+  setFailedTasks,
 }) => {
   const DEFAULT_HEIGHT_WITH_NO_ITEMS = 60;
   const DEFAULT_HEIGHT_WITH_ITEMS = 483;
@@ -71,6 +77,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     height: number;
     width: number;
   }>();
+  const [tektonTasks] = useTasksProvider({});
   const [draggableBoundary, setDraggableBoundary] =
     React.useState<string>(null);
   const ref = React.useRef<HTMLDivElement>();
@@ -162,8 +169,10 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       // Ignore results if a newer search version has started
       if (currentVersion !== searchVersion.current) return;
 
-      const normalizedArtifactHubItems =
-        normalizeArtifactHubTasks(artifactHubResults);
+      const normalizedArtifactHubItems = normalizeArtifactHubTasks(
+        artifactHubResults,
+        tektonTasks,
+      );
       const { filteredItems, viewAllLinks, catalogItemTypes } = catalogResults;
 
       const mergedItems = [
@@ -361,6 +370,8 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
                 catalogItems?.find((item) => item.uid === itemId),
               );
             }}
+            callback={callback}
+            setFailedTasks={setFailedTasks}
           />
         )}
       </div>

@@ -8,6 +8,7 @@ import QuickSearchDetails, {
 import QuickSearchList from './QuickSearchList';
 import { CatalogLinkData } from './utils/quick-search-types';
 import { CatalogType } from '../catalog/types';
+import { TaskSearchCallback } from '../pipeline-builder/types';
 import './QuickSearchContent.scss';
 
 interface QuickSearchContentProps {
@@ -23,6 +24,8 @@ interface QuickSearchContentProps {
   closeModal: () => void;
   detailsRenderer?: DetailsRendererFunction;
   onListChange?: (items: number) => void;
+  callback?: TaskSearchCallback;
+  setFailedTasks?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
@@ -38,6 +41,8 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
   limitItemCount,
   detailsRenderer,
   onListChange,
+  callback,
+  setFailedTasks,
 }) => {
   return (
     <Split className="ocs-quick-search-content">
@@ -66,6 +71,9 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
           detailsRenderer={detailsRenderer}
           selectedItem={selectedItem}
           closeModal={closeModal}
+          namespace={namespace}
+          callback={callback}
+          setFailedTasks={setFailedTasks}
         />
       </SplitItem>
     </Split>

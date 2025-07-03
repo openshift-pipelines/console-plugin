@@ -189,6 +189,8 @@ const Contents: React.FC<
       setIsOpen={setIsOpen}
       disableKeyboardOpen
       icon={<PlusCircleIcon width="1.5em" height="1.5em" />}
+      callback={savedCallback.current}
+      setFailedTasks={setFailedTasks}
       detailsRenderer={(props) => <PipelineQuickSearchDetails {...props} />}
     />
   );

@@ -6,6 +6,7 @@ import QuickSearchModalBody from './QuickSearchModalBody';
 import { QuickSearchData } from './utils/quick-search-types';
 import './QuickSearchModal.scss';
 import { useBoundingClientRect } from './useBoundingClientRect';
+import { TaskSearchCallback } from '../pipeline-builder/types';
 
 interface QuickSearchModalProps {
   isOpen: boolean;
@@ -18,6 +19,8 @@ interface QuickSearchModalProps {
   limitItemCount?: number;
   icon?: React.ReactNode;
   detailsRenderer?: DetailsRendererFunction;
+  callback?: TaskSearchCallback;
+  setFailedTasks?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
@@ -31,6 +34,8 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   icon,
   limitItemCount,
   detailsRenderer,
+  callback,
+  setFailedTasks,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const clientRect = useBoundingClientRect(viewContainer);
@@ -60,6 +65,8 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
         detailsRenderer={detailsRenderer}
         maxDimension={{ maxHeight, maxWidth }}
         viewContainer={viewContainer}
+        callback={callback}
+        setFailedTasks={setFailedTasks}
       />
     </Modal>
   ) : null;

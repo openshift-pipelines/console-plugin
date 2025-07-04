@@ -123,7 +123,10 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   }, []);
 
   React.useEffect(() => {
-    if (catalogItems && !selectedItemId) {
+    if (
+      catalogItems &&
+      (!selectedItemId || catalogItems[0]?.uid !== selectedItemId)
+    ) {
       setSelectedItemId(catalogItems[0]?.uid);
       setSelectedItem(catalogItems[0]);
     }

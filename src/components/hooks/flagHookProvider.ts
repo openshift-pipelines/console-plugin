@@ -121,15 +121,15 @@ export const useFlagHookProvider = (setFeatureFlag: SetFeatureFlag) => {
 
   setFeatureFlag(
     FLAG_HIDE_STATIC_PIPELINE_PLUGIN_TOPOLOGY_DATA_FACTORY_EXTENSION,
-    false,
+    true,
   );
   setFeatureFlag(
     FLAG_HIDE_STATIC_PIPELINE_PLUGIN_TOPOLOGY_DECORATOR_PROVIDER_EXTENSION,
-    false,
+    true,
   );
   setFeatureFlag(
     FLAG_HIDE_STATIC_PIPELINE_PLUGIN_TOPOLOGY_DETAILS_TABSECTION_EXTENSION,
-    false,
+    true,
   );
 };
 

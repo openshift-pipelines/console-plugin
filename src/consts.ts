@@ -195,3 +195,4 @@ export const ARTIFACTHUB_TASK_DETAILS_URL = '/api/dev-console/artifacthub/get';
 export const GITHUB_ARTIFACTHUB_TASK_YAML_URL =
   '/api/dev-console/artifacthub/yaml';
 export const FLAG_OPENSHIFT_PIPELINE = 'OPENSHIFT_PIPELINE';
+export const PIPELINE_RUN_AUTO_START_FAILED = `bridge/pipeline-run-auto-start-failed`;

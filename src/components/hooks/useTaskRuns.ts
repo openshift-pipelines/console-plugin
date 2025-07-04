@@ -39,6 +39,29 @@ export const getTaskRunsOfPipelineRun = (
   );
 };
 
+export const useTaskRunsK8s = (
+  namespace: string,
+  pipelineRunName?: string,
+): [TaskRunKind[], boolean, unknown] => {
+  const taskRunResource = pipelineRunName
+    ? {
+        groupVersionKind: getGroupVersionKindForModel(TaskRunModel),
+        namespace,
+        selector: {
+          matchLabels: {
+            [TektonResourceLabel.pipelinerun]: pipelineRunName,
+          },
+        },
+        isList: true,
+      }
+    : {
+        groupVersionKind: getGroupVersionKindForModel(TaskRunModel),
+        namespace,
+        isList: true,
+      };
+  return useK8sWatchResource<TaskRunKind[]>(taskRunResource);
+};
+
 export const useTaskRuns = (
   namespace: string,
   pipelineRunName?: string,
@@ -207,7 +230,6 @@ export const useRuns = <Kind extends K8sResourceCommon>(
     };
   }, [groupVersionKind, namespace, optionsMemo, isList]);
   const [resources, loaded, error] = useK8sWatchResource(watchOptions);
-
   // if a pipeline run was removed from etcd, we want to still include it in the return value without re-querying tekton-results
   const etcdRuns = React.useMemo(() => {
     if (!loaded || error) {

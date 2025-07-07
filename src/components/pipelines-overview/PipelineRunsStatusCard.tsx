@@ -296,31 +296,31 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
     {
       x: t('Succeeded'),
       y: Math.round(
-        (100 * data?.summary?.[0].succeeded) / data?.summary?.[0].total,
+        (100 * data?.summary?.[0]?.succeeded) / data?.summary?.[0]?.total,
       ),
     },
     {
       x: t('Failed'),
       y: Math.round(
-        (100 * data?.summary?.[0].failed) / data?.summary?.[0].total,
+        (100 * data?.summary?.[0]?.failed) / data?.summary?.[0]?.total,
       ),
     },
     {
       x: t('Running'),
       y: Math.round(
-        (100 * data?.summary?.[0].running) / data?.summary?.[0].total,
+        (100 * data?.summary?.[0]?.running) / data?.summary?.[0]?.total,
       ),
     },
     {
       x: t('Cancelled'),
       y: Math.round(
-        (100 * data?.summary?.[0].cancelled) / data?.summary?.[0].total,
+        (100 * data?.summary?.[0]?.cancelled) / data?.summary?.[0]?.total,
       ),
     },
     {
       x: t('Others'),
       y: Math.round(
-        (100 * data?.summary?.[0].others) / data?.summary?.[0].total,
+        (100 * data?.summary?.[0]?.others) / data?.summary?.[0]?.total,
       ),
     },
   ];
@@ -397,7 +397,9 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                         }}
                       />
                     }
-                    title={`${data?.summary?.[0].succeeded}/${data?.summary?.[0].total}`}
+                    title={`${data?.summary?.[0]?.succeeded ?? 0}/${
+                      data?.summary?.[0]?.total ?? 0
+                    }`}
                     titleComponent={
                       <ChartLabel
                         style={{

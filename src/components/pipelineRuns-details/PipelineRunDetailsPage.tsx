@@ -51,6 +51,7 @@ import {
   usePipelineRun,
   useTaskRuns,
 } from '../hooks/useTaskRuns';
+import { useGetActiveUser } from '../hooks/hooks';
 
 type PipelineRunDetailsPageProps = {
   name: string;
@@ -66,6 +67,7 @@ const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
   const [pipelineRun, pipelineRunLoaded] = usePipelineRun(namespace, name);
   const [taskRuns] = useTaskRuns(namespace, name);
   const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, name);
+  const currentUser = useGetActiveUser();
   const reRunAction = () => {
     const { pipelineRef, pipelineSpec } = pipelineRun.spec;
     if (
@@ -74,7 +76,7 @@ const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
     ) {
       k8sCreate({
         model: returnValidPipelineRunModel(pipelineRun),
-        data: getPipelineRunData(null, pipelineRun),
+        data: getPipelineRunData(null, currentUser, pipelineRun),
       }).then((plr) => {
         navigate(
           resourcePathFromModel(

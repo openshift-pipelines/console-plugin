@@ -6,7 +6,7 @@ import { ModalComponentProps, ModalWrapper } from '../modals/modal';
 import { convertPipelineToModalData } from './utils';
 import ModalStructure from '../modals/ModalStructure';
 import { ModalComponent } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/ModalProvider';
-import { usePipelinePVC } from '../hooks/hooks';
+import { useGetActiveUser, usePipelinePVC } from '../hooks/hooks';
 import { TRIGGER_BINDING_EMPTY } from '../../consts';
 import AddTriggerForm from './AddTriggerForm';
 import { submitTrigger } from './submit-utils';
@@ -22,6 +22,7 @@ const AddTriggerModal: ModalComponent<AddTriggerModalProps> = ({
   closeModal,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const currentUser = useGetActiveUser();
   const [pipelinePVC, pipelinePVCLoaded] = usePipelinePVC(
     pipeline.metadata?.name,
     pipeline.metadata?.namespace,
@@ -39,7 +40,7 @@ const AddTriggerModal: ModalComponent<AddTriggerModalProps> = ({
   };
 
   const handleSubmit = (values: AddTriggerFormValues, actions) => {
-    return submitTrigger(pipeline, values)
+    return submitTrigger(pipeline, values, currentUser)
       .then(() => {
         closeModal();
       })

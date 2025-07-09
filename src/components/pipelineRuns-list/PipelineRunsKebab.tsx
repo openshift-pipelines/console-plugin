@@ -37,12 +37,14 @@ type PipelineRunsKebabProps = {
   obj: PipelineRunKind;
   taskRuns: TaskRunKind[];
   taskRunStatusObj: TaskStatus;
+  currentUser: string;
 };
 
 const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
   obj,
   taskRuns,
   taskRunStatusObj,
+  currentUser,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const message = (
@@ -105,7 +107,7 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
     ) {
       k8sCreate({
         model: returnValidPipelineRunModel(obj),
-        data: getPipelineRunData(null, obj),
+        data: getPipelineRunData(null, currentUser, obj),
       });
     } else {
       errorModal({

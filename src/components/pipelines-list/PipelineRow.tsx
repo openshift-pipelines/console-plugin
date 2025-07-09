@@ -38,11 +38,13 @@ type PipelineRowWithoutTaskRunsProps = {
   obj: PipelineWithLatest;
   taskRunStatusObj: TaskStatus;
   activeColumnIDs: Set<string>;
+  currentUser: string;
 };
 
 type PipelineRowWithTaskRunsProps = {
   obj: PipelineWithLatest;
   activeColumnIDs: Set<string>;
+  currentUser: string;
 };
 
 const TASKRUNSFORPLRCACHE: { [key: string]: TaskRunKind[] } = {};
@@ -64,6 +66,7 @@ const PipelineRowTable = ({
   taskRunsLoaded,
   taskRunStatusObj,
   activeColumnIDs,
+  currentUser,
 }) => {
   return (
     <>
@@ -138,14 +141,14 @@ const PipelineRowTable = ({
         id=""
         activeColumnIDs={activeColumnIDs}
       >
-        <PipelineKebab pipeline={obj} />
+        <PipelineKebab pipeline={obj} currentUser={currentUser} />
       </TableData>
     </>
   );
 };
 
 const PipelineRowWithoutTaskRuns: React.FC<PipelineRowWithoutTaskRunsProps> =
-  React.memo(({ obj, taskRunStatusObj, activeColumnIDs }) => {
+  React.memo(({ obj, taskRunStatusObj, activeColumnIDs, currentUser }) => {
     return (
       <PipelineRowTable
         obj={obj}
@@ -153,12 +156,13 @@ const PipelineRowWithoutTaskRuns: React.FC<PipelineRowWithoutTaskRunsProps> =
         taskRunsLoaded
         taskRunStatusObj={taskRunStatusObj}
         activeColumnIDs={activeColumnIDs}
+        currentUser={currentUser}
       />
     );
   });
 
 const PipelineRowWithTaskRunsFetch: React.FC<PipelineRowWithTaskRunsProps> =
-  React.memo(({ obj, activeColumnIDs }) => {
+  React.memo(({ obj, activeColumnIDs, currentUser }) => {
     const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
     const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
       obj.latestRun.metadata.namespace,
@@ -177,12 +181,13 @@ const PipelineRowWithTaskRunsFetch: React.FC<PipelineRowWithTaskRunsProps> =
         taskRunsLoaded={taskRunsLoaded}
         taskRunStatusObj={undefined}
         activeColumnIDs={activeColumnIDs}
+        currentUser={currentUser}
       />
     );
   });
 
 const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> =
-  React.memo(({ obj, activeColumnIDs }) => {
+  React.memo(({ obj, activeColumnIDs, currentUser }) => {
     let PLRTaskRuns: TaskRunKind[];
     let taskRunsLoaded: boolean;
     const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
@@ -199,6 +204,7 @@ const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> =
         <PipelineRowWithTaskRunsFetch
           obj={obj}
           activeColumnIDs={activeColumnIDs}
+          currentUser={currentUser}
         />
       );
     }
@@ -209,21 +215,25 @@ const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> =
         taskRunsLoaded={taskRunsLoaded}
         taskRunStatusObj={undefined}
         activeColumnIDs={activeColumnIDs}
+        currentUser={currentUser}
       />
     );
   });
 
-const PipelineRow: React.FC<RowProps<PipelineWithLatest>> = ({
-  obj,
-  activeColumnIDs,
-}) => {
+const PipelineRow: React.FC<
+  RowProps<PipelineWithLatest, { currentUser?: string }>
+> = ({ obj, activeColumnIDs, rowData: { currentUser } }) => {
   const plrStatus = pipelineRunStatus(obj.latestRun);
   if (
     plrStatus === ComputedStatus.Cancelled &&
     (obj?.latestRun?.status?.childReferences ?? []).length > 0
   ) {
     return (
-      <PipelineRowWithTaskRuns obj={obj} activeColumnIDs={activeColumnIDs} />
+      <PipelineRowWithTaskRuns
+        obj={obj}
+        activeColumnIDs={activeColumnIDs}
+        currentUser={currentUser}
+      />
     );
   }
 
@@ -233,6 +243,7 @@ const PipelineRow: React.FC<RowProps<PipelineWithLatest>> = ({
       obj={obj}
       taskRunStatusObj={taskRunStatusObj}
       activeColumnIDs={activeColumnIDs}
+      currentUser={currentUser}
     />
   );
 };

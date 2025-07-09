@@ -6,16 +6,13 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import {
-  DELETED_RESOURCE_IN_K8S_ANNOTATION,
   PIPELINE_SERVICE_ACCOUNT,
   preferredNameAnnotation,
-  RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
   TektonResourceLabel,
   VolumeTypes,
 } from '../../consts';
 import {
   EventListenerModel,
-  PipelineRunModel,
   RouteModel,
   ServiceModel,
   TriggerTemplateModel,
@@ -42,10 +39,8 @@ import {
   VolumeClaimTemplateType,
 } from '../../types';
 import { errorModal } from '../modals/error-modal';
-import {
-  getPipelineRunParams,
-  getPipelineRunWorkspaces,
-} from './../utils/pipeline-utils';
+import { getPipelineRunData } from '../utils/utils';
+import { getPipelineRunWorkspaces } from './../utils/pipeline-utils';
 import { CREATE_PIPELINE_RESOURCE } from './validation-utils';
 
 export const getRandomChars = (len = 6): string => {
@@ -110,88 +105,6 @@ export const getPipelineRunGenerateName = (
   }
 
   return `${pipelineRun?.metadata?.name?.replace(/-[a-z0-9]{5,6}$/, '')}-`;
-};
-
-export const getPipelineRunData = (
-  pipeline: PipelineKind = null,
-  latestRun?: PipelineRunKind,
-  options?: { generateName: boolean },
-): PipelineRunKind => {
-  if (!pipeline && !latestRun) {
-    // eslint-disable-next-line no-console
-    console.error('Missing parameters, unable to create new PipelineRun');
-    return null;
-  }
-
-  const pipelineName = getPipelineName(pipeline, latestRun);
-
-  const workspaces = latestRun?.spec.workspaces;
-
-  const latestRunParams = latestRun?.spec.params;
-  const pipelineParams = pipeline?.spec.params;
-  const params = latestRunParams || getPipelineRunParams(pipelineParams);
-  // TODO: We should craft a better method to allow us to provide configurable annotations and labels instead of
-  // blinding merging existing content from potential real Pipeline and PipelineRun resources
-  const annotations = _.merge(
-    {},
-    pipeline?.metadata?.annotations,
-    latestRun?.metadata?.annotations,
-    // {
-    //   [StartedByAnnotation.user]: getActiveUserName(),
-    // },
-    !latestRun?.spec.pipelineRef &&
-      !latestRun?.metadata?.annotations?.[preferredNameAnnotation] && {
-        [preferredNameAnnotation]: pipelineName,
-      },
-  );
-  delete annotations['kubectl.kubernetes.io/last-applied-configuration'];
-  delete annotations['tekton.dev/v1beta1TaskRuns'];
-  delete annotations['results.tekton.dev/log'];
-  delete annotations['results.tekton.dev/record'];
-  delete annotations['results.tekton.dev/result'];
-  delete annotations[DELETED_RESOURCE_IN_K8S_ANNOTATION];
-  delete annotations[RESOURCE_LOADED_FROM_RESULTS_ANNOTATION];
-
-  const newPipelineRun: PipelineRunKind = {
-    apiVersion: pipeline ? pipeline.apiVersion : latestRun?.apiVersion,
-    kind: PipelineRunModel.kind,
-    metadata: {
-      ...(options?.generateName
-        ? {
-            generateName: `${pipelineName}-`,
-          }
-        : {
-            name:
-              latestRun?.metadata?.name !== undefined
-                ? `${getPipelineRunGenerateName(latestRun)}${getRandomChars()}`
-                : `${pipelineName}-${getRandomChars()}`,
-          }),
-      annotations,
-      namespace: pipeline
-        ? pipeline?.metadata?.namespace
-        : latestRun?.metadata?.namespace,
-      labels: _.merge(
-        {},
-        pipeline?.metadata?.labels,
-        latestRun?.metadata?.labels,
-        (latestRun?.spec.pipelineRef || pipeline) && {
-          'tekton.dev/pipeline': pipelineName,
-        },
-      ),
-    },
-    spec: {
-      ...(latestRun?.spec || {}),
-      ...((latestRun?.spec.pipelineRef || pipeline) && {
-        pipelineRef: {
-          name: pipelineName,
-        },
-      }),
-      ...(params && { params }),
-      workspaces,
-      status: null,
-    },
-  };
-  return migratePipelineRun(newPipelineRun);
 };
 
 export const getDefaultVolumeClaimTemplate = (
@@ -327,6 +240,7 @@ export const convertResources = (
 export const getPipelineRunFromForm = (
   pipeline: PipelineKind,
   formValues: CommonPipelineModalFormikValues,
+  currentUser: string,
   labels?: { [key: string]: string },
   annotations?: { [key: string]: string },
   options?: { generateName: boolean },
@@ -352,7 +266,7 @@ export const getPipelineRunFromForm = (
       }),
     },
   };
-  return getPipelineRunData(pipeline, pipelineRunData, options);
+  return getPipelineRunData(pipeline, currentUser, pipelineRunData, options);
 };
 
 export const createTriggerTemplate = (

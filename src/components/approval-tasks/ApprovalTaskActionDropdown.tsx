@@ -1,10 +1,6 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useSelector } from 'react-redux';
 import { ApprovalTaskKind, PipelineRunKind } from '../../types';
 import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
-import { SDKStoreState } from '@openshift-console/dynamic-plugin-sdk/lib/app/redux-types';
 import {
   Dropdown,
   DropdownItem,
@@ -16,13 +12,13 @@ import {
 import { KEBAB_BUTTON_ID } from '../../consts';
 import { useTranslation } from 'react-i18next';
 import {
-  UserInfo,
   useAccessReview,
   useModal,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { ApprovalTaskModel } from '../../models';
 import { approvalModal } from './modal';
 import { ApproverStatusResponse } from '../../types';
+import { useGetActiveUser } from '../hooks/hooks';
 
 type ApprovalTaskActionDropdownProps = {
   approvalTask: ApprovalTaskKind;
@@ -33,9 +29,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
   approvalTask,
   pipelineRun,
 }) => {
-  const currentUser: UserInfo = useSelector(
-    (state: SDKStoreState) => state.sdkCore.user,
-  );
+  const currentUser = useGetActiveUser();
   const launchModal = useModal();
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
@@ -53,7 +47,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
     launchModal(approvalModal, {
       resource: approvalTask,
       pipelineRunName: pipelineRun?.metadata?.name,
-      userName: currentUser.username,
+      userName: currentUser,
       type: 'approve',
     });
   };
@@ -62,7 +56,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
     launchModal(approvalModal, {
       resource: approvalTask,
       pipelineRunName: pipelineRun?.metadata?.name,
-      userName: currentUser.username,
+      userName: currentUser,
       type: 'reject',
     });
   };
@@ -78,7 +72,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
   const isDropdownDisabled =
     !canApproveAndRejectResource ||
     state !== ApproverStatusResponse.Pending ||
-    !approvers?.find((approver) => approver === currentUser.username);
+    !approvers?.find((approver) => approver === currentUser);
 
   const tooltipContent = () => {
     if (!canApproveAndRejectResource) {
@@ -90,7 +84,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
     if (state !== ApproverStatusResponse.Pending) {
       return t(`PipelineRun has been {{state}}`, { state });
     }
-    if (!approvers?.find((approver) => approver === currentUser.username)) {
+    if (!approvers?.find((approver) => approver === currentUser)) {
       return t('User not an approver');
     }
     return t('Permission denied');

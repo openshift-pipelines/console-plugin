@@ -11,6 +11,7 @@ import ModalStructure from '../modals/ModalStructure';
 import { startPipelineSchema } from './validation-utils';
 import { convertPipelineToModalData } from './utils';
 import {
+  useGetActiveUser,
   usePipelinePVC,
   useUserAnnotationForManualStart,
 } from '../hooks/hooks';
@@ -27,6 +28,7 @@ const StartPipelineModal: ModalComponent<
 > = ({ pipeline, closeModal, onSubmit }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const userStartedAnnotation = useUserAnnotationForManualStart();
+  const currentUser = useGetActiveUser();
   const [pipelinePVC, pipelinePVCLoaded] = usePipelinePVC(
     pipeline.metadata?.name,
     pipeline.metadata?.namespace,
@@ -42,7 +44,13 @@ const StartPipelineModal: ModalComponent<
   };
 
   const handleSubmit = (values: StartPipelineFormValues, actions) => {
-    return submitStartPipeline(values, pipeline, null, userStartedAnnotation)
+    return submitStartPipeline(
+      values,
+      pipeline,
+      currentUser,
+      null,
+      userStartedAnnotation,
+    )
       .then((res) => {
         onSubmit && onSubmit(res);
         closeModal();

@@ -1,5 +1,6 @@
 import {
   K8sResourceCommon,
+  UserInfo,
   WatchK8sResource,
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
@@ -78,4 +79,11 @@ export const usePipelineRunWithUserAnnotation = (
   const annotations = useUserAnnotationForManualStart();
 
   return plr && mergeAnnotationsWithResource(annotations, plr);
+};
+
+export const useGetActiveUser = (): string => {
+  const currentUser: UserInfo = useSelector(
+    (state: SDKStoreState) => state.sdkCore.user,
+  );
+  return currentUser?.username;
 };

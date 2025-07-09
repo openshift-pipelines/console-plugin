@@ -4,6 +4,7 @@ import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   preferredNameAnnotation,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
+  StartedByAnnotation,
 } from '../../consts';
 import { PipelineRunModel } from '../../models';
 import {
@@ -146,6 +147,7 @@ export const migratePipelineRun = (
 
 export const getPipelineRunData = (
   pipeline: PipelineKind = null,
+  currentUser: string,
   latestRun?: PipelineRunKind,
   options?: { generateName: boolean },
 ): PipelineRunKind => {
@@ -168,9 +170,9 @@ export const getPipelineRunData = (
     {},
     pipeline?.metadata?.annotations,
     latestRun?.metadata?.annotations,
-    // {
-    //   [StartedByAnnotation.user]: getActiveUserName(),
-    // },
+    {
+      [StartedByAnnotation.user]: currentUser,
+    },
     !latestRun?.spec.pipelineRef &&
       !latestRun?.metadata.annotations?.[preferredNameAnnotation] && {
         [preferredNameAnnotation]: pipelineName,

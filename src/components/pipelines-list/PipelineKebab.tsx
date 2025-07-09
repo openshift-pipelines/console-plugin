@@ -34,7 +34,7 @@ import {
 } from '../start-pipeline';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { errorModal } from '../modals/error-modal';
-import { getPipelineRunData } from '../start-pipeline/utils';
+import { getPipelineRunData } from '../utils/utils';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { rerunPipeline } from '../utils/pipelines-actions';
 import { usePipelineTriggerTemplateNames } from '../utils/triggers';
@@ -42,18 +42,26 @@ import { resourcePathFromModel } from '../utils/utils';
 
 type PipelineKebabProps = {
   pipeline: PipelineWithLatest;
+  currentUser: string;
 };
 
 export const triggerPipeline = (
   pipeline: PipelineKind,
+  currentUser: string,
   onSubmit?: (pipelineRun: PipelineRunKind) => void,
 ) => {
-  k8sCreate({ model: PipelineRunModel, data: getPipelineRunData(pipeline) })
+  k8sCreate({
+    model: PipelineRunModel,
+    data: getPipelineRunData(pipeline, currentUser),
+  })
     .then(onSubmit)
     .catch((err) => errorModal({ error: err.message }));
 };
 
-const PipelineKebab: React.FC<PipelineKebabProps> = ({ pipeline }) => {
+const PipelineKebab: React.FC<PipelineKebabProps> = ({
+  pipeline,
+  currentUser,
+}) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { name, namespace } = pipeline.metadata;
   const launchDeleteModal = useDeleteModal(pipeline);
@@ -116,14 +124,20 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({ pipeline }) => {
         onSubmit: handlePipelineRunSubmit,
       });
     } else {
-      triggerPipeline(pipeline, handlePipelineRunSubmit);
+      triggerPipeline(pipeline, currentUser, handlePipelineRunSubmit);
     }
   };
 
   const rerunPipelineAndRedirect = () => {
-    rerunPipeline(PipelineRunModel, pipeline.latestRun, launchModal, {
-      onComplete: handlePipelineRunSubmit,
-    });
+    rerunPipeline(
+      PipelineRunModel,
+      pipeline.latestRun,
+      currentUser,
+      launchModal,
+      {
+        onComplete: handlePipelineRunSubmit,
+      },
+    );
   };
 
   const addTrigger = () => {

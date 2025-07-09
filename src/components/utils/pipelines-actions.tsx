@@ -34,6 +34,7 @@ export type KebabOption = {
 export type KebabAction = (
   kind: K8sKind,
   obj: K8sResourceKind,
+  currentUser: string,
   resources?: any,
   customData?: any,
 ) => KebabOption;
@@ -51,7 +52,8 @@ export const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
 export const rerunPipeline: KebabAction = (
   kind: K8sKind,
   pipelineRun: PipelineRunKind,
-  modal?: any,
+  currentUser: string,
+  modal: any,
   customData: RerunPipelineData = {},
 ) => {
   // t('Start last run')
@@ -68,7 +70,7 @@ export const rerunPipeline: KebabAction = (
 
   k8sCreate({
     model: returnValidPipelineRunModel(pipelineRun),
-    data: getPipelineRunData(null, pipelineRun),
+    data: getPipelineRunData(null, currentUser, pipelineRun),
   })
     .then(typeof onComplete === 'function' ? onComplete : () => {})
     .catch((err) => modal(ModalErrorContent, { error: err.message }));
@@ -77,6 +79,7 @@ export const rerunPipeline: KebabAction = (
 export const rerunPipelineAction: KebabAction = (
   kind: K8sKind,
   pipelineRun: PipelineRunKind,
+  currentUser: string,
   modal?: any,
   customData: RerunPipelineData = {},
 ) => {
@@ -96,7 +99,7 @@ export const rerunPipelineAction: KebabAction = (
     callback: () => {
       k8sCreate({
         model: returnValidPipelineRunModel(pipelineRun),
-        data: getPipelineRunData(null, pipelineRun),
+        data: getPipelineRunData(null, currentUser, pipelineRun),
       })
         .then((res) => {
           if (typeof onComplete === 'function') {
@@ -132,6 +135,7 @@ export const rerunPipelineAndRedirect: KebabAction = (
 export const rerunPipelineAndStay: KebabAction = (
   kind: K8sKind,
   pipelineRun: PipelineRunKind,
+  currentUser: string,
 ) => {
-  return rerunPipelineAction(kind, pipelineRun);
+  return rerunPipelineAction(kind, pipelineRun, currentUser);
 };

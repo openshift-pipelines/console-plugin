@@ -20,7 +20,7 @@ import PipelineDetails from './PipelineDetails';
 import { PipelineKind, PipelineRunKind } from '../../types';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import PipelineParamatersTab from './PipelineParamatersTab';
-import { useLatestPipelineRun } from '../hooks/hooks';
+import { useGetActiveUser, useLatestPipelineRun } from '../hooks/hooks';
 import { rerunPipeline } from '../utils/pipelines-actions';
 import _ from 'lodash';
 import {
@@ -38,6 +38,7 @@ const PipelineDetailsPage = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const params = useParams();
   const navigate = useNavigate();
+  const currentUser = useGetActiveUser();
   const { name, ns: namespace } = params;
   const [pipeline, loaded, loadError] = useK8sWatchResource<PipelineKind>({
     groupVersionKind: getGroupVersionKindForModel(PipelineModel),
@@ -96,14 +97,20 @@ const PipelineDetailsPage = () => {
         onSubmit: handlePipelineRunSubmit,
       });
     } else {
-      triggerPipeline(pipeline, handlePipelineRunSubmit);
+      triggerPipeline(pipeline, currentUser, handlePipelineRunSubmit);
     }
   };
 
   const rerunPipelineAndRedirect = () => {
-    rerunPipeline(PipelineRunModel, latestPipelineRun, launchModal, {
-      onComplete: handlePipelineRunSubmit,
-    });
+    rerunPipeline(
+      PipelineRunModel,
+      latestPipelineRun,
+      currentUser,
+      launchModal,
+      {
+        onComplete: handlePipelineRunSubmit,
+      },
+    );
   };
 
   const addTrigger = () => {

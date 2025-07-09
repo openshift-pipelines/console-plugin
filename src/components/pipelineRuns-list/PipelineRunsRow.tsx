@@ -62,12 +62,14 @@ type PipelineRunRowWithoutTaskRunsProps = {
   obj: PipelineRunKind;
   taskRunStatusObj: TaskStatus;
   activeColumnIDs: Set<string>;
+  currentUser: string;
   repositoryPLRs?: boolean;
 };
 
 type PipelineRunRowWithTaskRunsProps = {
   obj: PipelineRunKind;
   activeColumnIDs: Set<string>;
+  currentUser: string;
   repositoryPLRs?: boolean;
 };
 
@@ -91,6 +93,7 @@ const PipelineRunRowTable = ({
   taskRunStatusObj,
   activeColumnIDs,
   repositoryPLRs,
+  currentUser,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const plrLabels = obj.metadata.labels;
@@ -237,6 +240,7 @@ const PipelineRunRowTable = ({
           obj={obj}
           taskRuns={PLRTaskRuns}
           taskRunStatusObj={taskRunStatusObj}
+          currentUser={currentUser}
         />
       </TableData>
     </>
@@ -244,21 +248,30 @@ const PipelineRunRowTable = ({
 };
 
 const PipelineRunRowWithoutTaskRuns: React.FC<PipelineRunRowWithoutTaskRunsProps> =
-  React.memo(({ obj, taskRunStatusObj, activeColumnIDs, repositoryPLRs }) => {
-    return (
-      <PipelineRunRowTable
-        obj={obj}
-        PLRTaskRuns={[]}
-        taskRunsLoaded
-        taskRunStatusObj={taskRunStatusObj}
-        activeColumnIDs={activeColumnIDs}
-        repositoryPLRs={repositoryPLRs}
-      />
-    );
-  });
+  React.memo(
+    ({
+      obj,
+      taskRunStatusObj,
+      activeColumnIDs,
+      repositoryPLRs,
+      currentUser,
+    }) => {
+      return (
+        <PipelineRunRowTable
+          obj={obj}
+          PLRTaskRuns={[]}
+          taskRunsLoaded
+          taskRunStatusObj={taskRunStatusObj}
+          activeColumnIDs={activeColumnIDs}
+          repositoryPLRs={repositoryPLRs}
+          currentUser={currentUser}
+        />
+      );
+    },
+  );
 
 const PipelineRunRowWithTaskRunsFetch: React.FC<PipelineRunRowWithTaskRunsProps> =
-  React.memo(({ obj, activeColumnIDs, repositoryPLRs }) => {
+  React.memo(({ obj, activeColumnIDs, repositoryPLRs, currentUser }) => {
     const cacheKey = `${obj.metadata.namespace}-${obj.metadata.name}`;
     const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
       obj.metadata.namespace,
@@ -278,12 +291,13 @@ const PipelineRunRowWithTaskRunsFetch: React.FC<PipelineRunRowWithTaskRunsProps>
         taskRunStatusObj={undefined}
         activeColumnIDs={activeColumnIDs}
         repositoryPLRs={repositoryPLRs}
+        currentUser={currentUser}
       />
     );
   });
 
 const PipelineRunRowWithTaskRuns: React.FC<PipelineRunRowWithTaskRunsProps> =
-  React.memo(({ obj, activeColumnIDs, repositoryPLRs }) => {
+  React.memo(({ obj, activeColumnIDs, repositoryPLRs, currentUser }) => {
     let PLRTaskRuns: TaskRunKind[];
     let taskRunsLoaded: boolean;
     const cacheKey = `${obj.metadata.namespace}-${obj.metadata.name}`;
@@ -300,6 +314,7 @@ const PipelineRunRowWithTaskRuns: React.FC<PipelineRunRowWithTaskRunsProps> =
         <PipelineRunRowWithTaskRunsFetch
           obj={obj}
           activeColumnIDs={activeColumnIDs}
+          currentUser={currentUser}
         />
       );
     }
@@ -311,6 +326,7 @@ const PipelineRunRowWithTaskRuns: React.FC<PipelineRunRowWithTaskRunsProps> =
         taskRunStatusObj={undefined}
         activeColumnIDs={activeColumnIDs}
         repositoryPLRs={repositoryPLRs}
+        currentUser={currentUser}
       />
     );
   });
@@ -320,9 +336,10 @@ const PipelineRunRow: React.FC<
     PipelineRunKind,
     {
       repositoryPLRs?: boolean;
+      currentUser?: string;
     }
   >
-> = ({ obj, activeColumnIDs, rowData: { repositoryPLRs } }) => {
+> = ({ obj, activeColumnIDs, rowData: { repositoryPLRs, currentUser } }) => {
   const plrStatus = pipelineRunStatus(obj);
   if (
     plrStatus === ComputedStatus.Cancelled &&
@@ -333,6 +350,7 @@ const PipelineRunRow: React.FC<
         obj={obj}
         activeColumnIDs={activeColumnIDs}
         repositoryPLRs={repositoryPLRs}
+        currentUser={currentUser}
       />
     );
   }
@@ -343,6 +361,7 @@ const PipelineRunRow: React.FC<
       taskRunStatusObj={taskRunStatusObj}
       activeColumnIDs={activeColumnIDs}
       repositoryPLRs={repositoryPLRs}
+      currentUser={currentUser}
     />
   );
 };

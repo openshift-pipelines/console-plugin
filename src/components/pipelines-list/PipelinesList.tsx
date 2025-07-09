@@ -17,6 +17,7 @@ import { useGetPipelineRuns } from '../hooks/useTektonResult';
 import { PipelineModel } from '../../models';
 import { PropPipelineData, augmentRunsToData } from '../utils/pipeline-augment';
 import { ListPageFilter } from '../list-pages/ListPageFilter';
+import { useGetActiveUser } from '../hooks/hooks';
 
 type PipelineListProps = {
   namespace?: string;
@@ -32,6 +33,7 @@ const PipelinesList: React.FC<PipelineListProps> = ({
   namespace = namespace || ns;
   const columns = usePipelinesColumns(namespace);
   const filters = usePipelinesFilters();
+  const currentUser = useGetActiveUser();
   const sortColumnIndex = !namespace ? 5 : 4;
   const [pipelines, pipelinesLoaded, pipelinesLoadError] = useK8sWatchResource<
     PropPipelineData[]
@@ -76,6 +78,9 @@ const PipelinesList: React.FC<PipelineListProps> = ({
         loaded={pipelinesLoaded && pipelineRunsLoaded}
         loadError={pipelinesLoadError || pipelineRunsLoadError}
         Row={PipelineRow}
+        rowData={{
+          currentUser,
+        }}
         unfilteredData={data}
         sortColumnIndex={sortColumnIndex}
         sortDirection={SortByDirection.desc}

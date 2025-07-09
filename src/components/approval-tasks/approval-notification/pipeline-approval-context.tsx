@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useSelector } from 'react-redux';
 import {
-  UserInfo,
   WatchK8sResource,
   useActiveNamespace,
 } from '@openshift-console/dynamic-plugin-sdk';
@@ -16,9 +12,9 @@ import {
 import ApprovalToastContent from './ApprovalToastContent';
 import { ApprovalStatus, ApprovalTaskKind } from '../../../types';
 import { ApprovalTaskModel } from '../../../models';
-import { SDKStoreState } from '@openshift-console/dynamic-plugin-sdk/lib/app/redux-types';
 import { ApprovalLabels, ApprovalFields } from '../../../consts';
 import { useToast } from '../../toast/useToast';
+import { useGetActiveUser } from '../../hooks/hooks';
 
 const getPipelineRunsofApprovals = (
   approvalTasks: ApprovalTaskKind[],
@@ -50,9 +46,7 @@ export const usePipelineApprovalToast = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { addToast, removeToast } = useToast();
   const [namespace] = useActiveNamespace();
-  const currentUser: UserInfo = useSelector(
-    (state: SDKStoreState) => state.sdkCore.user,
-  );
+  const currentUser = useGetActiveUser();
   const [currentToasts, setCurrentToasts] = React.useState<{
     [key: string]: { toastId: string };
   }>({});
@@ -81,7 +75,7 @@ export const usePipelineApprovalToast = () => {
     let toastID = '';
     const userApprovalTasksInWait = approvalTasks.filter(
       (approvalTask) =>
-        checkUserIsApprover(approvalTask, currentUser.username) &&
+        checkUserIsApprover(approvalTask, currentUser) &&
         approvalTask?.status?.state === ApprovalStatus.RequestSent,
     );
 

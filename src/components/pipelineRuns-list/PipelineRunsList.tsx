@@ -13,9 +13,10 @@ import { PipelineRunKind } from '../../types';
 import { useGetPipelineRuns } from '../hooks/useTektonResult';
 import PipelineRunsRow from './PipelineRunsRow';
 import { useLoadMoreOnScroll } from '../utils/tekton-results';
+import { useGetActiveUser } from '../hooks/hooks';
+import { ListPageFilter } from '../list-pages/ListPageFilter';
 
 import './PipelineRunsList.scss';
-import { ListPageFilter } from '../list-pages/ListPageFilter';
 
 type PipelineRunsListProps = {
   namespace?: string;
@@ -35,6 +36,7 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
   const { ns } = useParams();
+  const currentUser = useGetActiveUser();
   namespace = namespace || ns;
   const columns = usePipelineRunsColumns(namespace, repositoryPLRs);
   const filters = usePipelineRunsFilters();
@@ -90,6 +92,7 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
         unfilteredData={data}
         rowData={{
           repositoryPLRs,
+          currentUser,
         }}
         sortColumnIndex={sortColumnIndex}
         sortDirection={SortByDirection.desc}

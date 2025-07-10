@@ -31,7 +31,7 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
         x={x}
         y={y}
         radius={radius}
-        className="odc-decorator"
+        className="opp-decorator"
         showBackground
         {...rest}
       />
@@ -41,7 +41,7 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   if (href) {
     return external ? (
       <a
-        className="odc-decorator__link"
+        className="opp-decorator__link"
         href={href}
         target="_blank"
         rel="noopener noreferrer"
@@ -55,7 +55,7 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
       </a>
     ) : (
       <Link
-        className="odc-decorator__link"
+        className="opp-decorator__link"
         to={href}
         role="button"
         aria-label={ariaLabel}

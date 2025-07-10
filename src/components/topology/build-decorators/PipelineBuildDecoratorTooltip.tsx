@@ -35,19 +35,19 @@ const PipelineBuildDecoratorTooltip: React.FC<
   const breakdownInfo = <TaskStatusToolTip taskStatus={taskStatus} />;
 
   return (
-    <div className="odc-pipeline-build-decorator-tooltip">
-      <div className="odc-pipeline-build-decorator-tooltip__title">
+    <div className="opp-pipeline-build-decorator-tooltip">
+      <div className="opp-pipeline-build-decorator-tooltip__title">
         {t('Pipeline {{status}}', { status })}
       </div>
-      <div className="odc-pipeline-build-decorator-tooltip__status-bars-wrapper">
-        <div className="odc-pipeline-build-decorator-tooltip__status-bars-title">
+      <div className="opp-pipeline-build-decorator-tooltip__status-bars-wrapper">
+        <div className="opp-pipeline-build-decorator-tooltip__status-bars-title">
           {t('Task status')}
         </div>
-        <div className="odc-pipeline-build-decorator-tooltip__status-bars">
+        <div className="opp-pipeline-build-decorator-tooltip__status-bars">
           {pipelineBars}
         </div>
       </div>
-      <div className="odc-pipeline-build-decorator-tooltip__status-breakdown">
+      <div className="opp-pipeline-build-decorator-tooltip__status-breakdown">
         {breakdownInfo}
       </div>
     </div>

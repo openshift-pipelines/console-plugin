@@ -9,10 +9,10 @@ type LogSnippetProps = {
 
 const LogSnippet: React.FC<LogSnippetProps> = ({ logSnippet, message }) => {
   return (
-    <div className="ocs-log-snippet">
-      <p className="ocs-log-snippet__status-message">{message}</p>
+    <div className="opp-log-snippet">
+      <p className="opp-log-snippet__status-message">{message}</p>
       {logSnippet && (
-        <pre className="co-pre ocs-log-snippet__log-snippet">{logSnippet}</pre>
+        <pre className="co-pre opp-log-snippet__log-snippet">{logSnippet}</pre>
       )}
     </div>
   );

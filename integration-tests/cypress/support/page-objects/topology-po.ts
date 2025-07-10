@@ -24,13 +24,13 @@ export const topologyPO = {
     sectionTitle: 'h2',
     tabName: '[role="dialog"] li button',
     pipelineRunsDetails: '.sidebar__section-heading',
-    pipelineRunsLogSnippet: '.ocs-log-snippet__log-snippet',
-    pipelineRunsStatus: '.ocs-log-snippet__status-message',
+    pipelineRunsLogSnippet: '.opp-log-snippet__log-snippet',
+    pipelineRunsStatus: '.opp-log-snippet__status-message',
     pipelineRunsLinks: 'a.sidebar__section-view-all',
     resourcesTab: {
       startLastRun:
         '[role="dialog"] li.list-group-item.pipeline-overview div button',
-      pipelineRuns: 'li.odc-pipeline-run-item',
+      pipelineRuns: 'li.opp-pipeline-run-item',
     },
   },
 };

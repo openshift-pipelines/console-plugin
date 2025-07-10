@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { Alert, AlertActionCloseButton, AlertProps } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertActionCloseButton,
+  AlertProps,
+} from '@patternfly/react-core';
 
 import './PipelineOverviewAlert.scss';
 
@@ -8,13 +12,12 @@ type PipelineOverviewAlertProps = {
   onClose?: () => void;
 };
 
-const PipelineOverviewAlert: React.FC<PipelineOverviewAlertProps & AlertProps> = ({
-  title,
-  onClose,
-}) => {
+const PipelineOverviewAlert: React.FC<
+  PipelineOverviewAlertProps & AlertProps
+> = ({ title, onClose }) => {
   return (
     <Alert
-      className="pipeline-overview-alert"
+      className="opp-pipeline-overview-alert"
       variant="custom"
       isInline
       title={title}

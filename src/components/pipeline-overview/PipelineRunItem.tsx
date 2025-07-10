@@ -34,7 +34,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
     : creationTimestamp;
   const logDetails = getPLRLogSnippet(pipelineRun, taskRuns);
   return (
-    <li className="odc-pipeline-run-item list-group-item">
+    <li className="opp-pipeline-run-item list-group-item">
       <Grid hasGutter>
         <GridItem span={6}>
           <div>
@@ -42,7 +42,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
             {lastUpdated && (
               <>
                 {' '}
-                <span className="odc-pipeline-run-item__time pf-v6-u-text-color-subtle">
+                <span className="opp-pipeline-run-item__time pf-v6-u-text-color-subtle">
                   ({fromNow(lastUpdated)})
                 </span>
               </>

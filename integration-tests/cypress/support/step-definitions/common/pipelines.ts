@@ -147,3 +147,9 @@ Then(
     topologyPage.verifyPipelineRunStatus(status);
   },
 );
+
+Given('user is at {string} on Pipeline Builder page', (view: string) => {
+  navigateTo(devNavigationMenu.Pipelines);
+  pipelinesPage.clickOnCreatePipeline();
+  startPipelineInPipelinesPage.selectView(view);
+});

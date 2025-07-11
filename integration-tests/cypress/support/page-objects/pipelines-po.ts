@@ -24,7 +24,7 @@ export const pipelineBuilderPO = {
     deleteTaskIcon: '[data-id="delete-task"]',
     seriesTask: '[data-id^="has-run-after-"][data-kind="node"]',
     parallelTask: '[data-id^="shared-parallel-"][data-kind="node"]',
-    sectionTitle: '.odc-pipeline-builder-page h2',
+    sectionTitle: '.odc-pipeline-builder-page [class*="form__label-text"]',
     addResourcesLink: '[data-test="add-action"]',
     quickSearchListItem(itemName: string, itemType: string): string {
       return `[data-test="item-name-${itemName}-${itemType}"]`;
@@ -49,7 +49,7 @@ export const pipelineBuilderPO = {
       parameterUrlHelper: '[data-test="parameter url"]',
       parameterRevision: '[data-test="value formData.tasks.0.params.1.value"]',
       parameterRevisionHelper: '[data-test="parameter revision"]',
-      imageName: '#form-input-formData-tasks-0-params-3-value-field',
+      imageName: '[data-test="value formData.tasks.0.params.0.value"]',
       script: '#SCRIPT',
       args: '#ARGS-0',
       actions: '[data-test-id="actions-menu-button"]',

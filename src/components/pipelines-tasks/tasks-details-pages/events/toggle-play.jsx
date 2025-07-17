@@ -3,6 +3,9 @@ import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Button } from '@patternfly/react-core';
 import { withTranslation } from 'react-i18next';
+import { PlayIcon, PauseIcon } from '@patternfly/react-icons';
+
+import './toggle-play.scss';
 
 class TogglePlayWithTranslation extends React.Component {
   shouldComponentUpdate(nextProps) {
@@ -13,13 +16,16 @@ class TogglePlayWithTranslation extends React.Component {
 
   render() {
     const klass = classNames(
-      'co-toggle-play fa',
+      'opp-toggle-play',
       this.props.className,
-      this.props.active ? 'co-toggle-play--active' : 'co-toggle-play--inactive',
+      this.props.active
+        ? 'opp-toggle-play--active'
+        : 'opp-toggle-play--inactive',
     );
     const { t } = this.props;
     return (
       <Button
+        icon={this.props.active ? <PauseIcon /> : <PlayIcon />}
         variant="plain"
         className={klass}
         onClick={this.props.onClick}

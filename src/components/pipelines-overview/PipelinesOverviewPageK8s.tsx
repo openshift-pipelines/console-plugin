@@ -57,7 +57,7 @@ const PipelinesOverviewPageK8s: React.FC = () => {
   return (
     <>
       <PageSection variant="light" isFilled className="pf-v5-u-pl-md">
-        <Title headingLevel="h2"> {t('Overview')}</Title>
+        <Title headingLevel="h2">{t('Overview')}</Title>
       </PageSection>
       <div className="k8s-overview-info-alert">
         <K8sDataLimitationAlert />

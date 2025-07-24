@@ -27,7 +27,7 @@ const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({
   return (
     <>
       <PageSection isFilled variant="light">
-        <Title headingLevel="h2"> {t('Pipeline details')}</Title>
+        <Title headingLevel="h2">{t('Pipeline details')}</Title>
         <PipelineVisualization pipeline={pipeline} />
         <div className="row">
           <div className="col-sm-6">

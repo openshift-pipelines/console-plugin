@@ -12,7 +12,7 @@ const PipelineBuilderHeader: React.FC = () => {
       <Flex className="odc-pipeline-builder-header__content">
         <FlexItem grow={{ default: 'grow' }}>
           <PageSection variant="light" isFilled className="pf-v5-u-pb-0">
-            <Title headingLevel="h2"> {t('Pipeline builder')}</Title>
+            <Title headingLevel="h2">{t('Pipeline builder')}</Title>
           </PageSection>
         </FlexItem>
       </Flex>

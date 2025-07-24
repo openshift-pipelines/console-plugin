@@ -17,7 +17,7 @@ const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <PageSection isFilled variant="light">
-      <Title headingLevel="h2"> {t('PipelineRun details')}</Title>
+      <Title headingLevel="h2">{t('PipelineRun details')}</Title>
       <PipelineRunVisualization pipelineRun={pipelineRun} />
       <div className="row">
         <div className="col-sm-6">

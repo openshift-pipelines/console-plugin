@@ -55,7 +55,7 @@ const PipelinesOverviewPage: React.FC = () => {
   return (
     <>
       <PageSection variant="light" isFilled className="pf-v5-u-pl-md">
-        <Title headingLevel="h2"> {t('Overview')}</Title>
+        <Title headingLevel="h2">{t('Overview')}</Title>
       </PageSection>
       <Flex className="project-dropdown-label__flex">
         <FlexItem>

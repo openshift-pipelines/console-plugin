@@ -191,7 +191,7 @@ export const fetchArtifactHubTasks = async (
     const response = await fetch(
       `${ARTIFACTHUB_API_BASE_URL}/packages/search?ts_query_web=${encodeURIComponent(
         query,
-      )}&facets=false&sort=relevance&limit=${limit}&offset=0`,
+      )}&facets=false&sort=relevance&limit=${limit}&offset=0&kind=7`,
     );
     const data = await response.json();
     return data.packages || [];

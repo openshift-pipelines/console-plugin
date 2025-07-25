@@ -179,14 +179,16 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       const { filteredItems, viewAllLinks, catalogItemTypes } = catalogResults;
 
       const mergedItems = [
-        ...normalizedArtifactHubItems,
         ...filteredItems,
+        ...normalizedArtifactHubItems,
       ].filter(
         (item, index, self) =>
           index ===
           self.findIndex(
             (i) =>
-              i.name === item.name && i.data?.version === item.data?.version,
+              i.name === item.name &&
+              i.data?.version === item.data?.version &&
+              i.provider === item.provider,
           ),
       );
       setCatalogItems(mergedItems);

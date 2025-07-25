@@ -123,10 +123,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   }, []);
 
   React.useEffect(() => {
-    if (
-      catalogItems &&
-      (!selectedItemId || catalogItems[0]?.uid !== selectedItemId)
-    ) {
+    if (catalogItems && !selectedItemId) {
       setSelectedItemId(catalogItems[0]?.uid);
       setSelectedItem(catalogItems[0]);
     }
@@ -193,6 +190,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       setCatalogTypes(catalogItemTypes);
       setViewAll(viewAllLinks);
       setQueryArgument('catalogSearch', value);
+      setSelectedItemId(null);
     },
     [searchCatalog],
   );

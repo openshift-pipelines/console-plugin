@@ -23,13 +23,16 @@ export const pipelineRunStatus = (pipelineRun): ComputedStatus => {
 
   const succeedCondition = conditions.find((c) => c.type === 'Succeeded');
   const cancelledCondition = conditions.find((c) => c.reason === 'Cancelled');
+  const failedCondition = conditions.find((c) => c.reason === 'Failed');
 
   if (
     [
       SucceedConditionReason.PipelineRunStopped,
       SucceedConditionReason.PipelineRunCancelled,
+      SucceedConditionReason.Cancelled,
     ].includes(pipelineRun.spec?.status) &&
-    !cancelledCondition
+    !cancelledCondition &&
+    !failedCondition
   ) {
     return ComputedStatus.Cancelling;
   }

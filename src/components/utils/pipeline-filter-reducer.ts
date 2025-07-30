@@ -20,16 +20,25 @@ export enum SucceedConditionReason {
 export const pipelineRunStatus = (pipelineRun): ComputedStatus => {
   const conditions = _.get(pipelineRun, ['status', 'conditions'], []);
   if (conditions.length === 0) return null;
-
+  const cancelledReasons = [
+    'Cancelled',
+    'CancelledRunningFinally',
+    'StoppedRunningFinally',
+  ];
   const succeedCondition = conditions.find((c) => c.type === 'Succeeded');
-  const cancelledCondition = conditions.find((c) => c.reason === 'Cancelled');
+  const cancelledCondition = conditions.find((c) =>
+    cancelledReasons.includes(c.reason),
+  );
+  const cancelledStatus = conditions.find((c) => c.status === 'Unknown');
 
   if (
     [
       SucceedConditionReason.PipelineRunStopped,
       SucceedConditionReason.PipelineRunCancelled,
+      SucceedConditionReason.Cancelled,
     ].includes(pipelineRun.spec?.status) &&
-    !cancelledCondition
+    cancelledCondition &&
+    cancelledStatus
   ) {
     return ComputedStatus.Cancelling;
   }

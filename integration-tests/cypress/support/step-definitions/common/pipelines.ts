@@ -7,12 +7,14 @@ import { pageTitle } from '../../constants/pageTitle';
 import { pipelinesPO } from '../../page-objects';
 import {
   pipelineBuilderPage,
+  pipelineDetailsPage,
   pipelineRunDetailsPage,
   pipelinesPage,
   startPipelineInPipelinesPage,
 } from '../../pages';
 import { addPage } from '../../pages/add-page';
 import { app, navigateTo } from '../../pages/app';
+import { actionsDropdownMenu } from '../../pages/functions/common';
 import { gitPage } from '../../pages/git-page';
 import { topologyPage, topologySidePane } from '../../pages/topology-page';
 
@@ -145,5 +147,37 @@ Then(
   (status: string) => {
     topologySidePane.verify();
     topologyPage.verifyPipelineRunStatus(status);
+  },
+);
+
+Given('user is at {string} on Pipeline Builder page', (view: string) => {
+  navigateTo(devNavigationMenu.Pipelines);
+  pipelinesPage.clickOnCreatePipeline();
+  startPipelineInPipelinesPage.selectView(view);
+});
+
+Given(
+  'pipeline {string} is present on Pipeline Details page',
+  (pipelineName: string) => {
+    pipelinesPage.clickOnCreatePipeline();
+    pipelineBuilderPage.createPipelineFromBuilderPage(pipelineName);
+    navigateTo(devNavigationMenu.Pipelines);
+    pipelinesPage.selectPipeline(pipelineName);
+    pipelineDetailsPage.verifyTitle(pipelineName);
+  },
+);
+
+When('user clicks on pipeline {string}', (pipelineName: string) => {
+  pipelinesPage.selectPipeline(pipelineName);
+});
+
+When('user navigates to Pipelines page', () => {
+  navigateTo(devNavigationMenu.Pipelines);
+});
+
+When(
+  'user selects option {string} from Actions menu drop down',
+  (action: string) => {
+    actionsDropdownMenu.selectAction(action);
   },
 );

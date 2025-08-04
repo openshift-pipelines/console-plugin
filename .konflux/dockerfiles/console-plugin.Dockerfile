@@ -1,7 +1,7 @@
 ARG BUILDER=registry.redhat.io/ubi9/nodejs-20@sha256:0b3efb944852c4bed1711dda1b89e0f95f214faaf74506268490b497139327b5
 ARG RUNTIME=registry.redhat.io/ubi9/nginx-124@sha256:fc4def879394f8372626cf139ace7182e5cabbbd13f7a72639c64258f3b853ae
 
-FROM $BUILDER AS builder-ui
+FROM $BUILDER AS builder-ui 
 
 WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .

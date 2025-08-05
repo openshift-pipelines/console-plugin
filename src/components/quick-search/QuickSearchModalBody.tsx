@@ -3,7 +3,7 @@ import { debounce } from 'lodash-es';
 import { useHistory } from 'react-router';
 import { ResizeDirection } from 're-resizable';
 import { Rnd } from 'react-rnd';
-import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
+import { CatalogItem, useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import QuickSearchBar from './QuickSearchBar';
 import QuickSearchContent from './QuickSearchContent';
 import { DetailsRendererFunction } from './QuickSearchDetails';
@@ -21,6 +21,7 @@ import { TaskSearchCallback } from '../pipeline-builder/types';
 import useTasksProvider from '../catalog/providers/useTasksProvider';
 
 import './QuickSearchModalBody.scss';
+import { FLAGS } from '../../types';
 
 interface QuickSearchModalBodyProps {
   allCatalogItemsLoaded: boolean;
@@ -56,6 +57,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   const MIN_HEIGHT = 240;
   const MIN_WIDTH = 225;
   const history = useHistory();
+  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const [catalogItems, setCatalogItems] = React.useState<CatalogItem[]>(null);
   const [catalogTypes, setCatalogTypes] = React.useState<CatalogType[]>([]);
   const [isRndActive, setIsRndActive] = React.useState(false);
@@ -235,7 +237,12 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       if (activeViewAllLink) {
         history.push(activeViewAllLink.to);
       } else if (selectedItem) {
-        handleCta(e, selectedItem, closeModal, history);
+        handleCta(e, selectedItem, closeModal, history, {
+          callback,
+          setFailedTasks,
+          namespace,
+          isDevConsoleProxyAvailable,
+        });
       }
     },
     [closeModal, selectedItem, viewAll],

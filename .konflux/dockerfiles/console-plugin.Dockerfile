@@ -1,5 +1,5 @@
 ARG BUILDER=registry.redhat.io/ubi9/nodejs-20@sha256:0b3efb944852c4bed1711dda1b89e0f95f214faaf74506268490b497139327b5
-ARG RUNTIME=registry.redhat.io/ubi9/nginx-124@sha256:fc4def879394f8372626cf139ace7182e5cabbbd13f7a72639c64258f3b853ae
+ARG RUNTIME=registry.redhat.io/ubi9/nginx-124@sha256:e63a4bef4b5c876b034b8dfe80fe24afd1164ff59e802f3b5dead799ab6f504c
 
 FROM $BUILDER AS builder-ui 
 

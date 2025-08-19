@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageSection, Title } from '@patternfly/react-core';
+import { Grid, GridItem, PageSection, Title } from '@patternfly/react-core';
 
 import PipelineVisualization from './PipelineVisualization';
 import { ResourceSummary } from '../details-page/details-page';
@@ -29,11 +29,11 @@ const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({
       <PageSection isFilled variant="light">
         <Title headingLevel="h2">{t('Pipeline details')}</Title>
         <PipelineVisualization pipeline={pipeline} />
-        <div className="row">
-          <div className="col-sm-6">
+        <Grid hasGutter>
+          <GridItem sm={6}>
             <ResourceSummary resource={pipeline} model={PipelineModel} />
-          </div>
-          <div className="col-sm-6">
+          </GridItem>
+          <GridItem sm={6}>
             <TriggerTemplateResourceLink
               namespace={pipeline.metadata.namespace}
               model={TriggerTemplateModel}
@@ -50,8 +50,8 @@ const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({
               title={t('Finally tasks')}
             />
             <WorkspaceDefinitionList obj={pipeline} />
-          </div>
-        </div>
+          </GridItem>
+        </Grid>
       </PageSection>
     </>
   );

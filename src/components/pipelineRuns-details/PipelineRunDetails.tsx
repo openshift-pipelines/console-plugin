@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { PipelineRunModel } from '../../models';
 import PipelineRunVisualization from './PipelineRunVisualization';
 import PipelineRunCustomDetails from './PipelineRunCustomDetails';
-import { PageSection, Title } from '@patternfly/react-core';
+import { Grid, GridItem, PageSection, Title } from '@patternfly/react-core';
 
 type PipelineRunDetailsProps = {
   obj: PipelineRunKind;
@@ -19,14 +19,14 @@ const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({
     <PageSection isFilled variant="light">
       <Title headingLevel="h2">{t('PipelineRun details')}</Title>
       <PipelineRunVisualization pipelineRun={pipelineRun} />
-      <div className="row">
-        <div className="col-sm-6">
+      <Grid hasGutter>
+        <GridItem sm={6}>
           <ResourceSummary resource={pipelineRun} model={PipelineRunModel} />
-        </div>
-        <div className="col-sm-6 odc-pipeline-run-details__customDetails">
+        </GridItem>
+        <GridItem sm={6} className="odc-pipeline-run-details__customDetails">
           <PipelineRunCustomDetails pipelineRun={pipelineRun} />
-        </div>
-      </div>
+        </GridItem>
+      </Grid>
     </PageSection>
   );
 };

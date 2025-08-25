@@ -75,7 +75,7 @@ Then(
   'user can see events streaming for pipeline runs and all the associated task runs and pods',
   () => {
     app.waitForLoad();
-    cy.get('[role="rowgroup"]').should('be.visible');
+    cy.get('[role="row"]').should('be.visible');
   },
 );
 

@@ -27,7 +27,14 @@ type ApprovalTasksListProps = {
 
 const pipelineApprovalFilterReducer = (obj: ApprovalTaskKind, pipelineRuns) => {
   const pipelineRun = getPipelineRunOfApprovalTask(pipelineRuns, obj);
-  return getApprovalStatus(obj, pipelineRun) || ApprovalStatus.Unknown;
+  const status = getApprovalStatus(obj, pipelineRun);
+  if (
+    status === ApprovalStatus.PartiallyApproved ||
+    status === ApprovalStatus.AlmostApproved
+  ) {
+    return ApprovalStatus.RequestSent;
+  }
+  return status ||  ApprovalStatus.Unknown;
 };
 
 const ApprovalTasksList: React.FC<ApprovalTasksListProps> = ({

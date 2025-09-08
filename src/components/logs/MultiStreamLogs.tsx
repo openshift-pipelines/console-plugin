@@ -9,12 +9,14 @@ type MultiStreamLogsProps = {
   resource: PodKind;
   taskName?: string;
   setCurrentLogsGetter?: (getter: () => string) => void;
+  activeStep?: string;
 };
 
 export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
   resource,
   taskName,
   setCurrentLogsGetter,
+  activeStep,
 }) => {
   const { containers, stillFetching } = getRenderContainers(resource);
 
@@ -39,6 +41,7 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
           resource={resource}
           containers={containers}
           setCurrentLogsGetter={setCurrentLogsGetter}
+          activeStep={activeStep}
         />
       </div>
     </>

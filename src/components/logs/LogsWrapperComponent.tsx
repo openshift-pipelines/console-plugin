@@ -25,6 +25,7 @@ type LogsWrapperComponentProps = {
   downloadAllLabel?: string;
   onDownloadAll?: () => Promise<Error>;
   resource: WatchK8sResource;
+  activeStep?: string;
 };
 
 const LogsWrapperComponent: React.FC<
@@ -34,6 +35,7 @@ const LogsWrapperComponent: React.FC<
   taskRun,
   onDownloadAll,
   downloadAllLabel = 'Download all',
+  activeStep,
   ...props
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -139,6 +141,7 @@ const LogsWrapperComponent: React.FC<
           taskName={taskName}
           resource={resourceRef.current}
           setCurrentLogsGetter={setLogGetter}
+          activeStep={activeStep}
         />
       ) : (
         <TektonTaskRunLog

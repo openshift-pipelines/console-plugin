@@ -434,6 +434,86 @@ describe('Pipeline Build validation schema', () => {
           .catch(shouldHavePassed);
       });
 
+      it('should pass if the task params is string and empty', async () => {
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'test-task',
+              taskSpec: embeddedTaskSpec,
+              params: [{ name: 'test_param', value: '' }],
+            },
+          ],
+        })
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should pass if the task params is array and empty', async () => {
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'test-task',
+              taskSpec: embeddedTaskSpec,
+              params: [{ name: 'test_param', value: [] }],
+            },
+          ],
+        })
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should pass if the task params is array and has empty string as value', async () => {
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'test-task',
+              taskSpec: embeddedTaskSpec,
+              params: [{ name: 'test_param', value: [''] }],
+            },
+          ],
+        })
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should pass if the task params is string and has a value', async () => {
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'test-task',
+              taskSpec: embeddedTaskSpec,
+              params: [{ name: 'test_param', value: 'some value' }],
+            },
+          ],
+        })
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should pass if the task params is array and has values', async () => {
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'test-task',
+              taskSpec: embeddedTaskSpec,
+              params: [
+                {
+                  name: 'test_param',
+                  value: ['some value arg1', 'some value arg2'],
+                },
+              ],
+            },
+          ],
+        })
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
       it('should fail if the taskSpec params are required and not provided', async () => {
         const taskSpecWithParam = merge({}, embeddedTaskSpec, {
           params: [{ name: 'name', description: 'Your name to echo out' }],

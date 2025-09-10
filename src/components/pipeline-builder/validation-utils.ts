@@ -223,10 +223,11 @@ const taskValidation = (
               name: yup.string().required(t('Required')),
               value: yup.lazy((value) => {
                 if (Array.isArray(value)) {
-                  return yup.array().of(yup.string().required(t('Required')));
+                  return yup.array().of(yup.string());
                 }
                 return yup.string();
               }),
+              type: yup.string().oneOf(['string', 'array']),
             }),
           )
           .test(

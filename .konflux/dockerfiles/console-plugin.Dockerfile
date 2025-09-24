@@ -31,4 +31,5 @@ LABEL \
       description="Red Hat OpenShift Pipelines Console Plugin" \
       io.k8s.display-name="Red Hat OpenShift Pipelines Console Plugin" \
       io.k8s.description="Red Hat OpenShift Pipelines Console Plugin" \
-      io.openshift.tags="pipelines,tekton,openshift"
+      io.openshift.tags="pipelines,tekton,openshift" \
+      cpe="cpe:/a:redhat:openshift_pipelines:1.14::el8"

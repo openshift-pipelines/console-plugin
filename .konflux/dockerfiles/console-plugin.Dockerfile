@@ -46,6 +46,7 @@ LABEL \
       com.redhat.component="openshift-pipelines-console-plugin-rhel9-container" \
       name="openshift-pipelines/pipelines-console-plugin-rhel9" \
       version=$VERSION \
+      cpe="cpe:/a:redhat:openshift_pipelines:1.19::el9" \
       summary="Red Hat OpenShift Pipelines Console Plugin" \
       maintainer="pipelines-extcomm@redhat.com" \
       description="Red Hat OpenShift Pipelines Console Plugin" \

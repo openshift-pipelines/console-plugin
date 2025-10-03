@@ -503,3 +503,18 @@ export const TektonConfigModel: K8sKind = {
   labelPlural: 'TektonConfigs',
   crd: true,
 };
+
+export const GroupModel: K8sKind = {
+  apiGroup: 'user.openshift.io',
+  apiVersion: 'v1',
+  label: 'Group',
+  labelKey: 'Group',
+  labelPluralKey: 'Groups',
+  plural: 'groups',
+  abbr: 'G',
+  kind: 'Group',
+  id: 'group',
+  labelPlural: 'Groups',
+  crd: true,
+  color,
+};

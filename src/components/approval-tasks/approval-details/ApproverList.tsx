@@ -4,34 +4,35 @@ import { useTranslation } from 'react-i18next';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import {
   ApprovalTaskKind,
-  ApproverResponse,
-  ApproverStatusResponse,
+  ApproverInput,
+  ApprovalStatus,
 } from '../../../types';
 import { ApprovalStatusIcon } from '../../pipeline-topology/StatusIcons';
 
 import './ApproverList.scss';
+import { Approver } from '../../../types/approver';
 
 export interface ApproverListProps {
   obj: ApprovalTaskKind;
 }
 
 export interface ApproverBadgeProps {
-  approver: string;
-  status: ApproverResponse;
+  approver: Approver;
+  status: ApproverInput;
 }
 
 const ApproverBadge: React.FC<ApproverBadgeProps> = ({ approver, status }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const badgeClass = cx({
-    'pipelines-approval-approver__wait':
-      status === ApproverStatusResponse.Pending,
+    'pipelines-approval-approver__wait': status === ApprovalStatus.RequestSent,
     'pipelines-approval-approver__approved':
-      status !== ApproverStatusResponse.Pending,
+      status !== ApprovalStatus.RequestSent,
   });
 
   const color =
-    status === ApproverStatusResponse.Pending
+    status === ApprovalStatus.RequestSent
       ? 'orange'
-      : status === ApproverStatusResponse.Accepted
+      : status === ApprovalStatus.Accepted
       ? 'green'
       : 'red';
 
@@ -47,7 +48,9 @@ const ApproverBadge: React.FC<ApproverBadgeProps> = ({ approver, status }) => {
         </div>
       }
     >
-      {approver}
+      {approver.type === 'Group'
+        ? t('Group') + ': ' + approver.name.replace('group:', '')
+        : t('User') + ': ' + approver.name}
     </Label>
   );
 };
@@ -55,21 +58,11 @@ const ApproverBadge: React.FC<ApproverBadgeProps> = ({ approver, status }) => {
 const ApproverListSection: React.FC<ApproverListProps> = ({ obj }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
-    status: { approvers, approversResponse },
+    spec: { approvers },
   } = obj;
   if (!approvers || approvers?.length === 0) {
     return <p>{t('No approvers')}</p>;
   }
-
-  const getApprovalStatusforApprovers = (
-    approver: string,
-  ): ApproverResponse => {
-    return (
-      approversResponse?.find(
-        (approvalStatus) => approvalStatus.name === approver,
-      )?.response ?? ApproverStatusResponse.Pending
-    );
-  };
 
   return (
     <LabelGroup
@@ -80,7 +73,7 @@ const ApproverListSection: React.FC<ApproverListProps> = ({ obj }) => {
       {approvers?.map((approver, idx) => (
         <ApproverBadge
           approver={approver}
-          status={getApprovalStatusforApprovers(approver)}
+          status={approver.input}
           key={`approver-${idx.toString()}`}
         />
       ))}

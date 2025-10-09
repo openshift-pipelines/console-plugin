@@ -19,9 +19,6 @@
         "kind": "Pipeline"
       },
       "flag": "OPENSHIFT_PIPELINE"
-    },
-    "flags": {
-      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
     }
   },
   {
@@ -33,23 +30,6 @@
         "kind": "Repository"
       },
       "flag": "OPENSHIFT_PIPELINE_AS_CODE"
-    },
-    "flags": {
-      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
-      "model": {
-        "group": "tekton.dev",
-        "version": "v1",
-        "kind": "Pipeline"
-      },
-      "flag": "OPENSHIFT_PIPELINE"
-    },
-    "flags": {
-      "required": ["HIDE_STATIC_PIPELINE_PLUGIN_CONSOLE_FLAG_MODEL_EXTENSION"]
     }
   },
   {

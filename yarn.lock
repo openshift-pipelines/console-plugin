@@ -785,13 +785,13 @@
     "@patternfly/react-styles" "^4.11.4"
     classnames "^2.2.5"
 
-"@patternfly/react-charts@6.94.19":
-  version "6.94.19"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-6.94.19.tgz#90cce061db980f917ac6d1fdb51ec15bf8c20fe0"
-  integrity sha512-+yYwXAy/GBH2bTHFzMpdVKc8LUJCCNEqqS7bqovNkNLd0m3FP3q9fKJ22QxNnP9NeFHK6UFa4KfouQAb2fInfQ==
+"@patternfly/react-charts@6.94.21":
+  version "6.94.21"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-6.94.21.tgz#afec8b6fef3e2f502149ecd1f30469c88223eb69"
+  integrity sha512-/okakDxebgSacl9gnIifMjqLMGwuwqXogEIDX+TFveIGx9BBhXg+RLnSpSZS8xQMjEcSVppdz320IN2o+YgpaQ==
   dependencies:
-    "@patternfly/react-styles" "^4.92.6"
-    "@patternfly/react-tokens" "^4.94.6"
+    "@patternfly/react-styles" "^4.92.8"
+    "@patternfly/react-tokens" "^4.94.7"
     hoist-non-react-statics "^3.3.0"
     lodash "^4.17.19"
     tslib "^2.0.0"

@@ -26,7 +26,7 @@
     "@cypress/webpack-preprocessor": "^5.15.5",
     "@openshift-console/dynamic-plugin-sdk": "0.0.18",
     "@openshift-console/dynamic-plugin-sdk-webpack": "0.0.9",
-    "@patternfly/react-charts": "6.94.19",
+    "@patternfly/react-charts": "6.94.21",
     "@patternfly/react-core": "4.276.8",
     "@patternfly/react-table": "4.113.0",
     "@patternfly/react-tokens": "4.94.6",

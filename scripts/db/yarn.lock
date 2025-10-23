@@ -90,9 +90,9 @@ make-error@^1.1.1:
   integrity sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==
 
 postgres@^3.4.3:
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/postgres/-/postgres-3.4.3.tgz#52a0712cd6c2dae5e9f8c35b5c7b33434caa66ed"
-  integrity sha512-iHJn4+M9vbTdHSdDzNkC0crHq+1CUdFhx+YqCE+SqWxPjm+Zu63jq7yZborOBF64c8pc58O5uMudyL1FQcHacA==
+  version "3.4.7"
+  resolved "https://registry.yarnpkg.com/postgres/-/postgres-3.4.7.tgz#122f460a808fe300cae53f592108b9906e625345"
+  integrity sha512-Jtc2612XINuBjIl/QTWsV5UvE8UHuNblcO3vVADSrKsrc6RqGX6lOW1cEo3CM2v0XG4Nat8nI+YM7/f26VxXLw==
 
 ts-node@^10.9.1:
   version "10.9.2"

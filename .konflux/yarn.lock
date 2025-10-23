@@ -2797,9 +2797,9 @@
     undici-types "~6.21.0"
 
 "@types/node@^18.0.0":
-  version "18.19.103"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.103.tgz#9bbd31a54e240fc469cca409d7507ebc77536458"
-  integrity sha512-hHTHp+sEz6SxFsp+SA+Tqrua3AbmlAw+Y//aEwdHrdZkYVRWdvWD3y5uPZ0flYOkgskaFWqZ/YGFm3FaFQ0pRw==
+  version "18.19.130"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.130.tgz#da4c6324793a79defb7a62cba3947ec5add00d59"
+  integrity sha512-GRaXQx6jGfL8sKfaIDD6OupbIHBr9jv7Jnaml9tB7l4v068PAOXqfcujMMo5PhbIs6ggR1XODELqahT2R8v0fg==
   dependencies:
     undici-types "~5.26.4"
 

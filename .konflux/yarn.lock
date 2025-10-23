@@ -1519,10 +1519,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-redux@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-6.0.2.tgz#10069b53db8e0920fd8656e068dcf10c53c9ad2a"
-  integrity sha512-rNf/oxhVDPoRLpxP1d8NvdYHJe6LtyLp0ha8a/RLnsgMVBrbmPaQUznwcmAHlgCdAYFBFqntxe8OqmixHIVI5Q==
+"@types/react-redux@6.0.28":
+  version "6.0.28"
+  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-6.0.28.tgz#0a65a6947a4a0d8426b0ed20c069c06e81cc54ee"
+  integrity sha512-ovDuOZbHA4Gh/NbIuatIehKc/qotvuJipJs6y69+6J7n7GW4N6wcKAhYa25os1Mcc461U4eXIqNTpGSaJ/40Ug==
   dependencies:
     "@types/react" "*"
     redux "^4.0.0"

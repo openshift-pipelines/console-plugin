@@ -1878,10 +1878,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@openshift-console/dynamic-plugin-sdk-webpack@1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@openshift-console/dynamic-plugin-sdk-webpack/-/dynamic-plugin-sdk-webpack-1.1.1.tgz#349326366f84defa8c81baa8be411257d0b1e954"
-  integrity sha512-1m1iBpdj0HNWQIEFAhMlI5pmigyN5B/Eqcb2nGAI2n030hOOxAalxySO95dvEFa2hiyXMUt4z/Tyq4fDYKZ2nw==
+"@openshift-console/dynamic-plugin-sdk-webpack@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@openshift-console/dynamic-plugin-sdk-webpack/-/dynamic-plugin-sdk-webpack-1.3.0.tgz#098fa5d20e96fadd273dd3a4979aa8e68f080ed9"
+  integrity sha512-J5zl1FpK4ZWEod6S0J8foBrBInVFhZDt51Mz+5fz30c6Qe4A2XXiYOj+n0jAjIJdB0qNVb7ukjyxOu+xWA1RMg==
   dependencies:
     "@openshift/dynamic-plugin-sdk-webpack" "^4.0.2"
     ajv "^6.12.3"
@@ -1892,7 +1892,7 @@
     lodash "^4.17.21"
     read-pkg "5.x"
     semver "6.x"
-    webpack "5.75.0"
+    webpack "^5.75.0"
 
 "@openshift-console/dynamic-plugin-sdk@1.4.0":
   version "1.4.0"
@@ -13235,7 +13235,7 @@ webpack-sources@^3.2.3:
   resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.3.2.tgz#0ab55ab0b380ce53c45ca40cb7b33bab3149ea85"
   integrity sha512-ykKKus8lqlgXX/1WjudpIEjqsafjOTcOJqxnAbMLAu/KCsDCJ6GBtvscewvTkrn24HsnvFwrSCbenFrhtcCsAA==
 
-webpack@5.75.0, webpack@5.94.0:
+webpack@5.94.0, webpack@^5.75.0:
   version "5.94.0"
   resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.94.0.tgz#77a6089c716e7ab90c1c67574a28da518a20970f"
   integrity sha512-KcsGn50VT+06JH/iunZJedYGUJS5FGjow8wb9c0v5n1Om8O1g4L6LjtfxwlXIATopoQu+vOXXa7gYisWxCoPyg==

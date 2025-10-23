@@ -723,10 +723,10 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@openshift-console/dynamic-plugin-sdk-webpack@0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@openshift-console/dynamic-plugin-sdk-webpack/-/dynamic-plugin-sdk-webpack-0.0.9.tgz#46cbd97a304c20ba951fa2dc8c69f6ac60e8181f"
-  integrity sha512-ElbD6T7Z7s8zF3ulUU2aKkxVQ4GNqgxeKNvXv8lE9a0T+iFHcB6uzv6nfwHdLDWpCtuozvL1sTen+sQ+qvdfag==
+"@openshift-console/dynamic-plugin-sdk-webpack@0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@openshift-console/dynamic-plugin-sdk-webpack/-/dynamic-plugin-sdk-webpack-0.0.11.tgz#1b9f10fc4f4f6e6214576cc90b52ce8e6e8dc281"
+  integrity sha512-LtaNSKsBmeO+cJuTbOGgAucji8sF9SzZrPjyxee1tX/IiSXGGQAYcf/fwqZTS58FX3QSWQgkk8qrWpWdwTbbKA==
   dependencies:
     ajv "^6.12.3"
     chalk "2.4.x"

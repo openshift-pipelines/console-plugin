@@ -8,7 +8,7 @@ import {
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { PipelineModel } from '../../models';
+import { PipelineModel, TaskModel } from '../../models';
 import {
   PipelineKind,
   PipelineTask,
@@ -42,7 +42,11 @@ import FormFooter from '../pipelines-details/multi-column-field/FormFooter';
 import { FlexForm, FormBody } from './form-utils';
 import SyncedEditorField from './SyncedEditorField';
 import PipelineQuickSearch from '../task-quicksearch/PipelineQuickSearch';
-import { useModal } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  k8sDelete,
+  k8sGet,
+  useModal,
+} from '@openshift-console/dynamic-plugin-sdk';
 
 type PipelineBuilderFormProps = FormikProps<PipelineBuilderFormikValues> & {
   existingPipeline: PipelineKind;
@@ -105,7 +109,6 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   const updateTasks = (changes: CleanupResults): void => {
     const { tasks, listTasks, finallyTasks, finallyListTasks, loadingTasks } =
       changes;
-
     setFieldValue('formData', {
       ...formData,
       tasks,
@@ -206,8 +209,28 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
               onRemoveTask={(taskName: string) => {
                 launchModal(RemoveTaskModal, {
                   taskName,
-                  onRemove: () => {
+                  onRemove: async () => {
                     setSelectedTask(null);
+                    let taskExists = false;
+                    try {
+                      await k8sGet({
+                        model: TaskModel,
+                        name: taskName,
+                        ns: namespace,
+                      });
+                      taskExists = true;
+                    } catch (error) {
+                      console.warn(
+                        `Error fetching Task as task does not exist ${taskName}, so safely deleting from PipelineBuilder`,
+                        error,
+                      );
+                    }
+                    if (taskExists) {
+                      await k8sDelete({
+                        model: TaskModel,
+                        resource: { metadata: { name: taskName, namespace } },
+                      });
+                    }
                     updateTasks(
                       applyChange(
                         taskGroup,

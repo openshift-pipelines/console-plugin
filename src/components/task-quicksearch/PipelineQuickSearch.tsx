@@ -20,6 +20,7 @@ import {
   TaskProviders,
   updateTask,
 } from './pipeline-quicksearch-utils';
+import { safeName } from '../pipeline-builder/utils';
 import PipelineQuickSearchDetails from './PipelineQuickSearchDetails';
 import { CatalogServiceProvider } from '../catalog/service';
 import { CatalogService } from '../catalog/types';
@@ -64,6 +65,24 @@ const Contents: React.FC<
   useLoadingTaskCleanup(onUpdateTasks, taskGroup);
   useCleanupOnFailure(failedTasks, onUpdateTasks, taskGroup);
 
+  // Get all existing task names from taskGroup and installed tasks
+  const getExistingTaskNames = (): string[] => {
+    const taskNames = [
+      ...taskGroup.tasks.map((t) => t.name),
+      ...taskGroup.finallyTasks.map((t) => t.name),
+      ...taskGroup.listTasks.map((t) => t.name),
+      ...taskGroup.loadingTasks.map((t) => t.name),
+      ...taskGroup.finallyListTasks.map((t) => t.name),
+    ];
+    // Add installed task names from catalog
+    catalogService.items.forEach((catalogItem) => {
+      if (catalogItem.data?.metadata?.name) {
+        taskNames.push(catalogItem.data.metadata.name);
+      }
+    });
+    return taskNames;
+  };
+
   const catalogServiceItems = catalogService.items.reduce((acc, item) => {
     const installedTask = findInstalledTask(catalogService.items, item);
 
@@ -102,12 +121,30 @@ const Contents: React.FC<
                 ).catch(() => setFailedTasks([...failedTasks, item.data.name]));
               }
             } else {
-              resolve(
-                savedCallback.current({ metadata: { name: item.data.name } }),
-              );
-              createTask(selectedVersionUrl, namespace).catch(() =>
-                setFailedTasks([...failedTasks, item.data.name]),
-              );
+              // Checking if task with same name already exists, if yes then create with a different name to avoid conflict
+              const existingTaskNames = getExistingTaskNames();
+              if (existingTaskNames.includes(item.data.name)) {
+                const taskNameToUse = safeName(
+                  existingTaskNames,
+                  item.data.name,
+                );
+                createTask(selectedVersionUrl, namespace, taskNameToUse)
+                  .then(() =>
+                    resolve(
+                      savedCallback.current({
+                        metadata: { name: taskNameToUse },
+                      }),
+                    ),
+                  )
+                  .catch(() => setFailedTasks([...failedTasks, taskNameToUse]));
+              } else {
+                resolve(
+                  savedCallback.current({ metadata: { name: item.data.name } }),
+                );
+                createTask(selectedVersionUrl, namespace).catch(() =>
+                  setFailedTasks([...failedTasks, item.data.name]),
+                );
+              }
             }
           } else {
             resolve(savedCallback.current(item.data));
@@ -143,19 +180,46 @@ const Contents: React.FC<
               );
             }
           } else {
-            resolve(
-              savedCallback.current({
-                metadata: { name: item.data.task.name },
-              }),
-            );
-            createArtifactHubTask(
-              selectedVersionUrl,
-              namespace,
-              selectedVersion,
-              isDevConsoleProxyAvailable,
-            ).catch(() =>
-              setFailedTasks([...failedTasks, item.data.task.name]),
-            );
+            // Checking if task with same name already exists, if yes then create with a different name to avoid conflict
+            const existingTaskNames = getExistingTaskNames();
+            if (existingTaskNames.includes(item.data.task.name)) {
+              const taskNameToUse = safeName(
+                existingTaskNames,
+                item.data.task.name,
+              );
+              createArtifactHubTask(
+                selectedVersionUrl,
+                namespace,
+                selectedVersion,
+                isDevConsoleProxyAvailable,
+                taskNameToUse,
+              )
+                .then(() =>
+                  resolve(
+                    savedCallback.current({
+                      metadata: { name: taskNameToUse },
+                    }),
+                  ),
+                )
+                .catch(() => setFailedTasks([...failedTasks, taskNameToUse]));
+            } else {
+              createArtifactHubTask(
+                selectedVersionUrl,
+                namespace,
+                selectedVersion,
+                isDevConsoleProxyAvailable,
+              )
+                .then(() =>
+                  resolve(
+                    savedCallback.current({
+                      metadata: { name: item.data.task.name },
+                    }),
+                  ),
+                )
+                .catch(() =>
+                  setFailedTasks([...failedTasks, item.data.task.name]),
+                );
+            }
           }
         }
       });

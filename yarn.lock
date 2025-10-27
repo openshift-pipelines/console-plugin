@@ -2193,10 +2193,10 @@
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.1.2.tgz#1cf95080bb7072fafaa3cb13b442fab4695c3893"
   integrity sha512-fdDH1LSGfZdTH2sxdpVMw31BanV28K/Gry0cVFxaNP77neJSkd82mM8ErPNYs9e+0O7SdHBLTDzDgwUuy18RnQ==
 
-"@postalsys/gettext@^4.0.0":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@postalsys/gettext/-/gettext-4.0.1.tgz#1594211f37627a7147af3ea415f377a0211358ee"
-  integrity sha512-QERj2sCJTZJN4scplV9BUpZObUsB/ZAF+/MD3OBxDkqTWEmK/C0HX1i15IRJ0YpYtl3hovc4mEN37HIGvb4pbw==
+"@postalsys/gettext@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@postalsys/gettext/-/gettext-4.1.0.tgz#d62b91f996f26fcf27412a67cef53a6e95153f09"
+  integrity sha512-DNUqMXvCW/wVKA/UaAYME2oXZbNfrz6ZjmfOy0xDwRtI6If1alUzc7s500TuvEW07UPJ5vJ7dGALvI08cXsG7Q==
   dependencies:
     lodash.get "4.4.2"
 
@@ -4579,7 +4579,7 @@ commander@11.0.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-11.0.0.tgz#43e19c25dbedc8256203538e8d7e9346877a6f67"
   integrity sha512-9HMlXtt/BNoYr8ooyjjNRdIilOTkVJXB+GhxMTtOKwk0R4j4lS4NpjuqmRxroBfnfTSHQIHQB7wryHhXarNjmQ==
 
-commander@13.1.0, commander@^13.0.0:
+commander@13.1.0:
   version "13.1.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-13.1.0.tgz#776167db68c78f38dcce1f9b8d7b8b9a488abf46"
   integrity sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==
@@ -4603,6 +4603,11 @@ commander@^12.1.0:
   version "12.1.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-12.1.0.tgz#01423b36f501259fdaac4d0e4d60c96c991585d3"
   integrity sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==
+
+commander@^14.0.0:
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-14.0.2.tgz#b71fd37fe4069e4c3c7c13925252ada4eba14e8e"
+  integrity sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==
 
 commander@^2.19.0, commander@^2.20.0:
   version "2.20.3"
@@ -7474,13 +7479,13 @@ hyphenate-style-name@^1.0.3:
   integrity sha512-WDC/ui2VVRrz3jOVi+XtjqkDjiVjTtFaAGiW37k6b+ohyQ5wYDOGkvCZa8+H0nx3gyvv0+BST9xuOgIyGQ00gw==
 
 i18next-conv@^15.1.1:
-  version "15.1.1"
-  resolved "https://registry.yarnpkg.com/i18next-conv/-/i18next-conv-15.1.1.tgz#74865b6a904ef874c9963ccbbd841dce8ba86ba1"
-  integrity sha512-PpI8/1jmxM/Sgfxof4SBp3MAIM1HYl/2RwXYBcloqtoOx0IxojMxDvjAiN7FhgVKPjZ0s/jdIP33JQmqCHG3Qg==
+  version "15.1.2"
+  resolved "https://registry.yarnpkg.com/i18next-conv/-/i18next-conv-15.1.2.tgz#144c989de6a8c04aacb95276d2133a4315f822c2"
+  integrity sha512-vIJNuePPnoKwrD51WXbLUeKU5Xz3ZAeeLii61Ng+MOC4AEElnGk6M2zkhMIwLnv98oUoyRPtXMHkJncrx3kKmw==
   dependencies:
-    "@postalsys/gettext" "^4.0.0"
+    "@postalsys/gettext" "^4.1.0"
     colorette "^2.0.20"
-    commander "^13.0.0"
+    commander "^14.0.0"
     gettext-converter "^1.3.0"
     gettext-parser "^8.0.0"
     p-from-callback "^2.0.0"

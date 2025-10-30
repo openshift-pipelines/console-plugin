@@ -2422,12 +2422,12 @@
   dependencies:
     "@types/node" "*"
 
-"@types/cypress-axe@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@types/cypress-axe/-/cypress-axe-0.8.0.tgz#c22f5cb197080378fd65082255a613fa2e8e1afa"
-  integrity sha512-4sTqNsXUXnl/CqmSI+xCCmYwml+/zZ66uBExMLqnF1dn3wd+BIyrLL8fJ81O/AJePuh08igR2VjZqWuZaoqWaw==
+"@types/cypress-axe@^0.11.0":
+  version "0.11.3"
+  resolved "https://registry.yarnpkg.com/@types/cypress-axe/-/cypress-axe-0.11.3.tgz#1f2c0df6bc3d9dc3196babbde6ac36e5ecba486e"
+  integrity sha512-29z3IiyIBulyrHCTpFp5gff5fKIXpecTVskHHirzaNo38iEhSud51xw7YcLkY7HAa4kUeYMkr5vh++PgwdSuYQ==
   dependencies:
-    axe-core "^3.4.1"
+    cypress-axe "*"
 
 "@types/d3-array@*", "@types/d3-array@^3.0.3":
   version "3.2.1"
@@ -3834,11 +3834,6 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.13.2.tgz#0aa167216965ac9474ccfa83892cfb6b3e1e52ef"
   integrity sha512-lHe62zvbTB5eEABUVi/AwVh0ZKY9rMMDhmm+eeyuuUQbQ3+J+fONVQOZyj+DdrvD4BY33uYniyRJ4UJIaSKAfw==
 
-axe-core@^3.4.1:
-  version "3.5.6"
-  resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-3.5.6.tgz#e762a90d7f6dbd244ceacb4e72760ff8aad521b5"
-  integrity sha512-LEUDjgmdJoA3LqklSTwKYqkjcZ4HKc4ddIYGSAiSkr46NTjzg2L9RNB+lekO9P7Dlpa87+hBtzc2Fzn/+GUWMQ==
-
 babel-jest@30.0.0-alpha.7:
   version "30.0.0-alpha.7"
   resolved "https://registry.yarnpkg.com/babel-jest/-/babel-jest-30.0.0-alpha.7.tgz#f13c820abced26f5decddbc077d7c0ad35194611"
@@ -4899,10 +4894,15 @@ cucumber-messages@8.0.0:
     protobufjs "^6.8.8"
     uuid "^3.3.3"
 
-cypress-axe@^0.12.0:
-  version "0.12.2"
-  resolved "https://registry.yarnpkg.com/cypress-axe/-/cypress-axe-0.12.2.tgz#4bc2f23ed4930eb6020ea802ba2a201b349b14d8"
-  integrity sha512-gn+rVJ2JnvUWhBshbZ/8dkJdANaEB96zgtAEClJ7vNvDgmqAYb+HhQpW0GM04EqtIiPhenqUeKNQDoqrquY5+w==
+cypress-axe@*:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/cypress-axe/-/cypress-axe-1.7.0.tgz#258c007db13c637eaffec1cf2765090b521c07a0"
+  integrity sha512-zzJpvAAjauEB3GZl0KYXb8i3w6MztWAt2WM3czYTFyNVC30alDmqCm9E7GwZ4bgkldZJlmHakaVEyu73R5St4w==
+
+cypress-axe@^0.14.0:
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/cypress-axe/-/cypress-axe-0.14.0.tgz#5f5e70fb36b8cb3ba73a8ba01e9262ff1268d5e2"
+  integrity sha512-7Rdjnko0MjggCmndc1wECAkvQBIhuy+DRtjF7bd5YPZRFvubfMNvrxfqD8PWQmxm7MZE0ffS4Xr43V6ZmvLopg==
 
 cypress-file-upload@^5.0.8:
   version "5.0.8"

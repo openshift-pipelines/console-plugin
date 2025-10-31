@@ -34,7 +34,7 @@ const pipelineApprovalFilterReducer = (obj: ApprovalTaskKind, pipelineRuns) => {
   ) {
     return ApprovalStatus.RequestSent;
   }
-  return status ||  ApprovalStatus.Unknown;
+  return status || ApprovalStatus.Unknown;
 };
 
 const ApprovalTasksList: React.FC<ApprovalTasksListProps> = ({

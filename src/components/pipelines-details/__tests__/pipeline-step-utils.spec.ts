@@ -1,6 +1,6 @@
 import { ComputedStatus, PipelineRunKind } from '../../../types';
 import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
-import { sortPipelineRunsByDuration } from '../pipeline-step-utils';
+import { sortPipelineAndTaskRunsByDuration } from '../pipeline-step-utils';
 
 // Mock the pipeline-filter-reducer module
 jest.mock('../../utils/pipeline-filter-reducer', () => ({
@@ -11,7 +11,7 @@ const mockPipelineRunStatus = pipelineRunStatus as jest.MockedFunction<
   typeof pipelineRunStatus
 >;
 
-describe('sortPipelineRunsByDuration', () => {
+describe('sortPipelineAndTaskRunsByDuration', () => {
   const createMockPipelineRun = (
     name: string,
     startTime?: string,
@@ -63,7 +63,7 @@ describe('sortPipelineRunsByDuration', () => {
         ),
       ];
 
-      const result = sortPipelineRunsByDuration(pipelineRuns, 'asc');
+      const result = sortPipelineAndTaskRunsByDuration(pipelineRuns, 'asc');
 
       expect(result[0].metadata.name).toBe('run-very-short');
       expect(result[1].metadata.name).toBe('run-short');
@@ -88,7 +88,7 @@ describe('sortPipelineRunsByDuration', () => {
         ),
       ];
 
-      const result = sortPipelineRunsByDuration(pipelineRuns, 'asc');
+      const result = sortPipelineAndTaskRunsByDuration(pipelineRuns, 'asc');
 
       expect(result[0].metadata.name).toBe('run-completed');
       expect(result[1].metadata.name).toBe('run-running');
@@ -117,7 +117,7 @@ describe('sortPipelineRunsByDuration', () => {
         ),
       ];
 
-      const result = sortPipelineRunsByDuration(pipelineRuns, 'desc');
+      const result = sortPipelineAndTaskRunsByDuration(pipelineRuns, 'desc');
 
       expect(result[0].metadata.name).toBe('run-long');
       expect(result[1].metadata.name).toBe('run-medium');
@@ -138,7 +138,7 @@ describe('sortPipelineRunsByDuration', () => {
         ),
       ];
 
-      const result = sortPipelineRunsByDuration(pipelineRuns, 'asc');
+      const result = sortPipelineAndTaskRunsByDuration(pipelineRuns, 'asc');
 
       expect(result[0].metadata.name).toBe('run-no-completion');
       expect(result[1].metadata.name).toBe('run-normal');
@@ -163,7 +163,7 @@ describe('sortPipelineRunsByDuration', () => {
         ),
       ];
 
-      const result = sortPipelineRunsByDuration(pipelineRuns, 'asc');
+      const result = sortPipelineAndTaskRunsByDuration(pipelineRuns, 'asc');
 
       expect(result[0].metadata.name).toBe('run-a');
       expect(result[1].metadata.name).toBe('run-m');
@@ -185,7 +185,7 @@ describe('sortPipelineRunsByDuration', () => {
       ];
 
       const originalOrder = pipelineRuns.map((run) => run.metadata.name);
-      sortPipelineRunsByDuration(pipelineRuns, 'asc');
+      sortPipelineAndTaskRunsByDuration(pipelineRuns, 'asc');
 
       // Original array should remain unchanged
       expect(pipelineRuns.map((run) => run.metadata.name)).toEqual(
@@ -194,7 +194,7 @@ describe('sortPipelineRunsByDuration', () => {
     });
 
     it('should handle empty array', () => {
-      const result = sortPipelineRunsByDuration([], 'asc');
+      const result = sortPipelineAndTaskRunsByDuration([], 'asc');
       expect(result).toEqual([]);
     });
 
@@ -207,7 +207,7 @@ describe('sortPipelineRunsByDuration', () => {
         ),
       ];
 
-      const result = sortPipelineRunsByDuration(pipelineRuns, 'asc');
+      const result = sortPipelineAndTaskRunsByDuration(pipelineRuns, 'asc');
 
       expect(result).toHaveLength(1);
       expect(result[0].metadata.name).toBe('single-run');
@@ -229,7 +229,7 @@ describe('sortPipelineRunsByDuration', () => {
         ),
       ];
 
-      const result = sortPipelineRunsByDuration(pipelineRuns, 'asc');
+      const result = sortPipelineAndTaskRunsByDuration(pipelineRuns, 'asc');
 
       // Should handle negative duration gracefully
       expect(result).toHaveLength(2);

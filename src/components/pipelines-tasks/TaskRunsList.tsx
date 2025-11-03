@@ -20,6 +20,7 @@ import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useTaskRunsFilters } from './useTaskRunsFilters';
 import { useLoadMoreOnScroll } from '../utils/tekton-results';
 import { ListPageFilter } from '../list-pages/ListPageFilter';
+import { sortPipelineAndTaskRunsByDuration } from '../pipelines-details/pipeline-step-utils';
 
 interface TaskRunsListPageProps {
   showTitle?: boolean;
@@ -79,7 +80,7 @@ const useTaskColumns = () => {
     },
     {
       id: 'duration',
-      sort: 'status.completionTime',
+      sort: sortPipelineAndTaskRunsByDuration,
       title: t('Duration'),
       transforms: [sortable],
       additional: true,

@@ -58,11 +58,15 @@ const NameSpaceDropdown: React.FC<NameSpaceDropdownProps> = ({
       items.push({ title: selected, key: selected }); // Add current namespace if it isn't included
     }
     items.sort((a, b) => alphanumericCompare(a.title, b.title));
-    if (canListNS) {
+
+    // Always show "All" option - behavior depends on user permissions:
+    // - Admins (canListNS=true): See all cluster namespaces
+    // - Non-admins (canListNS=false): See all their accessible namespaces
+    if (projects.length > 0) {
       items.unshift({ title: allNamespacesTitle, key: ALL_NAMESPACES_KEY });
     }
     return items;
-  }, [projects, projectsLoaded]);
+  }, [projects, projectsLoaded, allNamespacesTitle]);
 
   return (
     <>

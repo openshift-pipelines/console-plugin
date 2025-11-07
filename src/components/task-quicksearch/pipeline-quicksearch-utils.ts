@@ -174,19 +174,12 @@ export const updateTask = async (
     });
 };
 
-export const createTask = (
-  url: string,
-  namespace: string,
-  customName?: string,
-) => {
+export const createTask = (url: string, namespace: string) => {
   return consoleFetch(url)
     .then(async (res) => {
       const yaml = await res.text();
       const task = load(yaml) as TaskKind;
       task.metadata.namespace = namespace;
-      if (customName) {
-        task.metadata.name = customName;
-      }
       task.metadata.annotations = {
         ...task.metadata.annotations,
         [TektonTaskAnnotation.installedFrom]: TEKTONHUB,

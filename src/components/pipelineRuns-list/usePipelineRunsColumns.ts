@@ -9,7 +9,6 @@ import {
 } from '../../consts';
 import { PipelineRunKind } from '../../types';
 import { tableColumnClasses } from './PipelineRunsRow';
-import { sortPipelineRunsByDuration } from '../pipelines-details/pipeline-step-utils';
 
 const usePipelineRunsColumns = (
   namespace: string,
@@ -77,7 +76,7 @@ const usePipelineRunsColumns = (
     {
       id: 'duration',
       title: t('Duration'),
-      sort: sortPipelineRunsByDuration,
+      sort: 'status.completionTime',
       transforms: [sortable],
       props: { className: tableColumnClasses.duration },
     },

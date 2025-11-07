@@ -1,7 +1,5 @@
 import { ComputedStatus } from '../../types';
 import { calculateDuration } from '../utils/pipeline-utils';
-import { PipelineRunKind } from '../../types';
-import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
 
 enum TerminatedReasons {
   Completed = 'Completed',
@@ -98,37 +96,4 @@ export const createStepStatus = (
     name: step.name,
     status: stepRunStatus,
   };
-};
-
-export const sortPipelineRunsByDuration = (
-  pipelineRuns: PipelineRunKind[],
-  direction: 'asc' | 'desc',
-) => {
-  return [...pipelineRuns].sort((a: PipelineRunKind, b: PipelineRunKind) => {
-    const getDurationMs = (run: PipelineRunKind): number => {
-      const startTime = run?.status?.startTime ?? null;
-      const completionTime = run?.status?.completionTime ?? null;
-
-      if (
-        !startTime ||
-        (!completionTime && pipelineRunStatus(run) !== 'Running')
-      ) {
-        return -1;
-      }
-      const start = new Date(startTime).getTime();
-      const end = completionTime
-        ? new Date(completionTime).getTime()
-        : new Date().getTime();
-      return end - start;
-    };
-
-    const durationA = getDurationMs(a);
-    const durationB = getDurationMs(b);
-
-    if (durationA === durationB) {
-      return (a?.metadata?.name || '').localeCompare(b?.metadata?.name || '');
-    }
-
-    return direction === 'asc' ? durationA - durationB : durationB - durationA;
-  });
 };

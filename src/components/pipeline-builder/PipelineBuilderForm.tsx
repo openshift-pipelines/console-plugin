@@ -280,7 +280,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                 submitLabel={existingPipeline ? t('Save') : t('Create')}
                 disableSubmit={
                   editorType === EditorType.YAML
-                    ? !dirty || !_.isEmpty(errors) || !!status?.submitError
+                    ? !dirty
                     : !dirty ||
                       !_.isEmpty(errors) ||
                       !_.isEmpty(status?.tasks) ||

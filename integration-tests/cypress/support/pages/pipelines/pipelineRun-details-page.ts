@@ -11,7 +11,7 @@ import { actionsDropdownMenu } from '../functions/common';
 export const pipelineRunDetailsPage = {
   verifyTitle: () => {
     cy.contains(pageTitle.PipelineRunDetails).should('be.visible');
-    // cy.testA11y(`${pageTitle.PipelineRunDetails} page`);
+    cy.testA11y(`${pageTitle.PipelineRunDetails} page`);
   },
   waitForPipelineRunToComplete: () => {
     cy.get('.odc-pipeline-vis-task--icon-spin', { timeout: 120000 }).should(

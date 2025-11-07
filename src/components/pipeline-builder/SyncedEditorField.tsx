@@ -140,39 +140,6 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
     }
   }, [editorType, field.value, formContext.isDisabled, name, setFieldValue]);
 
-  React.useEffect(() => {
-    // Sync formData when yamlData changes (while in YAML mode)
-    if (editorType === EditorType.YAML && yamlData) {
-      const syncFormDataFromYaml = async () => {
-        try {
-          const content = safeYAMLToJS(yamlData);
-          if (!_.isEmpty(content) && formContext.sanitizeTo) {
-            const sanitizedContent = await formContext.sanitizeTo(content);
-            if (
-              typeof sanitizedContent === 'object' &&
-              !_.isEmpty(sanitizedContent)
-            ) {
-              // Only update if the content is different
-              if (!_.isEqual(sanitizedContent, formData)) {
-                setFieldValue(formContext.name, sanitizedContent);
-              }
-            }
-          }
-        } catch (e) {
-          console.warn('Failed to sync form data from YAML', e);
-        }
-      };
-      syncFormDataFromYaml();
-    }
-  }, [
-    yamlData,
-    editorType,
-    formContext.sanitizeTo,
-    formContext.name,
-    setFieldValue,
-    formData,
-  ]);
-
   return (
     <>
       <div

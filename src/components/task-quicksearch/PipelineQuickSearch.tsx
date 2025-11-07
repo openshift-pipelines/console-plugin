@@ -20,7 +20,6 @@ import {
   TaskProviders,
   updateTask,
 } from './pipeline-quicksearch-utils';
-import { safeName } from '../pipeline-builder/utils';
 import PipelineQuickSearchDetails from './PipelineQuickSearchDetails';
 import { CatalogServiceProvider } from '../catalog/service';
 import { CatalogService } from '../catalog/types';
@@ -65,51 +64,6 @@ const Contents: React.FC<
   useLoadingTaskCleanup(onUpdateTasks, taskGroup);
   useCleanupOnFailure(failedTasks, onUpdateTasks, taskGroup);
 
-  // Get all existing task names from taskGroup and installed tasks
-  const getExistingTaskNames = (): string[] => {
-    const taskNames = new Set<string>();
-    [
-      ...taskGroup.tasks,
-      ...taskGroup.finallyTasks,
-      ...taskGroup.listTasks,
-      ...taskGroup.loadingTasks,
-      ...taskGroup.finallyListTasks,
-    ].forEach((t) => {
-      if (t?.name) taskNames.add(t.name);
-    });
-
-    // Add installed catalog items (avoid duplicates)
-    catalogService.items.forEach((catalogItem) => {
-      const name = catalogItem.data?.metadata?.name;
-      if (name) taskNames.add(name);
-    });
-    return Array.from(taskNames);
-  };
-
-  const handleTaskCreationWithNameConflict = (
-    taskName: string,
-    createTaskFn: (taskNameToUse?: string) => Promise<any>,
-    resolve: (value: any) => void,
-  ) => {
-    // Checking if task with same name already exists, if yes then create with a different name to avoid conflict
-    const existingTaskNames = getExistingTaskNames();
-    if (existingTaskNames.includes(taskName)) {
-      const taskNameToUse = safeName(existingTaskNames, taskName);
-      createTaskFn(taskNameToUse)
-        .then(() =>
-          resolve(
-            savedCallback.current({
-              metadata: { name: taskNameToUse },
-            }),
-          ),
-        )
-        .catch(() => setFailedTasks([...failedTasks, taskNameToUse]));
-    } else {
-      resolve(savedCallback.current({ metadata: { name: taskName } }));
-      createTaskFn().catch(() => setFailedTasks([...failedTasks, taskName]));
-    }
-  };
-
   const catalogServiceItems = catalogService.items.reduce((acc, item) => {
     const installedTask = findInstalledTask(catalogService.items, item);
 
@@ -148,11 +102,11 @@ const Contents: React.FC<
                 ).catch(() => setFailedTasks([...failedTasks, item.data.name]));
               }
             } else {
-              handleTaskCreationWithNameConflict(
-                item.data.name,
-                (taskNameToUse) =>
-                  createTask(selectedVersionUrl, namespace, taskNameToUse),
-                resolve,
+              resolve(
+                savedCallback.current({ metadata: { name: item.data.name } }),
+              );
+              createTask(selectedVersionUrl, namespace).catch(() =>
+                setFailedTasks([...failedTasks, item.data.name]),
               );
             }
           } else {
@@ -189,17 +143,18 @@ const Contents: React.FC<
               );
             }
           } else {
-            handleTaskCreationWithNameConflict(
-              item.data.task.name,
-              (taskNameToUse) =>
-                createArtifactHubTask(
-                  selectedVersionUrl,
-                  namespace,
-                  selectedVersion,
-                  isDevConsoleProxyAvailable,
-                  taskNameToUse,
-                ),
-              resolve,
+            resolve(
+              savedCallback.current({
+                metadata: { name: item.data.task.name },
+              }),
+            );
+            createArtifactHubTask(
+              selectedVersionUrl,
+              namespace,
+              selectedVersion,
+              isDevConsoleProxyAvailable,
+            ).catch(() =>
+              setFailedTasks([...failedTasks, item.data.task.name]),
             );
           }
         }

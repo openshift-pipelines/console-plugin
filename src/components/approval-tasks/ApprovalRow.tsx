@@ -38,7 +38,7 @@ const ApprovalRow: React.FC<
   const {
     metadata: { name, namespace, creationTimestamp },
     spec: { description, numberOfApprovalsRequired },
-    status: { approvers, approvalsReceived },
+    status: { approvers, approversResponse },
   } = obj;
 
   const translatedApproversCount = t('{{assignees}} Assigned', {
@@ -104,7 +104,7 @@ const ApprovalRow: React.FC<
             {getApprovalStatusInfo(approvalTaskStatus).message}{' '}
             <Tooltip content={translatedApproversCount} position="right">
               <span className="pipelines-approval-status-info">{`(${
-                approvalsReceived || 0
+                approversResponse?.length || 0
               }/${numberOfApprovalsRequired || 0})`}</span>
             </Tooltip>
           </SplitItem>

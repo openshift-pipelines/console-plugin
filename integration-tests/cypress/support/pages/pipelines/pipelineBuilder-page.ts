@@ -50,7 +50,7 @@ export const pipelineBuilderSidePane = {
   selectWorkspace: (workspaceName: string) => {
     pipelineBuilderSidePane.verifyDialog();
     /* eslint-disable-next-line cypress/unsafe-to-chain-command */
-    cy.get(pipelineBuilderPO.formView.sidePane.workspacesSource)
+    cy.get(pipelineBuilderPO.formView.sidePane.workspaces)
       .scrollIntoView()
       .select(workspaceName);
   },
@@ -133,14 +133,14 @@ export const pipelineBuilderPage = {
   verifySection: () => {
     cy.get(pipelineBuilderPO.formView.sectionTitle).as('sectionTitle');
     cy.get('@sectionTitle')
-      .contains(pipelineBuilderText.formView.Tasks)
-      .should('be.visible');
+      .eq(0)
+      .should('contain.text', pipelineBuilderText.formView.Tasks);
     cy.get('@sectionTitle')
-      .contains(pipelineBuilderText.formView.Parameters)
-      .should('be.visible');
+      .eq(1)
+      .should('contain.text', pipelineBuilderText.formView.Parameters);
     cy.get('@sectionTitle')
-      .contains(pipelineBuilderText.formView.Workspaces)
-      .should('be.visible');
+      .eq(2)
+      .should('contain.text', pipelineBuilderText.formView.Workspaces);
   },
   clickCreateButton: () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting

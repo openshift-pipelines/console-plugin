@@ -6,10 +6,9 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { SDKStoreState } from '@openshift-console/dynamic-plugin-sdk/lib/app/redux-types';
 import { merge } from 'lodash-es';
-import { useCallback } from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { StartedByAnnotation, TektonResourceLabel } from '../../consts';
 import { PersistentVolumeClaimModel, PipelineRunModel } from '../../models';
 import { PersistentVolumeClaimKind, PipelineRunKind } from '../../types';
@@ -87,24 +86,4 @@ export const useGetActiveUser = (): string => {
     (state: SDKStoreState) => state.sdkCore.user,
   );
   return currentUser?.username;
-};
-/* This is required as a workaround for https://issues.redhat.com/browse/OCPBUGS-62145 */
-export const useActiveUserWithUpdate = (): {
-  currentUser: UserInfo;
-  updateUserInfo: (updates: Partial<UserInfo>) => void;
-} => {
-  const dispatch = useDispatch();
-  const currentUser = useSelector((state: SDKStoreState) => state.sdkCore.user);
-
-  const updateUserInfo = useCallback(
-    (updates: Partial<UserInfo>) => {
-      dispatch({
-        type: 'sdkCore/updateUser',
-        payload: updates,
-      });
-    },
-    [dispatch],
-  );
-
-  return { currentUser, updateUserInfo };
 };

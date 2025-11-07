@@ -102,7 +102,6 @@ export const createArtifactHubTask = (
   namespace: string,
   version: string,
   isDevConsoleProxyAvailable?: boolean,
-  customName?: string,
 ) => {
   const fetchTask = async (): Promise<K8sResourceKind> => {
     if (isDevConsoleProxyAvailable) {
@@ -123,9 +122,6 @@ export const createArtifactHubTask = (
   return fetchTask()
     .then((task: K8sResourceKind) => {
       task.metadata.namespace = namespace;
-      if (customName) {
-        task.metadata.name = customName;
-      }
       task.metadata.annotations = {
         ...task.metadata.annotations,
         [TektonTaskAnnotation.installedFrom]: ARTIFACTHUB,
@@ -189,7 +185,6 @@ export const updateArtifactHubTask = async (
 
 export const fetchArtifactHubTasks = async (
   query: string,
-  // eslint-disable-next-line @typescript-eslint/no-inferrable-types
   limit: number = 20,
 ): Promise<ArtifactHubTask[]> => {
   try {

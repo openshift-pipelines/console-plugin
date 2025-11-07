@@ -137,7 +137,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                     >
                       <span
                         className="ocs-quick-search-list__item-name"
-                        data-test={`item-name-${item.name}-${itemType}-${item.provider}`}
+                        data-test={`item-name-${item.name}-${itemType}`}
                       >
                         {item.name}
                       </span>

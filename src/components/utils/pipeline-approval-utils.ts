@@ -69,7 +69,7 @@ export const getApprovalStatus = (
     pipelineRun && pipelineRunFilterReducer(pipelineRun);
 
   const approvalsRequired = approvalTask?.spec?.numberOfApprovalsRequired;
-  const currentApprovals = approvalTask?.status?.approvalsReceived;
+  const currentApprovals = approvalTask?.status?.approversResponse?.length;
   const approvalState = approvalTask?.status?.state;
   const approvalPercentage = (currentApprovals / approvalsRequired) * 100;
 

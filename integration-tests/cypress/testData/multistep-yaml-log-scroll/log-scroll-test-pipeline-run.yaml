@@ -1,8 +1,0 @@
-apiVersion: tekton.dev/v1
-kind: PipelineRun
-metadata:
-  name: log-scroll-test-pipeline-run
-  namespace: aut-pipelines
-spec:
-  pipelineRef:
-    name: log-scroll-test-pipeline

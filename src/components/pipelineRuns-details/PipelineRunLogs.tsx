@@ -77,11 +77,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
 
   getActiveTaskRun = (taskRuns: TaskRunKind[], activeTask: string): string => {
     const activeTaskRun = activeTask
-      ? taskRuns.find(
-          (taskRun) =>
-            taskRun.metadata?.labels?.[TektonResourceLabel.pipelineTask] ===
-            activeTask,
-        )
+      ? taskRuns.find((taskRun) => taskRun.metadata.name.includes(activeTask))
       : taskRuns.find(
           (taskRun) => taskRunStatus(taskRun) === ComputedStatus.Failed,
         ) || taskRuns[taskRuns.length - 1];

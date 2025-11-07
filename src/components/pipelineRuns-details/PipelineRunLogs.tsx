@@ -31,7 +31,6 @@ import './PipelineRunLogs.scss';
 interface PipelineRunLogsProps {
   obj: PipelineRunKind;
   activeTask?: string;
-  activeStep?: string;
   t: TFunction;
   taskRuns: TaskRunKind[];
   isDevConsoleProxyAvailable?: boolean;
@@ -124,13 +123,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
   };
 
   render() {
-    const {
-      obj,
-      t,
-      taskRuns: tRuns,
-      isDevConsoleProxyAvailable,
-      activeStep,
-    } = this.props;
+    const { obj, t, taskRuns: tRuns, isDevConsoleProxyAvailable } = this.props;
     const { activeItem } = this.state;
     const taskRunNames = this.getSortedTaskRun(tRuns, [
       ...(obj?.status?.pipelineSpec?.tasks || []),
@@ -243,7 +236,6 @@ class PipelineRunLogsWithTranslation extends React.Component<
                 downloadAllLabel={t('Download all task logs')}
                 onDownloadAll={downloadAllCallback}
                 taskRun={activeTaskRun}
-                activeStep={activeStep}
               />
             ) : (
               <div className="odc-pipeline-run-logs__log">
@@ -298,7 +290,6 @@ export const PipelineRunLogsWithActiveTask: React.FC<
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const activeTask = params?.get('taskName');
-  const activeStep = params?.get('step');
   const [taskRuns, taskRunsLoaded] = useTaskRuns(
     obj?.metadata?.namespace,
     obj?.metadata?.name,
@@ -306,12 +297,7 @@ export const PipelineRunLogsWithActiveTask: React.FC<
 
   return (
     taskRunsLoaded && (
-      <PipelineRunLogs
-        obj={obj}
-        activeTask={activeTask}
-        activeStep={activeStep}
-        taskRuns={taskRuns}
-      />
+      <PipelineRunLogs obj={obj} activeTask={activeTask} taskRuns={taskRuns} />
     )
   );
 };

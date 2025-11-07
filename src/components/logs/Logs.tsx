@@ -16,7 +16,6 @@ type LogsProps = {
   resource: PodKind;
   containers: ContainerSpec[];
   setCurrentLogsGetter?: (getter: () => string) => void;
-  activeStep?: string;
 };
 
 type LogData = {
@@ -54,7 +53,6 @@ const Logs: React.FC<LogsProps> = ({
   resource,
   containers,
   setCurrentLogsGetter,
-  activeStep,
 }) => {
   if (!resource) return null;
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -66,23 +64,6 @@ const Logs: React.FC<LogsProps> = ({
   const [scrollToRow, setScrollToRow] = React.useState<number>(0);
   const [activeContainers, setActiveContainers] = React.useState<Set<string>>(
     new Set(),
-  );
-
-  const findTargetRowForActiveStep = React.useMemo(
-    () => (formattedString: string) => {
-      if (!activeStep) return null;
-      const lines = formattedString.split('\n');
-      let targetLine: number | null = null;
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        if (line.includes(`STEP-${activeStep}`.toUpperCase())) {
-          targetLine = i;
-          break;
-        }
-      }
-      return targetLine;
-    },
-    [activeStep],
   );
 
   React.useEffect(() => {
@@ -225,38 +206,10 @@ const Logs: React.FC<LogsProps> = ({
 
   React.useEffect(() => {
     const formattedString = processLogData(logData, containers);
-    const targetRow = findTargetRowForActiveStep(formattedString);
-    if (typeof targetRow === 'number') {
-      setScrollToRow(targetRow);
-      const searchTerm = `STEP-${activeStep}`.toUpperCase();
-      const formattedStringAfterHighlighting = formattedString.replace(
-        new RegExp(`(${searchTerm})`, 'gi'),
-        '\x1b[48;2;253;240;171m\x1b[38;2;21;21;21m$1\x1b[0m',
-      ); // yellow background with dark text
-      setFormattedLogString(formattedStringAfterHighlighting);
-      let isHighlighted = true;
-      const blinkInterval = setInterval(() => {
-        if (isHighlighted) {
-          setFormattedLogString(formattedString);
-        } else {
-          setFormattedLogString(formattedStringAfterHighlighting);
-        }
-        isHighlighted = !isHighlighted;
-      }, 300);
-      const stopBlinkingTimeout = setTimeout(() => {
-        clearInterval(blinkInterval);
-        setFormattedLogString(formattedString);
-      }, 1000);
-      return () => {
-        clearInterval(blinkInterval);
-        clearTimeout(stopBlinkingTimeout);
-      };
-    } else {
-      const totalLines = formattedString.split('\n').length;
-      setScrollToRow(totalLines);
-      setFormattedLogString(formattedString);
-    }
-  }, [logData, activeStep, findTargetRowForActiveStep]);
+    setFormattedLogString(formattedString);
+    const totalLines = formattedString.split('\n').length;
+    setScrollToRow(totalLines);
+  }, [logData]);
 
   return (
     <div className="odc-logs-logviewer">

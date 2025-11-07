@@ -7,13 +7,11 @@ import './TaskRunLog.scss';
 type Props = {
   taskRun: TaskRunKind;
   status: ComputedStatus;
-  activeStep?: string;
 };
 
 const TaskRunLogs: React.FC<React.PropsWithChildren<Props>> = ({
   taskRun,
   status,
-  activeStep,
 }) => {
   const podName = taskRun?.status?.podName;
 
@@ -34,11 +32,7 @@ const TaskRunLogs: React.FC<React.PropsWithChildren<Props>> = ({
   };
   return (
     <div className="odc-task-run-log">
-      <LogsWrapperComponent
-        taskRun={taskRun}
-        resource={podResources}
-        activeStep={activeStep}
-      />
+      <LogsWrapperComponent taskRun={taskRun} resource={podResources} />
     </div>
   );
 };

@@ -1,6 +1,5 @@
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
 import { ApproverInput, ApproverResponse } from './approvals';
-import { ApproverResponseDetails, UserApprover } from './approver';
 import { TektonTaskSpec } from './coreTekton';
 
 export type TaskKind = K8sResourceCommon & {
@@ -33,8 +32,6 @@ export type ApprovalTaskKind = K8sResourceCommon & {
       input: ApproverInput;
       message?: string;
       name: string;
-      type: 'User' | 'Group';
-      users?: UserApprover[];
     }[];
     numberOfApprovalsRequired: number;
     description?: string;
@@ -42,8 +39,9 @@ export type ApprovalTaskKind = K8sResourceCommon & {
   status?: {
     state: ApproverResponse;
     approvers: string[];
-    approvalsReceived?: number;
-    approvalsRequired?: number;
-    approversResponse?: ApproverResponseDetails[];
+    approversResponse?: {
+      name: string;
+      response: ApproverResponse;
+    }[];
   };
 };

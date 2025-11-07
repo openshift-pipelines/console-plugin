@@ -2,11 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { Link } from 'react-router-dom-v5-compat';
-import {
-  ResourceIcon,
-  UserInfo,
-  k8sPatch,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { ResourceIcon, k8sPatch } from '@openshift-console/dynamic-plugin-sdk';
 import { ApprovalTaskModel, PipelineRunModel } from '../../../models';
 import { getReferenceForModel } from '../../pipelines-overview/utils';
 import { ApprovalStatus, ApprovalTaskKind } from '../../../types';
@@ -15,13 +11,11 @@ import { ModalWrapper } from '../../modals/modal';
 import ApprovalModal from './ApprovalModal';
 
 import './ApprovalModal.scss';
-import { Approver, UserApprover } from 'src/types/approver';
 
 type ApprovalProps = {
   resource: ApprovalTaskKind;
   pipelineRunName?: string;
   userName?: string;
-  currentUser: UserInfo;
   type: string;
 };
 
@@ -30,7 +24,6 @@ const Approval: ModalComponent<ApprovalProps> = ({
   resource,
   pipelineRunName,
   userName,
-  currentUser,
   type,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -43,19 +36,12 @@ const Approval: ModalComponent<ApprovalProps> = ({
     reason: '',
   };
 
-  const individualUser = (approverDetails: Approver[], userName: string) => {
-    return approverDetails.some(
-      (approver) => approver.name === userName && approver.type === 'User',
-    );
-  };
-
   const handleSubmit = (
     values: FormikValues,
     action: FormikHelpers<FormikValues>,
   ) => {
     const updatedApprovers = approvers.map((approver) => {
-      // Update approver for User type
-      if (approver.name === userName && approver.type === 'User') {
+      if (approver.name === userName) {
         return {
           ...approver,
           input:
@@ -64,62 +50,6 @@ const Approval: ModalComponent<ApprovalProps> = ({
               : ApprovalStatus.Rejected,
           ...(values.reason && { message: values.reason }),
         };
-      } else if (
-        // Update approver for Group type
-        approver.type === 'Group' &&
-        !individualUser(approvers, userName)
-      ) {
-        // Check if the current user belongs to this specific group
-        const userBelongsToThisGroup = currentUser.groups?.includes(
-          approver.name,
-        );
-
-        if (userBelongsToThisGroup) {
-          const newUser: UserApprover = {
-            name: userName,
-            input:
-              type === 'approve'
-                ? ApprovalStatus.Accepted
-                : ApprovalStatus.Rejected,
-            ...(values.reason && { message: values.reason }),
-          };
-
-          // check if current user already exists in this group's users array
-          const userExists = approver.users?.some(
-            (user) => user.name === userName,
-          );
-
-          let updatedUsers = approver.users || [];
-
-          if (userExists) {
-            // Update existing user's input
-            updatedUsers =
-              approver.users?.map((item) => {
-                if (item.name === userName) {
-                  return {
-                    ...item,
-                    input: newUser.input,
-                    ...(newUser.message && { message: newUser.message }),
-                  };
-                }
-                return item;
-              }) || [];
-          } else {
-            // Add new user to the group
-            updatedUsers = [...updatedUsers, newUser];
-          }
-
-          // Only update this specific group approver
-          return {
-            ...approver,
-            users: updatedUsers,
-            input:
-              type === 'approve'
-                ? ApprovalStatus.Accepted
-                : ApprovalStatus.Rejected,
-            ...(values.reason && { message: values.reason }),
-          };
-        }
       }
       return approver;
     });

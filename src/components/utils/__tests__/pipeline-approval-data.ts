@@ -16,7 +16,6 @@ export const mockApprovalStatus = {
           {
             input: 'pending' as ApproverInput,
             name: 'foo',
-            type: 'User' as const,
           },
         ],
         numberOfApprovalsRequired: 1,
@@ -28,7 +27,6 @@ export const mockApprovalStatus = {
             message: 'hello',
             name: 'foo',
             response: 'approved' as ApproverResponse,
-            type: 'User' as const,
           },
         ],
         state: 'approved' as ApproverResponse,
@@ -99,7 +97,6 @@ export const mockApprovalStatus = {
           {
             input: 'pending' as ApproverInput,
             name: 'foo',
-            type: 'User' as const,
           },
         ],
         numberOfApprovalsRequired: 1,
@@ -111,7 +108,6 @@ export const mockApprovalStatus = {
             message: 'hello',
             name: 'foo',
             response: 'rejected' as ApproverResponse,
-            type: 'User' as const,
           },
         ],
         state: 'rejected' as ApproverResponse,
@@ -182,7 +178,6 @@ export const mockApprovalStatus = {
           {
             input: 'pending' as ApproverInput,
             name: 'foo',
-            type: 'User' as const,
           },
         ],
         numberOfApprovalsRequired: 1,
@@ -256,7 +251,6 @@ export const mockApprovalStatus = {
           {
             input: 'pending' as ApproverInput,
             name: 'foo',
-            type: 'User' as const,
           },
         ],
         numberOfApprovalsRequired: 1,
@@ -380,39 +374,32 @@ export const mockApprovalStatus = {
           {
             input: 'approve' as ApproverInput,
             name: 'foo',
-            type: 'User' as const,
           },
           {
             input: 'approve' as ApproverInput,
             name: 'bar',
-            type: 'User' as const,
           },
           {
             input: 'pending' as ApproverInput,
             name: 'john',
-            type: 'User' as const,
           },
           {
             input: 'pending' as ApproverInput,
             name: 'wick',
-            type: 'User' as const,
           },
         ],
         numberOfApprovalsRequired: 4,
       },
       status: {
         approvers: ['foo', 'bar', 'john', 'wick'],
-        approvalsReceived: 2,
         approversResponse: [
           {
             name: 'foo',
             response: 'approved' as ApproverResponse,
-            type: 'User' as const,
           },
           {
             name: 'bar',
             response: 'approved' as ApproverResponse,
-            type: 'User' as const,
           },
         ],
         state: 'pending' as ApproverResponse,
@@ -482,44 +469,36 @@ export const mockApprovalStatus = {
           {
             input: 'approve' as ApproverInput,
             name: 'foo',
-            type: 'User' as const,
           },
           {
             input: 'approve' as ApproverInput,
             name: 'bar',
-            type: 'User' as const,
           },
           {
             input: 'approve' as ApproverInput,
             name: 'john',
-            type: 'User' as const,
           },
           {
             input: 'pending' as ApproverInput,
             name: 'wick',
-            type: 'User' as const,
           },
         ],
         numberOfApprovalsRequired: 4,
       },
       status: {
         approvers: ['foo', 'bar', 'john', 'wick'],
-        approvalsReceived: 3,
         approversResponse: [
           {
             name: 'foo',
             response: 'approved' as ApproverResponse,
-            type: 'User' as const,
           },
           {
             name: 'bar',
             response: 'approved' as ApproverResponse,
-            type: 'User' as const,
           },
           {
             name: 'john',
             response: 'approved' as ApproverResponse,
-            type: 'User' as const,
           },
         ],
         state: 'pending' as ApproverResponse,
@@ -589,7 +568,6 @@ export const mockApprovalStatus = {
           {
             input: 'pending' as ApproverInput,
             name: 'foo',
-            type: 'User' as const,
           },
         ],
         numberOfApprovalsRequired: 1,
@@ -601,7 +579,6 @@ export const mockApprovalStatus = {
             message: 'hello',
             name: 'foo',
             response: 'rejected' as ApproverResponse,
-            type: 'User' as const,
           },
         ],
         state: 'unknown' as ApproverResponse,

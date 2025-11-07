@@ -10,16 +10,11 @@ import {
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
 import ApprovalToastContent from './ApprovalToastContent';
-import {
-  ApprovalStatus,
-  ApprovalTaskKind,
-  ApproverStatusResponse,
-} from '../../../types';
+import { ApprovalStatus, ApprovalTaskKind } from '../../../types';
 import { ApprovalTaskModel } from '../../../models';
 import { ApprovalLabels, ApprovalFields } from '../../../consts';
 import { useToast } from '../../toast/useToast';
-import { useActiveUserWithUpdate } from '../../hooks/hooks';
-import { isUserAuthorizedForApproval } from '../../utils/approval-group-utils';
+import { useGetActiveUser } from '../../hooks/hooks';
 
 const getPipelineRunsofApprovals = (
   approvalTasks: ApprovalTaskKind[],
@@ -35,6 +30,14 @@ const getPipelineRunsofApprovals = (
   return pipelineRuns;
 };
 
+const checkUserIsApprover = (
+  approvalTask: ApprovalTaskKind,
+  username: string,
+): boolean => {
+  const approverList = approvalTask?.status?.approvers ?? [];
+  return approverList?.includes(username);
+};
+
 export const PipelineApprovalContext = React.createContext({});
 
 export const PipelineApprovalContextProvider = PipelineApprovalContext.Provider;
@@ -43,7 +46,7 @@ export const usePipelineApprovalToast = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { addToast, removeToast } = useToast();
   const [namespace] = useActiveNamespace();
-  const { currentUser, updateUserInfo } = useActiveUserWithUpdate();
+  const currentUser = useGetActiveUser();
   const [currentToasts, setCurrentToasts] = React.useState<{
     [key: string]: { toastId: string };
   }>({});
@@ -56,6 +59,7 @@ export const usePipelineApprovalToast = () => {
   };
   const [approvalTasks] =
     useK8sWatchResource<ApprovalTaskKind[]>(approvalsResource);
+
   React.useEffect(() => {
     if (currentToasts?.current?.toastId) {
       removeToast(currentToasts.current.toastId);
@@ -65,128 +69,79 @@ export const usePipelineApprovalToast = () => {
       removeToast(currentToasts.other.toastId);
       setCurrentToasts((toasts) => ({ ...toasts, other: { toastId: '' } }));
     }
-  }, [approvalTasks, currentUser.username, t, addToast, removeToast]);
+  }, [approvalTasks, currentUser, t, addToast, removeToast]);
 
   React.useEffect(() => {
-    const processApprovalTasks = async () => {
-      let toastID = '';
+    let toastID = '';
+    const userApprovalTasksInWait = approvalTasks.filter(
+      (approvalTask) =>
+        checkUserIsApprover(approvalTask, currentUser) &&
+        approvalTask?.status?.state === ApprovalStatus.RequestSent,
+    );
 
-      // Filter approval tasks for current user with async group checking
-      const userApprovalTasksInWait = [];
-      for (const approvalTask of approvalTasks) {
-        if (approvalTask?.status?.state === ApprovalStatus.RequestSent) {
-          try {
-            const isApprover = await isUserAuthorizedForApproval(
-              currentUser.username,
-              approvalTask?.spec?.approvers,
-              currentUser,
-              updateUserInfo,
-            );
+    const [currentNsApprovalTasks, otherNsApprovalTasks]: [
+      ApprovalTaskKind[],
+      ApprovalTaskKind[],
+    ] = userApprovalTasksInWait.reduce(
+      (acc, approvalTask) => {
+        approvalTask?.metadata?.namespace === namespace
+          ? acc[0].push(approvalTask)
+          : acc[1].push(approvalTask);
+        return acc;
+      },
+      [[], []],
+    );
 
-            // Check if user has already responded
-            const hasUserResponded =
-              approvalTask?.status?.approversResponse?.some((response) => {
-                // Check if user responded directly
-                if (
-                  response.type === 'User' &&
-                  response.name === currentUser.username
-                ) {
-                  return true;
-                }
-                // Check if user responded as part of a group
-                if (response.type === 'Group' && response.groupMembers) {
-                  return response.groupMembers.some(
-                    (member) =>
-                      member.name === currentUser.username &&
-                      member.response !== ApproverStatusResponse.Pending,
-                  );
-                }
-                return false;
-              });
+    if (currentNsApprovalTasks.length > 0) {
+      const uniquePipelineRuns = new Set(
+        getPipelineRunsofApprovals(currentNsApprovalTasks),
+      ).size;
 
-            if (isApprover && !hasUserResponded) {
-              userApprovalTasksInWait.push(approvalTask);
-            }
-          } catch (error) {
-            console.warn('Error checking user approval authorization:', error);
-          }
-        }
+      if (uniquePipelineRuns > 0) {
+        toastID = addToast({
+          variant: AlertVariant.custom,
+          title: t('Task approval required'),
+          content: (
+            <ApprovalToastContent
+              type="current"
+              uniquePipelineRuns={uniquePipelineRuns}
+              devconsolePath={devconsolePath}
+            />
+          ),
+          timeout: 25000,
+          dismissible: true,
+        }) as any;
       }
+      setCurrentToasts((toasts) => ({
+        ...toasts,
+        current: { toastId: toastID },
+      }));
+    }
 
-      const [currentNsApprovalTasks, otherNsApprovalTasks]: [
-        ApprovalTaskKind[],
-        ApprovalTaskKind[],
-      ] = userApprovalTasksInWait.reduce(
-        (acc, approvalTask) => {
-          approvalTask?.metadata?.namespace === namespace
-            ? acc[0].push(approvalTask)
-            : acc[1].push(approvalTask);
-          return acc;
-        },
-        [[], []],
-      );
+    if (otherNsApprovalTasks.length > 0) {
+      const uniquePipelineRuns = new Set(
+        getPipelineRunsofApprovals(otherNsApprovalTasks),
+      ).size;
 
-      if (currentNsApprovalTasks.length > 0) {
-        const uniquePipelineRuns = new Set(
-          getPipelineRunsofApprovals(currentNsApprovalTasks),
-        ).size;
-
-        if (uniquePipelineRuns > 0) {
-          toastID = addToast({
-            variant: AlertVariant.custom,
-            title: t('Task approval required'),
-            content: (
-              <ApprovalToastContent
-                type="current"
-                uniquePipelineRuns={uniquePipelineRuns}
-                devconsolePath={devconsolePath}
-              />
-            ),
-            timeout: 25000,
-            dismissible: true,
-          }) as any;
-        }
-        setCurrentToasts((toasts) => ({
-          ...toasts,
-          current: { toastId: toastID },
-        }));
+      if (uniquePipelineRuns > 0) {
+        toastID = addToast({
+          variant: AlertVariant.custom,
+          title: t('Task approval required'),
+          content: (
+            <ApprovalToastContent
+              type="other"
+              uniquePipelineRuns={uniquePipelineRuns}
+              adminconsolePath={adminconsolePath}
+            />
+          ),
+          timeout: 25000,
+          dismissible: true,
+        });
       }
-
-      if (otherNsApprovalTasks.length > 0) {
-        const uniquePipelineRuns = new Set(
-          getPipelineRunsofApprovals(otherNsApprovalTasks),
-        ).size;
-
-        if (uniquePipelineRuns > 0) {
-          toastID = addToast({
-            variant: AlertVariant.custom,
-            title: t('Task approval required'),
-            content: (
-              <ApprovalToastContent
-                type="other"
-                uniquePipelineRuns={uniquePipelineRuns}
-                adminconsolePath={adminconsolePath}
-              />
-            ),
-            timeout: 25000,
-            dismissible: true,
-          });
-        }
-        setCurrentToasts((toasts) => ({
-          ...toasts,
-          other: { toastId: toastID },
-        }));
-      }
-    };
-
-    processApprovalTasks();
-  }, [
-    approvalTasks,
-    currentUser.username,
-    namespace,
-    t,
-    addToast,
-    devconsolePath,
-    adminconsolePath,
-  ]);
+      setCurrentToasts((toasts) => ({
+        ...toasts,
+        other: { toastId: toastID },
+      }));
+    }
+  }, [approvalTasks, currentUser, t, addToast, removeToast]);
 };

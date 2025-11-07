@@ -7,7 +7,6 @@ import {
   DropdownList,
   MenuToggle,
   MenuToggleElement,
-  Spinner,
   Tooltip,
 } from '@patternfly/react-core';
 import { KEBAB_BUTTON_ID } from '../../consts';
@@ -19,8 +18,7 @@ import {
 import { ApprovalTaskModel } from '../../models';
 import { approvalModal } from './modal';
 import { ApproverStatusResponse } from '../../types';
-import { useActiveUserWithUpdate } from '../hooks/hooks';
-import { isUserAuthorizedForApproval } from '../utils/approval-group-utils';
+import { useGetActiveUser } from '../hooks/hooks';
 
 type ApprovalTaskActionDropdownProps = {
   approvalTask: ApprovalTaskKind;
@@ -31,16 +29,14 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
   approvalTask,
   pipelineRun,
 }) => {
-  const { currentUser, updateUserInfo } = useActiveUserWithUpdate();
+  const currentUser = useGetActiveUser();
   const launchModal = useModal();
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
     metadata: { name, namespace },
-    status: { state },
-    spec: { approvers },
+    status: { approvers, state },
   } = approvalTask;
   const [isOpen, setIsOpen] = React.useState(false);
-  const [isAuthorized, setIsAuthorized] = React.useState<boolean | null>(null);
   const onToggle = () => {
     setIsOpen(!isOpen);
   };
@@ -51,8 +47,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
     launchModal(approvalModal, {
       resource: approvalTask,
       pipelineRunName: pipelineRun?.metadata?.name,
-      userName: currentUser?.username,
-      currentUser: currentUser,
+      userName: currentUser,
       type: 'approve',
     });
   };
@@ -61,8 +56,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
     launchModal(approvalModal, {
       resource: approvalTask,
       pipelineRunName: pipelineRun?.metadata?.name,
-      userName: currentUser?.username,
-      currentUser: currentUser,
+      userName: currentUser,
       type: 'reject',
     });
   };
@@ -75,36 +69,10 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
     namespace,
   });
 
-  // Check group-based authorization
-  React.useEffect(() => {
-    const checkAuthorization = async () => {
-      if (currentUser && approvers) {
-        try {
-          if (currentUser?.username) {
-            const authorized = await isUserAuthorizedForApproval(
-              currentUser.username,
-              approvers,
-              currentUser,
-              updateUserInfo,
-            );
-            setIsAuthorized(authorized);
-          }
-        } catch (error) {
-          console.error('Error checking group authorization:', error);
-          setIsAuthorized(false);
-        }
-      } else {
-        setIsAuthorized(false);
-      }
-    };
-    checkAuthorization();
-  }, [currentUser, approvers]);
-
   const isDropdownDisabled =
     !canApproveAndRejectResource ||
     state !== ApproverStatusResponse.Pending ||
-    isAuthorized === null || // Still loading
-    !isAuthorized; // Not authorized (includes both direct user and group checks)
+    !approvers?.find((approver) => approver === currentUser);
 
   const tooltipContent = () => {
     if (!canApproveAndRejectResource) {
@@ -116,18 +84,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
     if (state !== ApproverStatusResponse.Pending) {
       return t(`PipelineRun has been {{state}}`, { state });
     }
-    if (isAuthorized === null) {
-      return (
-        (
-          <Spinner
-            className="pf-v5-u-mr-xs"
-            size="sm"
-            aria-label={t('Checking authorization...')}
-          />
-        ) + t('Checking authorization...')
-      );
-    }
-    if (!isAuthorized) {
+    if (!approvers?.find((approver) => approver === currentUser)) {
       return t('User not an approver');
     }
     return t('Permission denied');

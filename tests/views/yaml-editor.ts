@@ -1,13 +1,12 @@
 export const getEditorContent = () => {
   return cy.window().then((win: any) => {
-    return win?.monaco?.editor?.getModels()[0]?.getValue();
+    return win.monaco.editor.getModels()[0].getValue();
   });
 };
 
 export const setEditorContent = (text: string) => {
-  cy.wait(5000);
   return cy.window().then((win: any) => {
-    return win?.monaco?.editor?.getModels()[0]?.setValue(text);
+    win.monaco.editor.getModels()[0].setValue(text);
   });
 };
 
@@ -17,6 +16,7 @@ export const isLoaded = () => cy.get("[class='mtk26']").should('exist');
 // since yaml editor class mtk26 is a font class it doesn't work on an import page with no text
 // adding a check for the 1st line number, AND providing a wait allowed the load of the full component
 export const isImportLoaded = () => {
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(5000);
   cy.get('.monaco-editor textarea:first').should('exist');
 };

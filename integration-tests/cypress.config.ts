@@ -98,7 +98,7 @@ export default defineConfig({
   reporterOptions: {
     configFile: 'reporter-config.json',
   },
-  fixturesFolder: 'cypress/testData',
+  fixturesFolder: 'testData',
   chromeWebSecurity: false,
   env: {
     TAGS: '(@pre-condition or @smoke or @regression) and not (@manual or @to-do or @un-verified or @broken-test)',

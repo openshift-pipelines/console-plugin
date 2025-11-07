@@ -137,6 +137,13 @@ When(
   },
 );
 
+When(
+  'user selects option {string} from Actions menu drop down',
+  (action: string) => {
+    actionsDropdownMenu.selectAction(action);
+  },
+);
+
 When('user clicks Delete button on Delete Pipeline modal', () => {
   modal.modalTitleShouldContain('Delete Pipeline?');
   cy.get(pipelinesPO.deletePipeline.delete).click();

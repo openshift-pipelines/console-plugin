@@ -8,8 +8,9 @@ import {
   RepositoryLabels,
 } from '../../consts';
 import { PipelineRunKind } from '../../types';
-import { sortPipelineAndTaskRunsByDuration } from '../pipelines-details/pipeline-step-utils';
 import { tableColumnClasses } from './PipelineRunsRow';
+import { sortPipelineRunsByDuration } from '../pipelines-details/pipeline-step-utils';
+
 const usePipelineRunsColumns = (
   namespace: string,
   repositoryPLRs?: boolean,
@@ -76,7 +77,7 @@ const usePipelineRunsColumns = (
     {
       id: 'duration',
       title: t('Duration'),
-      sort: sortPipelineAndTaskRunsByDuration,
+      sort: sortPipelineRunsByDuration,
       transforms: [sortable],
       props: { className: tableColumnClasses.duration },
     },

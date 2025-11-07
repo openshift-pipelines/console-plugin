@@ -1,6 +1,7 @@
-import { ComputedStatus, PipelineRunKind, TaskRunKind } from '../../types';
-import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
+import { ComputedStatus } from '../../types';
 import { calculateDuration } from '../utils/pipeline-utils';
+import { PipelineRunKind } from '../../types';
+import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
 
 enum TerminatedReasons {
   Completed = 'Completed',
@@ -99,14 +100,12 @@ export const createStepStatus = (
   };
 };
 
-export const sortPipelineAndTaskRunsByDuration = <
-  T extends PipelineRunKind | TaskRunKind,
->(
-  runs: T[],
+export const sortPipelineRunsByDuration = (
+  pipelineRuns: PipelineRunKind[],
   direction: 'asc' | 'desc',
-): T[] => {
-  return [...runs].sort((a: T, b: T) => {
-    const getDurationMs = (run: T): number => {
+) => {
+  return [...pipelineRuns].sort((a: PipelineRunKind, b: PipelineRunKind) => {
+    const getDurationMs = (run: PipelineRunKind): number => {
       const startTime = run?.status?.startTime ?? null;
       const completionTime = run?.status?.completionTime ?? null;
 

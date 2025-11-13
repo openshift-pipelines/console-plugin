@@ -10,7 +10,7 @@ metadata:
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
-      == "main" &&
+      == "release-v1.21.x" &&
       ("***".pathChanged() ||
       ".konflux/dockerfiles/console-plugin.Dockerfile".pathChanged() ||
       ".tekton/console-plugin-next-console-plugin-push.yaml".pathChanged())
@@ -33,7 +33,7 @@ spec:
     value: .konflux/dockerfiles/console-plugin.Dockerfile
   - name: prefetch-input
     value: |
-      {"type": "rpm", "path": ".konflux/rpms"}
+      [{"type": "rpm", "path": ".konflux/rpms"}, {"type": "yarn"}]
   pipelineRef:
     name: docker-build-ta
   taskRunTemplate:

@@ -54,7 +54,7 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
   language,
 }) => {
   const [field] = useField(name);
-  const { setFieldValue } = useFormikContext<FormikValues>();
+  const { setFieldValue, setStatus } = useFormikContext<FormikValues>();
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const editorRef = React.useRef();
 
@@ -91,6 +91,11 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
     [templateExtensions],
   );
 
+  const handleOnChange = (newYAML: string) => {
+    setFieldValue(name, newYAML);
+    setStatus({ submitError: '' });
+  };
+
   return (
     <div className="osc-yaml-editor odc-p-has-sidebar" data-test="yaml-editor">
       <div
@@ -104,7 +109,7 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
             ref={editorRef}
             value={field.value}
             minHeight={minHeight ?? '200px'}
-            onChange={(yaml: string) => setFieldValue(name, yaml)}
+            onChange={handleOnChange}
             onSave={onSave}
             showShortcuts={showShortcuts}
             showMiniMap={showMiniMap}

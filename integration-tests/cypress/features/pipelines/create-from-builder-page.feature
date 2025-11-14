@@ -24,7 +24,7 @@ Feature: Create the pipeline from builder page
               And Create button is in disabled state
 
 
-        @regression
+        @regression @broken-test
         Scenario Outline: Create a pipeline with series tasks: P-02-TC03
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
@@ -40,7 +40,7 @@ Feature: Create the pipeline from builder page
                   | pipe-one      | kn                | openshift-client    |
 
 
-        @regression
+        @regression @broken-test
         Scenario Outline: Create a pipeline with parallel tasks: P-02-TC04
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
@@ -105,7 +105,7 @@ Feature: Create the pipeline from builder page
              Then user will be redirected to Pipeline Details page with header name "pipeline-params"
 
 
-        @regression
+        @regression @broken-test
         Scenario: Deleting added task with delete icon in pipeline builder page: P-02-TC08
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-delete-task"

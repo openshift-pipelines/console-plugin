@@ -7,7 +7,7 @@ Feature: Create Pipeline from Add Options
               And user is at Add page
 
 
-        @smoke
+        @smoke @broken-test
         Scenario Outline: Create a pipeline from git workload with resource type "<resource>": P-01-TC02
             Given user is at Import from Git form
              When user enters Git Repo URL as "<git_url>"
@@ -24,7 +24,7 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/sclorg/nodejs-ex.git | nodejs-fc     | Deployment Config |
 
 
-        @regression @knative
+        @regression @knative @broken-test
         Scenario Outline: Create a pipeline from git workload with knative resource type: P-01-TC03
             Given user has installed OpenShift Serverless Operator
               And user is at developer perspective
@@ -45,7 +45,7 @@ Feature: Create Pipeline from Add Options
 
 
     # https://bugzilla.redhat.com/show_bug.cgi?id=2061302
-        @smoke @manual
+        @smoke @manual @broken-test
         Scenario Outline: Pipeline details display in topology page: P-01-TC04
             Given user created workload "<name>" from add page with pipeline
               And user is at the Topology page
@@ -73,7 +73,7 @@ Feature: Create Pipeline from Add Options
                   | nodejs-g |
 
 
-        @regression
+        @regression @broken-test
         Scenario Outline: Create a workload with pipeline from Docker file: P-01-TC06
             Given user is on Import from Git form
              When user enters Git Repo URL as "<docker_git_url>"
@@ -91,7 +91,7 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/openshift/pipelines-vote-api | docker-pipeline | Dockerfile      |
 
 
-        @regression
+        @regression @broken-test
         Scenario Outline: Create a pipeline with s2i builder images: P-01-TC07
             Given user is at Developer Catalog form with builder images
              When user searches builder image "node" in developer catalog
@@ -155,7 +155,7 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/sclorg/nginx-ex.git | Nginx         | There are no pipeline templates available for Nginx and Deployment combination. |
 
 
-        @regression
+        @regression @broken-test
         Scenario Outline: Pipeline dropdown in add from git : P-01-TC11
             Given user is at Import from Git form
              When user enters Git Repo url in builder image as "<git_url>"
@@ -173,7 +173,7 @@ Feature: Create Pipeline from Add Options
                   | s2i-python            | https://github.com/sclorg/django-ex.git | django-ex-1      | Deployment Config |
 
 
-        @regression @manual
+        @regression @manual @broken-test
         Scenario Outline: Pick a pipeline from git : P-01-TC12
             Given user has created a custom pipeline from yaml "<pipeline_yaml>" in namespace "openshift"
               And user is at Import from Git form

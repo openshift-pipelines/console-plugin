@@ -7,7 +7,7 @@
 # however in this project, the code will be executed on a browser,
 # hence assuming no impact on this approach
 
-FROM registry.access.redhat.com/ubi8/nginx-124:latest
+FROM registry.access.redhat.com/ubi9/nginx-124:latest
 
 COPY ./dist /usr/share/nginx/html
 

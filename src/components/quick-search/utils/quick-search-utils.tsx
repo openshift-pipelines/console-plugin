@@ -20,7 +20,7 @@ export const handleCta = async (
     closeModal();
     await callback({
       ...callbackProps,
-      selectedVersion: item.data?.version,
+      selectedVersion: item.data?.version ?? item.data?.task?.version,
       selectedItem: item,
     });
     removeQueryArgument('catalogSearch');

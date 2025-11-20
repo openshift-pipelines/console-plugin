@@ -105,7 +105,6 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   const updateTasks = (changes: CleanupResults): void => {
     const { tasks, listTasks, finallyTasks, finallyListTasks, loadingTasks } =
       changes;
-
     setFieldValue('formData', {
       ...formData,
       tasks,
@@ -179,6 +178,20 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     }
   }, [selectedTask]);
 
+  const handleRemoveTask = React.useCallback(
+    async (taskName: string) => {
+      setSelectedTask(null);
+      updateTasks(
+        applyChange(
+          taskGroup,
+          { type: UpdateOperationType.REMOVE_TASK, data: { taskName } },
+          namespace,
+        ),
+      );
+    },
+    [namespace, taskGroup, updateTasks],
+  );
+
   return (
     <Drawer isExpanded={!!selectedTask} position="right">
       <DrawerContent
@@ -206,19 +219,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
               onRemoveTask={(taskName: string) => {
                 launchModal(RemoveTaskModal, {
                   taskName,
-                  onRemove: () => {
-                    setSelectedTask(null);
-                    updateTasks(
-                      applyChange(
-                        taskGroup,
-                        {
-                          type: UpdateOperationType.REMOVE_TASK,
-                          data: { taskName },
-                        },
-                        namespace,
-                      ),
-                    );
-                  },
+                  onRemove: () => handleRemoveTask(taskName),
                 });
               }}
               selectedData={selectedTask}

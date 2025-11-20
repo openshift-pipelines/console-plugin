@@ -95,6 +95,12 @@ export const pipelineBuilderPage = {
     cy.get(`[data-id="${taskName}"] text`).click({ force: true });
   },
   selectParallelTask: (taskName: string) => {
+    cy.get('.pipelines-console-plugin__spin', { timeout: 80000 }).should(
+      'not.exist',
+    );
+    cy.get(pipelineBuilderPO.formView.task, { timeout: 80000 }).should(
+      'be.visible',
+    );
     cy.mouseHover(pipelineBuilderPO.formView.task);
     cy.get(pipelineBuilderPO.formView.plusTaskIcon)
       .eq(2)
@@ -103,6 +109,12 @@ export const pipelineBuilderPage = {
     pipelineBuilderPage.addRedHatTask(taskName);
   },
   selectSeriesTask: (taskName: string) => {
+    cy.get('.pipelines-console-plugin__spin', { timeout: 80000 }).should(
+      'not.exist',
+    );
+    cy.get(pipelineBuilderPO.formView.task, { timeout: 80000 }).should(
+      'be.visible',
+    );
     cy.mouseHover(pipelineBuilderPO.formView.task);
     cy.get(pipelineBuilderPO.formView.plusTaskIcon)
       .first()

@@ -664,6 +664,12 @@ When('user clicks on Add in selected task', () => {
 });
 
 When('user adds a task in series', () => {
+  cy.get('.pipelines-console-plugin__spin', { timeout: 80000 }).should(
+    'not.exist',
+  );
+  cy.get(pipelineBuilderPO.formView.task, { timeout: 80000 }).should(
+    'be.visible',
+  );
   cy.mouseHover(pipelineBuilderPO.formView.task);
   cy.get(pipelineBuilderPO.formView.plusTaskIcon)
     .first()

@@ -19,7 +19,7 @@ export const pipelineBuilderPO = {
     quickSearch: '[data-test="quick-search-bar"]',
     versionTask: '[data-test="task-version"]',
     addInstallTask: '[data-test="task-cta"]',
-    task: '[data-type="builder"] .odc-pipeline-vis-task',
+    task: '[data-test="pipeline-builder"] .odc-pipeline-vis-task',
     plusTaskIcon: 'g.odc-plus-node-decorator',
     deleteTaskIcon: '[data-id="delete-task"]',
     seriesTask: '[data-id^="has-run-after-"][data-kind="node"]',

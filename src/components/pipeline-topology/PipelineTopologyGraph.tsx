@@ -22,6 +22,7 @@ const PipelineTopologyGraph: React.FC<PipelineTopologyGraphProps> = ({
     <div
       className={classNames('odc-pipeline-topology-graph', { builder })}
       data-test={props['data-test'] || 'pipeline-topology-graph'}
+      data-type={builder ? 'builder' : 'topology'}
     >
       <PipelineVisualizationSurface
         model={model}

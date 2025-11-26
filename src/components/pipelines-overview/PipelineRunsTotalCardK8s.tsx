@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon } from '@patternfly/react-icons';
 import {
+  Alert,
   Card,
   CardBody,
   CardTitle,
@@ -39,14 +40,21 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
   bordered,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-
-  const [totalPipelineRunsData, , loadingTotalPipelineRunsData] =
+  const [pipelineRunsTotalError, setPipelineRunsTotalError] = React.useState<
+    string | null
+  >(null);
+  const [
+    totalPipelineRunsData,
+    totalPipelineRunsError,
+    loadingTotalPipelineRunsData,
+  ] =
     namespace == ALL_NAMESPACES_KEY
       ? usePipelineMetricsForAllNamespacePoll({
           timespan,
           delay: interval,
           queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
           metricsQuery: PipelineQuery.PIPELINERUN_COUNT_FOR_ALL_NAMESPACE,
+          timeout: 90000,
         })
       : usePipelineMetricsForNamespacePoll({
           namespace,
@@ -54,14 +62,26 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
           delay: interval,
           queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
           metricsQuery: PipelineQuery.PIPELINERUN_COUNT_FOR_NAMESPACE,
+          timeout: 90000,
         });
   const [tickValues, type] = getXaxisValues(timespan);
 
-  const totalPipelineRuns = getTotalPipelineRuns(
-    totalPipelineRunsData,
-    tickValues,
-    type,
-  );
+  const totalPipelineRuns = React.useMemo(() => {
+    if (totalPipelineRunsError) {
+      return '-';
+    }
+    return getTotalPipelineRuns(totalPipelineRunsData, tickValues, type);
+  }, [totalPipelineRunsData, tickValues, type, totalPipelineRunsError]);
+
+  React.useEffect(() => {
+    const hasNonAbortError =
+      totalPipelineRunsError && totalPipelineRunsError.name !== 'AbortError';
+    setPipelineRunsTotalError(
+      hasNonAbortError
+        ? totalPipelineRunsError?.message ?? t('Unable to load pipeline runs')
+        : null,
+    );
+  }, [totalPipelineRunsError]);
 
   return (
     <>
@@ -75,67 +95,73 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
         </CardTitle>
         <Divider />
         <CardBody>
-          <Grid hasGutter className="pipeline-overview__totals-card__grid">
-            <GridItem span={9}>
-              <span>
-                <Label
-                  variant="outline"
-                  className="pipeline-overview__totals-card__label"
+          {pipelineRunsTotalError ? (
+            <Alert
+              variant="danger"
+              isInline
+              title={t('Unable to load total runs')}
+              className="pf-v5-u-mb-md"
+            />
+          ) : (
+            <>
+              <Grid hasGutter className="pipeline-overview__totals-card__grid">
+                <GridItem span={9}>
+                  <span>
+                    <Label
+                      variant="outline"
+                      className="pipeline-overview__totals-card__label"
+                    >
+                      {PipelineModel.abbr}
+                    </Label>
+                    {t('Runs in pipelines')}
+                  </span>
+                </GridItem>
+                <GridItem
+                  span={3}
+                  className="pipeline-overview__totals-card__value"
                 >
-                  {PipelineModel.abbr}
-                </Label>
-                {t('Runs in pipelines')}
-              </span>
-            </GridItem>
-            <GridItem
-              span={3}
-              className="pipeline-overview__totals-card__value"
-            >
-              {loadingTotalPipelineRunsData ? 
-                <LoadingInline/>
-                : '-'
-              }
-            </GridItem>
-          </Grid>
-          <Grid hasGutter className="pipeline-overview__totals-card__grid">
-            <GridItem span={9}>
-              <span>
-                <Label
-                  variant="outline"
-                  className="pipeline-overview__totals-card__repo-label"
+                  {loadingTotalPipelineRunsData ? <LoadingInline /> : '-'}
+                </GridItem>
+              </Grid>
+              <Grid hasGutter className="pipeline-overview__totals-card__grid">
+                <GridItem span={9}>
+                  <span>
+                    <Label
+                      variant="outline"
+                      className="pipeline-overview__totals-card__repo-label"
+                    >
+                      {RepositoryModel.abbr}
+                    </Label>
+                    {t('Runs in repositories')}
+                  </span>
+                </GridItem>
+                <GridItem
+                  span={3}
+                  className="pipeline-overview__totals-card__value"
                 >
-                  {RepositoryModel.abbr}
-                </Label>
-                {t('Runs in repositories')}
-              </span>
-            </GridItem>
-            <GridItem
-              span={3}
-              className="pipeline-overview__totals-card__value"
-            >
-              {loadingTotalPipelineRunsData ? 
-                <LoadingInline/>
-                : '-'
-              }
-            </GridItem>
-          </Grid>
-          <Grid hasGutter>
-            <GridItem span={9}>
-              <span>
-                <CheckIcon className="pipeline-overview__totals-card__icon" />
-                {t('Total runs')}
-              </span>
-            </GridItem>
-            <GridItem
-              span={3}
-              className="pipeline-overview__totals-card__value"
-            >
-              {loadingTotalPipelineRunsData ? 
-                <LoadingInline/>
-                : totalPipelineRuns
-              }
-            </GridItem>
-          </Grid>
+                  {loadingTotalPipelineRunsData ? <LoadingInline /> : '-'}
+                </GridItem>
+              </Grid>
+              <Grid hasGutter>
+                <GridItem span={9}>
+                  <span>
+                    <CheckIcon className="pipeline-overview__totals-card__icon" />
+                    {t('Total runs')}
+                  </span>
+                </GridItem>
+                <GridItem
+                  span={3}
+                  className="pipeline-overview__totals-card__value"
+                >
+                  {loadingTotalPipelineRunsData ? (
+                    <LoadingInline />
+                  ) : (
+                    totalPipelineRuns
+                  )}
+                </GridItem>
+              </Grid>
+            </>
+          )}
         </CardBody>
       </Card>
     </>

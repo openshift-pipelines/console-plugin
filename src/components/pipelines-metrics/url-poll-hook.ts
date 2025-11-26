@@ -8,30 +8,40 @@ export const URL_POLL_DEFAULT_DELAY = 15000; // 15 seconds
 export const useURLPoll: UseURLPoll = <R>(
   url: string,
   delay = URL_POLL_DEFAULT_DELAY,
+  timeout?: number,
   ...dependencies: any[]
 ) => {
   const [error, setError] = useState();
   const [response, setResponse] = useState<R>();
   const [loading, setLoading] = useState(true);
-  const safeFetch = useSafeFetch();
+  const safeFetch = useSafeFetch(timeout);
+
+  const handleReset = () => {
+    setResponse(null);
+    setError(null);
+  };
+
   const tick = useCallback(() => {
     if (url) {
+      handleReset();
       setLoading(true);
       safeFetch(url)
         .then((data) => {
           setResponse(data);
           setError(null);
+          setLoading(false);
         })
         .catch((err) => {
+          setError(err);
+          setResponse(null);
           if (err.name !== 'AbortError') {
-            setResponse(null);
-            setError(err);
             // eslint-disable-next-line no-console
-            console.error(`Error polling URL: ${err}`);
+            console.error(`Error polling useURLPoll: ${url} - ${err}`);
+            setLoading(false);
           }
-        })
-        .finally(() => setLoading(false));
+        });
     } else {
+      handleReset();
       setLoading(false);
     }
   }, [url]);

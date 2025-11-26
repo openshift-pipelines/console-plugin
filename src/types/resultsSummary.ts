@@ -37,6 +37,7 @@ export type Log = {
 
 export type RecordsList = {
   nextPageToken?: string;
+  next_page_token?: string;
   records: ResultRecord[];
 };
 

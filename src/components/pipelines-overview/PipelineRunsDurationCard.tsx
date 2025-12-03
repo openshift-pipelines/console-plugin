@@ -57,6 +57,7 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
   const date = getDropDownDate(timespan).toISOString();
 
   const getSummaryData = () => {
+    setLoaded(false);
     getResultsSummary(
       namespace,
       {

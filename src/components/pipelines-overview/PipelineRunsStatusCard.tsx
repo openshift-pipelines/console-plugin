@@ -124,7 +124,8 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
       data_type: DataType?.PipelineRun,
     };
     groupBy && (summaryOpt['groupBy'] = groupBy);
-
+    
+    setLoaded(false);
     getResultsSummary(
       namespace,
       summaryOpt,
@@ -361,9 +362,9 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
         </CardTitle>
         <CardBody className="pipeline-overview__pipelinerun-status-card__title">
           <Grid>
-            <GridItem xl2={4} xl={12} lg={12} md={12} sm={12}>
-              <div className="pipeline-overview__pipelinerun-status-card__donut-chart-div">
-                {loaded ? (
+            <GridItem xl2={4} xl={12} lg={12} md={12} sm={12}>              
+              {loaded ? (
+                <div className="pipeline-overview__pipelinerun-status-card__donut-chart-div">
                   <ChartDonut
                     constrainToVisibleArea={true}
                     data={donutData}
@@ -410,10 +411,10 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                     }
                     width={350}
                   />
-                ) : (
-                  <LoadingInline />
-                )}
-              </div>
+                </div>
+              ) : (
+                <LoadingInline />
+              )}              
             </GridItem>
             <GridItem xl2={8} xl={12} lg={12} md={12} sm={12}>
               <div className="pipeline-overview__pipelinerun-status-card__bar-chart-div">

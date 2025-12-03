@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { DomainPropType, DomainTuple } from 'victory-core';
 import {
@@ -48,6 +48,7 @@ import {
   adjustToStartOfWeek,
 } from '../pipelines-metrics/utils';
 import { getTotalPipelineRuns, isMatchingFirstTickValue } from './utils';
+import { LoadingInline } from '../Loading';
 
 interface PipelinesRunsStatusCardProps {
   timespan?: number;
@@ -236,7 +237,7 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
     x: domainX || [startDate, endDate],
     y: domainY || undefined,
   };
-  const [runSuccessRatioData] =
+  const [runSuccessRatioData, , loadingRunSuccessRatioData] =
     parentName && namespace
       ? usePipelineMetricsForNamespaceForPipelinePoll({
           namespace,
@@ -263,7 +264,7 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
           metricsQuery:
             PipelineQuery.PIPELINERUN_COUNT_FOR_STATUS_FOR_NAMESPACE,
         });
-  const [totalPipelineRunsData] =
+  const [totalPipelineRunsData, , loadingTotalPipelineRunsData] =
     parentName && namespace
       ? usePipelineMetricsForNamespaceForPipelinePoll({
           namespace,
@@ -499,6 +500,9 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
         <CardBody className="pipeline-overview__pipelinerun-status-card__title">
           <Grid>
             <GridItem xl2={4} xl={12} lg={12} md={12} sm={12}>
+              {loadingRunSuccessRatioData ? (
+                <LoadingInline />
+              ) : (
               <div className="pipeline-overview__pipelinerun-status-card__donut-chart-div">
                 <ChartDonut
                   constrainToVisibleArea={true}
@@ -545,9 +549,13 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
                   width={350}
                 />
               </div>
+              )}
             </GridItem>
             <GridItem xl2={8} xl={12} lg={12} md={12} sm={12}>
               <div className="pipeline-overview__pipelinerun-status-card__bar-chart-div">
+                {loadingTotalPipelineRunsData ? (
+                <LoadingInline />
+              ) : (
                 <Chart
                   containerComponent={
                     <ChartVoronoiContainer
@@ -585,6 +593,7 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
                     <ChartLine data={chartDataCancelledK8s} />
                   </ChartGroup>
                 </Chart>
+                )}
               </div>
             </GridItem>
           </Grid>

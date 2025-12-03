@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
 import {
   PrometheusResponse,
@@ -131,7 +131,7 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
     kind: 'Project',
     optional: true,
   });
-  const [pipelineRunsMetricsCountData] =
+  const [pipelineRunsMetricsCountData, , loadingPipelineRunsMetricsCount] =
     namespace == ALL_NAMESPACES_KEY
       ? usePipelineMetricsForAllNamespacePoll({
           timespan,
@@ -149,7 +149,7 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
             PipelineQuery.PIPELINERUN_COUNT_WITH_METRIC_FOR_NAMESPACE,
         });
 
-  const [pipelineRunsMetricsSumData] =
+  const [pipelineRunsMetricsSumData, , loadingPipelineRunsMetricsSum] =
     namespace == ALL_NAMESPACES_KEY
       ? usePipelineMetricsForAllNamespacePoll({
           timespan,
@@ -252,7 +252,7 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
               <PipelineRunsForPipelinesListK8s
                 summaryData={summaryDataK8s}
                 summaryDataFiltered={summaryDataFiltered}
-                loaded={true}
+                loaded={!loadingPipelineRunsMetricsCount && !loadingPipelineRunsMetricsSum}
                 hideLastRunTime={true}
                 projects={projects}
                 projectsLoaded={projectsLoaded}
@@ -261,7 +261,7 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
               <PipelineRunsForRepositoriesList
                 summaryData={summaryDataK8s}
                 summaryDataFiltered={summaryDataFiltered}
-                loaded={true}
+                loaded={!loadingPipelineRunsMetricsCount && !loadingPipelineRunsMetricsSum}
               />
             )}
           </GridItem>

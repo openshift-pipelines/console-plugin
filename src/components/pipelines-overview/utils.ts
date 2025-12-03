@@ -53,7 +53,7 @@ export const TimeRangeOptions = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return {
     '1d': t('Last day'),
-    '2w': t('Last weeks'),
+    '1w': t('Last week'),
     '4w 2d': t('Last month'),
     '12w': t('Last quarter'),
     '52w': t('Last year'),
@@ -64,7 +64,7 @@ export const TimeRangeOptionsK8s = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return {
     '1d': t('Last day'),
-    '2w': t('Last weeks'),
+    '1w': t('Last week'),
     '4w 2d': t('Last month'),
     '12w': t('Last quarter'),
   };

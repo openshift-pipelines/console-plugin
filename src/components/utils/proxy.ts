@@ -11,6 +11,8 @@ export type ProxyRequest = {
   headers?: Record<string, string[]>;
   queryparams?: Record<string, string[]>;
   body?: string;
+  signal?: AbortSignal;
+  timeout?: number;
 };
 
 export type ProxyResponse = {
@@ -41,9 +43,12 @@ export const convertHeaders = (headers): Record<string, string[]> => {
 export const consoleProxyFetch = async (
   proxyRequest: ProxyRequest,
 ): Promise<ProxyResponse> => {
+  const { signal, timeout = 60000, ...requestData } = proxyRequest;
   const proxyResponse: ProxyResponse = await consoleFetchJSON.post(
     API_PROXY_URL,
-    proxyRequest,
+    requestData,
+    { signal },
+    timeout,
   );
   if (!proxyResponse.statusCode) {
     throw new Error('Unexpected proxy response: Status code is missing!');

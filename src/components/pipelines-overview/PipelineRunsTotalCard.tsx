@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon } from '@patternfly/react-icons';
 import {
+  Alert,
   Card,
   CardBody,
   CardTitle,
@@ -43,6 +44,12 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
   const [plrRun, setPlrRun] = React.useState(0);
   const [repoRun, setRepoRun] = React.useState(0);
   const [loaded, setLoaded] = React.useState(false);
+  const [pipelineRunsTotalError, setPipelineRunsTotalError] = React.useState<
+    string | undefined
+  >();
+  const abortControllerRefPipeline = React.useRef<AbortController>();
+  const abortControllerRefRepo = React.useRef<AbortController>();
+  const abortControllerRefAll = React.useRef<AbortController>();
 
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
@@ -50,11 +57,26 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
 
   React.useEffect(() => {
     setLoaded(false);
+    setPipelineRunsTotalError(undefined);
+    // Clear stale data when namespace or timespan changes
+    setTotalRun(0);
+    setPlrRun(0);
+    setRepoRun(0);
   }, [namespace, timespan]);
+
+  React.useEffect(() => {
+    return () => {
+      abortControllerRefPipeline.current?.abort();
+      abortControllerRefRepo.current?.abort();
+      abortControllerRefAll.current?.abort();
+    };
+  }, []);
 
   const date = getDropDownDate(timespan).toISOString();
 
-  const getSummaryData = (filter, setData) => {
+  const getSummaryData = (filter, setData, controller) => {
+    setData(0);
+    setPipelineRunsTotalError(undefined);
     setLoaded(false);
     getResultsSummary(
       namespace,
@@ -65,19 +87,38 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
       },
       undefined,
       isDevConsoleProxyAvailable,
+      controller?.signal,
+      90000,
     )
       .then((response) => {
         setLoaded(true);
-        setData(response?.summary?.[0]?.total);
+        setPipelineRunsTotalError(undefined);
+        setData(response?.summary?.[0]?.total || 0);
       })
       .catch((e) => {
-        console.error('Error in getSummary', e);
+        if (e.name === 'AbortError') {
+          // Request was cancelled, this is expected behavior
+          return;
+        }
+        setLoaded(true);
+        setPipelineRunsTotalError(
+          e.message || t('Failed to load total runs data'),
+        );
+        setData(0);
       });
   };
 
   const pipelineFilter = `data.spec.pipelineRef.contains("name") && data.status.startTime>timestamp("${date}")`;
   useInterval(
-    () => getSummaryData(pipelineFilter, setPlrRun),
+    () => {
+      abortControllerRefPipeline.current?.abort();
+      abortControllerRefPipeline.current = new AbortController();
+      getSummaryData(
+        pipelineFilter,
+        setPlrRun,
+        abortControllerRefPipeline.current,
+      );
+    },
     interval,
     namespace,
     date,
@@ -85,7 +126,11 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
 
   const pacFilter = `data.metadata.labels.contains("pipelinesascode.tekton.dev/repository") && data.status.startTime>timestamp("${date}")`;
   useInterval(
-    () => getSummaryData(pacFilter, setRepoRun),
+    () => {
+      abortControllerRefRepo.current?.abort();
+      abortControllerRefRepo.current = new AbortController();
+      getSummaryData(pacFilter, setRepoRun, abortControllerRefRepo.current);
+    },
     interval,
     namespace,
     date,
@@ -93,7 +138,11 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
 
   const allFilter = `data.status.startTime>timestamp("${date}")`;
   useInterval(
-    () => getSummaryData(allFilter, setTotalRun),
+    () => {
+      abortControllerRefAll.current?.abort();
+      abortControllerRefAll.current = new AbortController();
+      getSummaryData(allFilter, setTotalRun, abortControllerRefAll.current);
+    },
     interval,
     namespace,
     date,
@@ -111,58 +160,69 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
         </CardTitle>
         <Divider />
         <CardBody>
-          <Grid hasGutter className="pipeline-overview__totals-card__grid">
-            <GridItem span={9}>
-              <span>
-                <Label
-                  variant="outline"
-                  className="pipeline-overview__totals-card__label"
+          {pipelineRunsTotalError ? (
+            <Alert
+              variant="danger"
+              isInline
+              title={t('Unable to load total runs')}
+              className="pf-v5-u-mb-md"
+            />
+          ) : (
+            <>
+              <Grid hasGutter className="pipeline-overview__totals-card__grid">
+                <GridItem span={9}>
+                  <span>
+                    <Label
+                      variant="outline"
+                      className="pipeline-overview__totals-card__label"
+                    >
+                      {PipelineModel.abbr}
+                    </Label>
+                    {t('Runs in pipelines')}
+                  </span>
+                </GridItem>
+                <GridItem
+                  span={3}
+                  className="pipeline-overview__totals-card__value"
                 >
-                  {PipelineModel.abbr}
-                </Label>
-                {t('Runs in pipelines')}
-              </span>
-            </GridItem>
-            <GridItem
-              span={3}
-              className="pipeline-overview__totals-card__value"
-            >
-              {loaded ? plrRun : <LoadingInline />}
-            </GridItem>
-          </Grid>
-          <Grid hasGutter className="pipeline-overview__totals-card__grid">
-            <GridItem span={9}>
-              <span>
-                <Label
-                  variant="outline"
-                  className="pipeline-overview__totals-card__repo-label"
+                  {loaded ? plrRun : <LoadingInline />}
+                </GridItem>
+              </Grid>
+              <Grid hasGutter className="pipeline-overview__totals-card__grid">
+                <GridItem span={9}>
+                  <span>
+                    <Label
+                      variant="outline"
+                      className="pipeline-overview__totals-card__repo-label"
+                    >
+                      {RepositoryModel.abbr}
+                    </Label>
+                    {t('Runs in repositories')}
+                  </span>
+                </GridItem>
+                <GridItem
+                  span={3}
+                  className="pipeline-overview__totals-card__value"
                 >
-                  {RepositoryModel.abbr}
-                </Label>
-                {t('Runs in repositories')}
-              </span>
-            </GridItem>
-            <GridItem
-              span={3}
-              className="pipeline-overview__totals-card__value"
-            >
-              {loaded ? repoRun : <LoadingInline />}
-            </GridItem>
-          </Grid>
-          <Grid hasGutter>
-            <GridItem span={9}>
-              <span>
-                <CheckIcon className="pipeline-overview__totals-card__icon" />
-                {t('Total runs')}
-              </span>
-            </GridItem>
-            <GridItem
-              span={3}
-              className="pipeline-overview__totals-card__value"
-            >
-              {loaded ? totalRun : <LoadingInline />}
-            </GridItem>
-          </Grid>
+                  {loaded ? repoRun : <LoadingInline />}
+                </GridItem>
+              </Grid>
+              <Grid hasGutter>
+                <GridItem span={9}>
+                  <span>
+                    <CheckIcon className="pipeline-overview__totals-card__icon" />
+                    {t('Total runs')}
+                  </span>
+                </GridItem>
+                <GridItem
+                  span={3}
+                  className="pipeline-overview__totals-card__value"
+                >
+                  {loaded ? totalRun : <LoadingInline />}
+                </GridItem>
+              </Grid>
+            </>
+          )}
         </CardBody>
       </Card>
     </>

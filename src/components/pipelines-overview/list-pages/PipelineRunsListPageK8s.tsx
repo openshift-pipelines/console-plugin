@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
+import { Alert, Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
 import {
   PrometheusResponse,
   useK8sWatchResource,
@@ -20,6 +20,7 @@ import {
 } from '../../pipelines-metrics/utils';
 import { getXaxisValues, secondsToHms } from '../dateTime';
 import { Project } from '../../../types';
+import { useTranslation } from 'react-i18next';
 
 type PipelineRunsListPageProps = {
   bordered?: boolean;
@@ -125,13 +126,21 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
   const [pageFlag, setPageFlag] = React.useState(1);
   const [searchText, setSearchText] = React.useState('');
   const [tickValues, type] = getXaxisValues(timespan);
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   const [projects, projectsLoaded] = useK8sWatchResource<Project[]>({
     isList: true,
     kind: 'Project',
     optional: true,
   });
-  const [pipelineRunsMetricsCountData, , loadingPipelineRunsMetricsCount] =
+  const [pipelineRunsListError, setPipelineRunsListError] = React.useState<
+    string | null
+  >(null);
+  const [
+    pipelineRunsMetricsCountData,
+    pipelineRunsMetricsCountError,
+    loadingPipelineRunsMetricsCount,
+  ] =
     namespace == ALL_NAMESPACES_KEY
       ? usePipelineMetricsForAllNamespacePoll({
           timespan,
@@ -139,6 +148,7 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
           queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
           metricsQuery:
             PipelineQuery.PIPELINERUN_COUNT_WITH_METRIC_FOR_ALL_NAMESPACE,
+          timeout: 90000,
         })
       : usePipelineMetricsForNamespacePoll({
           namespace,
@@ -147,9 +157,14 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
           queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
           metricsQuery:
             PipelineQuery.PIPELINERUN_COUNT_WITH_METRIC_FOR_NAMESPACE,
+          timeout: 90000,
         });
 
-  const [pipelineRunsMetricsSumData, , loadingPipelineRunsMetricsSum] =
+  const [
+    pipelineRunsMetricsSumData,
+    pipelineRunsMetricsSumError,
+    loadingPipelineRunsMetricsSum,
+  ] =
     namespace == ALL_NAMESPACES_KEY
       ? usePipelineMetricsForAllNamespacePoll({
           timespan,
@@ -157,6 +172,7 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
           queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
           metricsQuery:
             PipelineQuery.PIPELINERUN_SUM_WITH_METRIC_FOR_ALL_NAMESPACE,
+          timeout: 90000,
         })
       : usePipelineMetricsForNamespacePoll({
           namespace,
@@ -164,16 +180,27 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
           delay: interval,
           queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
           metricsQuery: PipelineQuery.PIPELINERUN_SUM_WITH_METRIC_FOR_NAMESPACE,
+          timeout: 90000,
         });
 
   const summaryDataK8s = React.useMemo(() => {
+    if (pipelineRunsMetricsCountError || pipelineRunsMetricsSumError) {
+      return [];
+    }
     return processData(
       pipelineRunsMetricsCountData,
       pipelineRunsMetricsSumData,
       tickValues,
       type,
     );
-  }, [pipelineRunsMetricsCountData, pipelineRunsMetricsSumData]);
+  }, [
+    pipelineRunsMetricsCountData,
+    pipelineRunsMetricsSumData,
+    pipelineRunsMetricsCountError,
+    pipelineRunsMetricsSumError,
+    tickValues,
+    type,
+  ]);
 
   const summaryDataFiltered = React.useMemo(() => {
     return summaryDataK8s.filter((summary) =>
@@ -210,6 +237,23 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
   const handleNameChange = (value: string) => {
     setSearchText(value);
   };
+
+  React.useEffect(() => {
+    const hasNonAbortError =
+      (pipelineRunsMetricsCountError &&
+        pipelineRunsMetricsCountError.name !== 'AbortError') ||
+      (pipelineRunsMetricsSumError &&
+        pipelineRunsMetricsSumError.name !== 'AbortError');
+
+    setPipelineRunsListError(
+      hasNonAbortError
+        ? pipelineRunsMetricsSumError?.message ??
+            pipelineRunsMetricsCountError?.message ??
+            t('Unable to load pipeline runs')
+        : null,
+    );
+  }, [pipelineRunsMetricsCountError, pipelineRunsMetricsSumError, t]);
+
   return (
     <Card
       className={classNames('pipeline-overview__pipelinerun-status-card', {
@@ -217,17 +261,29 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
       })}
     >
       <CardBody>
-        <Grid hasGutter className="pipeline-overview__listpage__grid">
-          <GridItem span={9} className="pipeline-overview__listpage__griditem">
-            {/* Lastrun Status is not provided by API  */}
-            {/* <StatusDropdown /> */}
-            <SearchInputField
-              searchText={searchText}
-              pageFlag={pageFlag}
-              handleNameChange={handleNameChange}
-            />
-          </GridItem>
-          {/*
+        {pipelineRunsListError ? (
+          <Alert
+            variant="danger"
+            isInline
+            title={t('Unable to load pipeline runs list')}
+            className="pf-v5-u-mb-md"
+          />
+        ) : (
+          <>
+            <Grid hasGutter className="pipeline-overview__listpage__grid">
+              <GridItem
+                span={9}
+                className="pipeline-overview__listpage__griditem"
+              >
+                {/* Lastrun Status is not provided by API  */}
+                {/* <StatusDropdown /> */}
+                <SearchInputField
+                  searchText={searchText}
+                  pageFlag={pageFlag}
+                  handleNameChange={handleNameChange}
+                />
+              </GridItem>
+              {/*
           Since Pipeline metrics for PAC is not available, commenting this
           <GridItem span={3}>
             <ToggleGroup className="pipeline-overview__listpage__button">
@@ -245,27 +301,35 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
               />
             </ToggleGroup>
           </GridItem> */}
-        </Grid>
-        <Grid hasGutter>
-          <GridItem span={12}>
-            {pageFlag === 1 ? (
-              <PipelineRunsForPipelinesListK8s
-                summaryData={summaryDataK8s}
-                summaryDataFiltered={summaryDataFiltered}
-                loaded={!loadingPipelineRunsMetricsCount && !loadingPipelineRunsMetricsSum}
-                hideLastRunTime={true}
-                projects={projects}
-                projectsLoaded={projectsLoaded}
-              />
-            ) : (
-              <PipelineRunsForRepositoriesList
-                summaryData={summaryDataK8s}
-                summaryDataFiltered={summaryDataFiltered}
-                loaded={!loadingPipelineRunsMetricsCount && !loadingPipelineRunsMetricsSum}
-              />
-            )}
-          </GridItem>
-        </Grid>
+            </Grid>
+            <Grid hasGutter>
+              <GridItem span={12}>
+                {pageFlag === 1 ? (
+                  <PipelineRunsForPipelinesListK8s
+                    summaryData={summaryDataK8s}
+                    summaryDataFiltered={summaryDataFiltered}
+                    loaded={
+                      !loadingPipelineRunsMetricsCount &&
+                      !loadingPipelineRunsMetricsSum
+                    }
+                    hideLastRunTime={true}
+                    projects={projects}
+                    projectsLoaded={projectsLoaded}
+                  />
+                ) : (
+                  <PipelineRunsForRepositoriesList
+                    summaryData={summaryDataK8s}
+                    summaryDataFiltered={summaryDataFiltered}
+                    loaded={
+                      !loadingPipelineRunsMetricsCount &&
+                      !loadingPipelineRunsMetricsSum
+                    }
+                  />
+                )}
+              </GridItem>
+            </Grid>
+          </>
+        )}
       </CardBody>
     </Card>
   );

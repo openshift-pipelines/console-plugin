@@ -105,6 +105,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
       groupBy: group_by,
     };
 
+    setLoaded(false);
     getResultsSummary(
       namespace,
       summaryOpt,
@@ -241,7 +242,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
                 </ChartGroup>
               </Chart>
             ) : (
-              <div className="pipeline-overview__number-of-plr-card__loading">
+              <div className="pipeline-overview__number-of-plr-card__loading pf-v5-u-h-100">
                 <LoadingInline />
               </div>
             )}

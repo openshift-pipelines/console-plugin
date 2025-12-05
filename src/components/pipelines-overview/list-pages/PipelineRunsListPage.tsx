@@ -48,6 +48,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
     namespace = '-';
   }
   const getSummaryData = () => {
+    setloaded(false);
     getResultsSummary(
       namespace,
       pageFlag === 1
@@ -68,8 +69,8 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
     )
       .then((response) => {
         setloaded(true);
-        setSummaryData(response.summary);
-        setSummaryDataFiltered(response.summary);
+        setSummaryData(response?.summary ?? []);
+        setSummaryDataFiltered(response?.summary ?? []);
       })
       .catch((e) => {
         throw e;

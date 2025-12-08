@@ -124,7 +124,7 @@ const PipelineRunsForPipelinesList: React.FC<
     (!summaryDataFiltered || summaryDataFiltered.length === 0) &&
     (!summaryData || summaryData.length === 0);
 
-  if (isEmptyData) {
+  if (loaded && isEmptyData) {
     return <EmptyMsg />;
   }
 

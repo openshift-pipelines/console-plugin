@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon } from '@patternfly/react-icons';
 import {
@@ -22,6 +22,7 @@ import {
   usePipelineMetricsForNamespacePoll,
 } from '../pipelines-metrics/hooks';
 import { getXaxisValues } from './dateTime';
+import { LoadingInline } from '../Loading';
 
 interface PipelinesRunsDurationProps {
   namespace: string;
@@ -39,7 +40,7 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
-  const [totalPipelineRunsData] =
+  const [totalPipelineRunsData, , loadingTotalPipelineRunsData] =
     namespace == ALL_NAMESPACES_KEY
       ? usePipelineMetricsForAllNamespacePoll({
           timespan,
@@ -90,7 +91,10 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
               span={3}
               className="pipeline-overview__totals-card__value"
             >
-              {'-'}
+              {loadingTotalPipelineRunsData ? 
+                <LoadingInline/>
+                : '-'
+              }
             </GridItem>
           </Grid>
           <Grid hasGutter className="pipeline-overview__totals-card__grid">
@@ -109,7 +113,10 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
               span={3}
               className="pipeline-overview__totals-card__value"
             >
-              {'-'}
+              {loadingTotalPipelineRunsData ? 
+                <LoadingInline/>
+                : '-'
+              }
             </GridItem>
           </Grid>
           <Grid hasGutter>
@@ -123,7 +130,10 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
               span={3}
               className="pipeline-overview__totals-card__value"
             >
-              {totalPipelineRuns}
+              {loadingTotalPipelineRunsData ? 
+                <LoadingInline/>
+                : totalPipelineRuns
+              }
             </GridItem>
           </Grid>
         </CardBody>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { DomainPropType, DomainTuple } from 'victory-core';
 import {
@@ -31,6 +31,7 @@ import {
   PipelineQuery,
   adjustToStartOfWeek,
 } from '../pipelines-metrics/utils';
+import { LoadingInline } from '../Loading';
 
 interface PipelinesRunsNumbersChartProps {
   namespace?: string;
@@ -123,7 +124,7 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
     y: domainY || undefined,
   };
 
-  const [runSuccessRatioData] =
+  const [runSuccessRatioData, , loadingRunSuccessRatioData] =
     parentName && namespace
       ? usePipelineMetricsForNamespaceForPipelinePoll({
           namespace,
@@ -232,6 +233,9 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
         </CardTitle>
         <CardBody className="pipeline-overview__number-of-plr-card__body">
           <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
+          {loadingRunSuccessRatioData ? (
+              <LoadingInline />
+            ) : (
             <Chart
               containerComponent={
                 <ChartVoronoiContainer
@@ -262,6 +266,7 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
                 <ChartBar data={chartData} barWidth={18} />
               </ChartGroup>
             </Chart>
+            )}
           </div>
         </CardBody>
       </Card>

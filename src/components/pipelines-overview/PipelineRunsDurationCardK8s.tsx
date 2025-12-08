@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
   HistoryIcon,
@@ -31,6 +31,7 @@ import {
 } from '../pipelines-metrics/hooks';
 import { MetricsQueryPrefix, PipelineQuery } from '../pipelines-metrics/utils';
 import { getXaxisValues } from './dateTime';
+import { LoadingInline } from '../Loading';
 
 interface PipelinesRunsDurationProps {
   namespace: string;
@@ -50,7 +51,7 @@ const PipelineRunsDurationCardK8s: React.FC<PipelinesRunsDurationProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
-  const [totalPipelineRunsCountData] =
+  const [totalPipelineRunsCountData, , loadingPipelineRunsCount] =
     parentName && namespace
       ? usePipelineMetricsForNamespaceForPipelinePoll({
           namespace,
@@ -83,7 +84,7 @@ const PipelineRunsDurationCardK8s: React.FC<PipelinesRunsDurationProps> = ({
     type,
   );
 
-  const [totalPipelineRunsDurationData] =
+  const [totalPipelineRunsDurationData, , loadingPipelineRunsDuration] =
     parentName && namespace
       ? usePipelineMetricsForNamespaceForPipelinePoll({
           namespace,
@@ -144,7 +145,9 @@ const PipelineRunsDurationCardK8s: React.FC<PipelinesRunsDurationProps> = ({
               span={6}
               className="pipeline-overview__duration-card__value"
             >
-              {averageDuration}
+              {loadingPipelineRunsCount ? 
+                <LoadingInline/>
+                : averageDuration}
             </GridItem>
           </Grid>
           <Grid hasGutter className="pipeline-overview__duration-card__grid">
@@ -158,7 +161,9 @@ const PipelineRunsDurationCardK8s: React.FC<PipelinesRunsDurationProps> = ({
               span={6}
               className="pipeline-overview__duration-card__value"
             >
-              {'-'}
+              {loadingPipelineRunsCount ? 
+                <LoadingInline/>
+                : '-'}
             </GridItem>
           </Grid>
           <Grid hasGutter>
@@ -172,7 +177,9 @@ const PipelineRunsDurationCardK8s: React.FC<PipelinesRunsDurationProps> = ({
               span={6}
               className="pipeline-overview__duration-card__value"
             >
-              {totalPipelineRunsDuration ?? '-'}
+              {loadingPipelineRunsDuration ? 
+                <LoadingInline/>
+                : totalPipelineRunsDuration ?? '-'}
             </GridItem>
           </Grid>
         </CardBody>

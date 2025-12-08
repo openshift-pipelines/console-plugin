@@ -249,20 +249,25 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
   return (
     <>
       <Card
-        className={classNames('pipeline-overview__number-of-plr-card', {
+        className={classNames({
+          'pipeline-overview__number-of-plr-card':!pipelineRunsChartError,
           'card-border': bordered,
         })}
       >
         <CardTitle className="pipeline-overview__number-of-plr-card__title">
           <span>{t('Number of PipelineRuns')}</span>
         </CardTitle>
-        <CardBody className="pipeline-overview__number-of-plr-card__body">
+         <CardBody 
+          className={classNames({
+            'pipeline-overview__number-of-plr-card__body':!pipelineRunsChartError,
+          })}
+        >
           {pipelineRunsChartError ? (
             <Alert
               variant="danger"
               isInline
               title={t('Unable to load pipeline runs')}
-              className="pf-v5-u-ml-lg"
+              className="pf-v5-u-mb-md pf-v5-u-mt-lg"
             />
           ) : (
             <div className="pipeline-overview__number-of-plr-card__bar-chart-div">

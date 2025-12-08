@@ -54,10 +54,10 @@ const PipelinesOverviewPage: React.FC = () => {
 
   return (
     <>
-      <PageSection variant="light" isFilled className="pf-v5-u-pl-md">
+      <PageSection variant="light" className="pf-v5-u-pl-md">
         <Title headingLevel="h2">{t('Overview')}</Title>
       </PageSection>
-      <Flex className="project-dropdown-label__flex">
+      <Flex className="project-dropdown-label__flex pf-v5-u-mt-md">
         <FlexItem>
           <NameSpaceDropdown
             selected={activeNamespace}
@@ -106,7 +106,6 @@ const PipelinesOverviewPage: React.FC = () => {
             />
           </FlexItem>
           <FlexItem
-            spacer={{ default: 'spacerXs' }}
             grow={{ default: 'grow' }}
             className="pipelines-overview__cards"
           >
@@ -119,12 +118,12 @@ const PipelinesOverviewPage: React.FC = () => {
             />
           </FlexItem>
         </Flex>
-      </div>
-      <div className="pipelines-metrics__background">
+
         <PipelineRunsListPage
           namespace={activeNamespace}
           timespan={timespan}
           interval={interval}
+          bordered
         />
       </div>
     </>

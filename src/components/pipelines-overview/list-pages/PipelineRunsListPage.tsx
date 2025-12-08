@@ -2,6 +2,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
+  Alert,
   Card,
   CardBody,
   Grid,
@@ -37,17 +38,36 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
 
   const [pageFlag, setPageFlag] = React.useState(1);
   const [loaded, setloaded] = React.useState(false);
+  const [pipelineRunsListError, setPipelineRunsListError] = React.useState<
+    string | undefined
+  >();
   const [summaryData, setSummaryData] = React.useState<SummaryProps[]>([]);
   const [searchText, setSearchText] = React.useState('');
   const [summaryDataFiltered, setSummaryDataFiltered] = React.useState<
     SummaryProps[]
   >([]);
+  const abortControllerRef = React.useRef<AbortController>();
 
   const date = getDropDownDate(timespan).toISOString();
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
   }
+
+  React.useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
   const getSummaryData = () => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+
+    // Clear stale data before making new request
+    setSummaryData([]);
+    setSummaryDataFiltered([]);
+
+    setPipelineRunsListError(undefined);
     setloaded(false);
     getResultsSummary(
       namespace,
@@ -66,14 +86,27 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
           },
       undefined,
       isDevConsoleProxyAvailable,
+      abortControllerRef.current.signal,
+      90000,
     )
       .then((response) => {
         setloaded(true);
-        setSummaryData(response?.summary ?? []);
-        setSummaryDataFiltered(response?.summary ?? []);
+        setPipelineRunsListError(undefined);
+        setSummaryData((response?.summary || []) ?? []);
+        setSummaryDataFiltered((response?.summary || []) ?? []);
       })
       .catch((e) => {
-        throw e;
+        if (e.name === 'AbortError') {
+          // Request was cancelled, this is expected behavior
+          return;
+        }
+        setloaded(true);
+        setPipelineRunsListError(
+          e.message || t('Failed to load pipeline runs list'),
+        );
+        // Keep data cleared on error to prevent stale data display
+        setSummaryData([]);
+        setSummaryDataFiltered([]);
       });
   };
 
@@ -81,6 +114,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
 
   React.useEffect(() => {
     setloaded(false);
+    setPipelineRunsListError(undefined);
     setSummaryData([]);
     setSummaryDataFiltered([]);
   }, [namespace, timespan]);
@@ -104,6 +138,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
 
   const handlePageChange = (pageNumber: number) => {
     setloaded(false);
+    setPipelineRunsListError(undefined);
     setSummaryData([]);
     setSummaryDataFiltered([]);
     setPageFlag(pageNumber);
@@ -125,50 +160,64 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
       })}
     >
       <CardBody>
-        <Grid hasGutter className="pipeline-overview__listpage__grid">
-          <GridItem span={9} className="pipeline-overview__listpage__griditem">
-            {/* Lastrun Status is not provided by API  */}
-            {/* <StatusDropdown /> */}
-            <SearchInputField
-              searchText={searchText}
-              pageFlag={pageFlag}
-              handleNameChange={handleNameChange}
-            />
-          </GridItem>
-          <GridItem span={3}>
-            <ToggleGroup className="pipeline-overview__listpage__button">
-              <ToggleGroupItem
-                text={t('Per Pipeline')}
-                buttonId="pipelineButton"
-                isSelected={pageFlag === 1}
-                onChange={() => handlePageChange(1)}
-              />
-              <ToggleGroupItem
-                text={t('Per Repository')}
-                buttonId="repositoryButton"
-                isSelected={pageFlag === 2}
-                onChange={() => handlePageChange(2)}
-              />
-            </ToggleGroup>
-          </GridItem>
-        </Grid>
-        <Grid hasGutter>
-          <GridItem span={12}>
-            {pageFlag === 1 ? (
-              <PipelineRunsForPipelinesList
-                summaryData={summaryData}
-                summaryDataFiltered={summaryDataFiltered}
-                loaded={loaded}
-              />
-            ) : (
-              <PipelineRunsForRepositoriesList
-                summaryData={summaryData}
-                summaryDataFiltered={summaryDataFiltered}
-                loaded={loaded}
-              />
-            )}
-          </GridItem>
-        </Grid>
+        {pipelineRunsListError ? (
+          <Alert
+            variant="danger"
+            isInline
+            title={t('Unable to load pipeline runs list')}
+            className="pf-v5-u-mb-md"
+          />
+        ) : (
+          <>
+            <Grid hasGutter className="pipeline-overview__listpage__grid">
+              <GridItem
+                span={9}
+                className="pipeline-overview__listpage__griditem"
+              >
+                {/* Lastrun Status is not provided by API  */}
+                {/* <StatusDropdown /> */}
+                <SearchInputField
+                  searchText={searchText}
+                  pageFlag={pageFlag}
+                  handleNameChange={handleNameChange}
+                />
+              </GridItem>
+              <GridItem span={3}>
+                <ToggleGroup className="pipeline-overview__listpage__button">
+                  <ToggleGroupItem
+                    text={t('Per Pipeline')}
+                    buttonId="pipelineButton"
+                    isSelected={pageFlag === 1}
+                    onChange={() => handlePageChange(1)}
+                  />
+                  <ToggleGroupItem
+                    text={t('Per Repository')}
+                    buttonId="repositoryButton"
+                    isSelected={pageFlag === 2}
+                    onChange={() => handlePageChange(2)}
+                  />
+                </ToggleGroup>
+              </GridItem>
+            </Grid>
+            <Grid hasGutter>
+              <GridItem span={12}>
+                {pageFlag === 1 ? (
+                  <PipelineRunsForPipelinesList
+                    summaryData={summaryData}
+                    summaryDataFiltered={summaryDataFiltered}
+                    loaded={loaded}
+                  />
+                ) : (
+                  <PipelineRunsForRepositoriesList
+                    summaryData={summaryData}
+                    summaryDataFiltered={summaryDataFiltered}
+                    loaded={loaded}
+                  />
+                )}
+              </GridItem>
+            </Grid>
+          </>
+        )}
       </CardBody>
     </Card>
   );

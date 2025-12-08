@@ -315,6 +315,8 @@ export const useRuns = <Kind extends K8sResourceCommon>(
             : // when searching by name, return an error if we have no result
               trError && (trLoaded && !trResources.length ? error : undefined)
           : error
+        : error
+        ? error
         : undefined,
       trGetNextPage,
     ];

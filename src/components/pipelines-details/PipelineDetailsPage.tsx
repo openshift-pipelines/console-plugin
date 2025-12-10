@@ -1,4 +1,8 @@
-import { BreadcrumbItem, Text, TextVariants } from '@patternfly/react-core';
+import {
+  BreadcrumbItem,
+  Content,
+  ContentVariants,
+} from '@patternfly/react-core';
 import * as React from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
@@ -137,13 +141,15 @@ const PipelineDetailsPage = () => {
     <DetailsPage
       obj={pipeline}
       headTitle={name}
-      title={<Text component={TextVariants.h1}>{resourceTitleFunc}</Text>}
+      title={
+        <Content component={ContentVariants.h1}>{resourceTitleFunc}</Content>
+      }
       model={PipelineModel}
       breadcrumbs={[
         <BreadcrumbItem key="app-link" component="div">
           <Link
             data-test="breadcrumb-link"
-            className="pf-v5-c-breadcrumb__link"
+            className="pf-v6-c-breadcrumb__link"
             to={`/pipelines/ns/${namespace}/`}
           >
             {t('Pipelines')}

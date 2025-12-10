@@ -1,10 +1,9 @@
 import { ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
 import {
   Divider,
-  TextContent,
-  TextVariants,
-  Text,
-} from '@patternfly/react-core';
+  Content,
+  ContentVariants,
+  } from '@patternfly/react-core';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import ProjectsList from './ProjectsList';
@@ -19,11 +18,11 @@ const AllProjectsPage: React.FC<AllProjectsPageProps> = ({ pageTitle }) => {
   return (
     <>
       <ListPageHeader title={pageTitle || t('Pipelines')} />
-      <TextContent className="cp-all-projects-page-description">
-        <Text component={TextVariants.p}>
+      <Content className="cp-all-projects-page-description">
+        <Content component={ContentVariants.p}>
           {t('Select a Project to view its details')}
-        </Text>
-      </TextContent>
+        </Content>
+      </Content>
       <Divider className="co-divider" />
       <ProjectsList />
     </>

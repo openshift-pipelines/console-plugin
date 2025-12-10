@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { BreadcrumbItem, Text, TextVariants } from '@patternfly/react-core';
+import {
+  BreadcrumbItem,
+  Content,
+  ContentVariants,
+} from '@patternfly/react-core';
 import { Link, useNavigate, useParams } from 'react-router-dom-v5-compat';
 import {
   getGroupVersionKindForModel,
@@ -70,7 +74,9 @@ const TaskDetailsPage: React.FC<TaskDetailsPageProps> = () => {
     <DetailsPage
       obj={task}
       model={TaskModel}
-      title={<Text component={TextVariants.h1}>{resourceTitleFunc}</Text>}
+      title={
+        <Content component={ContentVariants.h1}>{resourceTitleFunc}</Content>
+      }
       actions={[
         {
           key: 'edit-labels',
@@ -109,7 +115,7 @@ const TaskDetailsPage: React.FC<TaskDetailsPageProps> = () => {
         <BreadcrumbItem key="app-link" component="div">
           <Link
             data-test="breadcrumb-link"
-            className="pf-v5-c-breadcrumb__link"
+            className="pf-v6-c-breadcrumb__link"
             to={`/tasks/ns/${namespace}/`}
           >
             {t('Tasks')}

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   EmptyState,
-  EmptyStateBody,
   EmptyStateVariant,
   PageSection,
 } from '@patternfly/react-core';
@@ -17,7 +16,7 @@ const OutputTab: React.FC<{ obj: PipelineRunKind }> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return pipelineRun.status?.pipelineResults || pipelineRun.status?.results ? (
-    <PageSection variant="light" isFilled>
+    <PageSection hasBodyWrapper={false} isFilled>
       <ResultsList
         results={
           pipelineRun.status?.pipelineResults || pipelineRun.status?.results
@@ -26,11 +25,11 @@ const OutputTab: React.FC<{ obj: PipelineRunKind }> = ({
       />
     </PageSection>
   ) : (
-    <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateBody>
-        <p>{t('No Output found')}</p>
-      </EmptyStateBody>
-    </EmptyState>
+    <EmptyState
+      variant={EmptyStateVariant.full}
+      headingLevel="h4"
+      titleText={t('No Output found')}
+    ></EmptyState>
   );
 };
 export default OutputTab;

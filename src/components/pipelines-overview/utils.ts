@@ -42,11 +42,11 @@ export type mainDataType = {
 export const listPageTableColumnClasses = [
   '', //name
   '', //namespace
-  'pf-m-hidden pf-m-visible-on-md', //total plr
-  'pf-m-hidden pf-m-visible-on-md', //total duration
-  'pf-m-hidden pf-m-visible-on-xl', //avg duration
-  'pf-m-hidden pf-m-visible-on-xl', //success rate
-  'pf-m-hidden pf-m-visible-on-xl', //last run time
+  'pf-v6-m-hidden pf-v6-m-visible-on-md', //total plr
+  'pf-v6-m-hidden pf-v6-m-visible-on-md', //total duration
+  'pf-v6-m-hidden pf-v6-m-visible-on-xl', //avg duration
+  'pf-v6-m-hidden pf-v6-m-visible-on-xl', //success rate
+  'pf-v6-m-hidden pf-v6-m-visible-on-xl', //last run time
 ];
 
 export const TimeRangeOptions = () => {

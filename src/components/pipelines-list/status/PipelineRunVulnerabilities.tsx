@@ -6,10 +6,10 @@ import {
   AngleDoubleUpIcon,
   EqualsIcon,
 } from '@patternfly/react-icons/dist/js/icons';
-import { global_palette_blue_300 as blueColor } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
-import { global_palette_gold_400 as goldColor } from '@patternfly/react-tokens/dist/js/global_palette_gold_400';
-import { global_palette_orange_300 as orangeColor } from '@patternfly/react-tokens/dist/js/global_palette_orange_300';
-import { global_palette_red_200 as redColor } from '@patternfly/react-tokens/dist/js/global_palette_red_200';
+import { t_chart_color_blue_300 as blueColor } from "@patternfly/react-tokens/dist/js/t_chart_color_blue_300";
+import { t_chart_color_orange_400 as goldColor } from "@patternfly/react-tokens/dist/js/t_chart_color_orange_400";
+import { t_chart_color_orange_300 as orangeColor } from "@patternfly/react-tokens/dist/js/t_chart_color_orange_300";
+import { t_chart_global_danger_color_100 as redColor } from "@patternfly/react-tokens/dist/js/t_chart_global_danger_color_100";
 import { PipelineRunKind } from '../../../types';
 import { usePipelineRunVulnerabilities } from '../../hooks/usePipelineRunVulnerabilities';
 

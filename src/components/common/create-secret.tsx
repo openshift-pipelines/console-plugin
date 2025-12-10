@@ -63,7 +63,7 @@ class BasicAuthSubformWithTranslation extends React.Component<
           </label>
           <div>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               id="username"
               data-test="secret-username"
               aria-describedby="username-help"
@@ -85,7 +85,7 @@ class BasicAuthSubformWithTranslation extends React.Component<
           </label>
           <div>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               id="password"
               data-test="secret-password"
               aria-describedby="password-help"
@@ -257,7 +257,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
           </label>
           <div>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               id={`${this.props.id}-address`}
               aria-describedby={`${this.props.id}-address-help`}
               type="text"
@@ -284,7 +284,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
           </label>
           <div>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               id={`${this.props.id}-username`}
               type="text"
               name="username"
@@ -305,7 +305,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
           </label>
           <div>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               id={`${this.props.id}-password`}
               type="password"
               name="password"
@@ -323,7 +323,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
           </label>
           <div>
             <input
-              className="pf-v5-c-form-control"
+              className="pf-v6-c-form-control"
               id={`${this.props.id}-email`}
               type="text"
               name="email"
@@ -487,12 +487,12 @@ class CreateConfigSubformWithTranslation extends React.Component<
             {_.size(this.state.secretEntriesArray) > 1 && (
               <div className="co-add-remove-form__link--remove-entry">
                 <Button
+                  icon={<MinusCircleIcon className="co-icon-space-r" />}
                   onClick={() => this.removeEntry(index)}
                   type="button"
                   variant="link"
                   data-test="remove-entry-button"
                 >
-                  <MinusCircleIcon className="co-icon-space-r" />
                   {t('plugin__pipelines-console-plugin~Remove credentials')}
                 </Button>
               </div>
@@ -510,13 +510,13 @@ class CreateConfigSubformWithTranslation extends React.Component<
       <>
         {secretEntriesList}
         <Button
+          icon={<PlusCircleIcon className="co-icon-space-r" />}
           className="co-create-secret-form__link--add-entry pf-m-link--align-left"
           onClick={() => this.addEntry()}
           type="button"
           variant="link"
           data-test="add-credentials-button"
         >
-          <PlusCircleIcon className="co-icon-space-r" />
           {t('plugin__pipelines-console-plugin~Add credentials')}
         </Button>
       </>

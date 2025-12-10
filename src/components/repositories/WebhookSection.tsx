@@ -1,7 +1,7 @@
 import * as React from 'react';
 import cx from 'classnames';
 import {
-  Text,
+  Content,
   TextInputTypes,
   FormGroup,
   ClipboardCopy,
@@ -328,9 +328,9 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({
               label={t('Events triggering the webhook: ')}
               fieldId="repo-permissions"
             >
-              <Text>
+              <Content component="p">
                 <PermissionsSection formContextField={formContextField} />
-              </Text>
+              </Content>
             </FormGroup>
           </ExpandableSection>
 

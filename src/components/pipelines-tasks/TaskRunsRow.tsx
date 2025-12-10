@@ -240,7 +240,7 @@ const TaskRunsRow: React.FC<RowProps<TaskRunKind>> = ({
       <TableData
         activeColumnIDs={activeColumnIDs}
         id=""
-        className="dropdown-kebab-pf pf-v5-c-table__action"
+        className="dropdown-kebab-pf pf-v6-c-table__action"
       >
         <TaskRunKebab obj={obj} />
       </TableData>

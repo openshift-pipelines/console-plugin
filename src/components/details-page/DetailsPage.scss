@@ -7,7 +7,7 @@
 
     &__tabItem {
       position: relative;
-      &.isFilled.pf-v5-c-tab-content {
+      &.isFilled.pf-v6-c-tab-content {
         flex: 1;
       }
     }
@@ -17,6 +17,6 @@
 .action-menu-dropdown {
   inset-inline-end: 0;
   position: absolute;
-  background: var(--pf-v5-global--BackgroundColor--light-100);
-  box-shadow: var(--pf-v5-global--BoxShadow--md);
+  background: var(--pf-t--global--background--color--primary--default);
+  box-shadow: var(--pf-t--global--box-shadow--md);
 }

@@ -65,7 +65,7 @@ const DEFAULT_ROW_RENDERER = ({
       {!isReadOnly && (
         <div className={'odc-multi-column-field__col--button'}>
           <Tooltip content={tooltipDeleteRow || t('Remove')}>
-            <Button
+            <Button icon={<MinusCircleIcon />}
               data-test="delete-row"
               aria-label={tooltipDeleteRow || t('Remove')}
               variant={ButtonVariant.plain}
@@ -73,9 +73,7 @@ const DEFAULT_ROW_RENDERER = ({
               isInline
               onClick={!disableDeleteRow ? onDelete : undefined}
               isAriaDisabled={disableDeleteRow}
-            >
-              <MinusCircleIcon />
-            </Button>
+             />
           </Tooltip>
         </div>
       )}

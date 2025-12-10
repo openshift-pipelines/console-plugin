@@ -125,6 +125,9 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
         >
           {canUpdate ? (
             <Button
+              icon={
+                <PencilAltIcon className="co-icon-space-l pf-v6-c-button-icon--plain" />
+              }
               data-test="edit-annotations"
               type="button"
               isInline
@@ -134,7 +137,6 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
               {t('{{count}} annotation', {
                 count: _.size(metadata.annotations),
               })}
-              <PencilAltIcon className="co-icon-space-l pf-v5-c-button-icon--plain" />
             </Button>
           ) : (
             t('{{count}} annotation', {

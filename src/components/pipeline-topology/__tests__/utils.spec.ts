@@ -165,7 +165,9 @@ describe('When expression decorator color', () => {
       false,
       false,
     );
-    expect(diamondColor).toBe('var(--pf-v5-global--BackgroundColor--200)');
+    expect(diamondColor).toBe(
+      'var(--pf-t--global--background--color--secondary--default)',
+    );
     expect(tooltipContent).toBe('When expression');
   });
 
@@ -176,7 +178,7 @@ describe('When expression decorator color', () => {
       true,
     );
     expect(diamondColor).toBe(
-      'var(--pf-v5-global--BackgroundColor--light-100)',
+      'var(--pf-t--global--background--color--primary--default)',
     );
     expect(tooltipContent).toBe('When expression');
   });

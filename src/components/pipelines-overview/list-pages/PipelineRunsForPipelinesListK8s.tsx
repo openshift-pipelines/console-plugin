@@ -39,8 +39,7 @@ const PipelineRunsForPipelinesListK8s: React.FC<
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const EmptyMsg = () => (
-    <EmptyState variant={EmptyStateVariant.lg}>
-      {t('No PipelineRuns found')}
+    <EmptyState variant={EmptyStateVariant.lg} headingLevel="h4" titleText={t('No PipelineRuns found')}>
     </EmptyState>
   );
 

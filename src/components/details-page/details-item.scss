@@ -1,5 +1,5 @@
 .editable-label-group {
-  border: var(--pf-border-width-sm) solid var(--pf-global--BorderColor--100);
-  border-radius: var(--pf-global--BorderRadius--sm);
-  padding: var(--pf-global--spacer--xs);
+  border: var(--pf-t--global--border--width--regular) solid var(--pf-t--global--border--color--default);
+  border-radius: var(--pf-t--global--border--radius--small);
+  padding: var(--pf-t--global--spacer--xs);
 }

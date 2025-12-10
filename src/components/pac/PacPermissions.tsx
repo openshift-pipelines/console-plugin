@@ -4,8 +4,8 @@ import {
   ExpandableSection,
   Grid,
   GridItem,
-  Text,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -24,7 +24,7 @@ const PacPermissions: React.FC = () => {
             label={t('Repository Permissions:')}
             fieldId="repo-permissions"
           >
-            <Text component={TextVariants.small}>
+            <Content component={ContentVariants.small}>
               {t('Checks: Read & Write')}
               <br />
               {t('Contents: Read & Write')}
@@ -38,7 +38,7 @@ const PacPermissions: React.FC = () => {
               {t('Organization plan: Readonly')}
               <br />
               {t('Pull requests: Read & Write')}
-            </Text>
+            </Content>
           </FormGroup>
         </GridItem>
         <GridItem>
@@ -46,11 +46,11 @@ const PacPermissions: React.FC = () => {
             label={t('Organization permissions:')}
             fieldId="org-permissions"
           >
-            <Text component={TextVariants.small}>
+            <Content component={ContentVariants.small}>
               {t('Members: Readonly')}
               <br />
               {t('Plan: Readonly')}
-            </Text>
+            </Content>
           </FormGroup>
         </GridItem>
         <GridItem>
@@ -58,7 +58,7 @@ const PacPermissions: React.FC = () => {
             label={t('Subscribe to events:')}
             fieldId="event-subscriptions"
           >
-            <Text component={TextVariants.small}>
+            <Content component={ContentVariants.small}>
               {t('Commit comment')}
               <br />
               {t('Issue comment')}
@@ -70,7 +70,7 @@ const PacPermissions: React.FC = () => {
               {t('Pull request review comment')}
               <br />
               {t('Push')}
-            </Text>
+            </Content>
           </FormGroup>
         </GridItem>
       </Grid>

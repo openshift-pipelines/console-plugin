@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
   Button,
   ButtonVariant,
-  TextContent,
+  Content,
   Title,
 } from '@patternfly/react-core';
 import { useHistory } from 'react-router';
@@ -65,9 +65,9 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
         >
           {props.selectedItem.cta.label}
         </Button>
-        <TextContent className="ocs-quick-search-details__description">
+        <Content className="ocs-quick-search-details__description">
           {props.selectedItem.description}
-        </TextContent>
+        </Content>
       </>
     );
   };

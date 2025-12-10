@@ -56,7 +56,7 @@ const PipelinesOverviewPageK8s: React.FC = () => {
 
   return (
     <>
-      <PageSection variant="light" className="pf-v5-u-pl-md">
+      <PageSection hasBodyWrapper={false} isFilled className="pf-v6-u-pl-md">
         <Title headingLevel="h2">{t('Overview')}</Title>
       </PageSection>
       <div className="pf-v5-u-m-md">

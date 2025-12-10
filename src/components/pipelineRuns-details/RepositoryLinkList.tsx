@@ -53,7 +53,7 @@ const RepositoryLinkList: React.FC<RepositoryLinkListProps> = ({
   if (!repoName) return null;
 
   return (
-    <DescriptionList className="pf-v5-u-mt-md">
+    <DescriptionList className="pf-v6-u-mt-md">
       <DescriptionListGroup>
         <DescriptionListTerm>{t('Repository')}</DescriptionListTerm>
         <DescriptionListDescription>

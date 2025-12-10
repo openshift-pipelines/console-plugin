@@ -32,9 +32,9 @@ const PipelineParametersForm: React.FC<PipelineParametersFormProps> = ({
   return (
     <Form onSubmit={handleSubmit}>
       <PageSection
+        hasBodyWrapper={false}
         isFilled
-        variant="light"
-        className="pipelines-console-plugin__page-section-width pf-v5-u-p-0 pipelines-console-plugin__background-transparent"
+        className="pipelines-console-plugin__page-section-width pf-v6-u-p-0 pipelines-console-plugin__background-transparent"
       >
         <PipelineParameters
           fieldName="parameters"

@@ -4,10 +4,10 @@
 
   @-moz-document url-prefix() {
     /* Firefox vertical-alignment fix */
-    top: var(--pf-v5-global--spacer--sm);
+    top: var(--pf-t--global--spacer--sm);
   }
 }
 
 .pipelines-approval-status-info {
-  padding-left: var(--pf-v5-global--BorderWidth--md);
+  padding-left: var(--pf-t--global--border--width--md);
 }

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { Tooltip } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
-import { global_palette_black_500 as customTaskColor } from '@patternfly/react-tokens/dist/js/global_palette_black_500';
+import { t_chart_color_black_500 as customTaskColor } from "@patternfly/react-tokens/dist/js/t_chart_color_black_500";
 import {
   observer,
   Node,

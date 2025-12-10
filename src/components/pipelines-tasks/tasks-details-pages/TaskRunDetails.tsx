@@ -17,11 +17,11 @@ const TaskRunDetails: React.FC<TaskRunDetailsProps> = ({ obj: taskRun }) => {
 
   return (
     <>
-      <PageSection isFilled variant="light">
+      <PageSection hasBodyWrapper={false} isFilled>
         <TaskRunDetailsSection taskRun={taskRun} />
       </PageSection>
       {taskRun?.status?.taskResults || taskRun?.status?.results ? (
-        <PageSection isFilled variant="light">
+        <PageSection hasBodyWrapper={false} isFilled>
           <ResultsList
             results={taskRun.status?.taskResults || taskRun.status?.results}
             resourceName={t(TaskRunModel.labelKey)}

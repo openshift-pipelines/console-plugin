@@ -130,11 +130,11 @@ describe('pipelineQuickSearchDetails', () => {
         />,
       );
       await waitFor(() => {
+        const button = getByRole('button', { name: 'Install and add' });
         expect(
-          getByRole('button', { name: 'Install and add' }).getAttribute(
-            'aria-disabled',
-          ),
-        ).toBe('true');
+          button.hasAttribute('disabled') ||
+            button.getAttribute('aria-disabled') === 'true',
+        ).toBe(true);
       });
     });
 
@@ -146,7 +146,7 @@ describe('pipelineQuickSearchDetails', () => {
       await waitFor(() => {
         expect(
           getByRole('button', { name: 'Add' }).getAttribute('aria-disabled'),
-        ).toBe('false');
+        ).toBeNull();
       });
     });
 
@@ -157,7 +157,7 @@ describe('pipelineQuickSearchDetails', () => {
       await waitFor(() => {
         expect(
           getByRole('button', { name: 'Add' }).getAttribute('aria-disabled'),
-        ).toBe('false');
+        ).toBeNull();
       });
     });
 

@@ -24,7 +24,7 @@ export const BreadCrumbs: React.FC<
             crumb.name
           ) : (
             <Link
-              className="pf-v5-c-breadcrumb__link"
+              className="pf-v6-c-breadcrumb__link"
               to={crumb.path}
               data-test-id={`breadcrumb-link-${i}`}
             >

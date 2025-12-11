@@ -7,6 +7,10 @@ import {
   useActiveNamespace,
   useFlag,
 } from '@openshift-console/dynamic-plugin-sdk';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom-v5-compat';
 import PipelinesOverviewPage from '../PipelinesOverviewPage';
 import { getResultsSummary } from '../../utils/summary-api';
 import * as utils from '../utils';
@@ -27,6 +31,13 @@ jest.mock('../../utils/tekton-results', () => ({
 jest.mock('../../utils/summary-api', () => ({
   getResultsSummary: jest.fn(),
 }));
+jest.mock('react-redux', () => ({
+  useDispatch: jest.fn(),
+  useSelector: jest.fn(),
+}));
+jest.mock('react-router-dom-v5-compat', () => ({
+  useLocation: jest.fn(),
+}));
 (VirtualizedTable as jest.Mock).mockImplementation((props) => {
   virtualizedTableRenderProps(props);
   return null;
@@ -40,6 +51,9 @@ const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const useActiveColumnsMock = useActiveColumns as jest.Mock;
 const getResultsSummaryMock = getResultsSummary as jest.Mock;
 const useFlagMock = useFlag as jest.Mock;
+const useDispatchMock = useDispatch as jest.Mock;
+const useSelectorMock = useSelector as jest.Mock;
+const useLocationMock = useLocation as jest.Mock;
 
 describe('Pipeline Overview page', () => {
   beforeEach(() => {
@@ -52,6 +66,9 @@ describe('Pipeline Overview page', () => {
     useActiveColumnsMock.mockReturnValue([[]]);
     getResultsSummaryMock.mockReturnValue(Promise.resolve({}));
     useFlagMock.mockReturnValue(true);
+    useDispatchMock.mockReturnValue(jest.fn());
+    useSelectorMock.mockReturnValue(null);
+    useLocationMock.mockReturnValue({ search: '', pathname: '/' });
   });
 
   it('should render Pipeline Overview', async () => {

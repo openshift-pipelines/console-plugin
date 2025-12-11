@@ -4,6 +4,7 @@ import {
   k8sGet,
   K8sResourceKind,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { LaunchOverlay } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/OverlayProvider';
 import * as _ from 'lodash';
 import {
   PIPELINE_SERVICE_ACCOUNT,
@@ -38,7 +39,7 @@ import {
   TriggerTemplateKindParam,
   VolumeClaimTemplateType,
 } from '../../types';
-import { errorModal } from '../modals/error-modal';
+import { ModalErrorContent } from '../modals/error-modal';
 import { getPipelineRunData } from '../utils/utils';
 import { getPipelineRunWorkspaces } from './../utils/pipeline-utils';
 import { CREATE_PIPELINE_RESOURCE } from './validation-utils';
@@ -359,6 +360,7 @@ export const createEventListenerRoute = (
 export const exposeRoute = async (
   elName: string,
   ns: string,
+  launchOverlay: LaunchOverlay,
   iteration = 0,
 ) => {
   const elResource: EventListenerKind = await k8sGet({
@@ -371,7 +373,7 @@ export const exposeRoute = async (
   try {
     if (!serviceGeneratedName) {
       if (iteration < 3) {
-        setTimeout(() => exposeRoute(elName, ns, iteration + 1), 500);
+        setTimeout(() => exposeRoute(elName, ns, launchOverlay, iteration + 1), 500);
       } else {
         // Unable to deterministically create the route; create a default one
         await k8sCreate({
@@ -399,9 +401,9 @@ export const exposeRoute = async (
     );
     await k8sCreate({ model: RouteModel, data: route, ns });
   } catch (e) {
-    errorModal({
-      title: 'Error Exposing Route',
-      error: e.message || 'Unknown error exposing the Webhook route',
-    });
+      launchOverlay(ModalErrorContent, {
+        title: 'Error Exposing Route',
+        error: e.message || 'Unknown error exposing the Webhook route',
+      });
   }
 };

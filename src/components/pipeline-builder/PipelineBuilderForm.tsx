@@ -43,7 +43,7 @@ import FormFooter from '../pipelines-details/multi-column-field/FormFooter';
 import { FlexForm, FormBody } from './form-utils';
 import SyncedEditorField from './SyncedEditorField';
 import PipelineQuickSearch from '../task-quicksearch/PipelineQuickSearch';
-import { useModal } from '@openshift-console/dynamic-plugin-sdk';
+import { useOverlay } from '@openshift-console/dynamic-plugin-sdk';
 
 type PipelineBuilderFormProps = FormikProps<PipelineBuilderFormikValues> & {
   existingPipeline: PipelineKind;
@@ -52,7 +52,7 @@ type PipelineBuilderFormProps = FormikProps<PipelineBuilderFormikValues> & {
 
 const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const launchModal = useModal();
+  const launchOverlay = useOverlay();
   const [selectedTask, setSelectedTask] =
     React.useState<SelectedBuilderTask>(null);
   const selectedTaskRef = React.useRef<SelectedBuilderTask>(null);
@@ -219,7 +219,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                   );
                 }}
                 onRemoveTask={(taskName: string) => {
-                  launchModal(RemoveTaskModal, {
+                  launchOverlay(RemoveTaskModal, {
                     taskName,
                     onRemove: () => handleRemoveTask(taskName),
                   });

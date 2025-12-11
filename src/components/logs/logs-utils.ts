@@ -2,6 +2,7 @@ import {
   consoleFetchText,
   k8sGet,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { LaunchOverlay } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/OverlayProvider';
 import { saveAs } from 'file-saver';
 import { LOG_SOURCE_TERMINATED, LOG_SOURCE_WAITING } from '../../consts';
 import { PodModel } from '../../models';
@@ -11,7 +12,7 @@ import {
   PodKind,
   TaskRunKind,
 } from '../../types';
-import { errorModal } from '../modals/error-modal';
+import { ModalErrorContent } from '../modals/error-modal';
 import { t } from '../utils/common-utils';
 import { resourceURL } from '../utils/k8s-utils';
 import { containerToLogSourceStatus } from '../utils/pipeline-utils';
@@ -59,6 +60,7 @@ export const getRenderContainers = (
 const getOrderedStepsFromPod = (
   name: string,
   ns: string,
+  launchOverlay: LaunchOverlay,
 ): Promise<ContainerStatus[]> => {
   return k8sGet({ model: PodModel, name, ns })
     .then((pod: PodKind) => {
@@ -68,9 +70,9 @@ const getOrderedStepsFromPod = (
       );
     })
     .catch((err) => {
-      errorModal({
-        error: err.message || t('Error downloading logs.'),
-      });
+        launchOverlay(ModalErrorContent, {
+          error: err.message || t('Error downloading logs.'),
+        });
       return [];
     });
 };
@@ -93,6 +95,7 @@ export const getDownloadAllLogsCallback = (
   taskRuns: TaskRunKind[],
   namespace: string,
   pipelineRunName: string,
+  launchOverlay: LaunchOverlay,
   isDevConsoleProxyAvailable?: boolean,
 ): (() => Promise<Error>) => {
   const getWatchUrls = async (): Promise<StepsWatchUrl> => {
@@ -100,7 +103,7 @@ export const getDownloadAllLogsCallback = (
       sortedTaskRunNames.map((currTask) => {
         const { status } =
           taskRuns.find((t) => t.metadata.name === currTask) ?? {};
-        return getOrderedStepsFromPod(status?.podName, namespace);
+        return getOrderedStepsFromPod(status?.podName, namespace, launchOverlay);
       }),
     );
     return sortedTaskRunNames.reduce((acc, currTask, i) => {

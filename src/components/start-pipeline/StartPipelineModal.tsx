@@ -14,7 +14,7 @@ import {
 import StartPipelineForm from './StartPipelineForm';
 import { submitStartPipeline } from './submit-utils';
 import { StartPipelineFormValues } from './types';
-import { errorModal } from '../modals/error-modal';
+import { useErrorModal } from '../modals/error-modal';
 import { PipelineKind, PipelineRunKind } from '../../types';
 import { startPipelineSchema } from './validation-utils';
 import { convertPipelineToModalData } from './utils';
@@ -42,6 +42,7 @@ const StartPipelineModal: OverlayComponent<StartPipelineModalProps> = ({
     pipeline.metadata?.name,
     pipeline.metadata?.namespace,
   );
+  const errorModal = useErrorModal();
 
   const initialValues: StartPipelineFormValues = React.useMemo(() => {
     if (!pipelinePVCLoaded) return;

@@ -103,7 +103,7 @@ const PipelineDetailsPage = () => {
         onSubmit: handlePipelineRunSubmit,
       });
     } else {
-      triggerPipeline(pipeline, currentUser, handlePipelineRunSubmit);
+      triggerPipeline(pipeline, currentUser, launchOverlay, handlePipelineRunSubmit);
     }
   };
 

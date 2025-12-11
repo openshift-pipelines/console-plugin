@@ -1,6 +1,6 @@
 import * as React from 'react';
 import _ from 'lodash';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { DomainPropType, DomainTuple } from 'victory-core';
 import {
@@ -12,7 +12,7 @@ import {
   ChartThemeColor,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
-import { Card, CardBody, CardTitle } from '@patternfly/react-core';
+import { Alert, Card, CardBody, CardTitle } from '@patternfly/react-core';
 import {
   formatDate,
   getXaxisValues,
@@ -21,6 +21,7 @@ import {
   parsePrometheusDuration,
 } from '../pipelines-overview/dateTime';
 import { ALL_NAMESPACES_KEY } from '../../consts';
+import { LoadingInline } from '../Loading';
 import {
   usePipelineMetricsForAllNamespacePoll,
   usePipelineMetricsForNamespaceForPipelinePoll,
@@ -94,8 +95,13 @@ const PipelinesAverageDurationK8s: React.FC<PipelinesAverageDurationProps> = ({
     y: domainY || undefined,
   };
   const [tickValues, type] = getXaxisValues(timespan);
+  const [averageDurationError, setAverageDurationError] = React.useState<
+    string | null
+  >(null);
+  const [averageDurationLoading, setAverageDurationLoading] =
+    React.useState(true);
 
-  const [totalPipelineRunsCountData] =
+  const [totalPipelineRunsCountData, countError, countLoading] =
     parentName && namespace
       ? usePipelineMetricsForNamespaceForPipelinePoll({
           namespace,
@@ -105,6 +111,7 @@ const PipelinesAverageDurationK8s: React.FC<PipelinesAverageDurationProps> = ({
           name: parentName,
           metricsQuery:
             PipelineQuery.PIPELINERUN_COUNT_FOR_NAMESPACE_FOR_PIPELINE,
+          timeout: 90000,
         })
       : namespace == ALL_NAMESPACES_KEY
       ? usePipelineMetricsForAllNamespacePoll({
@@ -112,6 +119,7 @@ const PipelinesAverageDurationK8s: React.FC<PipelinesAverageDurationProps> = ({
           delay: interval,
           queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
           metricsQuery: PipelineQuery.PIPELINERUN_COUNT_FOR_ALL_NAMESPACE,
+          timeout: 90000,
         })
       : usePipelineMetricsForNamespacePoll({
           namespace,
@@ -119,9 +127,10 @@ const PipelinesAverageDurationK8s: React.FC<PipelinesAverageDurationProps> = ({
           delay: interval,
           queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
           metricsQuery: PipelineQuery.PIPELINERUN_COUNT_FOR_NAMESPACE,
+          timeout: 90000,
         });
 
-  const [totalPipelineRunsDurationData] =
+  const [totalPipelineRunsDurationData, durationError, durationLoading] =
     parentName && namespace
       ? usePipelineMetricsForNamespaceForPipelinePoll({
           namespace,
@@ -131,6 +140,7 @@ const PipelinesAverageDurationK8s: React.FC<PipelinesAverageDurationProps> = ({
           name: parentName,
           metricsQuery:
             PipelineQuery.PIPELINERUN_DURATION_FOR_NAMESPACE_FOR_PIPELINE,
+          timeout: 90000,
         })
       : namespace == ALL_NAMESPACES_KEY
       ? usePipelineMetricsForAllNamespacePoll({
@@ -138,6 +148,7 @@ const PipelinesAverageDurationK8s: React.FC<PipelinesAverageDurationProps> = ({
           delay: interval,
           queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
           metricsQuery: PipelineQuery.PIPELINERUN_DURATION_FOR_ALL_NAMESPACE,
+          timeout: 90000,
         })
       : usePipelineMetricsForNamespacePoll({
           namespace,
@@ -145,7 +156,21 @@ const PipelinesAverageDurationK8s: React.FC<PipelinesAverageDurationProps> = ({
           delay: interval,
           queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
           metricsQuery: PipelineQuery.PIPELINERUN_DURATION_FOR_NAMESPACE,
+          timeout: 90000,
         });
+
+  React.useEffect(() => {
+    const hasNonAbortError =
+      (countError && countError.name !== 'AbortError') ||
+      (durationError && durationError.name !== 'AbortError');
+    setAverageDurationError(
+      hasNonAbortError ? t('Unable to load average duration') : null,
+    );
+  }, [countError, durationError]);
+
+  React.useEffect(() => {
+    setAverageDurationLoading(countLoading || durationLoading);
+  }, [countLoading, durationLoading]);
 
   const combinedData = totalPipelineRunsCountData?.data?.result[0]?.values?.map(
     (value1) => {
@@ -273,42 +298,57 @@ const PipelinesAverageDurationK8s: React.FC<PipelinesAverageDurationProps> = ({
           <span>{t('Average duration')}</span>
         </CardTitle>
         <CardBody className="pipeline-overview__number-of-plr-card__body">
-          <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
-            <Chart
-              containerComponent={
-                <ChartVoronoiContainer
-                  labels={({ datum }) => `${datum.y}m`}
-                  constrainToVisibleArea
-                />
-              }
-              scale={{ x: 'time', y: 'linear' }}
-              domain={domainValue}
-              domainPadding={{ x: [30, 25] }}
-              height={145}
-              width={400}
-              padding={{
-                top: 10,
-                bottom: 55,
-                left: 50,
-              }}
-              themeColor={ChartThemeColor.blue}
-            >
-              <ChartAxis
-                tickValues={tickValues}
-                style={xAxisStyle}
-                tickFormat={xTickFormat}
-                label={showLabel ? dayLabel : ''}
-              />
-              <ChartAxis
-                dependentAxis
-                style={yAxisStyle}
-                tickFormat={(v) => `${v}m`}
-              />
-              <ChartGroup>
-                <ChartBar data={chartData} barWidth={18} />
-              </ChartGroup>
-            </Chart>
-          </div>
+          {averageDurationError ? (
+            <Alert
+              variant="danger"
+              isInline
+              title={t('Unable to load average duration')}
+              className="pf-v5-u-my-lg pf-v5-u-ml-lg"
+            />
+          ) : (
+            <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
+              {!averageDurationLoading ? (
+                <Chart
+                  containerComponent={
+                    <ChartVoronoiContainer
+                      labels={({ datum }) => `${datum.y}m`}
+                      constrainToVisibleArea
+                    />
+                  }
+                  scale={{ x: 'time', y: 'linear' }}
+                  domain={domainValue}
+                  domainPadding={{ x: [30, 25] }}
+                  height={145}
+                  width={400}
+                  padding={{
+                    top: 10,
+                    bottom: 55,
+                    left: 50,
+                  }}
+                  themeColor={ChartThemeColor.blue}
+                >
+                  <ChartAxis
+                    tickValues={tickValues}
+                    style={xAxisStyle}
+                    tickFormat={xTickFormat}
+                    label={showLabel ? dayLabel : ''}
+                  />
+                  <ChartAxis
+                    dependentAxis
+                    style={yAxisStyle}
+                    tickFormat={(v) => `${v}m`}
+                  />
+                  <ChartGroup>
+                    <ChartBar data={chartData} barWidth={18} />
+                  </ChartGroup>
+                </Chart>
+              ) : (
+                <div className="pipeline-overview__number-of-plr-card__loading pf-v5-u-h-100">
+                  <LoadingInline />
+                </div>
+              )}
+            </div>
+          )}
         </CardBody>
       </Card>
     </>

@@ -29,8 +29,8 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
   }, [setCurrentLogsGetter, trResults]);
 
   const errorMessage =
-    (trError as HttpError)?.code === 404
-      ? `Logs are no longer accessible for ${taskName} task`
+    (trError as HttpError)?.code === 404 || (trError as HttpError)?.code === 500
+      ? `Unable to access log for ${taskName} task`
       : null;
 
   // Format trResults to include taskName
@@ -49,14 +49,14 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
         data-test-id="logs-taskName"
       >
         {taskName}
-        {!trLoaded && (
+        {!trLoaded && !errorMessage ? (
           <span
             className="odc-multi-stream-logs__taskName__loading-indicator"
             data-test-id="loading-indicator"
           >
             <LoadingInline />
           </span>
-        )}
+        ) : null}
       </div>
       <div
         className="odc-multi-stream-logs__logviewer"

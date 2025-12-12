@@ -11,10 +11,8 @@ import {
   MenuToggleElement,
   PageGroup,
   PageSection,
-  PageSectionVariants,
-  Text,
-  TextContent,
-} from '@patternfly/react-core';
+  Content,
+  } from '@patternfly/react-core';
 import {
   HorizontalNav,
   K8sModel,
@@ -112,19 +110,19 @@ const DetailsPage: React.FC<React.PropsWithChildren<DetailsPageProps>> = ({
 
   return (
     <PageGroup data-test="details" className="app-details">
-      <PageSection type="breadcrumb" className="co-m-nav-title--detail">
+      <PageSection hasBodyWrapper={false} type="breadcrumb" className="co-m-nav-title--detail">
         {breadcrumbs && (
           <BreadCrumbs
             data-test="details__breadcrumbs"
             breadcrumbs={breadcrumbs}
           />
         )}
-        <Flex style={{ paddingTop: 'var(--pf-v5-global--spacer--md)' }}>
+        <Flex style={{ paddingTop: "var(--pf-t--global--spacer--md)" }}>
           <FlexItem>
-            <TextContent>
+            <Content>
               {renderTitle()}
-              {description && <Text component="p">{description}</Text>}
-            </TextContent>
+              {description && <Content component="p">{description}</Content>}
+            </Content>
           </FlexItem>
           {actions?.length ? (
             <FlexItem align={{ default: 'alignRight' }}>
@@ -154,7 +152,7 @@ const DetailsPage: React.FC<React.PropsWithChildren<DetailsPageProps>> = ({
       {preComponent}
       <HorizontalNav pages={pages} resource={obj} />
       {footer && (
-        <PageSection variant={PageSectionVariants.light} isFilled={false}>
+        <PageSection hasBodyWrapper={false}  isFilled={false}>
           {footer}
         </PageSection>
       )}

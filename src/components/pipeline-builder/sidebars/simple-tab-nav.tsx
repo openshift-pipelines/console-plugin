@@ -41,7 +41,7 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
         activeKey={activeKey}
         onSelect={handleTabClick}
         className={classNames(
-          { 'pf-u-mb-md': withinSidebar },
+          { 'pf-v6-u-mb-md': withinSidebar },
           additionalClassNames,
         )}
         unmountOnExit

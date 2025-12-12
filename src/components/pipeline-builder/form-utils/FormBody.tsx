@@ -20,7 +20,7 @@ const FormBody: React.FC<FormBodyProps & React.HTMLProps<HTMLDivElement>> = ({
   <div
     {...props}
     className={classNames(
-      'pf-v5-c-form',
+      'pf-v6-c-form',
       { 'co-m-pane__body': !disablePaneBody },
       className,
     )}

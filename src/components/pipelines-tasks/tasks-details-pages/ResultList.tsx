@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   Bullseye,
   EmptyState,
-  EmptyStateBody,
   EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
@@ -54,12 +53,13 @@ const ResultsList: React.FC<ResultsListProps> = ({
         </Table>
       ) : (
         <Bullseye>
-          <EmptyState variant={EmptyStateVariant.full}>
-            <EmptyStateBody>
-              {t('No {{resourceName}} results available due to failure', {
-                resourceName,
-              })}
-            </EmptyStateBody>
+          <EmptyState 
+            variant={EmptyStateVariant.full}
+            headingLevel="h4"
+            titleText={t('No {{resourceName}} results available due to failure', {
+              resourceName,
+            })}
+          >
           </EmptyState>
         </Bullseye>
       )}

@@ -144,7 +144,7 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
               className="co-external-link-with-copy__icon co-external-link-with-copy__copyicon"
             >
               <CopyIcon />
-              <span className="pf-v5-u-screen-reader">
+              <span className="pf-v6-u-screen-reader">
                 {t('Copy to clipboard')}
               </span>
             </span>

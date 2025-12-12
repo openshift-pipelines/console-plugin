@@ -1,13 +1,13 @@
 .odc-modal-content {
   &__confirm-title {
-    font-size: var(--pf-v5-global--FontSize--lg);
-    margin-top: var(--pf-v5-global--spacer--xs);
-    margin-bottom: var(--pf-v5-global--spacer--lg);
+    font-size: var(--pf-t--global--font--size--lg);
+    margin-top: var(--pf-t--global--spacer--xs);
+    margin-bottom: var(--pf-t--global--spacer--lg);
   }
 }
 
 .pipelines-remove-task-header {
   padding-top: 0;
-  padding-bottom: var(--pf-v5-global--spacer--md);
-  padding-left: var(--pf-v5-global--spacer--md);
+  padding-bottom: var(--pf-t--global--spacer--md);
+  padding-left: var(--pf-t--global--spacer--md);
 }

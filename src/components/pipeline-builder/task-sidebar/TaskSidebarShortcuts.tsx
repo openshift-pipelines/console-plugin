@@ -20,8 +20,8 @@ const TaskSidebarShortcuts: React.FC = () => {
       maxWidth="25rem"
       distance={18}
     >
-      <Button type="button" variant="link" isInline>
-        <QuestionCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
+      <Button icon={<QuestionCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />} type="button" variant="link" isInline>
+        
         {t('View shortcuts')}
       </Button>
     </Popover>

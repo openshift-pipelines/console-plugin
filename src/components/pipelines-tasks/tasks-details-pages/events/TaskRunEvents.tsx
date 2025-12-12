@@ -13,7 +13,7 @@ const TaskRunEvents: React.FC<TaskRunDetailsProps> = ({ obj: taskRun }) => {
   const { ns: namespace } = useParams();
   const filters = useTaskRunFilters(namespace, taskRun);
   return (
-    <PageSection isFilled variant="light">
+    <PageSection hasBodyWrapper={false} isFilled >
       <ResourcesEventStream filters={filters} namespace={namespace} />
     </PageSection>
   );

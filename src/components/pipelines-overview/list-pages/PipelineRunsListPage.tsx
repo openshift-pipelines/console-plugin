@@ -165,7 +165,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
             variant="danger"
             isInline
             title={t('Unable to load pipeline runs list')}
-            className="pf-v5-u-mb-md"
+            className="pf-v6-u-mb-md"
           />
         ) : (
           <>

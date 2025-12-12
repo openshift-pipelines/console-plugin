@@ -29,7 +29,7 @@ const PipelineRunParameters: React.FC<PipelineRunParametersProps> = ({
   className,
 }) => {
   return (
-    <PageSection variant="light" isWidthLimited className={className}>
+    <PageSection hasBodyWrapper  isWidthLimited className={className}>
       <MultiColumnField
         data-test="pipeline-parameters"
         name={fieldName}

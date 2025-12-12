@@ -3,19 +3,19 @@
 }
 
 .pipelines-approval-approver__wait {
-  top: var(--pf-v5-global--spacer--form-element);
+  top: var(--pf-t--global--spacer--form-element);
   position: relative;
   left: -9px;
-  width: var(--pf-v5-global--spacer--md);
+  width: var(--pf-t--global--spacer--md);
 }
 
 .pipelines-approval-approver__approved {
   top: 5px;
   position: relative;
   left: -9px;
-  width: var(--pf-v5-global--FontSize--xl);
+  width: var(--pf-t--global--font--size--xl);
 }
 
 .pipelines-approval-approver-list {
-  margin-top: var(--pf-v5-global--spacer--form-element);
+  margin-top: var(--pf-t--global--spacer--form-element);
 }

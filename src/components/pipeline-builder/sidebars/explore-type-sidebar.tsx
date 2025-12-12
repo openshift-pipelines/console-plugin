@@ -5,9 +5,8 @@ import {
   BreadcrumbItem,
   Button,
   EmptyState,
-  EmptyStateBody,
   EmptyStateVariant,
-  TextContent,
+  Content,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CamelCaseWrap, K8sKind } from '@openshift-console/dynamic-plugin-sdk';
@@ -156,18 +155,17 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
           })}
         </Breadcrumb>
       )}
-      <TextContent>
+      <Content>
         {description && (
           <p className="co-break-word co-pre-wrap">
             <LinkifyExternal>{description}</LinkifyExternal>
           </p>
         )}
         {_.isEmpty(currentProperties) ? (
-          <EmptyState variant={EmptyStateVariant.xs}>
-            <EmptyStateBody>{t('No Properties found')}</EmptyStateBody>
+          <EmptyState variant={EmptyStateVariant.xs} headingLevel="h4" titleText={t('No Properties found')}>
           </EmptyState>
         ) : (
-          <ul className="co-resource-sidebar-list pf-v5-c-list">
+          <ul className="co-resource-sidebar-list pf-v6-c-list">
             {_.map(
               currentProperties,
               (definition: SwaggerDefinition, name: string) => {
@@ -215,7 +213,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
             )}
           </ul>
         )}
-      </TextContent>
+      </Content>
     </>
   );
 };

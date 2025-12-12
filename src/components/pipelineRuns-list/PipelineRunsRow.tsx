@@ -42,16 +42,16 @@ import {
 import PipelineRunStatusContent from '../status/PipelineRunStatusContent';
 
 export const tableColumnClasses = {
-  name: 'pf-m-width-20',
-  commit: 'pf-m-hidden pf-m-visible-on-sm pf-m-width-10',
+  name: 'pf-v6-m-width-20',
+  commit: 'pf-v6-m-hidden pf-m-visible-on-sm pf-m-width-10',
   namespace: '',
-  vulnerabilities: 'pf-m-hidden pf-m-visible-on-md',
-  status: 'pf-m-hidden pf-m-visible-on-sm pf-m-width-10',
-  taskStatus: 'pf-m-hidden pf-m-visible-on-lg',
-  started: 'pf-m-hidden pf-m-visible-on-lg',
-  duration: 'pf-m-hidden pf-m-visible-on-xl',
-  branch: 'pf-m-hidden pf-m-visible-on-xl pf-m-width-5',
-  actions: 'dropdown-kebab-pf pf-v5-c-table__action',
+  vulnerabilities: 'pf-v6-m-hidden pf-m-visible-on-md',
+  status: 'pf-v6-m-hidden pf-m-visible-on-sm pf-m-width-10',
+  taskStatus: 'pf-v6-m-hidden pf-m-visible-on-lg',
+  started: 'pf-v6-m-hidden pf-m-visible-on-lg',
+  duration: 'pf-v6-m-hidden pf-m-visible-on-xl',
+  branch: 'pf-v6-m-hidden pf-m-visible-on-xl pf-m-width-5',
+  actions: 'dropdown-kebab-pf pf-v6-c-table__action',
 };
 
 type PLRStatusProps = {

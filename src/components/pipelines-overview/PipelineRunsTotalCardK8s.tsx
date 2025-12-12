@@ -100,7 +100,7 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
               variant="danger"
               isInline
               title={t('Unable to load total runs')}
-              className="pf-v5-u-mb-md"
+              className="pf-v6-u-mb-md"
             />
           ) : (
             <>

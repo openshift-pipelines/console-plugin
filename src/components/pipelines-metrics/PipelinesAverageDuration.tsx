@@ -11,7 +11,7 @@ import {
   ChartGroup,
   ChartThemeColor,
   ChartVoronoiContainer,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import { Card, CardBody, CardTitle } from '@patternfly/react-core';
 import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import {
@@ -176,15 +176,21 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
   }
 
   let xAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-v5-global--Color--100)', fontSize: 12 },
+    tickLabels: {
+      fill: 'var(--pf-t--global--text--color--regular)',
+      fontSize: 12,
+    },
   };
   const yAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-v5-global--Color--100)', fontSize: 12 },
+    tickLabels: {
+      fill: 'var(--pf-t--global--text--color--regular)',
+      fontSize: 12,
+    },
   };
   if (tickValues.length > 7) {
     xAxisStyle = {
       tickLabels: {
-        fill: 'var(--pf-v5-global--Color--100)',
+        fill: 'var(--pf-t--global--text--color--regular)',
         angle: 320,
         fontSize: 10,
         textAnchor: 'end',

@@ -3,6 +3,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerContentBody,
+  DrawerPanelContent,
   PageSection,
 } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
@@ -197,33 +198,35 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
       <DrawerContent
         panelContent={
           selectedTask ? (
-            <TaskSidebar
-              // Intentional remount when selection changes
-              key={selectedTask?.taskIndex}
-              onClose={() => setSelectedTask(null)}
-              resourceList={formData.resources || []}
-              workspaceList={formData.workspaces || []}
-              errorMap={status?.tasks || {}}
-              onRenameTask={(data: UpdateOperationRenameTaskData) => {
-                updateTasks(
-                  applyChange(
-                    taskGroup,
-                    {
-                      type: UpdateOperationType.RENAME_TASK,
-                      data,
-                    },
-                    namespace,
-                  ),
-                );
-              }}
-              onRemoveTask={(taskName: string) => {
-                launchModal(RemoveTaskModal, {
-                  taskName,
-                  onRemove: () => handleRemoveTask(taskName),
-                });
-              }}
-              selectedData={selectedTask}
-            />
+            <DrawerPanelContent>
+              <TaskSidebar
+                // Intentional remount when selection changes
+                key={selectedTask?.taskIndex}
+                onClose={() => setSelectedTask(null)}
+                resourceList={formData.resources || []}
+                workspaceList={formData.workspaces || []}
+                errorMap={status?.tasks || {}}
+                onRenameTask={(data: UpdateOperationRenameTaskData) => {
+                  updateTasks(
+                    applyChange(
+                      taskGroup,
+                      {
+                        type: UpdateOperationType.RENAME_TASK,
+                        data,
+                      },
+                      namespace,
+                    ),
+                  );
+                }}
+                onRemoveTask={(taskName: string) => {
+                  launchModal(RemoveTaskModal, {
+                    taskName,
+                    onRemove: () => handleRemoveTask(taskName),
+                  });
+                }}
+                selectedData={selectedTask}
+              />
+            </DrawerPanelContent>
           ) : null
         }
       >
@@ -237,7 +240,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
               className="opp-pipeline-builder-form"
               onSubmit={handleSubmit}
             >
-              <PageSection isFilled variant="light">
+              <PageSection hasBodyWrapper={false} isFilled >
                 <FormBody
                   flexLayout
                   disablePaneBody

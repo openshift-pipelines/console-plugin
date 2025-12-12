@@ -12,7 +12,7 @@ import {
   ChartLegend,
   ChartLine,
   ChartVoronoiContainer,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import {
   Alert,
   Card,
@@ -25,7 +25,9 @@ import {
 import { chart_color_black_200 as othersColor } from '@patternfly/react-tokens/dist/js/chart_color_black_200';
 import { chart_color_black_500 as cancelledColor } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
-import { global_danger_color_100 as failureColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
+import {
+  t_chart_global_danger_color_100 as failureColor,
+} from '@patternfly/react-tokens/dist/js/t_chart_global_danger_color_100';
 import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import {
   formatDate,
@@ -439,15 +441,19 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
   }
 
   let xAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-v5-global--Color--100)' },
+    tickLabels: {
+      fill: 'var(--pf-t--global--text--color--regular)',
+    },
   };
   const yAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-v5-global--Color--100)' },
+    tickLabels: {
+      fill: 'var(--pf-t--global--text--color--regular)',
+    },
   };
   if (tickValues?.length > 7) {
     xAxisStyle = {
       tickLabels: {
-        fill: 'var(--pf-v5-global--Color--100)',
+        fill: 'var(--pf-t--global--text--color--regular)',
         angle: 320,
         fontSize: 10,
         textAnchor: 'end',
@@ -556,7 +562,7 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
               variant="danger"
               isInline
               title={t('Unable to load PipelineRun status')}
-              className="pf-v5-u-mb-md"
+              className="pf-v6-u-mb-md"
             />
           ) : (
             <Grid>
@@ -583,7 +589,7 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
                           data={legendData}
                           style={{
                             labels: {
-                              fill: 'var(--pf-v5-global--Color--100)',
+                              fill: 'var(--pf-t--global--text--color--regular)',
                               fontSize: 14,
                             },
                           }}
@@ -593,7 +599,7 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
                       subTitleComponent={
                         <ChartLabel
                           style={{
-                            fill: 'var(--pf-v5-global--Color--400)',
+                            fill: 'var(--pf-t--global--text--color--subtle)',
                             fontSize: 14,
                           }}
                         />
@@ -606,7 +612,7 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
                       titleComponent={
                         <ChartLabel
                           style={{
-                            fill: 'var(--pf-v5-global--Color--100)',
+                            fill: 'var(--pf-t--global--text--color--regular)',
                             fontSize: 24,
                           }}
                         />

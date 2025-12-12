@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
-import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
+import { t_chart_global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/t_chart_global_warning_color_100';
 import ModalContent from './ModalContent';
 import { ModalComponent } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/ModalProvider';
 import {

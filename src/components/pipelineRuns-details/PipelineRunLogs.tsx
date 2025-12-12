@@ -194,7 +194,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
             data-test-id="logs-tasklist"
           >
             {taskCount > 0 ? (
-              <Nav onSelect={this.onNavSelect} theme="light">
+              <Nav onSelect={this.onNavSelect} >
                 <NavList className="odc-pipeline-run-logs__nav">
                   {taskRunNames.map((taskRunName) => {
                     const taskRun = tRuns.find(

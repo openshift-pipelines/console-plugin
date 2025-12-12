@@ -378,7 +378,7 @@ const EventStream = ({
       : t('Showing most recent {{count}} event', { count });
 
   return (
-    <PageSection isFilled variant="light">
+    <PageSection hasBodyWrapper={false} isFilled >
       <div className="co-sysevent-stream">
         <div className="co-sysevent-stream__status">
           <div className="co-sysevent-stream__timeline__btn-text">

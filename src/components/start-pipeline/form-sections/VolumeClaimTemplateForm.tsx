@@ -384,7 +384,7 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
             data-test-id="pvc-size-input"
           />
           {requestSizeError ? (
-            <p className="pf-v5-c-form__helper-text pf-m-error">
+            <p className="pf-v6-c-form__helper-text pf-m-error">
               {requestSizeError}
             </p>
           ) : (

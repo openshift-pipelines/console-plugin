@@ -6,12 +6,12 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
 const tableColumnClasses = [
-  'pf-v5-u-w-16-on-xl pf-v5-u-w-25-on-lg pf-v5-u-w-33-on-xs', // name
-  'pf-v5-u-w-8-on-xl pf-v5-u-w-16-on-xs', // namespace
-  'pf-v5-u-w-16-on-xl pf-v5-u-w-25-on-lg pf-v5-u-w-33-on-xs', // last run
-  'pf-m-hidden pf-m-visible-on-lg', // task status
-  'pf-m-hidden pf-m-visible-on-xl', // last run status
-  'pf-m-hidden pf-m-visible-on-xl', // last run time
+  'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-33-on-xs', // name
+  'pf-v6-u-w-8-on-xl pf-v6-u-w-16-on-xs', // namespace
+  'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-33-on-xs', // last run
+  'pf-v6-m-hidden pf-m-visible-on-lg', // task status
+  'pf-v6-m-hidden pf-m-visible-on-xl', // last run status
+  'pf-v6-m-hidden pf-m-visible-on-xl', // last run time
 ];
 
 const usePipelinesColumns = (namespace): TableColumn<K8sResourceCommon>[] => {
@@ -66,7 +66,7 @@ const usePipelinesColumns = (namespace): TableColumn<K8sResourceCommon>[] => {
     {
       id: '',
       title: '',
-      props: { className: 'dropdown-kebab-pf pf-v5-c-table__action' },
+      props: { className: 'dropdown-kebab-pf pf-v6-c-table__action' },
     },
   ];
   return columns;

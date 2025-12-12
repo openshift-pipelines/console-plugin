@@ -74,7 +74,7 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (
           valueFieldName="default"
           emptyMessage={t('No parameters are associated with this Pipeline.')}
           emptyValues={{ name: '', description: '', default: '' }}
-          className="pf-v5-u-p-0"
+          className="pf-v6-u-p-0"
         />
       </FormGroup>
 

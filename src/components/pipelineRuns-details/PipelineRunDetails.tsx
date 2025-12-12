@@ -16,7 +16,7 @@ const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
-    <PageSection isFilled variant="light">
+    <PageSection hasBodyWrapper={false} isFilled >
       <Title headingLevel="h2">{t('PipelineRun details')}</Title>
       <PipelineRunVisualization pipelineRun={pipelineRun} />
       <Grid hasGutter>

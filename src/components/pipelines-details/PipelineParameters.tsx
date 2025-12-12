@@ -33,7 +33,7 @@ const PipelineParameters: React.FC<PipelineParametersProps> = ({
   className,
 }) => {
   return (
-    <PageSection variant="light" isFilled className={className}>
+    <PageSection hasBodyWrapper={false}  isFilled className={className}>
       <MultiColumnField
         data-test="pipeline-parameters"
         name={fieldName}

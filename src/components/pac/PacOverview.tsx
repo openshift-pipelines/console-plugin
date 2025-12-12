@@ -6,8 +6,8 @@ import {
   Hint,
   HintBody,
   PageSection,
-  Text,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { PageBody } from '../pipeline-builder/form-utils';
@@ -59,7 +59,7 @@ const PacOverview: React.FC<PacOverviewProps> = ({
     return (
       <>
         <NamespaceBar isDisabled={true} />
-        <PageSection
+        <PageSection hasBodyWrapper={false}
           type="breadcrumb"
           className="co-m-nav-title--detail pipelines-console-plugin__background-transparent"
         >
@@ -88,7 +88,7 @@ const PacOverview: React.FC<PacOverviewProps> = ({
   return (
     <>
       <NamespaceBar isDisabled={true} />
-      <PageSection
+      <PageSection hasBodyWrapper={false}
         type="breadcrumb"
         className="co-m-nav-title--detail pipelines-console-plugin__background-transparent"
       >
@@ -143,9 +143,9 @@ const PacOverview: React.FC<PacOverviewProps> = ({
           <FormGroup fieldId="app-overview">
             {annotations?.appName && (
               <FormGroup label={t('App Name')} fieldId="app-name">
-                <Text component={TextVariants.small}>
+                <Content component={ContentVariants.small}>
                   {annotations.appName}
-                </Text>
+                </Content>
               </FormGroup>
             )}
             <br />

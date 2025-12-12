@@ -131,7 +131,7 @@ Then(
 Then(
   'user should expect default behavior of log viewer and scroll to end of log',
   () => {
-    cy.get('.pf-v5-c-log-viewer__scroll-container').then(($el) => {
+    cy.get('.pf-v6-c-log-viewer__scroll-container').then(($el) => {
       const el = $el[0];
       //eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000);

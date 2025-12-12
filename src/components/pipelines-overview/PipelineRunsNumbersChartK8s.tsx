@@ -11,7 +11,7 @@ import {
   ChartGroup,
   ChartThemeColor,
   ChartVoronoiContainer,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import { Alert, Card, CardBody, CardTitle } from '@patternfly/react-core';
 import {
   formatDate,
@@ -219,15 +219,21 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
   }
 
   let xAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-v5-global--Color--100)', fontSize: 12 },
+    tickLabels: {
+      fill: 'var(--pf-t--global--text--color--regular)',
+      fontSize: 12,
+    },
   };
   const yAxisStyle: ChartAxisProps['style'] = {
-    tickLabels: { fill: 'var(--pf-v5-global--Color--100)', fontSize: 12 },
+    tickLabels: {
+      fill: 'var(--pf-t--global--text--color--regular)',
+      fontSize: 12,
+    },
   };
   if (tickValues.length > 7) {
     xAxisStyle = {
       tickLabels: {
-        fill: 'var(--pf-v5-global--Color--100)',
+        fill: 'var(--pf-t--global--text--color--regular)',
         angle: 320,
         fontSize: 10,
         textAnchor: 'end',
@@ -250,16 +256,17 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
     <>
       <Card
         className={classNames({
-          'pipeline-overview__number-of-plr-card':!pipelineRunsChartError,
+          'pipeline-overview__number-of-plr-card': !pipelineRunsChartError,
           'card-border': bordered,
         })}
       >
         <CardTitle className="pipeline-overview__number-of-plr-card__title">
           <span>{t('Number of PipelineRuns')}</span>
         </CardTitle>
-         <CardBody 
+        <CardBody
           className={classNames({
-            'pipeline-overview__number-of-plr-card__body':!pipelineRunsChartError,
+            'pipeline-overview__number-of-plr-card__body':
+              !pipelineRunsChartError,
           })}
         >
           {pipelineRunsChartError ? (
@@ -267,7 +274,7 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
               variant="danger"
               isInline
               title={t('Unable to load pipeline runs')}
-              className="pf-v5-u-mb-md pf-v5-u-mt-lg"
+              className="pf-v6-u-ml-lg"
             />
           ) : (
             <div className="pipeline-overview__number-of-plr-card__bar-chart-div">

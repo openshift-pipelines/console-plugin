@@ -1,17 +1,17 @@
 .opp-pipeline-run-list {
   &__signed-indicator {
     display: inline-block;
-    --pf-c-table--cell--Color: var(
-      --pf-v5-global--BackgroundColor--dark-transparent-100
+    color: var(
+      --pf-t--global--background--color--action--plain--default
     );
-    margin-left: var(--pf-v5-global--spacer--xs);
+    margin-left: var(--pf-t--global--spacer--xs);
     vertical-align: middle;
   }
   &__results-indicator {
     display: inline-block;
-    margin-left: var(--pf-v5-global--spacer--xs);
+    margin-left: var(--pf-t--global--spacer--xs);
     > svg {
-      color: var(--pf-v5-global--Color--400);
+      color: var(--pf-t--global--text--color--subtle);
     }
   }
 }

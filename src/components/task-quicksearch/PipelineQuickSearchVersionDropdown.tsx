@@ -7,7 +7,7 @@ import {
   MenuToggleElement,
 } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
-import { global_palette_green_500 as greenColor } from '@patternfly/react-tokens';
+import { t_chart_color_green_500 as greenColor } from '@patternfly/react-tokens/dist/js/t_chart_color_green_500';
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
 import { TektonHubTaskVersion } from '../catalog/apis/tektonHub';
 import { isSelectedVersionInstalled } from './pipeline-quicksearch-utils';

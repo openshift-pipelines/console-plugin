@@ -1,7 +1,7 @@
 import {
   BreadcrumbItem,
-  Text,
-  TextVariants,
+  Content,
+  ContentVariants,
   Tooltip,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom-v5-compat';
@@ -63,7 +63,9 @@ const TaskRunDetailsPage = () => {
     <DetailsPage
       obj={data}
       headTitle={name}
-      title={<Text component={TextVariants.h1}>{resourceTitleFunc}</Text>}
+      title={
+        <Content component={ContentVariants.h1}>{resourceTitleFunc}</Content>
+      }
       baseURL={`/tasks/ns/${namespace}/${getReferenceForModel(
         TaskRunModel,
       )}/${name}/task-runs`}
@@ -72,7 +74,7 @@ const TaskRunDetailsPage = () => {
         <BreadcrumbItem key="app-link" component="div">
           <Link
             data-test="breadcrumb-link"
-            className="pf-v5-c-breadcrumb__link"
+            className="pf-v6-c-breadcrumb__link"
             to={`/tasks/ns/${namespace}/task-runs`}
           >
             {t('TaskRuns')}

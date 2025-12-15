@@ -49,7 +49,7 @@ const TriggeredBySection: React.FC<TriggeredByProps> = (props) => {
   }
 
   return (
-    <DescriptionList className="pf-v5-u-mt-md">
+    <DescriptionList className="pf-v6-u-mt-md">
       <DescriptionListGroup>
         <DescriptionListTerm>{t('Triggered by')}:</DescriptionListTerm>
         <DescriptionListDescription>{value}</DescriptionListDescription>

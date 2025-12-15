@@ -14,7 +14,7 @@ const LoadingModal: React.FC<LoadingModalProps> = ({ onClose }) => {
     <ModalWrapper onClose={onClose}>
       <LoadingBox />
       <ModalFooter inProgress={false}>
-        <ActionGroup className="pf-v5-c-form pf-v5-c-form__actions--right pf-v5-c-form__group--no-top-margin">
+        <ActionGroup className="pf-v6-c-form pf-v6-c-form__actions--right pf-v6-c-form__group--no-top-margin">
           <Button type="button" variant="secondary" onClick={onClose}>
             {t('Cancel')}
           </Button>

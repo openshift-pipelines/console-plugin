@@ -1,6 +1,6 @@
 .tasks-list-page {
   &__tabs {
-    padding-left: var(--pf-v5-global--spacer--sm);
+    padding-left: var(--pf-t--global--spacer--sm);
   }
 
   &__card {
@@ -16,9 +16,9 @@
 .task-run-list {
   &__results-indicator {
     display: inline-block;
-    margin-left: var(--pf-v5-global--spacer--xs);
+    margin-left: var(--pf-t--global--spacer--xs);
     > svg {
-      color: var(--pf-v5-global--Color--400);
+      color: var(--pf-t--global--text--color--subtle);
     }
   }
 }

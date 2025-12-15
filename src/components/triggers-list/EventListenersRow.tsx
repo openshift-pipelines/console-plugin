@@ -92,7 +92,7 @@ const EventListenersRow: React.FC<RowProps<K8sResourceCommon>> = ({
       </TableData>
       <TableData
         activeColumnIDs={activeColumnIDs}
-        className="dropdown-kebab-pf pf-v5-c-table__action"
+        className="dropdown-kebab-pf pf-v6-c-table__action"
         id=""
       >
         <EventListenersKebab obj={obj} />

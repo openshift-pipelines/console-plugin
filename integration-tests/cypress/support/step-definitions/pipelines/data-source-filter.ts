@@ -66,7 +66,7 @@ When('user selects Archived data in Data Source filter group', () => {
 
 When('user deletes a PipelineRun', () => {
   cy.get('a[data-test-id="hello-goodbye-run"]').click();
-  cy.get('button.pf-v5-c-menu-toggle').contains('Actions').click();
+  cy.get('button.pf-v6-c-menu-toggle').contains('Actions').click();
   cy.get('li[data-test="delete-pipelineRun"] button').click();
   cy.get('button[data-test="confirm-action"]').click();
   cy.get('button[data-test="confirm-action"]').should('not.exist');
@@ -77,7 +77,7 @@ When('user deletes a PipelineRun', () => {
 
 Then('user is able to see count in Cluster data', () => {
   cy.get('[data-test-row-filter="cluster-data"]')
-    .find('span.pf-v5-c-badge.pf-m-read')
+    .find('span.pf-v6-c-badge.pf-m-read')
     .invoke('text')
     .then((text) => {
       const countValue = parseInt(text.trim(), 10);
@@ -109,7 +109,7 @@ Given('user navigates to TaskRun list page', () => {
 
 Then('user is able to see count in Archived data', () => {
   cy.get('[data-test-row-filter="archived-data"]')
-    .find('span.pf-v5-c-badge.pf-m-read')
+    .find('span.pf-v6-c-badge.pf-m-read')
     .invoke('text')
     .then((text) => {
       const countValue = parseInt(text.trim(), 10);
@@ -122,7 +122,7 @@ Then('user is able to see no count in Cluster data', () => {
     cy.get('button').click();
   });
   cy.get('[data-test-row-filter="cluster-data"]')
-    .find('span.pf-v5-c-badge.pf-m-read')
+    .find('span.pf-v6-c-badge.pf-m-read')
     .invoke('text')
     .then((text) => {
       const countValue = parseInt(text.trim(), 10);

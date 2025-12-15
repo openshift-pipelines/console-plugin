@@ -22,9 +22,9 @@ const PipelineRunParametersForm: React.FC<PipelineRunParametersFormProps> = ({
       <Formik initialValues={initialValues} onSubmit={null}>
         {() => (
           <PageSection
-            variant="light"
+            hasBodyWrapper={false}
             isFilled
-            className="pipelines-console-plugin__page-section-width pf-v5-u-p-0 pipelines-console-plugin__background-transparent"
+            className="pipelines-console-plugin__page-section-width pf-v6-u-p-0 pipelines-console-plugin__background-transparent"
           >
             <PipelineRunParameters
               fieldName="parameters"

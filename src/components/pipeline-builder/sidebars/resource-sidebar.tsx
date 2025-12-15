@@ -162,7 +162,7 @@ export const ResourceSidebar: React.FC<{
             samples,
             snippets,
           }}
-          additionalClassNames="pf-v5-u-my-md"
+          additionalClassNames="pf-v6-u-my-md"
         />
       ) : (
         <ResourceSchema schema={schema} kindObj={kindObj} />

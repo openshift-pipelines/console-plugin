@@ -24,15 +24,15 @@ import RepositoriesKebab from './RepositoriesKebab';
 import { RepositoryFields, RepositoryLabels } from '../../consts';
 
 export const repositoriesTableColumnClasses = [
-  'pf-v5-u-w-16-on-xl pf-v5-u-w-25-on-lg pf-v5-u-w-33-on-xs', // name
-  'pf-v5-u-w-12-on-xl pf-v5-u-w-20-on-lg pf-v5-u-w-30-on-xs', // namespace
-  'pf-v5-u-w-12-on-xl pf-v5-u-w-20-on-lg pf-v5-u-w-30-on-xs', // Event type
-  'pf-v5-u-w-12-on-xl pf-v5-u-w-20-on-lg pf-v5-u-w-30-on-xs', // Last run
-  'pf-v5-u-w-16-on-xl pf-v5-u-w-25-on-lg pf-v5-u-w-33-on-xs', // Task status
-  'pf-m-hidden pf-m-visible-on-xl', // last run status
-  'pf-m-hidden pf-v5-u-w-12-on-xl pf-v5-u-w-20-on-lg pf-v5-u-w-33-on-xs pf-m-visible-on-xl', // Last run time
-  'pf-m-hidden pf-m-visible-on-xl', // Last run duration
-  'dropdown-kebab-pf pf-v5-c-table__action',
+  'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-33-on-xs', // name
+  'pf-v6-u-w-12-on-xl pf-v6-u-w-20-on-lg pf-v6-u-w-30-on-xs', // namespace
+  'pf-v6-u-w-12-on-xl pf-v6-u-w-20-on-lg pf-v6-u-w-30-on-xs', // Event type
+  'pf-v6-u-w-12-on-xl pf-v6-u-w-20-on-lg pf-v6-u-w-30-on-xs', // Last run
+  'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-33-on-xs', // Task status
+  'pf-v6-m-hidden pf-m-visible-on-xl', // last run status
+  'pf-v6-m-hidden pf-v6-u-w-12-on-xl pf-v6-u-w-20-on-lg pf-v6-u-w-33-on-xs pf-m-visible-on-xl', // Last run time
+  'pf-v6-m-hidden pf-m-visible-on-xl', // Last run duration
+  'dropdown-kebab-pf pf-v6-c-table__action',
 ];
 
 const RepositoriesRow: React.FC<

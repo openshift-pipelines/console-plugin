@@ -2,13 +2,13 @@
   display: flex;
   flex: 1 0 auto;
   flex-direction: row;
-  margin-right: -var(--pf-v5-global--gutter);
-  @media (max-width: var(--pf-v5-global--breakpoint--md)) {
-    margin-left: -var(--pf-v5-global--gutter);
-    margin-top: -var(--pf-v5-global--gutter--md);
+  margin-right: -var(--pf-t--global--spacer--lg);
+  @media (max-width: var(--pf-t--global--breakpoint--md)) {
+    margin-left: -var(--pf-t--global--spacer--lg);
+    margin-top: -var(--pf-t--global--spacer--xl);
   }
-  @media (min-width: var(--pf-v5-global--breakpoint--xl)) {
-    margin-right: -var(--pf-v5-global--gutter--md);
+  @media (min-width: var(--pf-t--global--breakpoint--xl)) {
+    margin-right: -var(--pf-t--global--spacer--xl);
   }
 
   &__editor {
@@ -16,18 +16,18 @@
     flex: 1 0 auto;
     flex-direction: column;
     height: 100%;
-    @media (min-width: var(--pf-v5-global--breakpoint--xl)) {
-      margin-right: var(--pf-v5-global--gutter);
+    @media (min-width: var(--pf-t--global--breakpoint--xl)) {
+      margin-right: var(--pf-t--global--spacer--lg);
     }
-    @media (min-width: var(--pf-v5-global--breakpoint--xl)) {
-      margin-right: var(--pf-v5-global--gutter--md);
+    @media (min-width: var(--pf-t--global--breakpoint--xl)) {
+      margin-right: var(--pf-t--global--spacer--xl);
     }
   }
   &__sidebar {
     display: flex;
     width: 34%;
-    margin-top: -var(--pf-v5-global--gutter--md);
-    @media screen and (max-width: var(--pf-v5-global--breakpoint--lg)) {
+    margin-top: -var(--pf-t--global--spacer--xl);
+    @media screen and (max-width: var(--pf-t--global--breakpoint--lg)) {
       display: none;
     }
   }
@@ -62,13 +62,13 @@
 
     &--bordered {
       @media (max-width: 767px) {
-        border-top: var(--pf-v5-global--BorderWidth--sm) solid
-          var(--pf-v5-global--BorderColor--100);
+        border-top: var(--pf-t--global--border--width--sm) solid
+          var(--pf-t--global--border--color--default);
       }
 
       @media (min-width: 768px) {
-        border-left: var(--pf-v5-global--BorderWidth--sm) solid
-          var(--pf-v5-global--BorderColor--100);
+        border-left: var(--pf-t--global--border--width--sm) solid
+          var(--pf-t--global--border--color--default);
       }
     }
   }

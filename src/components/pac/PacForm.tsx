@@ -36,7 +36,7 @@ const PacForm: React.FC<{ namespace: string }> = ({ namespace }) => {
   return (
     <>
       <NamespaceBar isDisabled={true} />
-      <PageSection
+      <PageSection hasBodyWrapper={false}
         type="breadcrumb"
         className="co-m-nav-title--detail"
         data-test="pac-form-page-section"

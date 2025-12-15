@@ -130,7 +130,7 @@ class DropDownRowWithTranslation extends React.PureComponent {
       return (
         <li key={itemKey}>
           <button
-            className="pf-v5-c-dropdown__menu-item"
+            className="pf-v6-c-dropdown__menu-item"
             id={`${itemKey}-link`}
             data-test-id="dropdown-menu"
             data-test-dropdown-menu={itemKey}
@@ -146,9 +146,9 @@ class DropDownRowWithTranslation extends React.PureComponent {
         <a
           href="#"
           className={classNames(
-            'pf-v5-c-menu__item-action pf-m-favorite',
+            'pf-v6-c-menu__item-action pf-m-favorite',
             { hover, focus: selected },
-            { 'pf-m-favorited': isBookmarked },
+            { 'pf-v6-m-favorited': isBookmarked },
           )}
           onClick={(e) => {
             e.preventDefault();
@@ -168,7 +168,7 @@ class DropDownRowWithTranslation extends React.PureComponent {
                 })
           }
         >
-          <span className="pf-v5-c-menu__item-action-icon">
+          <span className="pf-v6-c-menu__item-action-icon">
             <StarIcon />
           </span>
         </a>
@@ -208,7 +208,7 @@ class DropDownRowWithTranslation extends React.PureComponent {
     return (
       <li
         role="option"
-        className={classNames('pf-v5-c-menu__list-item', className)}
+        className={classNames('pf-v6-c-menu__list-item', className)}
         key={itemKey}
       >
         <a
@@ -216,14 +216,14 @@ class DropDownRowWithTranslation extends React.PureComponent {
           ref={this.link}
           id={`${itemKey}-link`}
           data-test="dropdown-menu-item-link"
-          className={classNames('pf-v5-c-menu__item', {
-            'pf-m-selected': selected,
+          className={classNames('pf-v6-c-menu__item', {
+            'pf-v6-m-selected': selected,
           })}
           onClick={(e) => onclick(itemKey, e)}
         >
-          <span className="pf-v5-c-menu__item-main">
-            <span className="pf-v5-c-menu__item-text">{content}</span>
-            <span className="pf-v5-c-menu__item-select-icon">
+          <span className="pf-v6-c-menu__item-main">
+            <span className="pf-v6-c-menu__item-text">{content}</span>
+            <span className="pf-v6-c-menu__item-select-icon">
               <CheckIcon />
             </span>
           </span>
@@ -485,8 +485,8 @@ class Dropdown_ extends DropdownMixin {
         >
           <div
             className={classNames(
-              'pf-v5-c-dropdown',
-              { 'pf-m-expanded': this.state.active },
+              'pf-v6-c-dropdown',
+              { 'pf-v6-m-expanded': this.state.active },
               dropDownClassName,
             )}
           >
@@ -497,7 +497,7 @@ class Dropdown_ extends DropdownMixin {
               onKeyDown={this.onKeyDown}
               type="button"
               className={classNames(
-                'pf-v5-c-dropdown__toggle',
+                'pf-v6-c-dropdown__toggle',
                 buttonClassName,
               )}
               id={this.props.id}
@@ -507,27 +507,27 @@ class Dropdown_ extends DropdownMixin {
             >
               <div
                 className={classNames(
-                  'pf-v5-c-dropdown__content-wrap',
+                  'pf-v6-c-dropdown__content-wrap',
                   dropDownContentClassName,
                 )}
               >
-                <span className="pf-v5-c-dropdown__toggle-text">
+                <span className="pf-v6-c-dropdown__toggle-text">
                   {titlePrefix && `${titlePrefix}: `}
                   {title}
                 </span>
-                <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+                <CaretDownIcon className="pf-v6-c-dropdown__toggle-icon" />
               </div>
             </button>
             {active && (
               // Style the Application menu to match the Project selection menu
-              <div className="pf-v5-c-menu pf-m-scrollable co-namespace-dropdown__menu">
+              <div className="pf-v6-c-menu pf-m-scrollable co-namespace-dropdown__menu">
                 <div
-                  className="pf-v5-c-menu__content"
+                  className="pf-v6-c-menu__content"
                   style={{ maxHeight: '60vh' }}
                 >
                   {autocompleteFilter && (
                     <>
-                      <div className="pf-v5-c-menu__search">
+                      <div className="pf-v6-c-menu__search">
                         <input
                           autoFocus
                           type="text"
@@ -537,7 +537,7 @@ class Dropdown_ extends DropdownMixin {
                           value={autocompleteText || ''}
                           autoCapitalize="none"
                           onKeyDown={this.onKeyDown}
-                          className="pf-v5-c-form-control pf-m-search"
+                          className="pf-v6-c-form-control pf-m-search"
                           onClick={(e) => e.stopPropagation()}
                           data-test-id="dropdown-text-filter"
                         />
@@ -546,12 +546,12 @@ class Dropdown_ extends DropdownMixin {
                     </>
                   )}
                   {_.size(bookMarkRows) ? (
-                    <h1 className="pf-v5-c-menu__group-title">Favorites</h1>
+                    <h1 className="pf-v6-c-menu__group-title">Favorites</h1>
                   ) : null}
                   <ul
                     role="listbox"
                     ref={this.dropdownList}
-                    className="pf-v5-c-menu__list dropdown-menu__autocomplete-filter"
+                    className="pf-v6-c-menu__list dropdown-menu__autocomplete-filter"
                   >
                     {this.renderActionItem()}
                     {bookMarkRows}
@@ -577,7 +577,7 @@ class Dropdown_ extends DropdownMixin {
       >
         <div
           className={classNames(
-            { 'pf-v5-c-dropdown': true, 'pf-m-expanded': this.state.active },
+            { 'pf-v6-c-dropdown': true, 'pf-v6-m-expanded': this.state.active },
             dropDownClassName,
           )}
         >
@@ -585,7 +585,7 @@ class Dropdown_ extends DropdownMixin {
             aria-label={ariaLabel}
             aria-haspopup="true"
             aria-expanded={this.state.active}
-            className={classNames('pf-v5-c-dropdown__toggle', buttonClassName)}
+            className={classNames('pf-v6-c-dropdown__toggle', buttonClassName)}
             data-test-id="dropdown-button"
             onClick={this.toggle}
             onKeyDown={this.onKeyDown}
@@ -595,16 +595,16 @@ class Dropdown_ extends DropdownMixin {
             aria-describedby={describedBy}
             disabled={disabled}
           >
-            <span className="pf-v5-c-dropdown__toggle-text">
+            <span className="pf-v6-c-dropdown__toggle-text">
               {titlePrefix && `${titlePrefix}: `}
               {title}
             </span>
-            <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+            <CaretDownIcon className="pf-v6-c-dropdown__toggle-icon" />
           </button>
           {active && (
             <ul
               ref={this.dropdownList}
-              className={classNames('pf-v5-c-dropdown__menu', menuClassName)}
+              className={classNames('pf-v6-c-dropdown__menu', menuClassName)}
             >
               {rows}
             </ul>

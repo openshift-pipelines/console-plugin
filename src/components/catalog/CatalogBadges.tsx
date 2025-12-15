@@ -12,7 +12,7 @@ const CatalogBadges: React.FC<CatalogBadgesProps> = ({ badges }) => (
     {badges?.map((badge, index) => (
       <Label
         className="odc-catalog-badges__label"
-        color={badge.color}
+        color={badge.color === 'cyan' ? 'blue' : (badge.color as any)}
         icon={badge.icon}
         variant={badge.variant}
         key={index}

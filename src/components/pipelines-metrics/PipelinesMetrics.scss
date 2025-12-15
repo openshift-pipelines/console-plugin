@@ -1,19 +1,19 @@
 .pipelines-metrix-dropdown {
-  margin-top: var(--pf-v5-global--spacer--md) !important;
-  margin-left: var(--pf-v5-global--spacer--md) !important;
+  margin-top: var(--pf-t--global--spacer--md) !important;
+  margin-left: var(--pf-t--global--spacer--md) !important;
 }
 
 .pipelines-metrics__background {
-  background-color: var(--pf-v5-global--BackgroundColor--200);
-  padding-left: var(--pf-v5-global--spacer--md);
-  padding-right: var(--pf-v5-global--spacer--md);
-  padding-top: var(--pf-v5-global--spacer--md);
-  padding-bottom: var(--pf-v5-global--spacer--md);
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  padding-left: var(--pf-t--global--spacer--md);
+  padding-right: var(--pf-t--global--spacer--md);
+  padding-top: var(--pf-t--global--spacer--md);
+  padding-bottom: var(--pf-t--global--spacer--md);
 }
 
 .pipelines-metrics__cards {
-  margin-top: var(--pf-v5-global--gutter);
-  margin-bottom: var(--pf-v5-global--gutter);
+  margin-top: var(--pf-t--global--spacer--lg);
+  margin-bottom: var(--pf-t--global--spacer--lg);
 }
 
 .pipelines-metrics__cards {
@@ -27,8 +27,8 @@
 }
 
 .k8s-overview-info-alert {
-  margin-top: var(--pf-v5-global--spacer--md);
-  margin-left: var(--pf-v5-global--spacer--md);
-  margin-right: var(--pf-v5-global--spacer--md);
+  margin-top: var(--pf-t--global--spacer--md);
+  margin-left: var(--pf-t--global--spacer--md);
+  margin-right: var(--pf-t--global--spacer--md);
   margin-bottom: 0;
 }

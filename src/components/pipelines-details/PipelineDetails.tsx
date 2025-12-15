@@ -26,7 +26,7 @@ const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({
 
   return (
     <>
-      <PageSection isFilled variant="light">
+      <PageSection hasBodyWrapper={false} isFilled >
         <Title headingLevel="h2">{t('Pipeline details')}</Title>
         <PipelineVisualization pipeline={pipeline} />
         <Grid hasGutter>

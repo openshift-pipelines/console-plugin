@@ -22,8 +22,8 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <li className="co-resource-sidebar-item">
-      <Title headingLevel="h3" size="lg" className="pf-v5-u-mb-sm">
-        <span className="pf-v5-u-text-transform-uppercase">
+      <Title headingLevel="h3" size="lg" className="pf-v6-u-mb-sm">
+        <span className="pf-v6-u-text-transform-uppercase">
           {highlightText}
         </span>{' '}
         {title}
@@ -38,25 +38,25 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
       <Level>
         <LevelItem>
           <Button
+            icon={<PasteIcon className="co-icon-space-r" />}
             type="button"
             variant="link"
             data-test="load-sample"
             isInline
             onClick={() => loadSampleYaml(id, yaml, reference)}
           >
-            <PasteIcon className="co-icon-space-r" />
             {t('Try it')}
           </Button>
         </LevelItem>
         <LevelItem>
           <Button
+            icon={<DownloadIcon className="co-icon-space-r" />}
             type="button"
             variant="link"
             data-test="download-sample"
             isInline
             onClick={() => downloadSampleYaml(id, yaml, reference)}
           >
-            <DownloadIcon className="co-icon-space-r" />
             {t('Download YAML')}
           </Button>
         </LevelItem>
@@ -142,8 +142,8 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
 
   return (
     <li className="co-resource-sidebar-item">
-      <Title headingLevel="h3" size="lg" className="pf-v5-u-mb-sm">
-        <span className="pf-v5-u-text-transform-uppercase">
+      <Title headingLevel="h3" size="lg" className="pf-v6-u-mb-sm">
+        <span className="pf-v6-u-text-transform-uppercase">
           {highlightText}
         </span>{' '}
         {title}
@@ -151,8 +151,13 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
       <p>{description}</p>
       <Level>
         <LevelItem>
-          <Button type="button" variant="link" isInline onClick={insertSnippet}>
-            <PasteIcon className="co-icon-space-r" />
+          <Button
+            icon={<PasteIcon className="co-icon-space-r" />}
+            type="button"
+            variant="link"
+            isInline
+            onClick={insertSnippet}
+          >
             {t('Insert snippet')}
           </Button>
         </LevelItem>

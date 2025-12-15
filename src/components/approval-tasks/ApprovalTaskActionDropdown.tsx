@@ -120,7 +120,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
       return (
         (
           <Spinner
-            className="pf-v5-u-mr-xs"
+            className="pf-v6-u-mr-xs"
             size="sm"
             aria-label={t('Checking authorization...')}
           />

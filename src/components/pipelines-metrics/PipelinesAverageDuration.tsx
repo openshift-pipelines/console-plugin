@@ -12,8 +12,9 @@ import {
   ChartThemeColor,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
-import { Card, CardBody, CardTitle } from '@patternfly/react-core';
+import { Alert, Card, CardBody, CardTitle } from '@patternfly/react-core';
 import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
+import { LoadingInline } from '../Loading';
 import {
   formatDate,
   getDropDownDate,
@@ -77,6 +78,10 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const [data, setData] = React.useState<SummaryResponse>();
+  const [loaded, setLoaded] = React.useState(false);
+  const [pipelineAverageDurationError, setPipelineAverageDurationError] =
+    React.useState<string | undefined>();
+  const abortControllerRef = React.useRef<AbortController>();
   const startTimespan = timespan - parsePrometheusDuration('1d');
   const endDate = new Date(Date.now()).setHours(0, 0, 0, 0);
   const startDate = new Date(Date.now() - startTimespan).setHours(0, 0, 0, 0);
@@ -90,11 +95,29 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
     namespace = '-';
   }
 
+  React.useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    setLoaded(false);
+    setPipelineAverageDurationError(undefined);
+    setData(undefined);
+  }, [namespace, timespan]);
+
   const [tickValues, type] = getXaxisValues(timespan);
 
   const date = getDropDownDate(timespan).toISOString();
 
   const getSummaryData = (group_by: string) => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+    setData(undefined);
+    setPipelineAverageDurationError(undefined);
+    setLoaded(false);
+
     const summaryOpt = {
       summary: 'avg_duration',
       data_type: DataType.PipelineRun,
@@ -107,12 +130,23 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
       summaryOpt,
       undefined,
       isDevConsoleProxyAvailable,
+      abortControllerRef.current.signal,
+      90000,
     )
       .then((d) => {
+        setLoaded(true);
+        setPipelineAverageDurationError(undefined);
         setData(d);
       })
       .catch((e) => {
-        throw e;
+        if (e.name === 'AbortError') {
+          return;
+        }
+        setLoaded(true);
+        setPipelineAverageDurationError(
+          e.message || t('Failed to load average duration data'),
+        );
+        setData(undefined);
       });
   };
 
@@ -204,42 +238,57 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
           <span>{t('Average duration')}</span>
         </CardTitle>
         <CardBody className="pipeline-overview__number-of-plr-card__body">
-          <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
-            <Chart
-              containerComponent={
-                <ChartVoronoiContainer
-                  labels={({ datum }) => `${datum.y}m`}
-                  constrainToVisibleArea
-                />
-              }
-              scale={{ x: 'time', y: 'linear' }}
-              domain={domainValue}
-              domainPadding={{ x: [30, 25] }}
-              height={145}
-              width={400}
-              padding={{
-                top: 10,
-                bottom: 55,
-                left: 50,
-              }}
-              themeColor={ChartThemeColor.blue}
-            >
-              <ChartAxis
-                tickValues={tickValues}
-                style={xAxisStyle}
-                tickFormat={xTickFormat}
-                label={showLabel ? dayLabel : ''}
-              />
-              <ChartAxis
-                dependentAxis
-                style={yAxisStyle}
-                tickFormat={(v) => `${v}m`}
-              />
-              <ChartGroup>
-                <ChartBar data={chartData} barWidth={18} />
-              </ChartGroup>
-            </Chart>
-          </div>
+          {pipelineAverageDurationError ? (
+            <Alert
+              variant="danger"
+              isInline
+              title={t('Unable to load average duration')}
+              className="pf-v5-u-my-lg pf-v5-u-ml-lg"
+            />
+          ) : (
+            <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
+              {loaded ? (
+                <Chart
+                  containerComponent={
+                    <ChartVoronoiContainer
+                      labels={({ datum }) => `${datum.y}m`}
+                      constrainToVisibleArea
+                    />
+                  }
+                  scale={{ x: 'time', y: 'linear' }}
+                  domain={domainValue}
+                  domainPadding={{ x: [30, 25] }}
+                  height={145}
+                  width={400}
+                  padding={{
+                    top: 10,
+                    bottom: 55,
+                    left: 50,
+                  }}
+                  themeColor={ChartThemeColor.blue}
+                >
+                  <ChartAxis
+                    tickValues={tickValues}
+                    style={xAxisStyle}
+                    tickFormat={xTickFormat}
+                    label={showLabel ? dayLabel : ''}
+                  />
+                  <ChartAxis
+                    dependentAxis
+                    style={yAxisStyle}
+                    tickFormat={(v) => `${v}m`}
+                  />
+                  <ChartGroup>
+                    <ChartBar data={chartData} barWidth={18} />
+                  </ChartGroup>
+                </Chart>
+              ) : (
+                <div className="pipeline-overview__number-of-plr-card__loading pf-v5-u-h-100">
+                  <LoadingInline />
+                </div>
+              )}
+            </div>
+          )}
         </CardBody>
       </Card>
     </>

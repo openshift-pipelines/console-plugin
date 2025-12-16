@@ -160,7 +160,8 @@
       "taskDetails": "./components/tasks",
       "pacComponent": "./components/pac/",
       "yamlTemplates": "./components/templates",
-      "topology": "./components/topology"
+      "topology": "./components/topology",
+      "pipelinesOverviewFiltersReducer": "./redux/reducers/pipelines-overview-filters"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

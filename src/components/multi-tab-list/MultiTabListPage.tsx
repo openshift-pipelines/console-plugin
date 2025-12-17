@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ActionList, ActionListItem, Button } from '@patternfly/react-core';
+import { ActionList, ActionListGroup, ActionListItem, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom-v5-compat';
 import {
@@ -83,29 +83,31 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
     <PageTitleContext.Provider value={titleProviderValues}>
       <ListPageHeader title={title} badge={badge}>
         <ActionList>
-          <ActionListItem>
+          <ActionListGroup>
             {secondaryButtonAction && (
-              <Button
-                type="button"
-                className="opp-secondary-action-btn"
-                variant="secondary"
-                data-test="secondary-action"
-                component={(props) => (
-                  <Link {...props} to={secondaryButtonAction.href} />
-                )}
-              >
-                {secondaryButtonAction.label}
-              </Button>
+              <ActionListItem>
+                <Button
+                  type="button"
+                  className="opp-secondary-action-btn"
+                  variant="secondary"
+                  data-test="secondary-action"
+                  component={(props) => (
+                    <Link {...props} to={secondaryButtonAction.href} />
+                  )}
+                >
+                  {secondaryButtonAction.label}
+                </Button>
+              </ActionListItem>
             )}
-          </ActionListItem>
-          <ActionListItem>
-            <ListPageCreateDropdown
-              items={items}
-              onClick={onSelectCreateAction}
-            >
-              {t('Create')}
-            </ListPageCreateDropdown>
-          </ActionListItem>
+            <ActionListItem>
+              <ListPageCreateDropdown
+                items={items}
+                onClick={onSelectCreateAction}
+              >
+                {t('Create')}
+              </ListPageCreateDropdown>
+            </ActionListItem>
+          </ActionListGroup>
         </ActionList>
       </ListPageHeader>
       <HorizontalNav pages={pages} />

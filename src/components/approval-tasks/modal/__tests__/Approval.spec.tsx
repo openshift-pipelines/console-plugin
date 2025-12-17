@@ -110,7 +110,7 @@ jest.mock('../ApprovalModal', () => {
 const mockK8sPatch = k8sPatch as jest.MockedFunction<typeof k8sPatch>;
 
 describe('Approval Component - handleSubmit function', () => {
-  const mockCloseModal = jest.fn();
+  const mockCloseOverlay = jest.fn();
 
   const baseApprovalTask: ApprovalTaskKind = {
     apiVersion: 'openshift-pipelines.org/v1alpha1',
@@ -182,7 +182,7 @@ describe('Approval Component - handleSubmit function', () => {
 
       const { getByTestId } = render(
         <Approval
-          closeModal={mockCloseModal}
+          closeOverlay={mockCloseOverlay}
           resource={userApprovalTask}
           pipelineRunName="example-approval-pr-mh34l5"
           userName="tester2"
@@ -219,7 +219,7 @@ describe('Approval Component - handleSubmit function', () => {
         });
       });
 
-      expect(mockCloseModal).toHaveBeenCalled();
+      expect(mockCloseOverlay).toHaveBeenCalled();
     });
 
     it('should reject as direct user successfully', async () => {
@@ -239,7 +239,7 @@ describe('Approval Component - handleSubmit function', () => {
 
       const { getByTestId } = render(
         <Approval
-          closeModal={mockCloseModal}
+          closeOverlay={mockCloseOverlay}
           resource={userApprovalTask}
           pipelineRunName="example-approval-pr-mh34l5"
           userName="tester2"
@@ -276,7 +276,7 @@ describe('Approval Component - handleSubmit function', () => {
         });
       });
 
-      expect(mockCloseModal).toHaveBeenCalled();
+      expect(mockCloseOverlay).toHaveBeenCalled();
     });
   });
 
@@ -284,7 +284,7 @@ describe('Approval Component - handleSubmit function', () => {
     it('should approve as group member when user belongs to the group', async () => {
       const { getByTestId } = render(
         <Approval
-          closeModal={mockCloseModal}
+          closeOverlay={mockCloseOverlay}
           resource={baseApprovalTask}
           pipelineRunName="example-approval-pr-mh34l5"
           userName="tester2"
@@ -338,13 +338,13 @@ describe('Approval Component - handleSubmit function', () => {
         });
       });
 
-      expect(mockCloseModal).toHaveBeenCalled();
+      expect(mockCloseOverlay).toHaveBeenCalled();
     });
 
     it('should reject as group member when user belongs to the group', async () => {
       const { getByTestId } = render(
         <Approval
-          closeModal={mockCloseModal}
+          closeOverlay={mockCloseOverlay}
           resource={baseApprovalTask}
           pipelineRunName="example-approval-pr-mh34l5"
           userName="tester2"
@@ -398,7 +398,7 @@ describe('Approval Component - handleSubmit function', () => {
         });
       });
 
-      expect(mockCloseModal).toHaveBeenCalled();
+      expect(mockCloseOverlay).toHaveBeenCalled();
     });
 
     it('should add new user to group when user does not exist in group users array', async () => {
@@ -419,7 +419,7 @@ describe('Approval Component - handleSubmit function', () => {
 
       const { getByTestId } = render(
         <Approval
-          closeModal={mockCloseModal}
+          closeOverlay={mockCloseOverlay}
           resource={taskWithEmptyGroup}
           pipelineRunName="example-approval-pr-mh34l5"
           userName="tester2"
@@ -463,7 +463,7 @@ describe('Approval Component - handleSubmit function', () => {
         });
       });
 
-      expect(mockCloseModal).toHaveBeenCalled();
+      expect(mockCloseOverlay).toHaveBeenCalled();
     });
 
     it('should update existing user in group when user already exists', async () => {
@@ -493,7 +493,7 @@ describe('Approval Component - handleSubmit function', () => {
 
       const { getByTestId } = render(
         <Approval
-          closeModal={mockCloseModal}
+          closeOverlay={mockCloseOverlay}
           resource={taskWithExistingUser}
           pipelineRunName="example-approval-pr-mh34l5"
           userName="tester2"
@@ -541,7 +541,7 @@ describe('Approval Component - handleSubmit function', () => {
         });
       });
 
-      expect(mockCloseModal).toHaveBeenCalled();
+      expect(mockCloseOverlay).toHaveBeenCalled();
     });
 
     it('should not update group when user does not belong to the group', async () => {
@@ -552,7 +552,7 @@ describe('Approval Component - handleSubmit function', () => {
 
       const { getByTestId } = render(
         <Approval
-          closeModal={mockCloseModal}
+          closeOverlay={mockCloseOverlay}
           resource={baseApprovalTask}
           pipelineRunName="example-approval-pr-mh34l5"
           userName="tester3"
@@ -582,7 +582,7 @@ describe('Approval Component - handleSubmit function', () => {
         });
       });
 
-      expect(mockCloseModal).toHaveBeenCalled();
+      expect(mockCloseOverlay).toHaveBeenCalled();
     });
 
     it('should handle group with undefined users array', async () => {
@@ -603,7 +603,7 @@ describe('Approval Component - handleSubmit function', () => {
 
       const { getByTestId } = render(
         <Approval
-          closeModal={mockCloseModal}
+          closeOverlay={mockCloseOverlay}
           resource={taskWithUndefinedUsers}
           pipelineRunName="example-approval-pr-mh34l5"
           userName="tester2"
@@ -647,7 +647,7 @@ describe('Approval Component - handleSubmit function', () => {
         });
       });
 
-      expect(mockCloseModal).toHaveBeenCalled();
+      expect(mockCloseOverlay).toHaveBeenCalled();
     });
   });
 
@@ -660,7 +660,7 @@ describe('Approval Component - handleSubmit function', () => {
 
       const { getByTestId } = render(
         <Approval
-          closeModal={mockCloseModal}
+          closeOverlay={mockCloseOverlay}
           resource={baseApprovalTask}
           pipelineRunName="example-approval-pr-mh34l5"
           userName="tester2"
@@ -690,7 +690,7 @@ describe('Approval Component - handleSubmit function', () => {
         });
       });
 
-      expect(mockCloseModal).toHaveBeenCalled();
+      expect(mockCloseOverlay).toHaveBeenCalled();
     });
   });
 });

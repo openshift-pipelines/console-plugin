@@ -9,17 +9,28 @@ type CatalogBadgesProps = {
 
 const CatalogBadges: React.FC<CatalogBadgesProps> = ({ badges }) => (
   <div className="odc-catalog-badges">
-    {badges?.map((badge, index) => (
-      <Label
-        className="odc-catalog-badges__label"
-        color={badge.color === 'cyan' ? 'blue' : (badge.color as any)}
-        icon={badge.icon}
-        variant={badge.variant}
-        key={index}
-      >
-        {badge.text}
-      </Label>
-    ))}
+    {badges?.map((badge, index) => {
+      // Map colors for PF6 compatibility
+      const validColors = ['blue', 'teal', 'green', 'orange', 'purple', 'red', 'grey'];
+      const color = badge.color as string;
+      // Map cyan to blue, and default any invalid color to blue
+      const validColor = validColors.includes(color)
+        ? color
+        : color === 'cyan'
+          ? 'blue'
+          : 'blue';
+      return (
+        <Label
+          className="odc-catalog-badges__label"
+          color={validColor as any}
+          icon={badge.icon}
+          variant={badge.variant}
+          key={index}
+        >
+          {badge.text}
+        </Label>
+      );
+    })}
   </div>
 );
 

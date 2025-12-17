@@ -5,7 +5,7 @@ import { PipelineKind } from '../../types';
 import {
   AccessReviewResourceAttributes,
   useAccessReview,
-  useModal,
+  useOverlay,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { PipelineRunModel } from '../../models';
 import { startPipelineModal } from '../start-pipeline';
@@ -29,7 +29,7 @@ const PipelineStartButton: React.FC<PipelineStartButtonProps & StateProps> = ({
   impersonate,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const launchModal = useModal();
+  const launchModal = useOverlay();
 
   const openPipelineModal = () => {
     launchModal(startPipelineModal, {

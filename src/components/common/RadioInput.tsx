@@ -1,6 +1,5 @@
-import classNames from 'classnames';
-import _ from 'lodash';
 import * as React from 'react';
+import { Radio } from '@patternfly/react-core';
 
 export type RadioInputProps = {
   checked: boolean;
@@ -9,42 +8,49 @@ export type RadioInputProps = {
   subTitle?: string | JSX.Element;
   value: any;
   disabled?: boolean;
-  inline?: boolean;
+  title?: string;
+  name?: string;
 } & React.InputHTMLAttributes<any>;
 
-export const RadioInput: React.SFC<RadioInputProps> = (props) => {
-  const inputProps: React.InputHTMLAttributes<any> = _.omit(props, [
-    'title',
-    'subTitle',
-    'desc',
-    'children',
-    'inline',
-  ]);
-  const inputElement = (
+export const RadioInput: React.FC<RadioInputProps> = (props) => {
+  const {
+    checked,
+    desc,
+    onChange,
+    subTitle,
+    value,
+    disabled,
+    title,
+    name,
+    children,
+    ...rest
+  } = props;
+
+  const label = (
     <>
-      <label
-        className={classNames({
-          'radio-inline': props.inline,
-          'co-disabled': props.disabled,
-        })}
-      >
-        <input
-          type="radio"
-          {...inputProps}
-          data-test={`${props.title}-radio-input`}
-          data-checked-state={props.checked}
-        />
-        {props.title}{' '}
-        {props.subTitle && <span className="co-no-bold">{props.subTitle}</span>}
-      </label>
-      {props.desc && <p className="co-m-radio-desc text-muted">{props.desc}</p>}
-      {props.children}
+      {title}
+      {subTitle && (
+        <span className="pf-v6-u-font-weight-normal"> {subTitle}</span>
+      )}
     </>
   );
 
-  return props.inline ? (
-    inputElement
-  ) : (
-    <div className="radio">{inputElement}</div>
+  return (
+    <div>
+      <Radio
+        id={`${name}-${value}`}
+        name={name}
+        label={label}
+        description={desc}
+        isChecked={checked}
+        onChange={(event) => onChange(event)}
+        value={value}
+        isDisabled={disabled}
+        data-test={`${title}-radio-input`}
+        data-checked-state={checked}
+        {...rest}
+      />
+      {children}
+    </div>
   );
 };

@@ -3,19 +3,28 @@ import { useTranslation } from 'react-i18next';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { Link } from 'react-router-dom-v5-compat';
 import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Form,
+  FormGroup,
+  TextArea,
+  Alert,
+} from '@patternfly/react-core';
+import {
   ResourceIcon,
   UserInfo,
   k8sPatch,
+  OverlayComponent,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { ApprovalTaskModel, PipelineRunModel } from '../../../models';
 import { getReferenceForModel } from '../../pipelines-overview/utils';
 import { ApprovalStatus, ApprovalTaskKind } from '../../../types';
-import { ModalComponent } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/ModalProvider';
-import { ModalWrapper } from '../../modals/modal';
-import ApprovalModal from './ApprovalModal';
+import { Approver, UserApprover } from 'src/types/approver';
 
 import './ApprovalModal.scss';
-import { Approver, UserApprover } from 'src/types/approver';
 
 type ApprovalProps = {
   resource: ApprovalTaskKind;
@@ -25,8 +34,8 @@ type ApprovalProps = {
   type: string;
 };
 
-const Approval: ModalComponent<ApprovalProps> = ({
-  closeModal,
+const Approval: OverlayComponent<ApprovalProps> = ({
+  closeOverlay,
   resource,
   pipelineRunName,
   userName,
@@ -135,7 +144,7 @@ const Approval: ModalComponent<ApprovalProps> = ({
       ],
     })
       .then(() => {
-        closeModal();
+        closeOverlay();
       })
       .catch((err) => {
         const errMessage =
@@ -153,50 +162,121 @@ const Approval: ModalComponent<ApprovalProps> = ({
       ? t('Are you sure you want to approve')
       : t('Please provide a reason for not approving');
 
-  const approvalEnding = type === 'approve' ? '?' : '.';
+  const approvalEnding = type === 'approve' ? ' ?' : '.';
 
   const labelDescription = (
-    <p>
-      {approvalMessage}{' '}
-      <ResourceIcon kind={getReferenceForModel(ApprovalTaskModel)} />
-      <Link
-        to={`/k8s/ns/${namespace}/${getReferenceForModel(
-          ApprovalTaskModel,
-        )}/${name}`}
-      >
-        {name}
-      </Link>{' '}
-      {t('in')} <br />
-      <ResourceIcon kind={getReferenceForModel(PipelineRunModel)} />
-      <Link
-        to={`/k8s/ns/${namespace}/${getReferenceForModel(
-          PipelineRunModel,
-        )}/${pipelineRunName}`}
-      >
-        {pipelineRunName}
-      </Link>
+    <div className="pf-v6-l-flex pf-m-col-gap-xs pf-v6-u-flex-wrap pf-v6-u-align-items-center pf-v6-u-mb-sm">
+      <span>{approvalMessage}</span>
+      <span>
+        <ResourceIcon
+          className="pf-v6-u-mr-sm"
+          groupVersionKind={{
+            group: ApprovalTaskModel.apiGroup,
+            version: ApprovalTaskModel.apiVersion,
+            kind: ApprovalTaskModel.kind,
+          }}
+        />
+        <Link
+          to={`/k8s/ns/${namespace}/${getReferenceForModel(
+            ApprovalTaskModel,
+          )}/${name}`}
+        >
+          {name}
+        </Link>
+      </span>
+      <span>{t('in')}</span>
+      <span>
+        <ResourceIcon
+          className="pf-v6-u-mr-sm"
+          groupVersionKind={{
+            group: PipelineRunModel.apiGroup,
+            version: PipelineRunModel.apiVersion,
+            kind: PipelineRunModel.kind,
+          }}
+        />
+        <Link
+          to={`/k8s/ns/${namespace}/${getReferenceForModel(
+            PipelineRunModel,
+          )}/${pipelineRunName}`}
+        >
+          {pipelineRunName}
+        </Link>
+      </span>
       {approvalEnding}
-    </p>
+    </div>
   );
   return (
-    <ModalWrapper className="pipelines-approval-modal" onClose={closeModal}>
+    <Modal
+      variant="small"
+      isOpen
+      onClose={closeOverlay}
+      className="pipelines-approval-modal"
+    >
+      <ModalHeader
+        title={labelTitle}
+        className="pipelines-approval-modal__title"
+      />
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        onReset={closeModal}
+        onReset={closeOverlay}
         initialStatus={{ error: '' }}
       >
-        {(formikProps) => (
-          <ApprovalModal
-            {...formikProps}
-            labelTitle={labelTitle}
-            labelDescription={labelDescription}
-            type={type}
-            cancel={closeModal}
-          />
-        )}
+        {(formikProps) => {
+          const dirty = type === 'reject' && !formikProps.values.reason?.trim();
+          return (
+            <Form onSubmit={formikProps.handleSubmit}>
+              <ModalBody className="pipelines-approval-modal__content">
+                {labelDescription}
+                {formikProps.status?.error && (
+                  <Alert
+                    variant="danger"
+                    isInline
+                    title={formikProps.status.error}
+                  />
+                )}
+                <FormGroup label={t('Reason')} fieldId="reason">
+                  <TextArea
+                    value={formikProps.values.reason}
+                    className="pipelines-approval-modal__text-box"
+                    onChange={(_event, value) => {
+                      formikProps.setFieldValue('reason', value);
+                    }}
+                    isRequired={type !== 'approve'}
+                    id="reason"
+                    name="reason"
+                  />
+                </FormGroup>
+              </ModalBody>
+              <ModalFooter className="pipelines-approval-modal__footer">
+                <Button
+                  key="submit"
+                  variant="primary"
+                  type="submit"
+                  isDisabled={
+                    dirty ||
+                    !formikProps.isValid ||
+                    formikProps.isSubmitting ||
+                    Object.keys(formikProps.errors).length > 0
+                  }
+                  isLoading={formikProps.isSubmitting}
+                >
+                  {t('Submit')}
+                </Button>
+                <Button
+                  key="cancel"
+                  variant="secondary"
+                  onClick={closeOverlay}
+                  isDisabled={formikProps.isSubmitting}
+                >
+                  {t('Cancel')}
+                </Button>
+              </ModalFooter>
+            </Form>
+          );
+        }}
       </Formik>
-    </ModalWrapper>
+    </Modal>
   );
 };
 

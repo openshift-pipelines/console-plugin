@@ -67,7 +67,11 @@ const WorkspaceResourcesSection: React.FC<WorkspaceResourcesSectionProps> = ({
           <ResourceLink
             key={workspace.name}
             name={secret.secretName}
-            kind={SecretModel.kind}
+            groupVersionKind={{
+              group: SecretModel.apiGroup,
+              version: SecretModel.apiVersion,
+              kind: SecretModel.kind,
+            }}
             namespace={namespace}
             displayName={displayName}
           />

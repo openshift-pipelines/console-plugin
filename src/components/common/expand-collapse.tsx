@@ -18,12 +18,12 @@ export const ExpandCollapse: React.FC<ExpandCollapseProps> = ({
   const [isExpanded, toggleExpandCollapse] = React.useState(false);
   return (
     <ExpandableSection
-      toggleTextExpanded={textExpanded}
-      toggleTextCollapsed={textCollapsed}
-      onToggle={() => {
-        onToggle?.(!isExpanded);
-        toggleExpandCollapse(!isExpanded);
+      toggleText={isExpanded ? textExpanded : textCollapsed}
+      onToggle={(_event, expanded) => {
+        onToggle?.(expanded);
+        toggleExpandCollapse(expanded);
       }}
+      isExpanded={isExpanded}
       data-test={dataTest}
     >
       {children}

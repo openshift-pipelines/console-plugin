@@ -94,8 +94,8 @@ const PipelineSecretSection: React.FC = () => {
                 setFieldValue(secretOpenField.name, true);
               }}
               className="odc-pipeline-secret-section__secret-action"
-              icon={<PlusCircleIcon />}
             >
+              <PlusCircleIcon className="pf-v6-u-mx-sm" />
               {t('Add Secret')}
             </Button>
           )}

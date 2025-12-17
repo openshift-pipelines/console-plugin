@@ -14,7 +14,7 @@ import { KEBAB_BUTTON_ID } from '../../consts';
 import { useTranslation } from 'react-i18next';
 import {
   useAccessReview,
-  useModal,
+  useOverlay,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { ApprovalTaskModel } from '../../models';
 import { approvalModal } from './modal';
@@ -32,7 +32,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
   pipelineRun,
 }) => {
   const { currentUser, updateUserInfo } = useActiveUserWithUpdate();
-  const launchModal = useModal();
+  const launchOverlay = useOverlay();
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
     metadata: { name, namespace },
@@ -48,7 +48,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
     setIsOpen(false);
   };
   const approveAction = () => {
-    launchModal(approvalModal, {
+    launchOverlay(approvalModal, {
       resource: approvalTask,
       pipelineRunName: pipelineRun?.metadata?.name,
       userName: currentUser?.username,
@@ -58,7 +58,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
   };
 
   const rejectAction = () => {
-    launchModal(approvalModal, {
+    launchOverlay(approvalModal, {
       resource: approvalTask,
       pipelineRunName: pipelineRun?.metadata?.name,
       userName: currentUser?.username,

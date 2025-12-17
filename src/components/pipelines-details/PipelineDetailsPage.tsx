@@ -14,6 +14,7 @@ import {
   useK8sWatchResource,
   useLabelsModal,
   useModal,
+  useOverlay,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { PipelineModel, PipelineRunModel } from '../../models';
 import { LoadingBox } from '../status/status-box';
@@ -50,6 +51,7 @@ const PipelineDetailsPage = () => {
     name,
   });
   const launchModal = useModal();
+  const launchOverlay = useOverlay();
   const latestPipelineRun = useLatestPipelineRun(name, namespace);
   const launchAnnotationsModal = useAnnotationsModal(pipeline);
   const launchLabelsModal = useLabelsModal(pipeline);
@@ -96,7 +98,7 @@ const PipelineDetailsPage = () => {
     const workspaces = _.get(pipeline, ['spec', 'workspaces'], []);
 
     if (!_.isEmpty(params) || !_.isEmpty(resources) || !_.isEmpty(workspaces)) {
-      launchModal(startPipelineModal, {
+      launchOverlay(startPipelineModal, {
         pipeline,
         onSubmit: handlePipelineRunSubmit,
       });

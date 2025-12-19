@@ -1,19 +1,26 @@
 import * as React from 'react';
-import { Formik } from 'formik';
+import { Formik, FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Form,
+  Alert,
+  Skeleton,
+} from '@patternfly/react-core';
 import { AddTriggerFormValues, PipelineKind } from '../../types';
-import { ModalComponentProps, ModalWrapper } from '../modals/modal';
 import { convertPipelineToModalData } from './utils';
-import ModalStructure from '../modals/ModalStructure';
 import { ModalComponent } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/ModalProvider';
 import { useGetActiveUser, usePipelinePVC } from '../hooks/hooks';
 import { TRIGGER_BINDING_EMPTY } from '../../consts';
 import AddTriggerForm from './AddTriggerForm';
 import { submitTrigger } from './submit-utils';
 import { addTriggerSchema } from './validation-utils';
-import LoadingModal from '../modals/LoadingModal';
 
-type AddTriggerModalProps = ModalComponentProps & {
+type AddTriggerModalProps = {
   pipeline: PipelineKind;
 };
 
@@ -28,16 +35,16 @@ const AddTriggerModal: ModalComponent<AddTriggerModalProps> = ({
     pipeline.metadata?.namespace,
   );
 
-  if (!pipelinePVCLoaded) {
-    return <LoadingModal onClose={closeModal} />;
-  }
-  const initialValues: AddTriggerFormValues = {
-    ...convertPipelineToModalData(pipeline, pipelinePVC?.metadata?.name),
-    triggerBinding: {
-      name: TRIGGER_BINDING_EMPTY,
-      resource: null,
-    },
-  };
+  const initialValues: AddTriggerFormValues = React.useMemo(() => {
+    if (!pipelinePVCLoaded) return;
+    return {
+      ...convertPipelineToModalData(pipeline, pipelinePVC?.metadata?.name),
+      triggerBinding: {
+        name: TRIGGER_BINDING_EMPTY,
+        resource: null,
+      },
+    };
+  }, [pipeline, pipelinePVC, pipelinePVCLoaded]);
 
   const handleSubmit = (values: AddTriggerFormValues, actions) => {
     return submitTrigger(pipeline, values, currentUser)
@@ -52,27 +59,82 @@ const AddTriggerModal: ModalComponent<AddTriggerModalProps> = ({
   };
 
   return (
-    <ModalWrapper
-      className="modal-lg opp-start-pipeline-modal"
+    <Modal
+      variant="large"
+      isOpen
       onClose={closeModal}
+      className="opp-start-pipeline-modal"
     >
-      <Formik
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        validationSchema={addTriggerSchema()}
-      >
-        {(formikProps) => (
-          <ModalStructure
-            submitBtnText={t('Add')}
-            title={t('Add Trigger')}
-            close={closeModal}
-            {...formikProps}
-          >
-            <AddTriggerForm {...formikProps} />
-          </ModalStructure>
-        )}
-      </Formik>
-    </ModalWrapper>
+      <ModalHeader title={t('Add Trigger')} />
+      {pipelinePVCLoaded ? (
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validationSchema={addTriggerSchema()}
+        >
+          {(formikProps: FormikProps<AddTriggerFormValues>) => (
+            <>
+              <ModalBody tabIndex={0}>
+                <Form id="add-trigger-form" onSubmit={formikProps.handleSubmit}>
+                  {formikProps.status?.submitError && (
+                    <Alert
+                      variant="danger"
+                      isInline
+                      title={formikProps.status.submitError}
+                    />
+                  )}
+
+                  <AddTriggerForm {...formikProps} />
+                </Form>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  key="cancel"
+                  variant="secondary"
+                  onClick={closeModal}
+                  isDisabled={formikProps.isSubmitting}
+                >
+                  {t('Cancel')}
+                </Button>
+                <Button
+                  key="submit"
+                  variant="primary"
+                  type="submit"
+                  form="add-trigger-form"
+                  isDisabled={
+                    !formikProps.isValid ||
+                    formikProps.isSubmitting ||
+                    Object.keys(formikProps.errors).length > 0
+                  }
+                  isLoading={formikProps.isSubmitting}
+                >
+                  {t('Add')}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </Formik>
+      ) : (
+        <ModalBody>
+          <Skeleton
+            className="pf-v6-u-mb-md pf-v6-u-mt-xl"
+            screenreaderText="Loading content"
+          />
+          <Skeleton
+            className="pf-v6-u-mb-md"
+            screenreaderText="Loading content"
+          />
+          <Skeleton
+            className="pf-v6-u-mb-md"
+            screenreaderText="Loading content"
+          />
+          <Skeleton
+            className="pf-v6-u-mb-xl"
+            screenreaderText="Loading content"
+          />
+        </ModalBody>
+      )}
+    </Modal>
   );
 };
 

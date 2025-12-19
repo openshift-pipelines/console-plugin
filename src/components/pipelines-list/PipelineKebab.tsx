@@ -24,6 +24,7 @@ import {
   useDeleteModal,
   useLabelsModal,
   useModal,
+  useOverlay,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { PipelineModel, PipelineRunModel } from '../../models';
 import _ from 'lodash';
@@ -68,6 +69,7 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({
   const launchAnnotationsModal = useAnnotationsModal(pipeline);
   const launchLabelsModal = useLabelsModal(pipeline);
   const launchModal = useModal();
+  const launchOverlay = useOverlay();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = React.useState(false);
   const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
@@ -119,7 +121,7 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({
     const workspaces = _.get(pipeline, ['spec', 'workspaces'], []);
 
     if (!_.isEmpty(params) || !_.isEmpty(resources) || !_.isEmpty(workspaces)) {
-      launchModal(startPipelineModal, {
+      launchOverlay(startPipelineModal, {
         pipeline,
         onSubmit: handlePipelineRunSubmit,
       });

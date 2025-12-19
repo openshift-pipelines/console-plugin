@@ -4,7 +4,14 @@ import { withTranslation } from 'react-i18next';
 import { DroppableFileInput } from './file-input';
 import _ from 'lodash';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { Button } from '@patternfly/react-core';
+import {
+  Button,
+  FormGroup,
+  TextInput,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+} from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 
 const AUTHS_KEY = 'auths';
@@ -42,66 +49,70 @@ class BasicAuthSubformWithTranslation extends React.Component<
       username: this.props.stringData.username || '',
       password: this.props.stringData.password || '',
     };
-    this.changeData = this.changeData.bind(this);
-  }
-  changeData(event) {
-    this.setState(
-      {
-        [event.target.name]: event.target.value,
-      } as BasicAuthSubformState,
-      () => this.props.onChange(this.state),
-    );
   }
 
   render() {
     const { t } = this.props;
     return (
       <>
-        <div className="form-group">
-          <label className="control-label" htmlFor="username">
-            {t('plugin__pipelines-console-plugin~Username')}
-          </label>
-          <div>
-            <input
-              className="pf-v6-c-form-control"
-              id="username"
-              data-test="secret-username"
-              aria-describedby="username-help"
-              type="text"
-              name="username"
-              onChange={this.changeData}
-              value={this.state.username}
-            />
-            <p className="help-block" id="username-help">
-              {t(
-                'plugin__pipelines-console-plugin~Optional username for Git authentication.',
-              )}
-            </p>
-          </div>
-        </div>
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="password">
-            {t('plugin__pipelines-console-plugin~Password or token')}
-          </label>
-          <div>
-            <input
-              className="pf-v6-c-form-control"
-              id="password"
-              data-test="secret-password"
-              aria-describedby="password-help"
-              type="password"
-              name="password"
-              onChange={this.changeData}
-              value={this.state.password}
-              required
-            />
-            <p className="help-block" id="password-help">
-              {t(
-                'plugin__pipelines-console-plugin~Password or token for Git authentication. Required if a ca.crt or .gitconfig file is not specified.',
-              )}
-            </p>
-          </div>
-        </div>
+        <FormGroup
+          label={t('plugin__pipelines-console-plugin~Username')}
+          fieldId="username"
+          className="form-group"
+        >
+          <TextInput
+            id="username"
+            type="text"
+            name="username"
+            value={this.state.username}
+            onChange={(_event, value) => {
+              this.setState({ username: value }, () =>
+                this.props.onChange(this.state),
+              );
+            }}
+            aria-describedby="username-help"
+            data-test="secret-username"
+          />
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem id="username-help">
+                {t(
+                  'plugin__pipelines-console-plugin~Optional username for Git authentication.',
+                )}
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
+        <FormGroup
+          label={t('plugin__pipelines-console-plugin~Password or token')}
+          isRequired
+          fieldId="password"
+          className="form-group"
+        >
+          <TextInput
+            id="password"
+            type="password"
+            name="password"
+            value={this.state.password}
+            onChange={(_event, value) => {
+              this.setState({ password: value }, () =>
+                this.props.onChange(this.state),
+              );
+            }}
+            aria-describedby="password-help"
+            data-test="secret-password"
+            isRequired
+          />
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem id="password-help">
+                {t(
+                  'plugin__pipelines-console-plugin~Password or token for Git authentication. Required if a ca.crt or .gitconfig file is not specified.',
+                )}
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
       </>
     );
   }
@@ -199,12 +210,8 @@ class ConfigEntryFormWithTranslation extends React.Component<
     onChange(this.state, id);
   };
 
-  onAddressChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({ address: event.currentTarget.value }, this.propagateChange);
-  };
-
-  onUsernameChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    const username = event.currentTarget.value;
+  onUsernameChanged = (event: any) => {
+    const username = event.currentTarget?.value || event;
     this.setState(
       (state: ConfigEntryFormState) => ({
         username,
@@ -214,8 +221,8 @@ class ConfigEntryFormWithTranslation extends React.Component<
     );
   };
 
-  onPasswordChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    const password = event.currentTarget.value;
+  onPasswordChanged = (event: any) => {
+    const password = event.currentTarget?.value || event;
     this.setState(
       (state: ConfigEntryFormState) => ({
         password,
@@ -223,10 +230,6 @@ class ConfigEntryFormWithTranslation extends React.Component<
       }),
       this.propagateChange,
     );
-  };
-
-  onEmailChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({ email: event.currentTarget.value }, this.propagateChange);
   };
 
   onBlurHandler: React.ReactEventHandler<HTMLInputElement> = (event) => {
@@ -248,92 +251,86 @@ class ConfigEntryFormWithTranslation extends React.Component<
         className="co-m-pane__body-group"
         data-test-id="create-image-secret-form"
       >
-        <div className="form-group">
-          <label
-            className="control-label co-required"
-            htmlFor={`${this.props.id}-address`}
-          >
-            {t('plugin__pipelines-console-plugin~Registry server address')}
-          </label>
-          <div>
-            <input
-              className="pf-v6-c-form-control"
-              id={`${this.props.id}-address`}
-              aria-describedby={`${this.props.id}-address-help`}
-              type="text"
-              name="address"
-              onChange={this.onAddressChanged}
-              value={this.state.address}
-              onBlur={this.onBlurHandler}
-              data-test="image-secret-address"
-              required
-            />
-          </div>
-          <p className="help-block" id={`${this.props.id}-address-help`}>
-            {t(
-              'plugin__pipelines-console-plugin~For example quay.io or docker.io',
-            )}
-          </p>
-        </div>
-        <div className="form-group">
-          <label
-            className="control-label co-required"
-            htmlFor={`${this.props.id}-username`}
-          >
-            {t('plugin__pipelines-console-plugin~Username')}
-          </label>
-          <div>
-            <input
-              className="pf-v6-c-form-control"
-              id={`${this.props.id}-username`}
-              type="text"
-              name="username"
-              onChange={this.onUsernameChanged}
-              value={this.state.username}
-              onBlur={this.onBlurHandler}
-              data-test="image-secret-username"
-              required
-            />
-          </div>
-        </div>
-        <div className="form-group">
-          <label
-            className="control-label co-required"
-            htmlFor={`${this.props.id}-password`}
-          >
-            {t('plugin__pipelines-console-plugin~Password')}
-          </label>
-          <div>
-            <input
-              className="pf-v6-c-form-control"
-              id={`${this.props.id}-password`}
-              type="password"
-              name="password"
-              onChange={this.onPasswordChanged}
-              value={this.state.password}
-              onBlur={this.onBlurHandler}
-              data-test="image-secret-password"
-              required
-            />
-          </div>
-        </div>
-        <div className="form-group">
-          <label className="control-label" htmlFor={`${this.props.id}-email`}>
-            {t('plugin__pipelines-console-plugin~Email')}
-          </label>
-          <div>
-            <input
-              className="pf-v6-c-form-control"
-              id={`${this.props.id}-email`}
-              type="text"
-              name="email"
-              onChange={this.onEmailChanged}
-              value={this.state.email}
-              onBlur={this.onBlurHandler}
-              data-test="image-secret-email"
-            />
-          </div>
-        </div>
+        <FormGroup
+          label={t('plugin__pipelines-console-plugin~Registry server address')}
+          isRequired
+          fieldId={`${this.props.id}-address`}
+          className="form-group"
+        >
+          <TextInput
+            id={`${this.props.id}-address`}
+            type="text"
+            name="address"
+            value={this.state.address}
+            onChange={(_event, value) => {
+              this.setState({ address: value }, this.propagateChange);
+            }}
+            onBlur={this.onBlurHandler}
+            aria-describedby={`${this.props.id}-address-help`}
+            data-test="image-secret-address"
+            isRequired
+          />
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem id={`${this.props.id}-address-help`}>
+                {t(
+                  'plugin__pipelines-console-plugin~For example quay.io or docker.io',
+                )}
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
+        <FormGroup
+          label={t('plugin__pipelines-console-plugin~Username')}
+          isRequired
+          fieldId={`${this.props.id}-username`}
+          className="form-group"
+        >
+          <TextInput
+            id={`${this.props.id}-username`}
+            type="text"
+            name="username"
+            value={this.state.username}
+            onChange={(_event, value) => this.onUsernameChanged(value)}
+            onBlur={this.onBlurHandler}
+            data-test="image-secret-username"
+            isRequired
+          />
+        </FormGroup>
+        <FormGroup
+          label={t('plugin__pipelines-console-plugin~Password')}
+          isRequired
+          fieldId={`${this.props.id}-password`}
+          className="form-group"
+        >
+          <TextInput
+            id={`${this.props.id}-password`}
+            type="password"
+            name="password"
+            value={this.state.password}
+            onChange={(_event, value) => this.onPasswordChanged(value)}
+            onBlur={this.onBlurHandler}
+            data-test="image-secret-password"
+            isRequired
+          />
+        </FormGroup>
+        <FormGroup
+          label={t('plugin__pipelines-console-plugin~Email')}
+          fieldId={`${this.props.id}-email`}
+          className="form-group"
+        >
+          <TextInput
+            id={`${this.props.id}-email`}
+            type="text"
+            name="email"
+            value={this.state.email}
+            onChange={(_event, value) => {
+              this.setState({ email: value }, this.propagateChange);
+            }}
+            onBlur={this.onBlurHandler}
+            data-test="image-secret-email"
+          />
+        </FormGroup>
       </div>
     );
   }
@@ -487,12 +484,12 @@ class CreateConfigSubformWithTranslation extends React.Component<
             {_.size(this.state.secretEntriesArray) > 1 && (
               <div className="co-add-remove-form__link--remove-entry">
                 <Button
-                  icon={<MinusCircleIcon className="co-icon-space-r" />}
                   onClick={() => this.removeEntry(index)}
                   type="button"
                   variant="link"
                   data-test="remove-entry-button"
                 >
+                  <MinusCircleIcon className="co-icon-space-r" />
                   {t('plugin__pipelines-console-plugin~Remove credentials')}
                 </Button>
               </div>
@@ -510,13 +507,13 @@ class CreateConfigSubformWithTranslation extends React.Component<
       <>
         {secretEntriesList}
         <Button
-          icon={<PlusCircleIcon className="co-icon-space-r" />}
           className="co-create-secret-form__link--add-entry pf-m-link--align-left"
           onClick={() => this.addEntry()}
           type="button"
           variant="link"
           data-test="add-credentials-button"
         >
+          <PlusCircleIcon className="co-icon-space-r" />
           {t('plugin__pipelines-console-plugin~Add credentials')}
         </Button>
       </>

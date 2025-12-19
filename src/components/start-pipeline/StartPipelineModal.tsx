@@ -1,13 +1,21 @@
 import * as React from 'react';
-import { Formik } from 'formik';
+import { Formik, FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Form,
+  Alert,
+  Skeleton,
+} from '@patternfly/react-core';
 import StartPipelineForm from './StartPipelineForm';
 import { submitStartPipeline } from './submit-utils';
 import { StartPipelineFormValues } from './types';
-import { ModalComponentProps, ModalWrapper } from '../modals/modal';
 import { errorModal } from '../modals/error-modal';
 import { PipelineKind, PipelineRunKind } from '../../types';
-import ModalStructure from '../modals/ModalStructure';
 import { startPipelineSchema } from './validation-utils';
 import { convertPipelineToModalData } from './utils';
 import {
@@ -15,17 +23,18 @@ import {
   usePipelinePVC,
   useUserAnnotationForManualStart,
 } from '../hooks/hooks';
-import { ModalComponent } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/ModalProvider';
-import LoadingModal from '../modals/LoadingModal';
+import { OverlayComponent } from '@openshift-console/dynamic-plugin-sdk';
 import './StartPipelineModal.scss';
 
 export interface StartPipelineModalProps {
   pipeline: PipelineKind;
   onSubmit?: (pipelineRun: PipelineRunKind) => void;
 }
-const StartPipelineModal: ModalComponent<
-  StartPipelineModalProps & ModalComponentProps
-> = ({ pipeline, closeModal, onSubmit }) => {
+const StartPipelineModal: OverlayComponent<StartPipelineModalProps> = ({
+  pipeline,
+  closeOverlay,
+  onSubmit,
+}) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const userStartedAnnotation = useUserAnnotationForManualStart();
   const currentUser = useGetActiveUser();
@@ -34,14 +43,13 @@ const StartPipelineModal: ModalComponent<
     pipeline.metadata?.namespace,
   );
 
-  if (!pipelinePVCLoaded) {
-    return <LoadingModal onClose={closeModal} />;
-  }
-
-  const initialValues: StartPipelineFormValues = {
-    ...convertPipelineToModalData(pipeline, pipelinePVC?.metadata?.name),
-    secretOpen: false,
-  };
+  const initialValues: StartPipelineFormValues = React.useMemo(() => {
+    if (!pipelinePVCLoaded) return;
+    return {
+      ...convertPipelineToModalData(pipeline, pipelinePVC?.metadata?.name),
+      secretOpen: false,
+    };
+  }, [pipeline, pipelinePVC, pipelinePVCLoaded]);
 
   const handleSubmit = (values: StartPipelineFormValues, actions) => {
     return submitStartPipeline(
@@ -53,37 +61,95 @@ const StartPipelineModal: ModalComponent<
     )
       .then((res) => {
         onSubmit && onSubmit(res);
-        closeModal();
+        closeOverlay();
       })
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
         errorModal({ error: err.message });
-        closeModal();
+        closeOverlay();
       });
   };
 
   return (
-    <ModalWrapper
-      className="modal-lg opp-start-pipeline-modal"
-      onClose={closeModal}
+    <Modal
+      variant="large"
+      isOpen
+      onClose={closeOverlay}
+      className="opp-start-pipeline-modal"
     >
-      <Formik
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        validationSchema={startPipelineSchema()}
-      >
-        {(formikProps) => (
-          <ModalStructure
-            submitBtnText={t('Start')}
-            title={t('Start Pipeline')}
-            close={closeModal}
-            {...formikProps}
-          >
-            <StartPipelineForm {...formikProps} />
-          </ModalStructure>
-        )}
-      </Formik>
-    </ModalWrapper>
+      <ModalHeader title={t('Start Pipeline')} />
+      {pipelinePVCLoaded ? (
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validationSchema={startPipelineSchema()}
+        >
+          {(formikProps: FormikProps<StartPipelineFormValues>) => (
+            <>
+              <ModalBody tabIndex={0}>
+                <Form
+                  id="start-pipeline-form"
+                  onSubmit={formikProps.handleSubmit}
+                >
+                  {formikProps.status?.submitError && (
+                    <Alert
+                      variant="danger"
+                      isInline
+                      title={formikProps.status.submitError}
+                    />
+                  )}
+
+                  <StartPipelineForm {...formikProps} />
+                </Form>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  key="cancel"
+                  variant="secondary"
+                  onClick={closeOverlay}
+                  isDisabled={formikProps.isSubmitting}
+                >
+                  {t('Cancel')}
+                </Button>
+                <Button
+                  key="submit"
+                  variant="primary"
+                  type="submit"
+                  form="start-pipeline-form"
+                  isDisabled={
+                    !formikProps.isValid ||
+                    formikProps.isSubmitting ||
+                    Object.keys(formikProps.errors).length > 0
+                  }
+                  isLoading={formikProps.isSubmitting}
+                >
+                  {t('Start')}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </Formik>
+      ) : (
+        <ModalBody>
+          <Skeleton
+            className="pf-v6-u-mb-md pf-v6-u-mt-xl"
+            screenreaderText="Loading content"
+          />
+          <Skeleton
+            className="pf-v6-u-mb-md"
+            screenreaderText="Loading content"
+          />
+          <Skeleton
+            className="pf-v6-u-mb-md"
+            screenreaderText="Loading content"
+          />
+          <Skeleton
+            className="pf-v6-u-mb-xl"
+            screenreaderText="Loading content"
+          />
+        </ModalBody>
+      )}
+    </Modal>
   );
 };
 

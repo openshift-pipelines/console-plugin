@@ -10,8 +10,19 @@ import {
   K8sResourceKind,
   ResourceIcon,
 } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  Select,
+  SelectOption,
+  SelectList,
+  MenuToggle,
+  MenuToggleElement,
+  TextInputGroup,
+  TextInputGroupMain,
+  TextInputGroupUtilities,
+  Button,
+} from '@patternfly/react-core';
+import { TimesIcon } from '@patternfly/react-icons';
 import { LoadingInline } from '../Loading';
-import { Dropdown } from './dropdown';
 
 type DropdownItemProps = {
   name: string;
@@ -26,7 +37,7 @@ const DropdownItem: React.FC<DropdownItemProps> = ({
 }) => {
   return (
     <span className="co-resource-item">
-      <span className="co-resource-icon--fixed-width">
+      <span className="">
         <ResourceIcon
           groupVersionKind={getGroupVersionKindForResource(resource)}
         />
@@ -47,6 +58,8 @@ interface State {
   resources: {};
   items: {};
   title: React.ReactNode;
+  isOpen: boolean;
+  filterValue: string;
 }
 
 export interface ResourceDropdownItems {
@@ -122,7 +135,11 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       ) : (
         <LoadingInline />
       ),
+      isOpen: false,
+      filterValue: '',
     };
+    this.onToggle = this.onToggle.bind(this);
+    this.onSelect = this.onSelect.bind(this);
   }
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -341,32 +358,111 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     }
   };
 
-  private onChange = (key: string) => {
+  private onToggle = () => {
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
+  };
+
+  private onSelect = (
+    _event: React.MouseEvent | undefined,
+    value: string | number | undefined,
+  ) => {
+    const key = String(value);
     this.handleChange(key, this.state.items);
+    this.setState({ isOpen: false, filterValue: '' });
+  };
+
+  private onFilterChange = (value: string) => {
+    this.setState({ filterValue: value });
+  };
+
+  private getFilteredItems = () => {
+    const { filterValue, items } = this.state;
+    const { autocompleteFilter } = this.props;
+
+    if (!filterValue) {
+      return items;
+    }
+
+    const filter = autocompleteFilter || fuzzy;
+    return _.pickBy(items, (item, key) => {
+      // If item is a React element, try to get props, otherwise use the item as name
+      const itemProps = React.isValidElement(item)
+        ? item.props
+        : { name: item };
+      return filter(filterValue, itemProps);
+    });
   };
 
   render() {
+    const { isOpen, filterValue } = this.state;
+    const {
+      id,
+      ariaLabel,
+      className,
+      dropDownClassName,
+      titlePrefix,
+      selectedKey,
+      placeholder,
+      disabled,
+    } = this.props;
+    const filteredItems = this.getFilteredItems();
+    const displayTitle = this.props.title || this.state.title;
+
+    const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+      <MenuToggle
+        ref={toggleRef}
+        onClick={this.onToggle}
+        isExpanded={isOpen}
+        isDisabled={disabled}
+        className={dropDownClassName}
+        id={id}
+        aria-label={ariaLabel}
+      >
+        {titlePrefix && `${titlePrefix}: `}
+        {displayTitle}
+      </MenuToggle>
+    );
+
     return (
-      <Dropdown
-        id={this.props.id}
-        ariaLabel={this.props.ariaLabel}
-        className={this.props.className}
-        dropDownClassName={this.props.dropDownClassName}
-        menuClassName={this.props.menuClassName}
-        buttonClassName={this.props.buttonClassName}
-        dropDownContentClassName={this.props.dropDownContentClassName}
-        titlePrefix={this.props.titlePrefix}
-        autocompleteFilter={this.props.autocompleteFilter || fuzzy}
-        actionItems={this.props.actionItems}
-        items={this.state.items}
-        onChange={this.onChange}
-        selectedKey={this.props.selectedKey}
-        title={this.props.title || this.state.title}
-        autocompletePlaceholder={this.props.placeholder}
-        userSettingsPrefix={this.props.userSettingsPrefix}
-        storageKey={this.props.storageKey}
-        disabled={this.props.disabled}
-      />
+      <Select
+        id={id}
+        isOpen={isOpen}
+        selected={selectedKey}
+        onSelect={this.onSelect}
+        onOpenChange={(open) => this.setState({ isOpen: open })}
+        toggle={toggle}
+        shouldFocusToggleOnSelect
+        className={className}
+      >
+        {this.props.autocompleteFilter && (
+          <TextInputGroup>
+            <TextInputGroupMain
+              value={filterValue}
+              onChange={(_event, value) => this.onFilterChange(value)}
+              placeholder={placeholder}
+              autoFocus
+            />
+            {filterValue && (
+              <TextInputGroupUtilities>
+                <Button
+                  variant="plain"
+                  onClick={() => this.setState({ filterValue: '' })}
+                  aria-label="Clear filter"
+                >
+                  <TimesIcon />
+                </Button>
+              </TextInputGroupUtilities>
+            )}
+          </TextInputGroup>
+        )}
+        <SelectList>
+          {Object.keys(filteredItems).map((key) => (
+            <SelectOption key={key} value={key}>
+              {filteredItems[key]}
+            </SelectOption>
+          ))}
+        </SelectList>
+      </Select>
     );
   }
 }

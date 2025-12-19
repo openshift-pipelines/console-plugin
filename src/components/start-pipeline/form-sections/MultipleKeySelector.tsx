@@ -4,8 +4,6 @@ import {
   Button,
   FormGroup,
   Tooltip,
-  Flex,
-  FlexItem,
 } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/minus-circle-icon';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
@@ -51,33 +49,33 @@ const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({
                 const fieldKey = `${name}.${index}.${item.key}`;
                 return (
                   <div
-                    className="form-group odc-multiple-key-selector__item"
+                    className="form-group odc-multiple-key-selector__item "
                     key={fieldKey}
                   >
-                    <Flex direction={{ default: 'column', lg: 'row' }}>
-                      <FlexItem grow={{ default: 'grow' }}>
+                    <div className="pf-v6-l-flex pf-v6-u-w-100">
+                      <div className="pf-v6-u-flex-1">
                         <DropdownField
                           name={`${name}.${index}.key`}
                           title={t('Select a key')}
                           items={keys}
                           fullWidth
                         />
-                      </FlexItem>
-                      <FlexItem grow={{ default: 'grow' }}>
+                      </div>
+                      <div className="pf-v6-u-flex-1">
                         <InputField
                           name={`${name}.${index}.path`}
                           type={TextInputTypes.text}
                           placeholder={t('Enter a path')}
                         />
-                      </FlexItem>
-                    </Flex>
-                    <div className="odc-multiple-key-selector__deleteButton">
-                      <Tooltip content={tooltip || t('Remove')}>
-                        <MinusCircleIcon
-                          aria-hidden="true"
-                          onClick={() => remove(index)}
-                        />
-                      </Tooltip>
+                      </div>
+                      <div className="pf-v6-u-flex-shrink-0">
+                        <Tooltip content={tooltip || t('Remove')}>
+                          <MinusCircleIcon
+                            aria-hidden="true"
+                            onClick={() => remove(index)}
+                          />
+                        </Tooltip>
+                      </div>
                     </div>
                   </div>
                 );

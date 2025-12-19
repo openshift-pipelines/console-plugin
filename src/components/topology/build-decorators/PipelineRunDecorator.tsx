@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import {
   AccessReviewResourceAttributes,
   useAccessReview,
-  useModal,
+  useOverlay,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { getLatestPipelineRunStatus } from '../../../components/utils/pipeline-utils';
 import {
@@ -40,7 +40,7 @@ export const ConnectedPipelineRunDecorator: React.FC<
   PipelineRunDecoratorProps & StateProps
 > = ({ pipeline, pipelineRuns, radius, x, y, impersonate }) => {
   const ref = React.useRef();
-  const launchModal = useModal();
+  const launchOverlay = useOverlay();
 
   const { latestPipelineRun, status } =
     getLatestPipelineRunStatus(pipelineRuns);
@@ -94,7 +94,7 @@ export const ConnectedPipelineRunDecorator: React.FC<
     let onClick = null;
     if (canStartPipeline) {
       onClick = () => {
-        launchModal(startPipelineModal, {
+        launchOverlay(startPipelineModal, {
           pipeline,
         });
       };

@@ -69,44 +69,6 @@ jest.mock('../../../modals/modal', () => ({
   ),
 }));
 
-jest.mock('../ApprovalModal', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const React = require('react');
-  return {
-    __esModule: true,
-    default: ({
-      handleSubmit,
-      values,
-      setFieldValue,
-      labelTitle,
-      type,
-      cancel,
-    }: any) => {
-      // Set the reason value before submitting (only if not already set)
-      React.useEffect(() => {
-        if (!values.reason) {
-          setFieldValue('reason', 'test reason');
-        }
-      }, [setFieldValue, values.reason]);
-
-      return (
-        <div data-testid="approval-modal">
-          <h1>{labelTitle}</h1>
-          <form onSubmit={handleSubmit}>
-            <button data-testid="submit-btn" type="submit">
-              Submit
-            </button>
-          </form>
-          <button data-testid="cancel-btn" onClick={cancel}>
-            Cancel
-          </button>
-          <span data-testid="approval-type">{type}</span>
-        </div>
-      );
-    },
-  };
-});
-
 const mockK8sPatch = k8sPatch as jest.MockedFunction<typeof k8sPatch>;
 
 describe('Approval Component - handleSubmit function', () => {
@@ -180,7 +142,7 @@ describe('Approval Component - handleSubmit function', () => {
         },
       };
 
-      const { getByTestId } = render(
+      const { getByTestId, getByLabelText } = render(
         <Approval
           closeOverlay={mockCloseOverlay}
           resource={userApprovalTask}
@@ -190,6 +152,10 @@ describe('Approval Component - handleSubmit function', () => {
           type="approve"
         />,
       );
+
+      // Fill in the reason field
+      const reasonField = getByLabelText('Reason');
+      fireEvent.change(reasonField, { target: { value: 'test reason' } });
 
       const submitBtn = getByTestId('submit-btn');
       fireEvent.click(submitBtn);
@@ -237,7 +203,7 @@ describe('Approval Component - handleSubmit function', () => {
         },
       };
 
-      const { getByTestId } = render(
+      const { getByTestId, getByLabelText } = render(
         <Approval
           closeOverlay={mockCloseOverlay}
           resource={userApprovalTask}
@@ -247,6 +213,10 @@ describe('Approval Component - handleSubmit function', () => {
           type="reject"
         />,
       );
+
+      // Fill in the reason field (required for reject)
+      const reasonField = getByLabelText('Reason');
+      fireEvent.change(reasonField, { target: { value: 'test reason' } });
 
       const submitBtn = getByTestId('submit-btn');
       fireEvent.click(submitBtn);
@@ -282,7 +252,7 @@ describe('Approval Component - handleSubmit function', () => {
 
   describe('Group Approval Path', () => {
     it('should approve as group member when user belongs to the group', async () => {
-      const { getByTestId } = render(
+      const { getByTestId, getByLabelText } = render(
         <Approval
           closeOverlay={mockCloseOverlay}
           resource={baseApprovalTask}
@@ -292,6 +262,10 @@ describe('Approval Component - handleSubmit function', () => {
           type="approve"
         />,
       );
+
+      // Fill in the reason field
+      const reasonField = getByLabelText('Reason');
+      fireEvent.change(reasonField, { target: { value: 'test reason' } });
 
       const submitBtn = getByTestId('submit-btn');
       fireEvent.click(submitBtn);
@@ -342,7 +316,7 @@ describe('Approval Component - handleSubmit function', () => {
     });
 
     it('should reject as group member when user belongs to the group', async () => {
-      const { getByTestId } = render(
+      const { getByTestId, getByLabelText } = render(
         <Approval
           closeOverlay={mockCloseOverlay}
           resource={baseApprovalTask}
@@ -352,6 +326,10 @@ describe('Approval Component - handleSubmit function', () => {
           type="reject"
         />,
       );
+
+      // Fill in the reason field (required for reject)
+      const reasonField = getByLabelText('Reason');
+      fireEvent.change(reasonField, { target: { value: 'test reason' } });
 
       const submitBtn = getByTestId('submit-btn');
       fireEvent.click(submitBtn);
@@ -417,7 +395,7 @@ describe('Approval Component - handleSubmit function', () => {
         },
       };
 
-      const { getByTestId } = render(
+      const { getByTestId, getByLabelText } = render(
         <Approval
           closeOverlay={mockCloseOverlay}
           resource={taskWithEmptyGroup}
@@ -427,6 +405,10 @@ describe('Approval Component - handleSubmit function', () => {
           type="approve"
         />,
       );
+
+      // Fill in the reason field
+      const reasonField = getByLabelText('Reason');
+      fireEvent.change(reasonField, { target: { value: 'test reason' } });
 
       const submitBtn = getByTestId('submit-btn');
       fireEvent.click(submitBtn);
@@ -491,7 +473,7 @@ describe('Approval Component - handleSubmit function', () => {
         },
       };
 
-      const { getByTestId } = render(
+      const { getByTestId, getByLabelText } = render(
         <Approval
           closeOverlay={mockCloseOverlay}
           resource={taskWithExistingUser}
@@ -501,6 +483,10 @@ describe('Approval Component - handleSubmit function', () => {
           type="approve"
         />,
       );
+
+      // Fill in the reason field
+      const reasonField = getByLabelText('Reason');
+      fireEvent.change(reasonField, { target: { value: 'test reason' } });
 
       const submitBtn = getByTestId('submit-btn');
       fireEvent.click(submitBtn);
@@ -601,7 +587,7 @@ describe('Approval Component - handleSubmit function', () => {
         },
       };
 
-      const { getByTestId } = render(
+      const { getByTestId, getByLabelText } = render(
         <Approval
           closeOverlay={mockCloseOverlay}
           resource={taskWithUndefinedUsers}
@@ -611,6 +597,10 @@ describe('Approval Component - handleSubmit function', () => {
           type="approve"
         />,
       );
+
+      // Fill in the reason field
+      const reasonField = getByLabelText('Reason');
+      fireEvent.change(reasonField, { target: { value: 'test reason' } });
 
       const submitBtn = getByTestId('submit-btn');
       fireEvent.click(submitBtn);

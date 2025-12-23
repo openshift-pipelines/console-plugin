@@ -1479,5 +1479,93 @@
         "HIDE_STATIC_PIPELINE_PLUGIN_TOPOLOGY_DETAILS_TABSECTION_EXTENSION"
       ]
     }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Task"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "Pipeline"
+      },
+      "provider": { "$codeRef": "pipelineActionsProvider.usePipelineActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "PipelineRun"
+      },
+      "provider": { "$codeRef": "pipelineRunActionsProvider.usePipelineRunActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "ClusterTriggerBinding"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "EventListener"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "TriggerTemplate"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "triggers.tekton.dev",
+        "version": "v1beta1",
+        "kind": "TriggerBinding"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "pipelinesascode.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "Repository"
+      },
+      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+    }
   }
 ]

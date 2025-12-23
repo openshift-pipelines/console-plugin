@@ -16,10 +16,11 @@ import {
   pipelineTitleFilterReducer,
 } from '../utils/pipeline-filter-reducer';
 import { PipelineModel, PipelineRunModel } from '../../models';
-import PipelineKebab from './PipelineKebab';
 import { getPipelineRunStatus } from '../utils/pipeline-utils';
 import { TaskStatus } from '../utils/pipeline-augment';
 import PipelineRunStatusContent from '../status/PipelineRunStatusContent';
+import { LazyActionMenu } from '@openshift-console/dynamic-plugin-sdk-internal';
+import { getReferenceForModel } from '../pipelines-overview/utils';
 
 export const tableColumnClasses = [
   'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-33-on-xs', // name
@@ -38,13 +39,11 @@ type PipelineRowWithoutTaskRunsProps = {
   obj: PipelineWithLatest;
   taskRunStatusObj: TaskStatus;
   activeColumnIDs: Set<string>;
-  currentUser: string;
 };
 
 type PipelineRowWithTaskRunsProps = {
   obj: PipelineWithLatest;
   activeColumnIDs: Set<string>;
-  currentUser: string;
 };
 
 const TASKRUNSFORPLRCACHE: { [key: string]: TaskRunKind[] } = {};
@@ -66,7 +65,6 @@ const PipelineRowTable = ({
   taskRunsLoaded,
   taskRunStatusObj,
   activeColumnIDs,
-  currentUser,
 }) => {
   return (
     <>
@@ -141,14 +139,16 @@ const PipelineRowTable = ({
         id=""
         activeColumnIDs={activeColumnIDs}
       >
-        <PipelineKebab pipeline={obj} currentUser={currentUser} />
+        <LazyActionMenu
+          context={{ [getReferenceForModel(PipelineModel)]: obj }}
+        />
       </TableData>
     </>
   );
 };
 
 const PipelineRowWithoutTaskRuns: React.FC<PipelineRowWithoutTaskRunsProps> =
-  React.memo(({ obj, taskRunStatusObj, activeColumnIDs, currentUser }) => {
+  React.memo(({ obj, taskRunStatusObj, activeColumnIDs }) => {
     return (
       <PipelineRowTable
         obj={obj}
@@ -156,13 +156,12 @@ const PipelineRowWithoutTaskRuns: React.FC<PipelineRowWithoutTaskRunsProps> =
         taskRunsLoaded
         taskRunStatusObj={taskRunStatusObj}
         activeColumnIDs={activeColumnIDs}
-        currentUser={currentUser}
       />
     );
   });
 
 const PipelineRowWithTaskRunsFetch: React.FC<PipelineRowWithTaskRunsProps> =
-  React.memo(({ obj, activeColumnIDs, currentUser }) => {
+  React.memo(({ obj, activeColumnIDs }) => {
     const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
     const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
       obj.latestRun.metadata.namespace,
@@ -181,13 +180,12 @@ const PipelineRowWithTaskRunsFetch: React.FC<PipelineRowWithTaskRunsProps> =
         taskRunsLoaded={taskRunsLoaded}
         taskRunStatusObj={undefined}
         activeColumnIDs={activeColumnIDs}
-        currentUser={currentUser}
       />
     );
   });
 
 const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> =
-  React.memo(({ obj, activeColumnIDs, currentUser }) => {
+  React.memo(({ obj, activeColumnIDs }) => {
     let PLRTaskRuns: TaskRunKind[];
     let taskRunsLoaded: boolean;
     const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
@@ -204,7 +202,6 @@ const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> =
         <PipelineRowWithTaskRunsFetch
           obj={obj}
           activeColumnIDs={activeColumnIDs}
-          currentUser={currentUser}
         />
       );
     }
@@ -215,25 +212,21 @@ const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> =
         taskRunsLoaded={taskRunsLoaded}
         taskRunStatusObj={undefined}
         activeColumnIDs={activeColumnIDs}
-        currentUser={currentUser}
       />
     );
   });
 
-const PipelineRow: React.FC<
-  RowProps<PipelineWithLatest, { currentUser?: string }>
-> = ({ obj, activeColumnIDs, rowData: { currentUser } }) => {
+const PipelineRow: React.FC<RowProps<PipelineWithLatest>> = ({
+  obj,
+  activeColumnIDs,
+}) => {
   const plrStatus = pipelineRunStatus(obj.latestRun);
   if (
     plrStatus === ComputedStatus.Cancelled &&
     (obj?.latestRun?.status?.childReferences ?? []).length > 0
   ) {
     return (
-      <PipelineRowWithTaskRuns
-        obj={obj}
-        activeColumnIDs={activeColumnIDs}
-        currentUser={currentUser}
-      />
+      <PipelineRowWithTaskRuns obj={obj} activeColumnIDs={activeColumnIDs} />
     );
   }
 
@@ -243,7 +236,6 @@ const PipelineRow: React.FC<
       obj={obj}
       taskRunStatusObj={taskRunStatusObj}
       activeColumnIDs={activeColumnIDs}
-      currentUser={currentUser}
     />
   );
 };

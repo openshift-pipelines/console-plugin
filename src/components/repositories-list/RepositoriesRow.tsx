@@ -20,8 +20,8 @@ import {
 } from '../utils/pipeline-filter-reducer';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import LinkedPipelineRunTaskStatus from '../pipelines-list/status/LinkedPipelineRunTaskStatus';
-import RepositoriesKebab from './RepositoriesKebab';
 import { RepositoryFields, RepositoryLabels } from '../../consts';
+import { LazyActionMenu } from '@openshift-console/dynamic-plugin-sdk-internal';
 
 export const repositoriesTableColumnClasses = [
   'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-33-on-xs', // name
@@ -169,7 +169,9 @@ const RepositoriesRow: React.FC<
         id="kebab-menu"
         activeColumnIDs={activeColumnIDs}
       >
-        <RepositoriesKebab obj={obj} />
+        <LazyActionMenu
+          context={{ [getReferenceForModel(RepositoryModel)]: obj }}
+        />
       </TableData>
     </>
   );

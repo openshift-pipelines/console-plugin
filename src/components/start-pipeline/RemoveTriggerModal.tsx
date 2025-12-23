@@ -12,17 +12,17 @@ import {
 } from '@patternfly/react-core';
 import { PipelineKind, RemoveTriggerFormValues } from '../../types';
 import RemoveTriggerForm from './RemoveTriggerForm';
-import { ModalComponent } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/ModalProvider';
+import { OverlayComponent } from '@openshift-console/dynamic-plugin-sdk';
 import { removeTrigger } from './remove-utils';
 import { removeTriggerSchema } from './validation-utils';
 
-type RemoveTriggerModalProps = {
+export type RemoveTriggerModalProps = {
   pipeline: PipelineKind;
 };
 
-const RemoveTriggerModal: ModalComponent<RemoveTriggerModalProps> = ({
+const RemoveTriggerModal: OverlayComponent<RemoveTriggerModalProps> = ({
   pipeline,
-  closeModal,
+  closeOverlay,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const initialValues: RemoveTriggerFormValues = {
@@ -35,7 +35,7 @@ const RemoveTriggerModal: ModalComponent<RemoveTriggerModalProps> = ({
   ) => {
     return removeTrigger(values, pipeline)
       .then(() => {
-        closeModal();
+        closeOverlay();
       })
       .catch((e) => {
         actions.setStatus({ submitError: e.message });
@@ -46,7 +46,7 @@ const RemoveTriggerModal: ModalComponent<RemoveTriggerModalProps> = ({
     <Modal
       variant="large"
       isOpen
-      onClose={closeModal}
+      onClose={closeOverlay}
       className="opp-start-pipeline-modal"
     >
       <ModalHeader title={t('Remove Trigger')} />
@@ -77,7 +77,7 @@ const RemoveTriggerModal: ModalComponent<RemoveTriggerModalProps> = ({
               <Button
                 key="cancel"
                 variant="secondary"
-                onClick={closeModal}
+                onClick={closeOverlay}
                 isDisabled={formikProps.isSubmitting}
               >
                 {t('Cancel')}

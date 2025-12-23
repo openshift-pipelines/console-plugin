@@ -12,7 +12,7 @@ import {
   PageGroup,
   PageSection,
   Content,
-  } from '@patternfly/react-core';
+} from '@patternfly/react-core';
 import {
   HorizontalNav,
   K8sModel,
@@ -42,6 +42,10 @@ type DetailsPageProps = {
   description?: React.ReactNode;
   breadcrumbs?: ({ name: string; path: string } | React.ReactElement)[];
   actions?: Action[];
+  customActionMenu?: (
+    kindObj: K8sModel,
+    obj: K8sResourceKind,
+  ) => React.ReactNode;
   baseURL?: string;
   onTabSelect?: (selectedTabKey: string) => void;
   model?: K8sModel;
@@ -56,6 +60,7 @@ const DetailsPage: React.FC<React.PropsWithChildren<DetailsPageProps>> = ({
   description,
   breadcrumbs,
   actions = [],
+  customActionMenu,
   model,
   pages,
 }) => {
@@ -89,6 +94,45 @@ const DetailsPage: React.FC<React.PropsWithChildren<DetailsPageProps>> = ({
     [actions],
   );
 
+  const renderActionMenu = React.useCallback(() => {
+    if (customActionMenu && model && obj) {
+      return customActionMenu(model, obj);
+    }
+    // Render default action menu as fallback
+    if (dropdownItems && dropdownItems.length > 0) {
+      return (
+        <Dropdown
+          onSelect={setClosed}
+          onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
+          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            <MenuToggle
+              ref={toggleRef}
+              aria-label="Actions"
+              variant="primary"
+              onClick={toggleIsOpen}
+              isExpanded={isOpen}
+            >
+              {t('Actions')}
+            </MenuToggle>
+          )}
+          isOpen={isOpen}
+          popperProps={{ position: 'right' }}
+        >
+          <DropdownList>{dropdownItems}</DropdownList>
+        </Dropdown>
+      );
+    }
+    return null;
+  }, [
+    customActionMenu,
+    model,
+    obj,
+    dropdownItems,
+    setClosed,
+    toggleIsOpen,
+    isOpen,
+  ]);
+
   const renderTitle = () => {
     return (
       <div className="co-m-pane__name co-resource-item co-m-pane__heading">
@@ -110,49 +154,35 @@ const DetailsPage: React.FC<React.PropsWithChildren<DetailsPageProps>> = ({
 
   return (
     <PageGroup data-test="details" className="app-details">
-      <PageSection hasBodyWrapper={false} type="breadcrumb" className="co-m-nav-title--detail">
+      <PageSection
+        hasBodyWrapper={false}
+        type="breadcrumb"
+        className="co-m-nav-title--detail"
+      >
         {breadcrumbs && (
           <BreadCrumbs
             data-test="details__breadcrumbs"
             breadcrumbs={breadcrumbs}
           />
         )}
-        <Flex style={{ paddingTop: "var(--pf-t--global--spacer--md)" }}>
+        <Flex style={{ paddingTop: 'var(--pf-t--global--spacer--md)' }}>
           <FlexItem>
             <Content>
               {renderTitle()}
               {description && <Content component="p">{description}</Content>}
             </Content>
           </FlexItem>
-          {actions?.length ? (
+          {(customActionMenu || actions?.length > 0) && (
             <FlexItem align={{ default: 'alignRight' }}>
-              <Dropdown
-                data-test="details__actions"
-                onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-                onSelect={setClosed}
-                toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-                  <MenuToggle
-                    ref={toggleRef}
-                    onClick={toggleIsOpen}
-                    isExpanded={isOpen}
-                  >
-                    {t('Actions')}
-                  </MenuToggle>
-                )}
-                isOpen={isOpen}
-              >
-                <DropdownList className="action-menu-dropdown">
-                  {dropdownItems}
-                </DropdownList>
-              </Dropdown>
+              {renderActionMenu()}
             </FlexItem>
-          ) : null}
+          )}
         </Flex>
       </PageSection>
       {preComponent}
       <HorizontalNav pages={pages} resource={obj} />
       {footer && (
-        <PageSection hasBodyWrapper={false}  isFilled={false}>
+        <PageSection hasBodyWrapper={false} isFilled={false}>
           {footer}
         </PageSection>
       )}

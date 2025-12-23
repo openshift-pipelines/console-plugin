@@ -162,7 +162,10 @@
       "pacComponent": "./components/pac/",
       "yamlTemplates": "./components/templates",
       "topology": "./components/topology",
-      "pipelinesOverviewFiltersReducer": "./redux/reducers/pipelines-overview-filters"
+      "pipelinesOverviewFiltersReducer": "./redux/reducers/pipelines-overview-filters",
+      "defaultActionsProvider": "./utils/default-actions-provider.ts",
+      "pipelineActionsProvider": "./utils/pipeline-actions-provider.ts",
+      "pipelineRunActionsProvider": "./utils/pipelineRun-actions-provider.tsx"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

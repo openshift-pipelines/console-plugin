@@ -36,7 +36,7 @@ import { PipelineRunLogsWithActiveTask } from './PipelineRunLogs';
 import PipelineRunEvents from './PipelineRunEvents';
 import { returnValidPipelineRunModel } from '../utils/pipeline-utils';
 import { getPipelineRunData, resourcePathFromModel } from '../utils/utils';
-import { errorModal } from '../modals/error-modal';
+import { useErrorModal } from '../modals/error-modal';
 import {
   isResourceLoadedFromTR,
   tektonResultsFlag,
@@ -68,6 +68,7 @@ const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
   const [taskRuns] = useTaskRuns(namespace, name);
   const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, name);
   const currentUser = useGetActiveUser();
+  const errorModal = useErrorModal();
   const reRunAction = () => {
     const { pipelineRef, pipelineSpec } = pipelineRun.spec;
     if (

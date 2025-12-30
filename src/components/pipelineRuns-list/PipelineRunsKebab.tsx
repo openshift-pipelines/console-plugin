@@ -31,7 +31,7 @@ import {
   isResourceLoadedFromTR,
   tektonResultsFlag,
 } from '../utils/common-utils';
-import { errorModal } from '../modals/error-modal';
+import { useErrorModal } from '../modals/error-modal';
 
 type PipelineRunsKebabProps = {
   obj: PipelineRunKind;
@@ -98,7 +98,8 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
     name,
     namespace,
   });
-
+  const errorModal = useErrorModal();
+  
   const reRunAction = () => {
     const { pipelineRef, pipelineSpec } = obj.spec;
     if (

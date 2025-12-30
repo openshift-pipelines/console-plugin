@@ -34,12 +34,13 @@ import {
   startPipelineModal,
 } from '../start-pipeline';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { errorModal } from '../modals/error-modal';
+import { ModalErrorContent } from '../modals/error-modal';
 import { getPipelineRunData } from '../utils/utils';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { rerunPipeline } from '../utils/pipelines-actions';
 import { usePipelineTriggerTemplateNames } from '../utils/triggers';
 import { resourcePathFromModel } from '../utils/utils';
+import { LaunchOverlay } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/OverlayProvider';
 
 type PipelineKebabProps = {
   pipeline: PipelineWithLatest;
@@ -49,6 +50,7 @@ type PipelineKebabProps = {
 export const triggerPipeline = (
   pipeline: PipelineKind,
   currentUser: string,
+  launchOverlay: LaunchOverlay,
   onSubmit?: (pipelineRun: PipelineRunKind) => void,
 ) => {
   k8sCreate({
@@ -56,7 +58,7 @@ export const triggerPipeline = (
     data: getPipelineRunData(pipeline, currentUser),
   })
     .then(onSubmit)
-    .catch((err) => errorModal({ error: err.message }));
+    .catch((err) => launchOverlay(ModalErrorContent, { error: err.message }));
 };
 
 const PipelineKebab: React.FC<PipelineKebabProps> = ({
@@ -126,7 +128,7 @@ const PipelineKebab: React.FC<PipelineKebabProps> = ({
         onSubmit: handlePipelineRunSubmit,
       });
     } else {
-      triggerPipeline(pipeline, currentUser, handlePipelineRunSubmit);
+      triggerPipeline(pipeline, currentUser, launchOverlay, handlePipelineRunSubmit);
     }
   };
 

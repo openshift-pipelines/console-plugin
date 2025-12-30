@@ -16,7 +16,7 @@ const ModalContent: React.FC<ModalContentProps> = ({
 }) => {
   return (
     <Split className="odc-modal-content" hasGutter>
-      {icon && <SplitItem>{icon}</SplitItem>}
+      {icon && <SplitItem className='odc-modal-content__confirm-title'>{icon}</SplitItem>}
       <SplitItem isFilled>
         <h2 className="co-break-word odc-modal-content__confirm-title">
           {title}

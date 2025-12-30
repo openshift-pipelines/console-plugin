@@ -19,6 +19,7 @@ import { TRIGGER_BINDING_EMPTY } from '../../consts';
 import AddTriggerForm from './AddTriggerForm';
 import { submitTrigger } from './submit-utils';
 import { addTriggerSchema } from './validation-utils';
+import { useOverlay } from '@openshift-console/dynamic-plugin-sdk';
 
 type AddTriggerModalProps = {
   pipeline: PipelineKind;
@@ -34,6 +35,7 @@ const AddTriggerModal: ModalComponent<AddTriggerModalProps> = ({
     pipeline.metadata?.name,
     pipeline.metadata?.namespace,
   );
+  const launchOverlay = useOverlay();
 
   const initialValues: AddTriggerFormValues = React.useMemo(() => {
     if (!pipelinePVCLoaded) return;
@@ -47,7 +49,7 @@ const AddTriggerModal: ModalComponent<AddTriggerModalProps> = ({
   }, [pipeline, pipelinePVC, pipelinePVCLoaded]);
 
   const handleSubmit = (values: AddTriggerFormValues, actions) => {
-    return submitTrigger(pipeline, values, currentUser)
+    return submitTrigger(pipeline, values, currentUser, launchOverlay)
       .then(() => {
         closeModal();
       })

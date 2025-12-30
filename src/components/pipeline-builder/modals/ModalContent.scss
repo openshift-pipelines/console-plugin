@@ -1,13 +1,6 @@
 .odc-modal-content {
   &__confirm-title {
     font-size: var(--pf-t--global--font--size--lg);
-    margin-top: var(--pf-t--global--spacer--xs);
     margin-bottom: var(--pf-t--global--spacer--lg);
   }
-}
-
-.pipelines-remove-task-header {
-  padding-top: 0;
-  padding-bottom: var(--pf-t--global--spacer--md);
-  padding-left: var(--pf-t--global--spacer--md);
 }

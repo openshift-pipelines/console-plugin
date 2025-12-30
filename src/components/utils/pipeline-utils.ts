@@ -6,6 +6,7 @@ import {
   k8sGet,
   k8sUpdate,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { LaunchOverlay } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/OverlayProvider';
 import * as _ from 'lodash';
 import {
   LOG_SOURCE_RESTARTING,
@@ -51,7 +52,7 @@ import {
   TektonParam,
   TriggerTemplateKind,
 } from '../../types';
-import { errorModal } from '../modals/error-modal';
+import { ErrorModalProps, ModalErrorContent } from '../modals/error-modal';
 import {
   formatPrometheusDuration,
   getDuration,
@@ -427,6 +428,7 @@ export const associateServiceAccountToSecret = (
   secret: SecretKind,
   namespace: string,
   isImageSecret: boolean,
+  launchOverlay: LaunchOverlay,
 ) => {
   k8sGet({
     model: ServiceAccountModel,
@@ -448,7 +450,7 @@ export const associateServiceAccountToSecret = (
       }
     })
     .catch((err) => {
-      errorModal({ error: err.message });
+      launchOverlay<ErrorModalProps>(ModalErrorContent, { error: err.message });
     });
 };
 

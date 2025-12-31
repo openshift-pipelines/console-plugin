@@ -1,5 +1,14 @@
 [
   {
+    "type": "console.redux-reducer",
+    "properties": {
+      "scope": "pipelinesOverviewFilters",
+      "reducer": {
+        "$codeRef": "pipelinesOverviewFiltersReducer.pipelinesOverviewFiltersReducer"
+      }
+    }
+  },
+  {
     "type": "console.flag/model",
     "properties": {
       "model": {

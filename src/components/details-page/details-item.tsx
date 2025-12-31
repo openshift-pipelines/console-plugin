@@ -138,7 +138,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
           </Split>
         </DescriptionListTermHelpText>
         <DescriptionListDescription
-          className={classnames('editable-label-group', valueClassName, {
+          className={classnames(valueClassName, {
             'details-item__value--group': editable && editAsGroup,
           })}
           data-test-selector={`details-item-value__${label}`}

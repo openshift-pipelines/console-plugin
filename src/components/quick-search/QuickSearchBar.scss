@@ -1,6 +1,7 @@
 .ocs-quick-search-bar {
   &.pf-v6-c-input-group {
-    background-color: var(--pf-t--global--background--color--secondary--default);
+    background-color: var(--pf-t--global--background--color--primary--default);
+    gap: unset;
     &__item.pf-v6-m-box {
       border: none;
     }
@@ -21,10 +22,12 @@
     border: none !important;
     display: block;
     z-index: 1;
+    border-radius: unset;
     > input {
       height: 60px !important;
       outline: none;
       border: none !important;
+      padding: 8px;
     }
     &-wrapper {
       max-width: 100%;
@@ -35,7 +38,7 @@
       display: none;
     }
   }
-  &__no-results {
+  &__message {
     white-space: nowrap;
   }
   &__border-none {
@@ -43,5 +46,9 @@
   }
   &__spinner {
     margin-left: auto !important;
+  }
+  &__icon {
+    background-color: var(--pf-t--global--background--color--secondary--default);
+    border-bottom: solid var(--pf-v5-global--BorderWidth--sm) var(--pf-v5-global--BorderColor--200);
   }
 }

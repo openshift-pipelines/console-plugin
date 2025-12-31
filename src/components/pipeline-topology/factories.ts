@@ -108,7 +108,7 @@ export const layoutFactory: LayoutFactory = (type: string, graph: Graph) => {
         ...getLayoutData(type),
       });
     case PipelineLayout.DAGRE_VIEWER:
-      return new PipelineDagreLayout(graph, { nodesep: 25 });
+      return new PipelineDagreLayout(graph, getLayoutData(type));
     default:
       return undefined;
   }

@@ -202,6 +202,6 @@ export const fetchArtifactHubTasks = async (
     return data.packages || [];
   } catch (error) {
     console.warn('Error searching Artifact Hub tasks:', error);
-    return [];
+    throw error;
   }
 };

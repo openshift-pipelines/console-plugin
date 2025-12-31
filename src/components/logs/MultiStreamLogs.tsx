@@ -2,7 +2,7 @@ import * as React from 'react';
 import Logs from './Logs';
 import { getRenderContainers } from './logs-utils';
 import { PodKind } from '../../types';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 import './MultiStreamLogs.scss';
 
 type MultiStreamLogsProps = {
@@ -27,23 +27,27 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
         data-test-id="logs-taskName"
       >
         {taskName}
-        {stillFetching && (
-          <span className="odc-multi-stream-logs__taskName__loading-indicator">
-            <LoadingInline />
-          </span>
-        )}
       </div>
-      <div
-        className="odc-multi-stream-logs__logviewer"
-        data-test-id="logs-task-container"
-      >
-        <Logs
-          resource={resource}
-          containers={containers}
-          setCurrentLogsGetter={setCurrentLogsGetter}
-          activeStep={activeStep}
+      {stillFetching ? (
+        <Loading
+          size="md"
+          data-test-id="loading-indicator"
+          isInline={true}
+          className="odc-multi-stream-logs__taskName__loading-indicator"
         />
-      </div>
+      ) : (
+        <div
+          className="odc-multi-stream-logs__logviewer"
+          data-test-id="logs-task-container"
+        >
+          <Logs
+            resource={resource}
+            containers={containers}
+            setCurrentLogsGetter={setCurrentLogsGetter}
+            activeStep={activeStep}
+          />
+        </div>
+      )}
     </>
   );
 };

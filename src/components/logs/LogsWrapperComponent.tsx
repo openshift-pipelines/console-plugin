@@ -89,11 +89,9 @@ const LogsWrapperComponent: React.FC<
         className={(classNames as any)({
           'odc-multi-stream-logs--fullscreen': isFullscreen,
         })}
+        justifyContent={{ default: 'justifyContentFlexEnd' }}
       >
-        <FlexItem
-          className="odc-multi-stream-logs__button"
-          align={{ default: 'alignRight' }}
-        >
+        <FlexItem className="odc-multi-stream-logs__button">
           <Button variant="link" onClick={downloadLogs} isInline>
             <DownloadIcon className="odc-multi-stream-logs__icon" />
             {t('Download')}

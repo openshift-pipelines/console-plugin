@@ -30,7 +30,6 @@ import {
   pipelineRunTitleFilterReducer,
 } from '../utils/pipeline-filter-reducer';
 import LinkedPipelineRunTaskStatus from '../pipelines-list/status/LinkedPipelineRunTaskStatus';
-import PipelineRunsKebab from './PipelineRunsKebab';
 import { ExternalLink } from '../utils/link';
 import { truncateMiddle } from '../utils/common-utils';
 import { sanitizeBranchName } from '../utils/repository-utils';
@@ -40,6 +39,8 @@ import {
   pipelineRunDuration,
 } from '../utils/pipeline-utils';
 import PipelineRunStatusContent from '../status/PipelineRunStatusContent';
+import { LazyActionMenu } from '@openshift-console/dynamic-plugin-sdk-internal';
+import { getReferenceForModel } from '../pipelines-overview/utils';
 
 export const tableColumnClasses = {
   name: 'pf-v6-m-width-20',
@@ -236,11 +237,8 @@ const PipelineRunRowTable = ({
         id="kebab-menu"
         activeColumnIDs={activeColumnIDs}
       >
-        <PipelineRunsKebab
-          obj={obj}
-          taskRuns={PLRTaskRuns}
-          taskRunStatusObj={taskRunStatusObj}
-          currentUser={currentUser}
+        <LazyActionMenu
+          context={{ [getReferenceForModel(PipelineRunModel)]: obj }}
         />
       </TableData>
     </>

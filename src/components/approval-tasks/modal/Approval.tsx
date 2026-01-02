@@ -253,6 +253,7 @@ const Approval: OverlayComponent<ApprovalProps> = ({
                   key="submit"
                   variant="primary"
                   type="submit"
+                  data-testid="submit-btn"
                   isDisabled={
                     dirty ||
                     !formikProps.isValid ||
@@ -266,6 +267,7 @@ const Approval: OverlayComponent<ApprovalProps> = ({
                 <Button
                   key="cancel"
                   variant="secondary"
+                  data-testid="cancel-btn"
                   onClick={closeOverlay}
                   isDisabled={formikProps.isSubmitting}
                 >

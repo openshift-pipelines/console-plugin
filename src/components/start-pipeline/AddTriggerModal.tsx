@@ -13,7 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { AddTriggerFormValues, PipelineKind } from '../../types';
 import { convertPipelineToModalData } from './utils';
-import { ModalComponent } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/ModalProvider';
+import { OverlayComponent } from '@openshift-console/dynamic-plugin-sdk';
 import { useGetActiveUser, usePipelinePVC } from '../hooks/hooks';
 import { TRIGGER_BINDING_EMPTY } from '../../consts';
 import AddTriggerForm from './AddTriggerForm';
@@ -21,13 +21,13 @@ import { submitTrigger } from './submit-utils';
 import { addTriggerSchema } from './validation-utils';
 import { useOverlay } from '@openshift-console/dynamic-plugin-sdk';
 
-type AddTriggerModalProps = {
+export type AddTriggerModalProps = {
   pipeline: PipelineKind;
 };
 
-const AddTriggerModal: ModalComponent<AddTriggerModalProps> = ({
+const AddTriggerModal: OverlayComponent<AddTriggerModalProps> = ({
   pipeline,
-  closeModal,
+  closeOverlay,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const currentUser = useGetActiveUser();
@@ -51,7 +51,7 @@ const AddTriggerModal: ModalComponent<AddTriggerModalProps> = ({
   const handleSubmit = (values: AddTriggerFormValues, actions) => {
     return submitTrigger(pipeline, values, currentUser, launchOverlay)
       .then(() => {
-        closeModal();
+        closeOverlay();
       })
       .catch((error) => {
         actions.setStatus({
@@ -64,7 +64,7 @@ const AddTriggerModal: ModalComponent<AddTriggerModalProps> = ({
     <Modal
       variant="large"
       isOpen
-      onClose={closeModal}
+      onClose={closeOverlay}
       className="opp-start-pipeline-modal"
     >
       <ModalHeader title={t('Add Trigger')} />
@@ -93,7 +93,7 @@ const AddTriggerModal: ModalComponent<AddTriggerModalProps> = ({
                 <Button
                   key="cancel"
                   variant="secondary"
-                  onClick={closeModal}
+                  onClick={closeOverlay}
                   isDisabled={formikProps.isSubmitting}
                 >
                   {t('Cancel')}

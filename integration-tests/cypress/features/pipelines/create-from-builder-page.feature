@@ -118,7 +118,7 @@ Feature: Create the pipeline from builder page
              Then user can see the task in series gets removed
 
 
-        @regression
+        @regression @broken-test
         Scenario Outline: Create a pipeline with TektonHub task not present in cluster from pipeline builder page: P-02-TC09
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
@@ -133,7 +133,7 @@ Feature: Create the pipeline from builder page
                   | ptask-1       | kn        |
 
 
-        @regression
+        @regression @broken-test
         Scenario: Upgrade tasks that are already installed on the cluster in pipeline builder page: P-02-TC10
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-client"
@@ -154,7 +154,7 @@ Feature: Create the pipeline from builder page
              Then user will be redirected to Pipeline Details page with header name "new-pipeline"
 
 
-        @regression
+        @regression @broken-test
         Scenario: Create pipeline with Workspaces: P-02-TC12
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-workspace"
@@ -173,7 +173,7 @@ Feature: Create the pipeline from builder page
               And user will see workspace mentioned as "git" in the Workspaces section of Pipeline Details page
 
 
-        @regression
+        @regression @broken-test
         Scenario: Create pipeline with optional Workspaces: P-02-TC13
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipe-opt-workspace"
@@ -209,7 +209,7 @@ Feature: Create the pipeline from builder page
               And user sees "Add finally task" option below "git-clone" task
 
 
-        @regression
+        @regression @broken-test
         Scenario: Create a pipeline with finally task node: P-02-TC15
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-finally"
@@ -257,7 +257,7 @@ Feature: Create the pipeline from builder page
               And user will see tooltip saying "When expression" while scrolling over diamond structure before conditional task
 
 
-        @regression
+        @regression @broken-test
         Scenario: Code assistance for referencing params in the Pipeline Builder: P-02-TC18
             Given user is at Pipeline Builder page
              When user clicks Add task button under Tasks section

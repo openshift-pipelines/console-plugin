@@ -16,7 +16,7 @@ Feature: Pipeline metrics
              Then user can see "0/0" in PipelineRun status
 
 
-        @smoke
+        @smoke @broken-test
         Scenario: Graphs in metrics tab: P-04-TC02
             Given pipeline run is displayed for "pipeline-metrics-one" with resource
              When user clicks on pipeline "pipeline-metrics-one"

@@ -14,7 +14,7 @@
   }
 
   &__divider {
-    color: var(--pf-t--global--color--nonstatus--gray--default);
+    color: var(--pf-t--global--border--color--default);
     margin: 0 var(--pf-t--global--spacer--sm);
   }
 
@@ -23,12 +23,13 @@
   }
 
   &__container {
+    background-color: var(--pf-t--global--background--color--primary--default);
+    border: 1px solid var(--pf-t--global--border--color--default);
+    color: var(--pf-t--global--text--color--regular);
     display: flex;
-    flex: 1;
     flex-direction: column;
-    background-color: var(--pf-t--global--color--nonstatus--gray--1000);
-    color: var(--pf-t--global--text--color--on-dark);
-    font-family: Menlo, Monaco, 'Courier New', monospace;
+    flex: 1;
+    font-family: var(--pf-t--global--font--family--mono);
     overflow-y: scroll;
     position: relative;
     &__logs {
@@ -37,22 +38,33 @@
     }
   }
   &__logviewer {
-    background-color: var(--pf-t--global--color--nonstatus--gray--1000);
-    color: var(--pf-t--global--text--color--on-dark);
-    font-family: Menlo, Monaco, 'Courier New', monospace;
+    background-color: var(--pf-t--global--background--color--primary--default);
+    color: var(--pf-t--global--text--color--regular);
+    font-family: var(--pf-t--global--font--family--mono);
     height: 100%;
   }
   &__taskName {
-    background-color: var(--pf-t--global--background--color--floating--default);
-    padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--md);
-    color: var(--pf-t--global--text--color--on-dark);
+    background-color: var(--pf-t--global--color--nonstatus--gray--default);
+    padding: var(--pf-t--global--spacer--xs) var(--pf-t--global--spacer--md);
+    color: var(--pf-t--global--text--color--regular);
   }
   &__taskName__loading-indicator {
-    margin-left: var(--pf-t--global--spacer--sm);
+    font-family: var(--pf-t--global--font--family--mono);
+    height: 100%;
+    background-color: var(
+      --pf-t--global--background--color--400
+    ); // same as the log viewer background color in both light and dark themes
+    border: 1px solid var(--pf-t--global--border--color--default);
+
+    .pf-v6-c-spinner {
+      --pf-v6-c-spinner--Color: var(--pf-t--global--background--color--100);
+    }
   }
 }
 
 .odc-logs-logviewer {
-  background-color: var(--pf-t--global--color--nonstatus--gray--1000);
+  background-color: var(--pf-t--global--background--color--primary--default);
+  color: var(--pf-t--global--text--color--regular);
+  font-family: var(--pf-t--global--font--family--mono);
   height: 100%;
 }

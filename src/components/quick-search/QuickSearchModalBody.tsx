@@ -82,6 +82,8 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   const [tektonTasks] = useTasksProvider({});
   const [draggableBoundary, setDraggableBoundary] =
     React.useState<string>(null);
+  const [isSearching, setIsSearching] = React.useState(false);
+  const [isSearchError, setIsSearchError] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>();
   const listCatalogItems =
     limitItemCount > 0 ? catalogItems?.slice(0, items) : catalogItems;
@@ -160,41 +162,52 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       if (!value) {
         setCatalogItems(null);
         removeQueryArgument('catalogSearch');
+        setIsSearching(false);
+        setIsSearchError(false);
         return;
       }
 
-      const [artifactHubResults, catalogResults] = await Promise.all([
-        fetchArtifactHubTasks(value),
-        searchCatalog(value),
-      ]);
+      setIsSearching(true);
+      setIsSearchError(false);
+      try {
+        const [artifactHubResults, catalogResults] = await Promise.all([
+          fetchArtifactHubTasks(value),
+          searchCatalog(value),
+        ]);
 
-      // Ignore results if a newer search version has started
-      if (currentVersion !== searchVersion.current) return;
+        // Ignore results if a newer search version has started
+        if (currentVersion !== searchVersion.current) return;
 
-      const normalizedArtifactHubItems = normalizeArtifactHubTasks(
-        artifactHubResults,
-        tektonTasks,
-      );
-      const { filteredItems, viewAllLinks, catalogItemTypes } = catalogResults;
+        const normalizedArtifactHubItems = normalizeArtifactHubTasks(
+          artifactHubResults,
+          tektonTasks,
+        );
+        const { filteredItems, viewAllLinks, catalogItemTypes } = catalogResults;
 
-      const mergedItems = [
-        ...filteredItems,
-        ...normalizedArtifactHubItems,
-      ].filter(
-        (item, index, self) =>
-          index ===
-          self.findIndex(
-            (i) =>
-              i.name === item.name &&
-              i.data?.version === item.data?.version &&
-              i.provider === item.provider,
-          ),
-      );
-      setCatalogItems(mergedItems);
-      setCatalogTypes(catalogItemTypes);
-      setViewAll(viewAllLinks);
-      setQueryArgument('catalogSearch', value);
-      setSelectedItemId(null);
+        const mergedItems = [
+          ...filteredItems,
+          ...normalizedArtifactHubItems,
+        ].filter(
+          (item, index, self) =>
+            index ===
+            self.findIndex(
+              (i) =>
+                i.name === item.name &&
+                i.data?.version === item.data?.version &&
+                i.provider === item.provider,
+            ),
+        );
+        setCatalogItems(mergedItems);
+        setCatalogTypes(catalogItemTypes);
+        setViewAll(viewAllLinks);
+        setQueryArgument('catalogSearch', value);
+        setSelectedItemId(null);
+      } catch (error) {
+        setIsSearchError(true);
+        setCatalogItems(null);
+      } finally {
+        setIsSearching(false);
+      }
     },
     [searchCatalog],
   );
@@ -356,8 +369,9 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
           searchTerm={searchTerm}
           searchPlaceholder={searchPlaceholder}
           onSearch={onSearch}
-          showNoResults={catalogItems?.length === 0}
-          itemsLoaded={allCatalogItemsLoaded}
+          showNoResults={!isSearchError && catalogItems?.length === 0}
+          showError={isSearchError}
+          itemsLoaded={allCatalogItemsLoaded && !isSearching}
           icon={icon}
           autoFocus
         />

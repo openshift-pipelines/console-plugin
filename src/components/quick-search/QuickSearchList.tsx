@@ -10,6 +10,7 @@ import {
   Label,
   Content,
   ContentVariants,
+  Bullseye,
 } from '@patternfly/react-core';
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -124,9 +125,9 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                   className="ocs-quick-search-list__item-content"
                   dataListCells={[
                     <DataListCell isIcon key={`${item.uid}-icon`}>
-                      <div className="ocs-quick-search-list__item-icon">
+                      <Bullseye className="ocs-quick-search-list__item-icon">
                         {item.icon?.node ?? getIcon(item)}
-                      </div>
+                      </Bullseye>
                     </DataListCell>,
                     <DataListCell
                       style={{ paddingTop: "var(--pf-t--global--spacer--sm)" }}

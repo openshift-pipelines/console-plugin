@@ -2,4 +2,8 @@
   display: flex;
   flex: 1;
   padding: var(--pf-v5-global--spacer--xl);
+
+  .pf-v5-c-log-viewer__text {
+    white-space: pre;
+  }
 }

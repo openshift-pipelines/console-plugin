@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Nav, NavItem, NavList } from '@patternfly/react-core';
+import { Banner, Nav, NavItem, NavList } from '@patternfly/react-core';
+import { LogViewer } from '@patternfly/react-log-viewer';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { withTranslation } from 'react-i18next';
@@ -187,8 +188,8 @@ class PipelineRunLogsWithTranslation extends React.Component<
     )}/logs`;
 
     return (
-      <div className="odc-pipeline-run-logs-main-div">
-        <div className="odc-pipeline-run-logs">
+      <div className="odc-pipeline-run-logs-main-div pf-v5-u-h-100">
+        <div className="odc-pipeline-run-logs pf-v5-u-h-100 pf-v5-u-py-xl">
           <div
             className="odc-pipeline-run-logs__tasklist"
             data-test-id="logs-tasklist"
@@ -239,38 +240,38 @@ class PipelineRunLogsWithTranslation extends React.Component<
               </div>
             )}
           </div>
-          <div className="odc-pipeline-run-logs__container">
-            {activeItem && resources ? (
-              <LogsWrapperComponent
-                key={taskName}
-                resource={resources}
-                downloadAllLabel={t('Download all task logs')}
-                onDownloadAll={downloadAllCallback}
-                taskRun={activeTaskRun}
-                activeStep={activeStep}
+          {activeItem && resources ? (
+            <LogsWrapperComponent
+              key={taskName}
+              resource={resources}
+              downloadAllLabel={t('Download all task logs')}
+              onDownloadAll={downloadAllCallback}
+              taskRun={activeTaskRun}
+              activeStep={activeStep}
+            />
+          ) : (
+            <div
+              className="odc-pipeline-run-logs__logcontainer pf-v5-u-w-100"
+              data-test-id="task-logs-error"
+            >
+              <LogViewer
+                header={
+                  <Banner className="pf-v5-u-font-size-md">{taskName}</Banner>
+                }
+                hasLineNumbers={false}
+                isTextWrapped={false}
+                theme="dark"
+                height="100%"
+                data={
+                  waitingForPods && !pipelineRunFinished
+                    ? `Waiting for ${taskName} task to start`
+                    : !resources && pipelineRunFinished && !obj.status
+                    ? t('No logs found')
+                    : logDetails?.staticMessage ?? ''
+                }
               />
-            ) : (
-              <div className="odc-pipeline-run-logs__log">
-                <div
-                  className="odc-pipeline-run-logs__logtext"
-                  data-test-id="task-logs-error"
-                >
-                  {waitingForPods &&
-                    !pipelineRunFinished &&
-                    `Waiting for ${taskName} task to start `}
-                  {!resources &&
-                    pipelineRunFinished &&
-                    !obj.status &&
-                    t('No logs found')}
-                  {logDetails && (
-                    <div className="odc-pipeline-run-logs__logsnippet">
-                      {logDetails.staticMessage}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     );

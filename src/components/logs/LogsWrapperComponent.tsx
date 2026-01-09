@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Flex, FlexItem } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import {
   CompressIcon,
   DownloadIcon,
   ExpandIcon,
 } from '@patternfly/react-icons/dist/js/icons';
-import classNames from 'classnames';
 import { saveAs } from 'file-saver';
 import {
   WatchK8sResource,
@@ -84,71 +83,67 @@ const LogsWrapperComponent: React.FC<
   };
 
   return (
-    <div ref={fullscreenRef} className="odc-multi-stream-logs">
-      <Flex
-        className={(classNames as any)({
-          'odc-multi-stream-logs--fullscreen': isFullscreen,
-        })}
+    <div
+      ref={fullscreenRef}
+      className="pf-v5-u-pr-xl pf-v5-u-display-flex pf-v5-u-flex-direction-column pf-v5-u-h-100 pf-v5-u-w-100"
+    >
+      <div
+        className={`pf-v5-l-flex pf-m-gap-sm pf-m-align-items-center pf-m-justify-content-flex-end ${
+          isFullscreen ? 'pf-v5-u-background-color-100 pf-v5-u-p-sm' : ''
+        }`}
       >
-        <FlexItem
-          className="odc-multi-stream-logs__button"
-          align={{ default: 'alignRight' }}
-        >
-          <Button variant="link" onClick={downloadLogs} isInline>
-            <DownloadIcon className="odc-multi-stream-logs__icon" />
-            {t('Download')}
-          </Button>
-        </FlexItem>
-        <FlexItem className="odc-multi-stream-logs__divider">|</FlexItem>
+        <Button variant="link" onClick={downloadLogs} isInline>
+          <DownloadIcon className="pf-v5-u-mr-xs" />
+          {t('Download')}
+        </Button>
+        <div>|</div>
         {onDownloadAll && (
           <>
-            <FlexItem className="odc-multi-stream-logs__button">
-              <Button
-                variant="link"
-                onClick={startDownloadAll}
-                isDisabled={downloadAllStatus}
-                isInline
-              >
-                <DownloadIcon className="odc-multi-stream-logs__icon" />
-                {downloadAllLabel || t('Download all')}
-                {downloadAllStatus && <LoadingInline />}
-              </Button>
-            </FlexItem>
-            <FlexItem className="odc-multi-stream-logs__divider">|</FlexItem>
+            <Button
+              variant="link"
+              onClick={startDownloadAll}
+              isDisabled={downloadAllStatus}
+              isInline
+            >
+              <DownloadIcon className="pf-v5-u-mr-xs" />
+              {downloadAllLabel || t('Download all')}
+              {downloadAllStatus && <LoadingInline />}
+            </Button>
+            <div>|</div>
           </>
         )}
         {fullscreenToggle && (
-          <FlexItem className="odc-multi-stream-logs__button">
-            <Button variant="link" onClick={fullscreenToggle} isInline>
-              {isFullscreen ? (
-                <>
-                  <CompressIcon className="odc-multi-stream-logs__icon" />
-                  {t('Collapse')}
-                </>
-              ) : (
-                <>
-                  <ExpandIcon className="odc-multi-stream-logs__icon" />
-                  {t('Expand')}
-                </>
-              )}
-            </Button>
-          </FlexItem>
+          <Button variant="link" onClick={fullscreenToggle} isInline>
+            {isFullscreen ? (
+              <>
+                <CompressIcon className="pf-v5-u-mr-xs" />
+                {t('Collapse')}
+              </>
+            ) : (
+              <>
+                <ExpandIcon className="pf-v5-u-mr-xs" />
+                {t('Expand')}
+              </>
+            )}
+          </Button>
         )}
-      </Flex>
-      {!error ? (
-        <MultiStreamLogs
-          {...props}
-          taskName={taskName}
-          resource={resourceRef.current}
-          setCurrentLogsGetter={setLogGetter}
-          activeStep={activeStep}
-        />
-      ) : (
-        <TektonTaskRunLog
-          taskRun={taskRun}
-          setCurrentLogsGetter={setLogGetter}
-        />
-      )}
+      </div>
+      <div className="pf-v5-u-flex-1">
+        {!error ? (
+          <MultiStreamLogs
+            {...props}
+            taskName={taskName}
+            resource={resourceRef.current}
+            setCurrentLogsGetter={setLogGetter}
+            activeStep={activeStep}
+          />
+        ) : (
+          <TektonTaskRunLog
+            taskRun={taskRun}
+            setCurrentLogsGetter={setLogGetter}
+          />
+        )}
+      </div>
     </div>
   );
 };

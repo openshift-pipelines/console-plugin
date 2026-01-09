@@ -5,6 +5,11 @@
   position: absolute;
   top: 0;
   bottom: 0;
+  overflow: hidden;
+
+  .pf-v5-c-log-viewer__text {
+    white-space: pre;
+  }
   &__nav {
     padding-top: 0;
     list-style-type: none;

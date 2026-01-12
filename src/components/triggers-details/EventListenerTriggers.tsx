@@ -12,6 +12,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { TriggerTemplateModel } from '../../models';
 import DynamicResourceLinkList from './DynamicResourceLinkList';
+import './EventListenerTriggers.scss';
 
 interface EventListenerTriggersProps {
   obj: EventListenerKind;

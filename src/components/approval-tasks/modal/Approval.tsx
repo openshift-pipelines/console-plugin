@@ -24,7 +24,7 @@ import { getReferenceForModel } from '../../pipelines-overview/utils';
 import { ApprovalStatus, ApprovalTaskKind } from '../../../types';
 import { Approver, UserApprover } from 'src/types/approver';
 
-import './ApprovalModal.scss';
+import './Approval.scss';
 
 type ApprovalProps = {
   resource: ApprovalTaskKind;

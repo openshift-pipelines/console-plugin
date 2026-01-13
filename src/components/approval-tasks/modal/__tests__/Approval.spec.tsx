@@ -54,21 +54,6 @@ jest.mock('../../../pipelines-overview/utils', () => ({
   getReferenceForModel: (model: any) => `${model.apiVersion}~${model.kind}`,
 }));
 
-// Mock the modal components
-jest.mock('../../../modals/modal', () => ({
-  ModalWrapper: ({
-    children,
-    onClose,
-  }: {
-    children: React.ReactNode;
-    onClose: () => void;
-  }) => (
-    <div data-testid="modal-wrapper" onClick={onClose}>
-      {children}
-    </div>
-  ),
-}));
-
 const mockK8sPatch = k8sPatch as jest.MockedFunction<typeof k8sPatch>;
 
 describe('Approval Component - handleSubmit function', () => {

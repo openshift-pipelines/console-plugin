@@ -2,6 +2,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon } from '@patternfly/react-icons';
+import { t_chart_color_blue_300 as blueColor } from '@patternfly/react-tokens/dist/js/t_chart_color_blue_300';
 import {
   Alert,
   Card,
@@ -16,7 +17,6 @@ import { SummaryProps, getTotalPipelineRuns } from './utils';
 import { PipelineModel, RepositoryModel } from '../../models';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 
-import './PipelineRunsTotalCard.scss';
 import { MetricsQueryPrefix, PipelineQuery } from '../pipelines-metrics/utils';
 import {
   usePipelineMetricsForAllNamespacePoll,
@@ -86,15 +86,16 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
   return (
     <>
       <Card
-        className={classNames('pipeline-overview__totals-card', {
+        className={classNames('pf-v6-u-h-100', {
           'card-border': bordered,
         })}
+        style={{ minWidth: '100%', fontSize: 18 }}
       >
-        <CardTitle>
+        <CardTitle style={{ fontSize: 20 }}>
           <span>{t('Total runs')}</span>
         </CardTitle>
         <Divider />
-        <CardBody>
+        <CardBody style={{ fontSize: 18, minWidth: 'min-content' }}>
           {pipelineRunsTotalError ? (
             <Alert
               variant="danger"
@@ -104,12 +105,16 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
             />
           ) : (
             <>
-              <Grid hasGutter className="pipeline-overview__totals-card__grid">
-                <GridItem span={9}>
-                  <span>
+              <Grid
+                hasGutter
+                className="pipeline-overview__totals-card__grid"
+                style={{ fontSize: 18 }}
+              >
+                <GridItem span={9} className="pf-v6-u-mb-sm">
+                  <span style={{ fontSize: 18 }}>
                     <Label
                       variant="outline"
-                      className="pipeline-overview__totals-card__label"
+                      className="pipeline-overview__totals-card__label pf-v6-u-mr-sm"
                     >
                       {PipelineModel.abbr}
                     </Label>
@@ -118,17 +123,22 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
                 </GridItem>
                 <GridItem
                   span={3}
-                  className="pipeline-overview__totals-card__value"
+                  style={{ color: blueColor.value, fontSize: 18 }}
+                  className="pf-v6-u-text-align-end"
                 >
                   {loadingTotalPipelineRunsData ? <LoadingInline /> : '-'}
                 </GridItem>
               </Grid>
-              <Grid hasGutter className="pipeline-overview__totals-card__grid">
+              <Grid
+                hasGutter
+                className="pipeline-overview__totals-card__grid pf-v6-u-mb-sm"
+                style={{ fontSize: 18 }}
+              >
                 <GridItem span={9}>
-                  <span>
+                  <span style={{ fontSize: 18 }}>
                     <Label
                       variant="outline"
-                      className="pipeline-overview__totals-card__repo-label"
+                      className="pipeline-overview__totals-card__repo-label pf-v6-u-mr-sm"
                     >
                       {RepositoryModel.abbr}
                     </Label>
@@ -137,21 +147,23 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
                 </GridItem>
                 <GridItem
                   span={3}
-                  className="pipeline-overview__totals-card__value"
+                  style={{ color: blueColor.value, fontSize: 18 }}
+                  className="pf-v6-u-text-align-end"
                 >
                   {loadingTotalPipelineRunsData ? <LoadingInline /> : '-'}
                 </GridItem>
               </Grid>
-              <Grid hasGutter>
+              <Grid hasGutter style={{ fontSize: 18 }}>
                 <GridItem span={9}>
-                  <span>
-                    <CheckIcon className="pipeline-overview__totals-card__icon" />
+                  <span style={{ fontSize: 18 }}>
+                    <CheckIcon className="pipeline-overview__totals-card__icon pf-v6-u-ml-sm pf-v6-u-mr-sm" />
                     {t('Total runs')}
                   </span>
                 </GridItem>
                 <GridItem
                   span={3}
-                  className="pipeline-overview__totals-card__value"
+                  style={{ color: blueColor.value, fontSize: 18 }}
+                  className="pf-v6-u-text-align-end"
                 >
                   {loadingTotalPipelineRunsData ? (
                     <LoadingInline />

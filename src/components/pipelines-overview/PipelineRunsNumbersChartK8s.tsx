@@ -34,6 +34,8 @@ import {
 } from '../pipelines-metrics/utils';
 import { LoadingInline } from '../Loading';
 
+import './PipelinesOverview.scss';
+
 interface PipelinesRunsNumbersChartProps {
   namespace?: string;
   timespan?: number;
@@ -257,17 +259,16 @@ const PipelineRunsNumbersChartK8s: FC<PipelinesRunsNumbersChartProps> = ({
     <>
       <Card
         className={classNames({
-          'pipeline-overview__number-of-plr-card': !pipelineRunsChartError,
+          'pf-v6-u-h-100 pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column': !pipelineRunsChartError,
           'card-border': bordered,
         })}
       >
-        <CardTitle className="pipeline-overview__number-of-plr-card__title">
+        <CardTitle className="pf-v6-u-pb-0">
           <span>{t('Number of PipelineRuns')}</span>
         </CardTitle>
         <CardBody
           className={classNames({
-            'pipeline-overview__number-of-plr-card__body':
-              !pipelineRunsChartError,
+            'pf-v6-u-flex-1 pipeline-overview__min-height-0 pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-justify-content-flex-end pf-v6-u-align-items-flex-start pf-v6-u-p-0': !pipelineRunsChartError,
           })}
         >
           {pipelineRunsChartError ? (
@@ -278,7 +279,9 @@ const PipelineRunsNumbersChartK8s: FC<PipelinesRunsNumbersChartProps> = ({
               className="pf-v6-u-ml-lg"
             />
           ) : (
-            <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
+            <div
+              className="pf-v6-u-flex-shrink-0"
+            >
               {loadingRunSuccessRatioData ? (
                 <LoadingInline />
               ) : (
@@ -298,6 +301,7 @@ const PipelineRunsNumbersChartK8s: FC<PipelinesRunsNumbersChartProps> = ({
                     top: 10,
                     bottom: 55,
                     left: 50,
+                    right: 50,
                   }}
                   themeColor={ChartThemeColor.blue}
                 >

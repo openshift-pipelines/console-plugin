@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import type { FC, Ref } from 'react';
+import type { FC } from 'react';
 import { useState, useCallback, useMemo } from 'react';
 import {
   Dropdown,
@@ -11,7 +11,6 @@ import {
 import { alphanumericCompare } from './utils';
 import { useTranslation } from 'react-i18next';
 
-import './PipelinesOverview.scss';
 import {
   useFlag,
   useK8sWatchResource,
@@ -65,38 +64,41 @@ const NameSpaceDropdown: FC<NameSpaceDropdownProps> = ({
     return items;
   }, [projects, projectsLoaded]);
 
-  return (<>
-    <label className="project-dropdown-label">{t('Project')}</label>
-    <Dropdown
-      isOpen={isOpen}
-      onOpenChange={(isOpen: boolean) => setValue(isOpen)}
-      onSelect={setClosed}
-      toggle={(toggleRef: Ref<MenuToggleElement>) => (
-        <MenuToggle
-          ref={toggleRef}
-          onClick={toggleIsOpen}
-          isExpanded={isOpen}
-        >
-          {selected !== ALL_NAMESPACES_KEY ? selected : allNamespacesTitle}
-        </MenuToggle>
-      )}
-      className="pipeline-overview__variable-dropdown"
-      isScrollable
-    >
-      <DropdownList>
-        {_.map(optionItems, (name, key) => (
-          <DropdownItem
-            component="button"
-            key={key}
-            onClick={() => setSelected(name.key)}
-            className={'max-height-menu'}
+  return (
+    <div className="form-group">
+      <div>
+        <label>{t('Project')}</label>
+      </div>
+      <Dropdown
+        isOpen={isOpen}
+        onOpenChange={(isOpen: boolean) => setValue(isOpen)}
+        onSelect={setClosed}
+        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+          <MenuToggle
+            ref={toggleRef}
+            onClick={toggleIsOpen}
+            isExpanded={isOpen}
           >
-            {name.title}
-          </DropdownItem>
-        ))}
-      </DropdownList>
-    </Dropdown>
-  </>);
+            {selected !== ALL_NAMESPACES_KEY ? selected : allNamespacesTitle}
+          </MenuToggle>
+        )}
+        isScrollable
+      >
+        <DropdownList>
+          {_.map(optionItems, (name, key) => (
+            <DropdownItem
+              component="button"
+              key={key}
+              onClick={() => setSelected(name.key)}
+              className={'max-height-menu'}
+            >
+              {name.title}
+            </DropdownItem>
+          ))}
+        </DropdownList>
+      </Dropdown>
+    </div>
+  );
 };
 
 export default NameSpaceDropdown;

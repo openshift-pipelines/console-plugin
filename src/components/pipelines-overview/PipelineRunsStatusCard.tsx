@@ -25,9 +25,7 @@ import {
 import { chart_color_black_200 as othersColor } from '@patternfly/react-tokens/dist/js/chart_color_black_200';
 import { chart_color_black_500 as cancelledColor } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
-import {
-  t_chart_global_danger_color_100 as failureColor,
-} from '@patternfly/react-tokens/dist/js/t_chart_global_danger_color_100';
+import { t_chart_global_danger_color_100 as failureColor } from '@patternfly/react-tokens/dist/js/t_chart_global_danger_color_100';
 import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import {
@@ -442,6 +440,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
                       colorScale={colorScale}
                       legendOrientation="vertical"
                       legendPosition="right"
+                      height={200}
                       padding={{
                         bottom: 30,
                         right: 140, // Adjusted to accommodate legend

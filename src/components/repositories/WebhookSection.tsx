@@ -217,7 +217,7 @@ const WebhookSection: React.FC<WebhoookSectionProps> = ({
                 )}
                 name={`${fieldPrefix}webhook.secretRef`}
                 id={`${fieldPrefix}webhook.secretRef`}
-                selectedKey={`${fieldPrefix}webhook.secretRef`}
+                selectedKey={webhook?.secretRef}
                 resources={[
                   {
                     kind: SecretModel.kind,

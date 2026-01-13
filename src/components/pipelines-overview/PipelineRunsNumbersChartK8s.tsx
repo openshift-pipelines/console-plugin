@@ -256,18 +256,35 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
     <>
       <Card
         className={classNames({
-          'pipeline-overview__number-of-plr-card': !pipelineRunsChartError,
+          'pf-v6-u-h-100': !pipelineRunsChartError,
           'card-border': bordered,
         })}
+        style={
+          !pipelineRunsChartError
+            ? {
+                minHeight: '220px',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+              }
+            : undefined
+        }
       >
-        <CardTitle className="pipeline-overview__number-of-plr-card__title">
+        <CardTitle className="pf-v6-u-pb-0">
           <span>{t('Number of PipelineRuns')}</span>
         </CardTitle>
         <CardBody
-          className={classNames({
-            'pipeline-overview__number-of-plr-card__body':
-              !pipelineRunsChartError,
-          })}
+          style={{
+            ...(!pipelineRunsChartError && {
+              flex: '1 1 0',
+              minHeight: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-end',
+              alignItems: 'flex-start',
+              padding: 0,
+            }),
+          }}
         >
           {pipelineRunsChartError ? (
             <Alert
@@ -277,7 +294,12 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
               className="pf-v6-u-ml-lg"
             />
           ) : (
-            <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
+            <div
+              style={{
+                minHeight: 145,
+                flexShrink: 0,
+              }}
+            >
               {loadingRunSuccessRatioData ? (
                 <LoadingInline />
               ) : (
@@ -297,6 +319,7 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
                     top: 10,
                     bottom: 55,
                     left: 50,
+                    right: 50,
                   }}
                   themeColor={ChartThemeColor.blue}
                 >

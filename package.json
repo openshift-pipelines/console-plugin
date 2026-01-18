@@ -20,7 +20,7 @@
     "cypress-generate": "marge -o ./integration-tests/screenshots/ -f cypress-report -t 'OpenShift Console Plugin Template Cypress Test Results' -p 'OpenShift Cypress Plugin Template Test Results' --showPassed false --assetsDir ./integration-tests/screenshots/cypress/assets ./integration-tests/screenshots/cypress.json",
     "cypress-postreport": "yarn cypress-merge && yarn cypress-generate",
     "generate-types": "openapi-typescript openapi/spec.yml --output src/types/api.ts",
-    "dev": "NODE_ENV=development NODE_OPTIONS=--max-old-space-size=8192 rm -rf dist && yarn ts-node ./node_modules/.bin/webpack serve --progress",
+    "dev": "NODE_ENV=development rm -rf dist && node --max-old-space-size=8192 -r ts-node/register ./node_modules/.bin/webpack serve --progress",
     "test": "jest",
     "memsource-upload": "./i18n-scripts/memsource-upload.sh",
     "memsource-download": "./i18n-scripts/memsource-download.sh",

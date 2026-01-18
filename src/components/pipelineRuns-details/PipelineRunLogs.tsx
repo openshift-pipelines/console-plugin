@@ -235,7 +235,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
                 </NavList>
               </Nav>
             ) : (
-              <div className="odc-pipeline-run-logs__nav">
+              <div className="odc-pipeline-run-logs__nav pf-v5-u-text-align-center">
                 {t('No task runs found')}
               </div>
             )}
@@ -251,7 +251,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
             />
           ) : (
             <div
-              className="odc-pipeline-run-logs__logcontainer pf-v5-u-w-100"
+              className="pf-v5-u-w-100 pf-v5-u-pr-xl"
               data-test-id="task-logs-error"
             >
               <LogViewer

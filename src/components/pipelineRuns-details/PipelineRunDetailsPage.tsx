@@ -145,7 +145,7 @@ const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
 
   const resourceTitleFunc = React.useMemo((): string | JSX.Element => {
     return (
-      <div className="pipelinerun-details-page">
+      <div className="pipelinerun-details-page pf-v5-u-display-flex pf-v5-u-align-items-center">
         {pipelineRun?.metadata?.name}{' '}
         {pipelineRun?.metadata?.annotations?.[chainsSignedAnnotation] ===
           'true' && (

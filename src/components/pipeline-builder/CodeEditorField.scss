@@ -76,6 +76,7 @@
   &__sidebar-body {
     position: absolute;
     width: 100%;
+    --pf-v6-c-page__main-section--RowGap: 0;
 
     &:focus {
       outline: 0;

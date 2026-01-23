@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import {
+  DocumentTitle,
   ListPageCreateLink,
   ListPageHeader,
   getGroupVersionKindForModel,
@@ -28,9 +28,9 @@ const TasksListPage: React.FC<TasksListPageProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <>
-      <Helmet>
-        <title>{t('Tasks')}</title>
-      </Helmet>
+      <DocumentTitle>
+        {t('Tasks')}
+      </DocumentTitle>
       {showTitle && (
         <ListPageHeader title={t('Tasks')}>
           <ListPageCreateLink

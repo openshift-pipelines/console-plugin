@@ -20,6 +20,7 @@ import RunDetailsErrorLog from '../../../components/logs/RunDetailsErrorLog';
 import { getTRLogSnippet } from '../taskRunLogSnippet';
 import Status from '../../status/Status';
 import WorkspaceResourceLinkList from '../../workspaces/WorkspaceResourceLinkList';
+import { useIsHubCluster } from '../../hooks/useIsHubCluster';
 
 export interface TaskRunDetailsStatusProps {
   taskRun: TaskRunKind;
@@ -29,6 +30,9 @@ const TaskRunDetailsStatus: React.FC<TaskRunDetailsStatusProps> = ({
   taskRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const [isHub] = useIsHubCluster();
+  const pipelineRunName =
+    taskRun.metadata?.labels?.[TektonResourceLabel.pipelinerun];
 
   return (
     <DescriptionList>
@@ -68,6 +72,8 @@ const TaskRunDetailsStatus: React.FC<TaskRunDetailsStatusProps> = ({
       <RunDetailsErrorLog
         logDetails={getTRLogSnippet(taskRun)}
         namespace={taskRun.metadata?.namespace}
+        isHub={isHub}
+        pipelineRunName={pipelineRunName}
       />
       {taskRun?.status?.podName && (
         <DescriptionListGroup data-test="pod">

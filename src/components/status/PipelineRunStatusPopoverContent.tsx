@@ -2,11 +2,13 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { PipelineRunModel } from '../../models';
-import { PipelineRunKind } from '../../types';
+import { ComputedStatus, PipelineRunKind } from '../../types';
 import { useTaskRuns } from '../hooks/useTaskRuns';
+import { useIsHubCluster } from '../hooks/useIsHubCluster';
 import LogSnippetBlock from '../logs/LogSnippetBlock';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import { LoadingInline } from '../Loading';
+import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
 import { resourcePathFromModel } from '../utils/utils';
 import './StatusPopoverContent.scss';
 
@@ -17,9 +19,16 @@ const PipelineRunStatusPopoverContent: React.FC<StatusPopoverContentProps> = ({
   pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const [isHub] = useIsHubCluster();
+  const plrStatus = pipelineRunStatus(pipelineRun);
+  const pipelineRunFinished =
+    plrStatus !== ComputedStatus.Running &&
+    plrStatus !== ComputedStatus.Pending &&
+    plrStatus !== ComputedStatus.Cancelling;
   const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
     pipelineRun.metadata.namespace,
     pipelineRun.metadata.name,
+    { pipelineRunFinished },
   );
   if (!taskRunsLoaded) {
     return (
@@ -36,6 +45,8 @@ const PipelineRunStatusPopoverContent: React.FC<StatusPopoverContentProps> = ({
       <LogSnippetBlock
         logDetails={logDetails}
         namespace={pipelineRun.metadata.namespace}
+        isHub={isHub}
+        pipelineRunName={pipelineRun.metadata.name}
       >
         {(logSnippet: string) => (
           <>

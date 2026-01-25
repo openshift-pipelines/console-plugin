@@ -6,12 +6,16 @@ type LogSnippetBlockProps = {
   children: (logSnippet: string) => React.ReactNode;
   logDetails: CombinedErrorDetails;
   namespace: string;
+  isHub?: boolean;
+  pipelineRunName?: string;
 };
 
 const LogSnippetBlock: React.FC<LogSnippetBlockProps> = ({
   children,
   logDetails,
   namespace,
+  isHub,
+  pipelineRunName,
 }) => {
   return 'podName' in logDetails ? (
     <LogSnippetFromPod
@@ -20,6 +24,8 @@ const LogSnippetBlock: React.FC<LogSnippetBlockProps> = ({
       podName={logDetails.podName}
       title={logDetails.title}
       staticMessage={logDetails.staticMessage}
+      isHub={isHub}
+      pipelineRunName={pipelineRunName}
     >
       {children}
     </LogSnippetFromPod>

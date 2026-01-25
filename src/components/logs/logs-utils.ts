@@ -14,6 +14,10 @@ import {
 import { errorModal } from '../modals/error-modal';
 import { t } from '../utils/common-utils';
 import { resourceURL } from '../utils/k8s-utils';
+import {
+  fetchMultiClusterLogs,
+  getMultiClusterPods,
+} from '../utils/multi-cluster-api';
 import { containerToLogSourceStatus } from '../utils/pipeline-utils';
 import { getTaskRunLog } from '../utils/tekton-results';
 import { LineBuffer } from './line-buffer';
@@ -94,7 +98,7 @@ export const getDownloadAllLogsCallback = (
   namespace: string,
   pipelineRunName: string,
   isDevConsoleProxyAvailable?: boolean,
-): (() => Promise<Error>) => {
+): (() => Promise<Error | null>) => {
   const getWatchUrls = async (): Promise<StepsWatchUrl> => {
     const stepsList: ContainerStatus[][] = await Promise.all(
       sortedTaskRunNames.map((currTask) => {
@@ -185,7 +189,140 @@ export const getDownloadAllLogsCallback = (
     saveAs(blob, `${pipelineRunName}.log`);
     return null;
   };
-  return (): Promise<Error> => {
+  return (): Promise<Error | null> => {
     return fetchLogs(getWatchUrls());
   };
+};
+
+/* Leaving it as is for now, we can and probably should refactor this a bit */
+export const getDownloadAllLogsCallbackMultiCluster = (
+  sortedTaskRunNames: string[],
+  taskRuns: TaskRunKind[],
+  namespace: string,
+  pipelineRunName: string,
+  isDevConsoleProxyAvailable?: boolean,
+): (() => Promise<Error | null>) => {
+  const fetchMcLogs = async (): Promise<Error | null> => {
+    let allLogs = '';
+
+    // Get all pods from multi-cluster API (or fall back on error)
+    let pods: PodKind[] = [];
+    try {
+      const podsResponse = await getMultiClusterPods(
+        namespace,
+        pipelineRunName,
+      );
+      pods = podsResponse?.items || [];
+    } catch (err) {
+      console.warn(
+        'Multi-cluster pods API failed in the Pipelines Operator:',
+        err,
+      );
+    }
+
+    for (const currTask of sortedTaskRunNames) {
+      const taskRun = taskRuns.find((t) => t.metadata.name === currTask);
+      if (!taskRun) continue;
+
+      const pipelineTaskName =
+        taskRun.spec?.taskRef?.name ?? taskRun.metadata.name;
+      const podName = taskRun.status?.podName;
+
+      allLogs += `${pipelineTaskName}\n\n`;
+
+      if (!podName) {
+        allLogs += 'No pod found for this task\n\n';
+        continue;
+      }
+
+      const pod = pods.find((p) => p.metadata?.name === podName);
+      const containers: ContainerSpec[] = pod?.spec?.containers ?? [];
+      const containerStatuses: ContainerStatus[] =
+        pod?.status?.containerStatuses ?? [];
+
+      // Fallback to Tekton Results if pod/containers are missing
+      if (containers.length === 0) {
+        const taskRunPath =
+          taskRun.metadata?.annotations?.['results.tekton.dev/record'];
+
+        if (taskRunPath) {
+          try {
+            const log = await getTaskRunLog(
+              taskRunPath,
+              isDevConsoleProxyAvailable,
+            );
+            allLogs += `${log}\n\n`;
+          } catch (trErr) {
+            allLogs += `Error fetching logs from Tekton Results: ${
+              (trErr as Error).message
+            }\n\n`;
+          }
+        } else {
+          allLogs +=
+            'No containers found and no Tekton Results path available\n\n';
+        }
+        continue;
+      }
+
+      for (const container of containers) {
+        const containerStatus = containerStatuses.find(
+          (cs) => cs.name === container.name,
+        );
+        const currentStatus = containerToLogSourceStatus(containerStatus);
+
+        if (currentStatus === LOG_SOURCE_WAITING) continue;
+
+        try {
+          const getContentPromise = fetchMultiClusterLogs(
+            namespace,
+            pipelineRunName,
+            podName,
+            container.name,
+          ).then((logs) => `${container.name.toUpperCase()}\n\n${logs}\n\n`);
+
+          allLogs +=
+            currentStatus === LOG_SOURCE_TERMINATED
+              ? await getContentPromise
+              : await Promise.race([
+                  getContentPromise,
+                  new Promise<string>((resolve) =>
+                    setTimeout(() => resolve(''), 1000),
+                  ),
+                ]);
+        } catch (err) {
+          const taskRunPath =
+            taskRun.metadata?.annotations?.['results.tekton.dev/record'];
+
+          if (taskRunPath) {
+            try {
+              const log = await getTaskRunLog(
+                taskRunPath,
+                isDevConsoleProxyAvailable,
+              );
+              allLogs += `${container.name.toUpperCase()}\n\n${log}\n\n`;
+            } catch (trErr) {
+              allLogs += `${container.name.toUpperCase()}\n\nError fetching logs (multi-cluster: ${
+                (err as Error).message
+              }, Tekton Results: ${(trErr as Error).message})\n\n`;
+            }
+          } else {
+            allLogs += `${container.name.toUpperCase()}\n\nError fetching logs: ${
+              (err as Error).message
+            }\n\n`;
+          }
+        }
+      }
+    }
+
+    const buffer = new LineBuffer(null);
+    buffer.ingest(allLogs);
+
+    const blob = buffer.getBlob({
+      type: 'text/plain;charset=utf-8',
+    });
+    saveAs(blob, `${pipelineRunName}.log`);
+    return null;
+  };
+
+  return () => fetchMcLogs();
 };

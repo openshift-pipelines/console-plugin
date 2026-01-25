@@ -273,11 +273,18 @@ const PipelineRunRowWithoutTaskRuns: React.FC<PipelineRunRowWithoutTaskRunsProps
 const PipelineRunRowWithTaskRunsFetch: React.FC<PipelineRunRowWithTaskRunsProps> =
   React.memo(({ obj, activeColumnIDs, repositoryPLRs, currentUser }) => {
     const cacheKey = `${obj.metadata.namespace}-${obj.metadata.name}`;
+    const plrStatus = pipelineRunStatus(obj);
+    const pipelineRunFinished =
+      plrStatus !== ComputedStatus.Running &&
+      plrStatus !== ComputedStatus.Pending &&
+      plrStatus !== ComputedStatus.Cancelling;
     const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
       obj.metadata.namespace,
       obj.metadata.name,
-      undefined,
-      `${obj.metadata.namespace}-${obj.metadata.name}`,
+      {
+        cacheKey: `${obj.metadata.namespace}-${obj.metadata.name}`,
+        pipelineRunFinished,
+      },
     );
     InFlightStoreForTaskRunsForPLR[cacheKey] = false;
     if (taskRunsLoaded) {

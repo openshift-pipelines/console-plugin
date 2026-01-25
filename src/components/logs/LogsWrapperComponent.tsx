@@ -18,6 +18,8 @@ import { TektonTaskRunLog } from './TektonTaskRunLog';
 import { useFullscreen } from './fullscreen';
 import { LoadingInline } from '../Loading';
 import { TektonResourceLabel } from '../../consts';
+import { getMultiClusterPods } from '../utils/multi-cluster-api';
+import { usePoll } from '../pipelines-metrics/poll-hook';
 
 type LogsWrapperComponentProps = {
   taskRun: TaskRunKind;
@@ -25,6 +27,9 @@ type LogsWrapperComponentProps = {
   onDownloadAll?: () => Promise<Error>;
   resource: WatchK8sResource;
   activeStep?: string;
+  isHub?: boolean;
+  pipelineRunName?: string;
+  pipelineRunFinished?: boolean;
 };
 
 const LogsWrapperComponent: React.FC<
@@ -35,11 +40,50 @@ const LogsWrapperComponent: React.FC<
   onDownloadAll,
   downloadAllLabel = 'Download all',
   activeStep,
+  isHub,
+  pipelineRunName,
+  pipelineRunFinished,
   ...props
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const resourceRef = React.useRef(null);
-  const [obj, loaded, error] = useK8sWatchResource<PodKind>(resource);
+
+  // For hub clusters, skip k8s watch and fetch from multi-cluster API
+  const k8sResource = isHub ? null : resource;
+  const [obj, loaded, error] = useK8sWatchResource<PodKind>(k8sResource);
+
+  // Multi-cluster Pod state for hub clusters
+  const [mcPod, setMcPod] = React.useState<PodKind | null>(null);
+  const [mcLoaded, setMcLoaded] = React.useState(false);
+  const [mcError, setMcError] = React.useState<unknown>(null);
+
+  // Fetch Pod from multi-cluster API for hub clusters
+  const fetchMcPod = React.useCallback(async () => {
+    if (!isHub || !pipelineRunName || !resource?.name || !resource?.namespace) {
+      return;
+    }
+    try {
+      const podsResponse = await getMultiClusterPods(
+        resource.namespace as string,
+        pipelineRunName,
+      );
+      const pod = podsResponse?.items?.find(
+        (p) => p.metadata?.name === resource.name,
+      );
+      setMcPod(pod || null);
+      setMcLoaded(true);
+    } catch (e) {
+      console.error('Error fetching multi-cluster pod:', e);
+      setMcError(e);
+      setMcLoaded(true);
+    }
+  }, [isHub, pipelineRunName, resource?.name, resource?.namespace]);
+
+  // Poll every 2 seconds while PipelineRun is running, null to disable
+  const pollDelay =
+    isHub && !pipelineRunFinished && pipelineRunName ? 2000 : null;
+  usePoll(fetchMcPod, pollDelay, resource?.name, resource?.namespace);
+
   const [isFullscreen, fullscreenRef, fullscreenToggle] =
     useFullscreen<HTMLDivElement>();
   const [downloadAllStatus, setDownloadAllStatus] = React.useState(false);
@@ -50,9 +94,18 @@ const LogsWrapperComponent: React.FC<
     taskRun?.spec.taskRef?.name ||
     '-';
 
-  if (loaded && !error && resource.name === obj?.metadata?.name) {
-    resourceRef.current = obj;
-  } else if (error) {
+  // Use multi-cluster Pod for hub clusters, k8s Pod for local clusters
+  const effectiveLoaded = isHub ? mcLoaded : loaded;
+  const effectiveError = isHub ? mcError : error;
+  const effectiveObj = isHub ? mcPod : obj;
+
+  if (
+    effectiveLoaded &&
+    !effectiveError &&
+    resource.name === effectiveObj?.metadata?.name
+  ) {
+    resourceRef.current = effectiveObj;
+  } else if (effectiveError) {
     resourceRef.current = null;
   }
 
@@ -129,13 +182,34 @@ const LogsWrapperComponent: React.FC<
         )}
       </div>
       <div className="pf-v5-u-flex-1">
-        {!error ? (
+        {!effectiveError ? (
           <MultiStreamLogs
             {...props}
+            key={
+              isHub
+                ? `${
+                    resourceRef.current?.metadata?.name
+                  }-${resourceRef.current?.status?.containerStatuses
+                    ?.map(
+                      (c) =>
+                        `${c.name}:${
+                          c.state?.running
+                            ? 'r'
+                            : c.state?.terminated
+                            ? 't'
+                            : 'w'
+                        }`,
+                    )
+                    .join(',')}`
+                : undefined
+            }
             taskName={taskName}
             resource={resourceRef.current}
             setCurrentLogsGetter={setLogGetter}
             activeStep={activeStep}
+            isHub={isHub}
+            pipelineRunName={pipelineRunName}
+            pipelineRunFinished={pipelineRunFinished}
           />
         ) : (
           <TektonTaskRunLog

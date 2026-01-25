@@ -8,6 +8,7 @@ import StatusPopoverContent from './StatusPopoverContent';
 import { LoadingInline } from '../../Loading';
 import { getPLRLogSnippet } from '../../logs/pipelineRunLogSnippet';
 import { getReferenceForModel } from '../../pipelines-overview/utils';
+import { useIsHubCluster } from '../../hooks/useIsHubCluster';
 
 type PipelineRunStatusProps = {
   status: string;
@@ -24,6 +25,7 @@ const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({
   taskRunsLoaded,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const [isHub] = useIsHubCluster();
   const logPath = `/k8s/ns/${
     pipelineRun?.metadata.namespace
   }/${getReferenceForModel(PipelineRunModel)}/${
@@ -36,6 +38,8 @@ const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({
           logDetails={getPLRLogSnippet(pipelineRun, taskRuns)}
           namespace={pipelineRun?.metadata.namespace}
           link={<Link to={logPath}>{t('View logs')}</Link>}
+          isHub={isHub}
+          pipelineRunName={pipelineRun?.metadata.name}
         />
       </PipelineResourceStatus>
     ) : (

@@ -135,6 +135,7 @@ export interface Spec {
   pipeline: Pipeline;
   profile: string;
   pruner: Pruner;
+  role?: string;
   targetNamespace: string;
   trigger: Trigger;
 }

@@ -11,6 +11,10 @@ import { PodModel } from '../../models';
 import { resourceURL } from '../utils/k8s-utils';
 import { containerToLogSourceStatus } from '../utils/pipeline-utils';
 import { LoadingInline } from '../Loading';
+import {
+  getMultiClusterLogsUrl,
+  getMultiClusterLogsStreamPath,
+} from '../utils/multi-cluster-api';
 
 type LogsProps = {
   resource: PodKind;
@@ -19,6 +23,9 @@ type LogsProps = {
   activeStep?: string;
   taskName?: string;
   stillFetching?: boolean;
+  isHub?: boolean;
+  pipelineRunName?: string;
+  pipelineRunFinished?: boolean;
 };
 
 type LogData = {
@@ -59,6 +66,9 @@ const Logs: React.FC<LogsProps> = ({
   containers,
   setCurrentLogsGetter,
   activeStep,
+  isHub,
+  pipelineRunName,
+  pipelineRunFinished,
 }) => {
   if (!resource) return null;
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -71,6 +81,12 @@ const Logs: React.FC<LogsProps> = ({
   const [activeContainers, setActiveContainers] = React.useState<Set<string>>(
     new Set(),
   );
+
+  // Ref to track current pipelineRunFinished value for WebSocket retry logic
+  const pipelineRunFinishedRef = React.useRef(pipelineRunFinished);
+  React.useEffect(() => {
+    pipelineRunFinishedRef.current = pipelineRunFinished;
+  }, [pipelineRunFinished]);
 
   const findTargetRowForActiveStep = React.useMemo(
     () => (formattedString: string) => {
@@ -155,14 +171,90 @@ const Logs: React.FC<LogsProps> = ({
     return ws;
   };
 
+  /* 
+  Why are we retrying websockets in multicluster ?
+    Container initialization delays: On spoke clusters, containers may not start immediately after admission
+    Network latency: Multi-cluster proxy-aae service adds another hop
+    WebSocket closes early: The connection sometimes closes before the container is ready, requiring retry on onclose
+  */
+  const retryMultiClusterWebSocket = (
+    watchURL: string,
+    wsOpts: any,
+    onMessage: (message: string) => void,
+    onError: () => void,
+    retryCount = 0,
+    isFinishedGetter: () => boolean,
+  ) => {
+    const mcWs = new WSFactory(watchURL, wsOpts);
+    let receivedData = false;
+    let destroyed = false;
+    let retryScheduled = false;
+
+    const handleRetry = () => {
+      if (destroyed || retryScheduled) return;
+      retryScheduled = true;
+      // Stop retrying if PipelineRun has finished
+      if (isFinishedGetter()) {
+        return;
+      }
+      if (retryCount < 10) {
+        // Retry up to 10 times (30 seconds total)
+        setTimeout(() => {
+          if (!destroyed && !isFinishedGetter()) {
+            retryMultiClusterWebSocket(
+              watchURL,
+              wsOpts,
+              onMessage,
+              onError,
+              retryCount + 1,
+              isFinishedGetter,
+            );
+          }
+        }, 3000);
+      } else {
+        onError();
+      }
+    };
+
+    // Multi-cluster logs are plain text, not base64 encoded
+    mcWs
+      .onopen(() => {})
+      .onmessage((msg) => {
+        receivedData = true;
+        onMessage(msg);
+      })
+      .onerror((err) => {
+        console.error('MC WebSocket ERROR:', err);
+        handleRetry();
+      })
+      .onclose(() => {
+        // Retry on close if we never received any data (container likely initializing)
+        if (!receivedData) {
+          handleRetry();
+        }
+      });
+
+    // Override destroy to prevent retries after cleanup
+    const originalDestroy = mcWs.destroy.bind(mcWs);
+    mcWs.destroy = () => {
+      destroyed = true;
+      originalDestroy();
+    };
+
+    return mcWs;
+  };
+
   React.useEffect(() => {
     containers.forEach((container) => {
       if (activeContainers.has(container.name)) return;
       setActiveContainers((prev) => new Set(prev).add(container.name));
       let loaded = false;
       let ws: WSFactory;
+      let mcWs: WSFactory;
       const { name } = container;
-      const urlOpts = {
+
+      // Build URL based on hub cluster vs local cluster
+      const k8sUrlOpts = {
         ns: resNamespace,
         name: resName,
         path: 'log',
@@ -172,7 +264,7 @@ const Logs: React.FC<LogsProps> = ({
           timestamps: 'true',
         },
       };
-      const watchURL = resourceURL(PodModel, urlOpts);
+      const k8sWatchURL = resourceURL(PodModel, k8sUrlOpts);
 
       const containerStatus: ContainerStatus[] =
         resource?.status?.containerStatuses ?? [];
@@ -183,40 +275,92 @@ const Logs: React.FC<LogsProps> = ({
         containerStatus[statusIndex],
       );
 
-      if (resourceStatus === LOG_SOURCE_TERMINATED) {
-        consoleFetchText(watchURL)
+      // Use HTTP fetch for completed PipelineRuns or terminated containers
+      // Use WebSocket only for actively running containers
+      const shouldUseHttp =
+        resourceStatus === LOG_SOURCE_TERMINATED ||
+        (isHub && pipelineRunFinished);
+
+      if (shouldUseHttp) {
+        // Fetch complete logs via HTTP
+        const logsUrl =
+          isHub && pipelineRunName
+            ? getMultiClusterLogsUrl(
+                resNamespace,
+                pipelineRunName,
+                resName,
+                name,
+              )
+            : k8sWatchURL;
+
+        consoleFetchText(logsUrl)
           .then((res) => {
             if (loaded) return;
             appendMessage(name, res, resourceStatus);
           })
-          .catch(() => {
+          .catch((err) => {
             if (loaded) return;
             setError(true);
           });
       } else {
-        const wsOpts = {
-          host: 'auto',
-          path: watchURL,
-          subprotocols: ['base64.binary.k8s.io'],
-        };
-        ws = retryWebSocket(
-          watchURL,
-          wsOpts,
-          (message) => {
-            if (loaded) return;
-            setError(false);
-            appendMessage(name, message, resourceStatus);
-          },
-          () => {
-            if (loaded) return;
-            setError(true);
-          },
-        );
+        // Stream logs via WebSocket for running containers
+        if (isHub && pipelineRunName) {
+          // Use multi-cluster WebSocket for hub clusters
+          const mcWsPath = getMultiClusterLogsStreamPath(
+            resNamespace,
+            pipelineRunName,
+            resName,
+            name,
+          );
+          const mcWsOpts = {
+            host: 'auto',
+            path: mcWsPath,
+            subprotocols: ['binary.k8s.io'],
+          };
+          mcWs = retryMultiClusterWebSocket(
+            mcWsPath,
+            mcWsOpts,
+            (message) => {
+              if (loaded) return;
+              setError(false);
+              appendMessage(name, message, resourceStatus);
+            },
+            () => {
+              if (loaded) return;
+              setError(true);
+            },
+            0,
+            () => pipelineRunFinishedRef.current,
+          );
+        } else {
+          // Use k8s WebSocket for local clusters
+          const wsOpts = {
+            host: 'auto',
+            path: k8sWatchURL,
+            subprotocols: ['base64.binary.k8s.io'],
+          };
+          ws = retryWebSocket(
+            k8sWatchURL,
+            wsOpts,
+            (message) => {
+              if (loaded) return;
+              setError(false);
+              appendMessage(name, message, resourceStatus);
+            },
+            () => {
+              if (loaded) return;
+              setError(true);
+            },
+          );
+        }
       }
       return () => {
         loaded = true;
         if (ws) {
           ws.destroy();
+        }
+        if (mcWs) {
+          mcWs.destroy();
         }
       };
     });
@@ -225,6 +369,9 @@ const Logs: React.FC<LogsProps> = ({
     resNamespace,
     resource?.status?.containerStatuses,
     activeContainers,
+    isHub,
+    pipelineRunName,
+    pipelineRunFinished,
   ]);
 
   React.useEffect(() => {

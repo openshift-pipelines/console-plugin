@@ -204,13 +204,18 @@ export const getPipelineRunData = (
       namespace: pipeline
         ? pipeline.metadata.namespace
         : latestRun.metadata.namespace,
-      labels: _.merge(
-        {},
-        pipeline?.metadata?.labels,
-        latestRun?.metadata?.labels,
-        (latestRun?.spec.pipelineRef || pipeline) && {
-          'tekton.dev/pipeline': pipelineName,
-        },
+      labels: _.omitBy(
+        _.merge(
+          {},
+          pipeline?.metadata?.labels,
+          latestRun?.metadata?.labels,
+          (latestRun?.spec.pipelineRef || pipeline) && {
+            'tekton.dev/pipeline': pipelineName,
+          },
+        ),
+        (_value, key) =>
+          latestRun?.metadata?.labels?.['kueue.x-k8s.io/multikueue-origin'] &&
+          key.startsWith('kueue.x-k8s.io/'),
       ),
     },
     spec: {

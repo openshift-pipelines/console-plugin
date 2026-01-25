@@ -15,7 +15,7 @@ import Status from '../status/Status';
 import { ExternalLink } from '../utils/link';
 import { TaskRunModel } from '../../models';
 import { Timestamp } from '@openshift-console/dynamic-plugin-sdk';
-import { PipelineRunKind } from '../../types';
+import { ComputedStatus, PipelineRunKind } from '../../types';
 import {
   pipelineRunFilterReducer,
   pipelineRunTitleFilterReducer,
@@ -31,6 +31,7 @@ import { convertBackingPipelineToPipelineResourceRefProps } from './utils';
 import RepositoryLinkList from './RepositoryLinkList';
 import PipelineRunVulnerabilities from '../pipelines-list/status/PipelineRunVulnerabilities';
 import { useTaskRuns } from '../hooks/useTaskRuns';
+import { useIsHubCluster } from '../hooks/useIsHubCluster';
 import TriggeredBySection from './TriggeredBySection';
 import PipelineResourceRef from '../triggers-details/PipelineResourceRef';
 import WorkspaceResourceLinkList from '../workspaces/WorkspaceResourceLinkList';
@@ -43,9 +44,16 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({
   pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const [isHub] = useIsHubCluster();
+  const plrStatus = pipelineRunFilterReducer(pipelineRun);
+  const pipelineRunFinished =
+    plrStatus !== ComputedStatus.Running &&
+    plrStatus !== ComputedStatus.Pending &&
+    plrStatus !== ComputedStatus.Cancelling;
   const [taskRuns, taskRunsLoaded] = useTaskRuns(
     pipelineRun?.metadata?.namespace,
     pipelineRun?.metadata?.name,
+    { pipelineRunFinished },
   );
 
   const sbomTaskRun = taskRunsLoaded ? getSbomTaskRun(taskRuns) : null;
@@ -68,6 +76,8 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({
           <RunDetailsErrorLog
             logDetails={getPLRLogSnippet(pipelineRun, taskRuns)}
             namespace={pipelineRun.metadata.namespace}
+            isHub={isHub}
+            pipelineRunName={pipelineRun.metadata.name}
           />
         )}
         <DescriptionListGroup>

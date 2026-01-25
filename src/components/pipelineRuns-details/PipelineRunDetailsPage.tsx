@@ -27,6 +27,7 @@ import {
 import { ArchiveIcon } from '@patternfly/react-icons';
 import SignedBadgeIcon from '../../images/SignedBadge';
 import Status from '../status/Status';
+import { ComputedStatus } from '../../types';
 import {
   pipelineRunFilterReducer,
   pipelineRunTitleFilterReducer,
@@ -65,9 +66,15 @@ const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const navigate = useNavigate();
   const [pipelineRun, pipelineRunLoaded] = usePipelineRun(namespace, name);
-  const [taskRuns] = useTaskRuns(namespace, name);
+  const plrStatus = pipelineRunFilterReducer(pipelineRun);
+  const pipelineRunFinished =
+    plrStatus !== ComputedStatus.Running &&
+    plrStatus !== ComputedStatus.Pending &&
+    plrStatus !== ComputedStatus.Cancelling;
+  const [taskRuns] = useTaskRuns(namespace, name, { pipelineRunFinished });
   const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, name);
   const currentUser = useGetActiveUser();
+
   const reRunAction = () => {
     const { pipelineRef, pipelineSpec } = pipelineRun.spec;
     if (

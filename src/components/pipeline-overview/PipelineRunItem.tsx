@@ -3,9 +3,10 @@ import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { useTaskRuns } from '../hooks/useTaskRuns';
+import { useIsHubCluster } from '../hooks/useIsHubCluster';
 import { resourcePath } from '../utils/resource-link';
 import { PipelineRunModel } from '../../models';
-import { PipelineRunKind } from '../../types';
+import { ComputedStatus, PipelineRunKind } from '../../types';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
 import Status from '../status/Status';
@@ -20,13 +21,20 @@ type PipelineRunItemProps = {
 
 const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const [isHub] = useIsHubCluster();
   const {
     metadata: { name, namespace, creationTimestamp },
     status,
   } = pipelineRun;
+  const plrStatus = pipelineRunStatus(pipelineRun);
+  const pipelineRunFinished =
+    plrStatus !== ComputedStatus.Running &&
+    plrStatus !== ComputedStatus.Pending &&
+    plrStatus !== ComputedStatus.Cancelling;
   const [taskRuns] = useTaskRuns(
     pipelineRun?.metadata?.namespace,
     pipelineRun?.metadata?.name,
+    { pipelineRunFinished },
   );
   const path = resourcePath(PipelineRunModel, name, namespace);
   const lastUpdated = status
@@ -57,7 +65,12 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
         </GridItem>
         {logDetails && (
           <GridItem>
-            <LogSnippetBlock logDetails={logDetails} namespace={namespace}>
+            <LogSnippetBlock
+              logDetails={logDetails}
+              namespace={namespace}
+              isHub={isHub}
+              pipelineRunName={name}
+            >
               {(logSnippet: string) => (
                 <LogSnippet
                   message={logDetails.title}

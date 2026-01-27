@@ -11,6 +11,7 @@
 .pipeline-overview__pipelinerun-status-card {
   &__title {
     padding-bottom: 0 !important;
+    overflow: hidden; // Hides any content that overflows outside this element's box
   }
 
   &__list-page {
@@ -23,6 +24,9 @@
   }
 
   &__bar-chart-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     height: 200px;
   }
 }
@@ -83,6 +87,7 @@
 }
 
 .pipeline-overview__number-of-plr-card {
+  overflow: hidden;
   .pf-v6-c-card__title {
     padding-bottom: 0;
   }

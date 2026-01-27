@@ -1,5 +1,4 @@
 node_modules/
-*.tgz
 dist/
 /coverage
 .devcontainer/dev.env
@@ -10,3 +9,12 @@ yarn-error.log
 .DS_Store
 *.pem
 integration-tests/cypress-a11y-report.json
+
+# Yarn 4 directories (cache is ignored, releases are committed)
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
+
+# Legacy yarn offline mirror (no longer used with yarn 4)
+npm-packages-offline-cache/

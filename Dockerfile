@@ -1,11 +1,12 @@
 FROM registry.access.redhat.com/ubi8/nodejs-18:latest AS builder-ui
 USER root
-RUN command -v yarn || npm i -g yarn
 
 ADD . /usr/src/app
 WORKDIR /usr/src/app
 
-RUN yarn install --frozen-lockfile && \
+# Use bundled yarn 4.6.0
+RUN corepack enable && corepack prepare yarn@4.6.0 --activate
+RUN yarn install --immutable && \
     yarn build
 
 FROM registry.access.redhat.com/ubi8/nginx-124:latest

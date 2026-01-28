@@ -1,0 +1,122 @@
+// Shared ANSI color classes for LogViewer with useAnsiClasses
+// Import this mixin in any SCSS file that wraps a LogViewer component
+
+@mixin ansi-log-colors {
+  // Foreground colors (optimized for dark/black background)
+  .ansi-black-fg {
+    color: #6e6e6e;
+  }
+  .ansi-red-fg {
+    color: #f14c4c;
+  }
+  .ansi-green-fg {
+    color: #23d18b;
+  }
+  .ansi-yellow-fg {
+    color: #f5f543;
+  }
+  .ansi-blue-fg {
+    color: #3b8eea;
+  }
+  .ansi-magenta-fg {
+    color: #d670d6;
+  }
+  .ansi-cyan-fg {
+    color: #29b8db;
+  }
+  .ansi-white-fg {
+    color: #e5e5e5;
+  }
+
+  // Bright foreground colors
+  .ansi-bright-black-fg {
+    color: #a0a0a0;
+  }
+  .ansi-bright-red-fg {
+    color: #f14c4c;
+  }
+  .ansi-bright-green-fg {
+    color: #23d18b;
+  }
+  .ansi-bright-yellow-fg {
+    color: #f5f543;
+  }
+  .ansi-bright-blue-fg {
+    color: #73c3ff;
+  }
+  .ansi-bright-magenta-fg {
+    color: #ff7eff;
+  }
+  .ansi-bright-cyan-fg {
+    color: #5ff;
+  }
+  .ansi-bright-white-fg {
+    color: #fff;
+  }
+
+  // Background colors
+  .ansi-black-bg {
+    background-color: #000;
+  }
+  .ansi-red-bg {
+    background-color: #bb0000;
+  }
+  .ansi-green-bg {
+    background-color: #00bb00;
+  }
+  .ansi-yellow-bg {
+    background-color: #bbbb00;
+  }
+  .ansi-blue-bg {
+    background-color: #0000bb;
+  }
+  .ansi-magenta-bg {
+    background-color: #bb00bb;
+  }
+  .ansi-cyan-bg {
+    background-color: #00bbbb;
+  }
+  .ansi-white-bg {
+    background-color: #fff;
+  }
+
+  // Bright background colors
+  .ansi-bright-black-bg {
+    background-color: #555;
+  }
+  .ansi-bright-red-bg {
+    background-color: #f55;
+  }
+  .ansi-bright-green-bg {
+    background-color: #0f0;
+  }
+  .ansi-bright-yellow-bg {
+    background-color: #ff5;
+  }
+  .ansi-bright-blue-bg {
+    background-color: #55f;
+  }
+  .ansi-bright-magenta-bg {
+    background-color: #f5f;
+  }
+  .ansi-bright-cyan-bg {
+    background-color: #5ff;
+  }
+  .ansi-bright-white-bg {
+    background-color: #fff;
+  }
+
+  // Text styles
+  .ansi-bold {
+    font-weight: bold;
+  }
+  .ansi-faint {
+    opacity: 0.5;
+  }
+  .ansi-italic {
+    font-style: italic;
+  }
+  .ansi-underline {
+    text-decoration: underline;
+  }
+}

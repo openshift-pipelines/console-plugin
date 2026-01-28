@@ -50,7 +50,7 @@ const LogsWrapperComponent: React.FC<
     taskRun?.spec.taskRef?.name ||
     '-';
 
-  if (loaded && !error && resource.name === obj.metadata.name) {
+  if (loaded && !error && resource.name === obj?.metadata?.name) {
     resourceRef.current = obj;
   } else if (error) {
     resourceRef.current = null;

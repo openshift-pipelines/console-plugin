@@ -1,7 +1,11 @@
+@use './ansi-log-colors' as *;
+
 .odc-tekton-taskrun-log {
   overflow: hidden;
 
   .pf-v5-c-log-viewer__text {
     white-space: pre;
   }
+
+  @include ansi-log-colors;
 }

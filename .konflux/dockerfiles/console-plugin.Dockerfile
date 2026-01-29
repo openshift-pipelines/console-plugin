@@ -1,24 +1,22 @@
 ARG BUILDER=registry.redhat.io/ubi9/nodejs-20@sha256:938970e0012ddc784adda181ede5bc00a4dfda5e259ee4a57f67973720a565d1
 ARG RUNTIME=registry.redhat.io/ubi9/nginx-124@sha256:aa73fdb10af2bf24611ba714a412c2e65cec88a00eee628a0f2a75e564ec18f2
+ARG YARN_PKG
 
 FROM $BUILDER AS builder-ui
 
 WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .
-RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
-RUN npm install -g corepack && \
-    if [ -f /cachi2/cachi2.env ]; then \
-      source /cachi2/cachi2.env && \
-      corepack enable && \
-      corepack prepare yarn@4.6.0 --activate && \
-      yarn install && \
-      yarn build; \
-    else \
-      corepack enable && \
-      corepack prepare yarn@4.6.0 --activate && \
-      yarn install --immutable && \
-      yarn build; \
-    fi
+
+RUN ls -l && \
+    ls -l /cachi2/output && \
+    ls -l /cachi2/output/deps && \
+    ls -l /cachi2/output/deps/npm && \
+
+RUN npm install -g /cachi2/output/deps/npm/"$YARN_PKG"
+
+# Install dependencies & build
+RUN yarn install --immutable && \
+    yarn build
 
 FROM $RUNTIME
 ARG VERSION=console-plugin-main

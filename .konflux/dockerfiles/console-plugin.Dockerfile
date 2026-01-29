@@ -5,11 +5,18 @@ FROM $BUILDER AS builder-ui
 
 WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .
-RUN npm install -g yarn-1.22.22.tgz
 RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
-COPY .konflux/yarn.lock .
-RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
-    yarn build
+RUN npm install -g corepack && \
+    if [ -f /cachi2/cachi2.env ]; then \
+      source /cachi2/cachi2.env && \
+      corepack enable && \
+      yarn install && \
+      yarn build; \
+    else \
+      corepack enable && \
+      yarn install --immutable && \
+      yarn build; \
+    fi
 
 FROM $RUNTIME
 ARG VERSION=console-plugin-main

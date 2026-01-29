@@ -4,6 +4,8 @@ on:
     branches:
       - main
       - release-v* # example: release-v1.14
+      - main_ocp_4.22
+      - test_yarn4
     tags: ['v*']
 
 jobs:
@@ -17,7 +19,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
+      
+      - name: Enable Corepack
+        run: corepack enable
 
       - uses: docker/setup-buildx-action@v3
 

@@ -5,21 +5,20 @@ FROM $BUILDER AS builder-ui
 
 WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .
-RUN npm install -g yarn-1.22.22.tgz
-RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
+#Install Yarn
+RUN if [[ -d /cachi2/output/deps/npm/ ]]; then \
+      npm install -g /cachi2/output/deps/npm/yarnpkg-cli-dist-4.6.0.tgz; \
+      YARN_ENABLE_NETWORK=0; \
+    else \
+      npm install -g corepack; \
+      corepack enable ;\
+      corepack prepare yarn@4.6.0 --activate;  \
+    fi
 
+
+# Install dependencies & build
 USER root
-
-# Enable FIPS mode during build process
-RUN fips-mode-setup --enable && \
-    update-crypto-policies --set FIPS && \
-    echo "Build stage - Verifying FIPS kernel parameter:" && \
-    cat /proc/sys/crypto/fips_enabled && \
-    echo "Build stage - Verifying OpenSSL FIPS status:" && \
-    openssl version -a | grep -i fips && \
-    (openssl md5 /dev/null || echo "MD5 test passed (expected failure in FIPS mode)")
-
-RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
+RUN CYPRESS_INSTALL_BINARY=0 yarn install --immutable && \
     yarn build
 
 FROM $RUNTIME

@@ -5,23 +5,18 @@ FROM $BUILDER AS builder-ui
 
 WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .
-RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
-RUN npm install -g corepack && \
-    if [ -f /cachi2/cachi2.env ]; then \
-      source /cachi2/cachi2.env && \
-      corepack enable && \
-      corepack prepare yarn@4.6.0 --activate && \
-      yarn install && \
-      yarn build; \
-    else \
-      corepack enable && \
-      corepack prepare yarn@4.6.0 --activate && \
-      yarn install --immutable && \
-      yarn build; \
-    fi
+
+RUN ls -l /cachi2/output/deps/npm
+
+RUN npm install -g /cachi2/output/deps/npm/yarnpkg-cli-dist-4.12.0.tgz"
+
+# Install dependencies & build
+RUN yarn config --why pkg || true
+RUN yarn install --immutable
+RUN yarn build
 
 FROM $RUNTIME
-ARG VERSION=console-plugin-main
+ARG VERSION=console-plugin-next
 
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/dist /usr/share/nginx/html
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/nginx.conf /etc/nginx/nginx.conf

@@ -33,7 +33,7 @@ spec:
     value: .konflux/dockerfiles/console-plugin.Dockerfile
   - name: prefetch-input
     value: |
-      {"type": "rpm", "path": ".konflux/rpms"}
+      [{"type": "yarn"}, {"type": "npm", "path": ".konflux/npm"}]
   pipelineRef:
     name: docker-build-ta
   workspaces:

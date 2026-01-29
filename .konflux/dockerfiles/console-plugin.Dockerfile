@@ -5,11 +5,19 @@ FROM $BUILDER AS builder-ui
 
 WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .
-RUN npm install -g yarn-1.22.22.tgz
-COPY .konflux/yarn.lock .
-COPY .konflux/package.json .
-RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
-RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
+#Install Yarn
+RUN if [[ -d /cachi2/output/deps/npm/ ]]; then \
+      npm install -g /cachi2/output/deps/npm/yarnpkg-cli-dist-4.6.0.tgz; \
+      YARN_ENABLE_NETWORK=0; \
+    else \
+      echo "ERROR: Hermetic npm deps not injected"; \
+      exit 1; \
+    fi
+
+
+# Install dependencies & build
+USER root
+RUN CYPRESS_INSTALL_BINARY=0 yarn install --immutable && \
     yarn build
 
 FROM $RUNTIME

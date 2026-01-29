@@ -5,20 +5,11 @@ FROM $BUILDER AS builder-ui
 
 WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .
-RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
-RUN npm install -g corepack && \
-    if [ -f /cachi2/cachi2.env ]; then \
-      source /cachi2/cachi2.env && \
-      corepack enable && \
-      corepack prepare yarn@4.6.0 --activate && \
-      yarn install && \
-      yarn build; \
-    else \
-      corepack enable && \
-      corepack prepare yarn@4.6.0 --activate && \
-      yarn install --immutable && \
-      yarn build; \
-    fi
+
+# Install dependencies & build
+RUN yarn install --immutable && \
+    yarn build
+
 
 FROM $RUNTIME
 ARG VERSION=console-plugin-main

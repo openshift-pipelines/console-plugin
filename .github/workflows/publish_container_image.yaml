@@ -4,12 +4,21 @@ on:
     branches:
       - main
       - release-v* # example: release-v1.14
+      - main_ocp_4.22
     tags: ['v*']
+  pull_request:
+    branches:
+      - main
+      - main_ocp_4.22
+  workflow_dispatch:
 
 jobs:
   setup:
     name: build container
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout source code
@@ -42,4 +51,4 @@ jobs:
         env:
           SUPPORT_MULTI_ARCH: "true"
           CONSOLE_PLUGIN_IMAGE_REPO: 'ghcr.io/${{ github.repository }}'
-          CONSOLE_PLUGIN_IMAGE_TAG: '${{ github.ref_name }}'
+          CONSOLE_PLUGIN_IMAGE_TAG: ${{ github.event.pull_request.number && format('pr-{0}', github.event.pull_request.number) || github.ref_name }}

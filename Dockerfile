@@ -1,4 +1,5 @@
-FROM registry.access.redhat.com/ubi8/nodejs-18:latest AS builder-ui
+FROM registry.access.redhat.com/ubi9/nodejs-20 AS builder-ui
+
 USER root
 RUN command -v yarn || npm i -g yarn
 
@@ -8,7 +9,7 @@ WORKDIR /usr/src/app
 RUN yarn install --frozen-lockfile && \
     yarn build
 
-FROM registry.access.redhat.com/ubi8/nginx-124:latest
+FROM registry.access.redhat.com/ubi9/nginx-124
 
 COPY --from=builder-ui /usr/src/app/dist /usr/share/nginx/html
 

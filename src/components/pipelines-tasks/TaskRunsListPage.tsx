@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import {
+  DocumentTitle,
   K8sResourceCommon,
   ListPageCreateLink,
   ListPageHeader,
@@ -32,9 +32,9 @@ const TaskRunsListPage: React.FC<TaskRunsListPageProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <>
-      <Helmet>
-        <title>{t('TaskRuns')}</title>
-      </Helmet>
+      <DocumentTitle>
+        {t('TaskRuns')}
+      </DocumentTitle>
       {showTitle && (
         <ListPageHeader title={t('TaskRuns')}>
           <ListPageCreateLink

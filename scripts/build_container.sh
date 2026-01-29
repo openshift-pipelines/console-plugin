@@ -20,7 +20,8 @@ if [ "$SUPPORT_MULTI_ARCH" = "true" ]; then
   # WARNING: with this approach, if we use platform naive package may lead to a malfunction
   # however in this project, the code will be executed on a browser,
   # hence assuming no impact on this approach
-  yarn install --frozen-lockfile
+  corepack enable && corepack prepare yarn@4.6.0 --activate
+  yarn install
   yarn build
 
   docker buildx build --push \

@@ -4,6 +4,7 @@
   "private": true,
   "repository": "git@github.com:openshift-pipelines/console-plugin.git",
   "license": "Apache-2.0",
+  "packageManager": "yarn@4.6.0",
   "scripts": {
     "clean": "rm -rf dist",
     "build": "yarn clean && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node node_modules/.bin/webpack",
@@ -179,6 +180,8 @@
     "url": "^0.11.4"
   },
   "resolutions": {
-    "webpack": "5.94.0"
+    "webpack": "5.94.0",
+    "@types/d3-dispatch": "3.0.6",
+    "@types/d3-selection": "3.0.10"
   }
 }

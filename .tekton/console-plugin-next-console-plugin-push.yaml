@@ -1,16 +1,16 @@
-# Generated for Konflux Application openshift-pipelines-core-next by openshift-pipelines/hack. DO NOT EDIT
+# Generated for Konflux Application openshift-pipelines-core by openshift-pipelines/hack. DO NOT EDIT
 apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
   annotations:
     pipelinesascode.tekton.dev/cancel-in-progress: "true" # Cancel in-progress pipelines
-    pipelinesascode.tekton.dev/pipeline: "https://raw.githubusercontent.com/openshift-pipelines/operator/refs/heads/main/.tekton/docker-build-ta.yaml"
+    pipelinesascode.tekton.dev/pipeline: "https://raw.githubusercontent.com/openshift-pipelines/operator/refs/heads/next/.tekton/docker-build-ta.yaml"
     build.appstudio.openshift.io/repo: https://github.com/openshift-pipelines/console-plugin.git?rev={{revision}}
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
-      == "main" &&
+      == "test_yarn4" &&
       ("***".pathChanged() ||
       ".konflux/dockerfiles/console-plugin.Dockerfile".pathChanged() ||
       ".tekton/console-plugin-next-console-plugin-push.yaml".pathChanged())
@@ -25,15 +25,20 @@ spec:
   params:
   - name: git-url
     value: '{{source_url}}'
+  - name: upstream-git-url
+    value: 'https://github.com/'
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/tekton-ecosystem-tenant/next/console-plugin-rhel9:{{revision}}
+    value: quay.io/redhat-user-workloads/tekton-ecosystem-tenant/console-plugin/pipelines-console-plugin-rhel9:{{revision}}
   - name: dockerfile
     value: .konflux/dockerfiles/console-plugin.Dockerfile
+  - name: additional-tags
+    value:
+      - "next"
   - name: prefetch-input
     value: |
-      [{"type": "rpm", "path": ".konflux/rpms"}, {"type": "yarn"}]
+      [{"type": "npm", "path": ".konflux/npm"}]
   pipelineRef:
     name: docker-build-ta
   taskRunTemplate:

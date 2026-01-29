@@ -1,15 +1,25 @@
-name: publish container images
+name: Build and Publish Container
+
 on:
   push:
     branches:
       - main
       - release-v* # example: release-v1.14
+      - main_ocp_4.22
     tags: ['v*']
+  pull_request:
+    branches:
+      - main
+      - main_ocp_4.22
+  workflow_dispatch:
 
 jobs:
   setup:
     name: build container
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout source code
@@ -17,11 +27,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
+      
+      - name: Enable Corepack
+        run: corepack enable
 
       - uses: docker/setup-buildx-action@v3
 
       - name: Login in to ghcr.io registry
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -41,5 +55,5 @@ jobs:
         run: ./scripts/build_container.sh
         env:
           SUPPORT_MULTI_ARCH: "true"
-          CONSOLE_PLUGIN_IMAGE_REPO: 'ghcr.io/${{ github.repository }}'
-          CONSOLE_PLUGIN_IMAGE_TAG: '${{ github.ref_name }}'
+          CONSOLE_PLUGIN_IMAGE_REPO: ${{ github.event_name == 'pull_request' && format('ttl.sh/{0}/console-plugin-pr-{1}', github.repository, github.event.pull_request.number) || format('ghcr.io/{0}', github.repository) }}
+          CONSOLE_PLUGIN_IMAGE_TAG: ${{ github.event_name == 'pull_request' && '24h' || github.ref_name }}

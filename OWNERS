@@ -1,6 +1,7 @@
 approvers:
   - anwesha-palit-redhat
   - vdemeester
+  - arvindk-softwaredev
   - vikram-raj
   - lokanandaprabhu
 options: {}

@@ -5,15 +5,21 @@ FROM $BUILDER AS builder-ui
 
 WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .
+#Install Yarn
+RUN if [[ -d /cachi2/output/deps/npm/ ]]; then \
+      npm install -g /cachi2/output/deps/npm/yarnpkg-cli-dist-4.6.0.tgz; \
+      YARN_ENABLE_NETWORK=0; \
+    else \
+      npm install -g corepack; \
+      corepack enable ;\
+      corepack prepare yarn@4.6.0 --activate;  \
+    fi
 
-RUN ls -l /cachi2/output/deps/npm
-
-RUN npm install -g /cachi2/output/deps/npm/yarnpkg-cli-dist-4.12.0.tgz
 
 # Install dependencies & build
-RUN yarn config --why pkg || true
-RUN yarn install
-RUN yarn build
+USER root
+RUN yarn install --immutable  && \
+    yarn build
 
 FROM $RUNTIME
 ARG VERSION=console-plugin-next

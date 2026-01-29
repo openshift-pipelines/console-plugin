@@ -3,5 +3,5 @@
   "version": "1.0.0",
   "description": "Konflux image containing rebuilds for tooling to assist in building with yarn",
   "dependencies": {
-    "@yarnpkg/cli-dist": "4.12.0"}
+    "@yarnpkg/cli-dist": "4.6.0"}
 }

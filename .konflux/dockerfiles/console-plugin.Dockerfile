@@ -1,4 +1,4 @@
-ARG BUILDER=registry.redhat.io/ubi9/nodejs-20@sha256:938970e0012ddc784adda181ede5bc00a4dfda5e259ee4a57f67973720a565d1
+ARG BUILDER=registry.redhat.io/ubi9/nodejs-20@sha256:5a87f3bb059628160dcd3a5e82b5905c1e6b21e9949d2f8939b441cc5cad7f96
 ARG RUNTIME=registry.redhat.io/ubi9/nginx-124@sha256:aa73fdb10af2bf24611ba714a412c2e65cec88a00eee628a0f2a75e564ec18f2
 ARG YARN_PKG
 

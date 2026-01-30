@@ -10,12 +10,12 @@ COPY . .
 RUN ls -l && \
     ls -l /cachi2/output && \
     ls -l /cachi2/output/deps && \
-    ls -l /cachi2/output/deps/npm && \
+    ls -l /cachi2/output/deps/npm
 
 RUN npm install -g /cachi2/output/deps/npm/"$YARN_PKG"
 
 # Install dependencies & build
-RUN yarn install --immutable && \
+RUN CYPRESS_INSTALL_BINARY=0 yarn install --immutable && \
     yarn build
 
 FROM $RUNTIME

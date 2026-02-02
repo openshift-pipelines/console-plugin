@@ -7,6 +7,7 @@ integration-tests/gui_test_screenshots
 integration-tests/videos
 integration-tests/screenshots
 yarn-error.log
+.yarn/install-state.gz
 .DS_Store
 *.pem
 integration-tests/cypress-a11y-report.json

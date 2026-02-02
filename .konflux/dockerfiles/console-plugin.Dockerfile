@@ -1,28 +1,23 @@
 ARG BUILDER=registry.redhat.io/ubi9/nodejs-20@sha256:938970e0012ddc784adda181ede5bc00a4dfda5e259ee4a57f67973720a565d1
 ARG RUNTIME=registry.redhat.io/ubi9/nginx-124@sha256:aa73fdb10af2bf24611ba714a412c2e65cec88a00eee628a0f2a75e564ec18f2
+ARG YARN_PKG
 
 FROM $BUILDER AS builder-ui
 
+USER 0
+
 WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .
-#Install Yarn
-RUN if [[ -d /cachi2/output/deps/npm/ ]]; then \
-      npm install -g /cachi2/output/deps/npm/yarnpkg-cli-dist-4.6.0.tgz; \
-      YARN_ENABLE_NETWORK=0; \
-    else \
-      npm install -g corepack; \
-      corepack enable ;\
-      corepack prepare yarn@4.6.0 --activate;  \
-    fi
 
+
+RUN npm install -g /tmp/output/deps/npm/yarnpkg-cli-dist-4.12.0.tgz
 
 # Install dependencies & build
-USER root
 RUN CYPRESS_INSTALL_BINARY=0 yarn install --immutable && \
     yarn build
 
 FROM $RUNTIME
-ARG VERSION=console-plugin-next
+ARG VERSION=console-plugin-main
 
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/dist /usr/share/nginx/html
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/nginx.conf /etc/nginx/nginx.conf

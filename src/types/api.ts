@@ -22,12 +22,13 @@ export interface paths {
       };
     };
   };
+
   '/v1alpha2/parents/{parent}/results/{result_uid}/records/{record_uid}': {
     /** Get a record given uid */
     get: operations['get_record_by_uid'];
     /** Create record with given uid */
     post: operations['create_record_by_uid'];
-    /** Delete record given the uid */
+    /** Delete record given uid */
     delete: operations['delete_record_by_uid'];
     /** Update a record given the uid */
     patch: {

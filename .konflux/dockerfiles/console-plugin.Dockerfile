@@ -18,7 +18,7 @@ RUN if [[ -d /cachi2/output/deps/npm/ ]]; then \
 
 # Install dependencies & build
 USER root
-RUN yarn install --immutable  && \
+RUN CYPRESS_INSTALL_BINARY=0 yarn install --immutable && \
     yarn build
 
 FROM $RUNTIME

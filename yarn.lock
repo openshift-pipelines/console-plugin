@@ -14596,6 +14596,7 @@ __metadata:
     ts-node: "npm:^10.9.1"
     typescript: "npm:^4.7.4"
     url: "npm:^0.11.4"
+    webpack: "npm:5.94.0"
     webpack-cli: "npm:^5.1.4"
     webpack-dev-server: "npm:^5.2.0"
     yup: "npm:1.6.1"

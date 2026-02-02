@@ -21,7 +21,7 @@ if [ "$SUPPORT_MULTI_ARCH" = "true" ]; then
   # however in this project, the code will be executed on a browser,
   # hence assuming no impact on this approach
   corepack enable && corepack prepare yarn@4.6.0 --activate
-  yarn install
+  yarn install --immutable
   yarn build
 
   docker buildx build --push \

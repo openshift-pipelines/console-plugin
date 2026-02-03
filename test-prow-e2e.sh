@@ -2,7 +2,11 @@
 
 set -exuo pipefail
 
-# Enable Corepack for Yarn 4
+# Set Cypress cache to user-writable location as user inside container may not have write access
+export CYPRESS_CACHE_FOLDER="${HOME}/.cache/Cypress"
+
+# Install and enable Corepack for Yarn 4
+npm install -g corepack 2>/dev/null || true
 corepack enable && corepack prepare yarn@4.6.0 --activate
 
 ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
@@ -34,6 +38,9 @@ export BRIDGE_BASE_ADDRESS
 if [ ! -d node_modules ]; then
   yarn install
 fi
+
+# Ensure Cypress binary is installed
+yarn exec cypress install
 
 while getopts s:h:l:n: flag
 do

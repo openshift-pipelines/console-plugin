@@ -1,2 +1,4 @@
-build_root:
-  from_repository: true
+build_root_image:
+  name: nodejs-20
+  namespace: openshift
+  tag: latest

@@ -2,6 +2,9 @@
 
 set -exuo pipefail
 
+# Enable Corepack for Yarn 4
+corepack enable && corepack prepare yarn@4.6.0 --activate
+
 ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
 SCREENSHOTS_DIR=gui_test_screenshots
 INSTALLER_DIR=${INSTALLER_DIR:=${ARTIFACT_DIR}/installer}

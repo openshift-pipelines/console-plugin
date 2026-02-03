@@ -6,6 +6,9 @@ set -euo pipefail
 OPENSHIFT_CI=${OPENSHIFT_CI:=false}
 ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
 
+# Enable Corepack for Yarn 4
+corepack enable && corepack prepare yarn@4.6.0 --activate
+
 if [ ! -d node_modules ]; then
   yarn install
 fi

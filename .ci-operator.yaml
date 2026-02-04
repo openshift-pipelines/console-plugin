@@ -1,4 +1,4 @@
 build_root_image:
-  name: nodejs
+  name: nodejs-20
   namespace: openshift
-  tag: 20-ubi9
+  tag: latest

@@ -40,7 +40,6 @@ const ApprovalRow: React.FC<
     spec: { description, numberOfApprovalsRequired },
     status: { approvers, approvalsReceived },
   } = obj;
-
   const translatedApproversCount = t('{{assignees}} Assigned', {
     assignees: approvers?.length || 0,
   });

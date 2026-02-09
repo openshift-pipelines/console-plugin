@@ -1,5 +1,5 @@
-ARG BUILDER=registry.redhat.io/ubi9/nodejs-20@sha256:f91e70850145174b6257c4536d2cdb8b0d6796e4220e022e1958b533d47db36d
-ARG RUNTIME=registry.redhat.io/ubi9/nginx-124@sha256:cd49f0b20c71ade4babf4212869f850645d9f151591fe031d48739d213edd7d4 
+ARG BUILDER=registry.redhat.io/ubi9/nodejs-20@sha256:b45e1ba00ca4bda7575f3ef2a5000ea679e64b9892daa1d8ec850ae38f1d9259
+ARG RUNTIME=registry.redhat.io/ubi9/nginx-124@sha256:b9c2c8657761ea521f49ade5b330e5f81ac03372a093588f142de736e13336af 
 
 FROM $BUILDER AS builder-ui
 
@@ -51,4 +51,5 @@ LABEL \
       description="Red Hat OpenShift Pipelines Console Plugin" \
       io.k8s.display-name="Red Hat OpenShift Pipelines Console Plugin" \
       io.k8s.description="Red Hat OpenShift Pipelines Console Plugin" \
-      io.openshift.tags="pipelines,tekton,openshift"
+      io.openshift.tags="pipelines,tekton,openshift" \
+      cpe="cpe:/a:redhat:openshift_pipelines:1.21::el9"

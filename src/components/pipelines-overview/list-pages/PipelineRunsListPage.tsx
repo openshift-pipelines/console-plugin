@@ -183,7 +183,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
                 />
               </GridItem>
               <GridItem span={3}>
-                <ToggleGroup className="pipeline-overview__listpage__button">
+                <ToggleGroup className="pf-v6-u-float-inline-end">
                   <ToggleGroupItem
                     text={t('Per Pipeline')}
                     buttonId="pipelineButton"

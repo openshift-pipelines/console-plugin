@@ -238,14 +238,14 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
           'pipeline-overview__number-of-plr-card': !pipelineRunsChartError,
           'card-border': bordered,
         })}
+        style={{ height: '220px', overflow: 'hidden' }}
       >
-        <CardTitle className="pipeline-overview__number-of-plr-card__title">
+        <CardTitle className="pf-v6-u-pb-0">
           <span>{t('Number of PipelineRuns')}</span>
         </CardTitle>
         <CardBody
           className={classNames({
-            'pipeline-overview__number-of-plr-card__body':
-              !pipelineRunsChartError,
+            'pf-v6-u-p-0': !pipelineRunsChartError,
           })}
         >
           {pipelineRunsChartError ? (
@@ -273,7 +273,8 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
                   padding={{
                     top: 10,
                     bottom: 55,
-                    left: 50,
+                    left: 40,
+                    right: 10,
                   }}
                   themeColor={ChartThemeColor.blue}
                 >
@@ -289,7 +290,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
                   </ChartGroup>
                 </Chart>
               ) : (
-                <div className="pipeline-overview__number-of-plr-card__loading pf-v6-u-h-100">
+                <div className="pipeline-overview__number-of-plr-card__loading pf-v6-u-pl-md pf-v6-u-h-100">
                   <LoadingInline />
                 </div>
               )}

@@ -12,11 +12,15 @@ import LogSnippetBlock from './LogSnippetBlock';
 type RunDetailErrorLogProps = {
   logDetails: CombinedErrorDetails;
   namespace: string;
+  isHub?: boolean;
+  pipelineRunName?: string;
 };
 
 const RunDetailsErrorLog: React.FC<RunDetailErrorLogProps> = ({
   logDetails,
   namespace,
+  isHub,
+  pipelineRunName,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   if (!logDetails) {
@@ -34,7 +38,12 @@ const RunDetailsErrorLog: React.FC<RunDetailErrorLogProps> = ({
       <DescriptionListGroup>
         <DescriptionListTerm>{t('Log snippet')}</DescriptionListTerm>
         <DescriptionListDescription>
-          <LogSnippetBlock logDetails={logDetails} namespace={namespace}>
+          <LogSnippetBlock
+            logDetails={logDetails}
+            namespace={namespace}
+            isHub={isHub}
+            pipelineRunName={pipelineRunName}
+          >
             {(logSnippet: string) => <pre className="co-pre">{logSnippet}</pre>}
           </LogSnippetBlock>
         </DescriptionListDescription>

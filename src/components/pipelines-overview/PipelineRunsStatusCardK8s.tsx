@@ -2,6 +2,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { DomainPropType, DomainTuple } from 'victory-core';
+
 import {
   Chart,
   ChartAxis,
@@ -34,7 +35,7 @@ import {
   parsePrometheusDuration,
   monthYear,
 } from './dateTime';
-import './PipelinesOverview.scss';
+//import './PipelinesOverview.scss';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { PrometheusResponse } from '@openshift-console/dynamic-plugin-sdk';
@@ -554,7 +555,7 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
             </Popover>
           </span>
         </CardTitle>
-        <CardBody className="pipeline-overview__pipelinerun-status-card__title">
+        <CardBody className="pf-v6-u-pt-0 pf-v6-u-pb-sm">
           {pipelineRunsStatusError ? (
             <Alert
               variant="danger"
@@ -563,12 +564,12 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
               className="pf-v6-u-mb-md"
             />
           ) : (
-            <Grid>
+            <Grid className="pf-v6-u-align-items-center">
               <GridItem xl2={4} xl={12} lg={12} md={12} sm={12}>
                 {loadingRunSuccessRatioData ? (
                   <LoadingInline />
                 ) : (
-                  <div className="pipeline-overview__pipelinerun-status-card__donut-chart-div">
+                  <div>
                     <ChartDonut
                       constrainToVisibleArea={true}
                       data={donutDataK8s}
@@ -622,7 +623,7 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
                 )}
               </GridItem>
               <GridItem xl2={8} xl={12} lg={12} md={12} sm={12}>
-                <div className="pipeline-overview__pipelinerun-status-card__bar-chart-div">
+                <div className="pf-v6-u-display-flex pf-v6-u-align-items-flex-end pf-v6-u-h-100">
                   {loadingTotalPipelineRunsData ? (
                     <LoadingInline />
                   ) : (

@@ -256,11 +256,11 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
     <>
       <Card
         className={classNames({
-          'pipeline-overview__number-of-plr-card': !pipelineRunsChartError,
+          'pf-v6-u-h-100': !pipelineRunsChartError,
           'card-border': bordered,
         })}
       >
-        <CardTitle className="pipeline-overview__number-of-plr-card__title">
+        <CardTitle className="pf-v6-u-pb-0">
           <span>{t('Number of PipelineRuns')}</span>
         </CardTitle>
         <CardBody
@@ -277,7 +277,7 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
               className="pf-v6-u-ml-lg"
             />
           ) : (
-            <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
+            <div>
               {loadingRunSuccessRatioData ? (
                 <LoadingInline />
               ) : (

@@ -13,7 +13,7 @@ RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
     yarn build
 
 FROM $RUNTIME
-ARG VERSION=console-plugin-1.15.3
+ARG VERSION=console-plugin-1.15.4
 
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/dist /usr/share/nginx/html
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/nginx.conf /etc/nginx/nginx.conf

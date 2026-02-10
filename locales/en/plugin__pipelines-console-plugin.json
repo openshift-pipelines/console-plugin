@@ -291,6 +291,7 @@
   "Missing resources": "Missing resources",
   "Missing workspaces": "Missing workspaces",
   "More info": "More info",
+  "Multicluster Pipeline Run": "Multicluster Pipeline Run",
   "Must define at least one task.": "Must define at least one task.",
   "Name": "Name",
   "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.": "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.",

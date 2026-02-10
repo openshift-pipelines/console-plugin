@@ -6,7 +6,7 @@ import {
   getGroupVersionKindForModel,
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
-import { ArchiveIcon } from '@patternfly/react-icons';
+import { ArchiveIcon, MulticlusterIcon } from '@patternfly/react-icons';
 import { ComputedStatus, PipelineRunKind, TaskRunKind } from '../../types';
 import { ResourceLinkWithIcon } from '../utils/resource-link';
 import { PipelineRunModel } from '../../models';
@@ -14,6 +14,7 @@ import { Tooltip } from '@patternfly/react-core';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
+  PIPELINE_RUN_MANAGED_BY_KUEUE_LABEL,
   RepoAnnotationFields,
   RepositoryAnnotations,
   RepositoryFields,
@@ -134,6 +135,11 @@ const PipelineRunRowTable = ({
                   <div className="opp-pipeline-run-list__results-indicator">
                     <ArchiveIcon />
                   </div>
+                </Tooltip>
+              ) : null}
+              {obj.spec?.managedBy === PIPELINE_RUN_MANAGED_BY_KUEUE_LABEL ? (
+                <Tooltip content={t('Multicluster Pipeline Run')}>
+                  <MulticlusterIcon className="opp-pipeline-run-list__results-indicator" />
                 </Tooltip>
               ) : null}
             </>

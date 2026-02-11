@@ -1,5 +1,5 @@
-ARG BUILDER=registry.redhat.io/ubi8/nodejs-18@sha256:1a109c7d4a268e897a22b87f505eef326864f5ff74d4e2b7f0706605c9c5aba5
-ARG RUNTIME=registry.redhat.io/ubi8/nginx-124@sha256:b02afddd2dd7d754bda1226fe3141f4b934f1e2fab3a1ed1ddc9bd476a8ee3e6
+ARG BUILDER=registry.redhat.io/ubi8/nodejs-20@sha256:2a71011f69e5cfc26c55d99e07d0b7ca7da25879338fdae7045cdb2ad19711da
+ARG RUNTIME=registry.redhat.io/ubi8/nginx-124@sha256:0c48ade8db59c4cf3be128bace64b23e132b587b2c3a7f53ad11380f14ad3b9b
 
 FROM $BUILDER AS builder-ui
 
@@ -14,11 +14,11 @@ RUN if [[ -d /cachi2/output/deps/npm/ ]]; then \
       exit 1; \
     fi
 
-
 # Install dependencies & build
 USER root
 RUN CYPRESS_INSTALL_BINARY=0 yarn install --immutable && \
     yarn build
+
 
 FROM $RUNTIME
 ARG VERSION=console-plugin-1.16.4

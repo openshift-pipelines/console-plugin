@@ -15,11 +15,11 @@ RUN if [[ -d /cachi2/output/deps/npm/ ]]; then \
       corepack prepare yarn@4.6.0 --activate;  \
     fi
 
-
 # Install dependencies & build
 USER root
 RUN CYPRESS_INSTALL_BINARY=0 yarn install --immutable && \
     yarn build
+
 
 FROM $RUNTIME
 ARG VERSION=console-plugin-1.18.1

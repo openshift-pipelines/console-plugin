@@ -284,6 +284,7 @@ const PipelineRunRowWithTaskRunsFetch: React.FC<PipelineRunRowWithTaskRunsProps>
       {
         cacheKey: `${obj.metadata.namespace}-${obj.metadata.name}`,
         pipelineRunFinished,
+        pipelineRunManagedBy: obj?.spec?.managedBy 
       },
     );
     InFlightStoreForTaskRunsForPLR[cacheKey] = false;

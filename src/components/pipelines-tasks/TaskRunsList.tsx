@@ -119,7 +119,8 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
   const sortColumnIndex = !namespace ? 6 : 5;
   const parentName = props?.obj?.metadata?.name;
   const parentUid = props?.obj?.metadata?.uid;
-  const plrStatus = pipelineRunFilterReducer(props?.obj as PipelineRunKind);
+  const pipelineRun = props?.obj as PipelineRunKind;
+  const plrStatus = pipelineRunFilterReducer(pipelineRun);
   const pipelineRunFinished =
     plrStatus !== ComputedStatus.Running &&
     plrStatus !== ComputedStatus.Pending &&
@@ -127,7 +128,10 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
   const [taskRuns, loaded, loadError, nextPageToken] = useTaskRuns(
     ns,
     parentName,
-    { pipelineRunUid: parentUid, pipelineRunFinished },
+    { pipelineRunUid: parentUid, 
+      pipelineRunFinished,
+      pipelineRunManagedBy: pipelineRun?.spec?.managedBy 
+    },
   );
   const [staticData, filteredData, onFilterChange] = useListPageFilter(
     taskRuns,

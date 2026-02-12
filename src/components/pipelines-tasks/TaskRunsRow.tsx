@@ -40,7 +40,7 @@ import {
 } from '../utils/common-utils';
 import { getModelReferenceFromTaskKind } from '../utils/pipeline-augment';
 import { pipelineRunDuration } from '../utils/pipeline-utils';
-import { useIsHubCluster } from '../hooks/useIsHubCluster';
+import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 
 const taskRunsReference = getReferenceForModel(TaskRunModel);
 const pipelineReference = getReferenceForModel(PipelineModel);
@@ -144,13 +144,13 @@ const TaskRunsRow: React.FC<RowProps<TaskRunKind>> = ({
   obj,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [isHub] = useIsHubCluster();
+  const {isResourceManagedByKueue} = useMultiClusterProxyService({ labels: obj?.metadata?.labels });
   return (
     <>
       <TableData activeColumnIDs={activeColumnIDs} id="name">
         <ResourceLinkWithIcon
           linkTo={
-            !isHub
+            !isResourceManagedByKueue
               ? true
               : taskRunFilterReducer(obj) == ComputedStatus.Succeeded ||
                 taskRunFilterReducer(obj) == ComputedStatus.Failed ||

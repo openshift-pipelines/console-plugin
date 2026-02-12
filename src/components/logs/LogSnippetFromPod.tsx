@@ -14,7 +14,7 @@ type LogSnippetFromPodProps = {
   podName: string;
   title: string;
   staticMessage?: string;
-  isHub?: boolean;
+  isResourceManagedByKueue?: boolean;
   pipelineRunName?: string;
 };
 
@@ -25,7 +25,7 @@ const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
   podName,
   title,
   staticMessage,
-  isHub,
+  isResourceManagedByKueue,
   pipelineRunName,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -37,7 +37,7 @@ const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
     const fetchLogs = async () => {
       try {
         let logContent: string;
-        if (isHub && pipelineRunName) {
+        if (isResourceManagedByKueue && pipelineRunName) {
           // Use multicluster API for hub clusters
           logContent = await fetchMultiClusterLogs(
             namespace,
@@ -68,7 +68,7 @@ const LogSnippetFromPod: React.FC<LogSnippetFromPodProps> = ({
       }
     };
     fetchLogs();
-  }, [containerName, namespace, podName, t, isHub, pipelineRunName]);
+  }, [containerName, namespace, podName, t, isResourceManagedByKueue, pipelineRunName]);
 
   if (logError) {
     return (

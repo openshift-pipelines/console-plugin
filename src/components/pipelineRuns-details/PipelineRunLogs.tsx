@@ -18,7 +18,7 @@ import {
 } from '../../types';
 import { TektonResourceLabel } from '../../consts';
 import { useTaskRuns } from '../hooks/useTaskRuns';
-import { useIsHubCluster } from '../hooks/useIsHubCluster';
+import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 import { ErrorDetailsWithStaticLog } from '../logs/log-snippet-types';
 import {
   getDownloadAllLogsCallback,
@@ -38,7 +38,7 @@ interface PipelineRunLogsProps {
   activeStep?: string;
   taskRuns: TaskRunKind[];
   isDevConsoleProxyAvailable?: boolean;
-  isHub?: boolean;
+  isResourceManagedByKueue?: boolean;
 }
 
 type PipelineRunLogsWithActiveTaskProps = {
@@ -99,7 +99,7 @@ const PipelineRunLogsComponent: React.FC<PipelineRunLogsProps> = ({
   activeStep,
   taskRuns: tRuns,
   isDevConsoleProxyAvailable,
-  isHub,
+  isResourceManagedByKueue,
 }) => {
   const { t } = useTranslation();
   const [activeItem, setActiveItem] = React.useState<string>(null);
@@ -143,7 +143,7 @@ const PipelineRunLogsComponent: React.FC<PipelineRunLogsProps> = ({
   const taskCount = taskRunNames.length;
   const downloadAllCallback =
     taskCount > 1
-      ? isHub
+      ? isResourceManagedByKueue
         ? getDownloadAllLogsCallbackMultiCluster(
             taskRunNames,
             tRuns,
@@ -249,7 +249,7 @@ const PipelineRunLogsComponent: React.FC<PipelineRunLogsProps> = ({
             onDownloadAll={downloadAllCallback}
             taskRun={activeTaskRun}
             activeStep={activeStep}
-            isHub={isHub}
+            isResourceManagedByKueue={isResourceManagedByKueue}
             pipelineRunName={obj.metadata?.name}
             pipelineRunFinished={pipelineRunFinished}
           />
@@ -308,8 +308,9 @@ export const PipelineRunLogsWithActiveTask: React.FC<
   const [taskRuns, taskRunsLoaded, , , pendingAdmission, proxyUnavailable] =
     useTaskRuns(obj?.metadata?.namespace, obj?.metadata?.name, {
       pipelineRunFinished,
+      pipelineRunManagedBy: obj?.spec?.managedBy
     });
-  const [isHub] = useIsHubCluster();
+  const { isResourceManagedByKueue } = useMultiClusterProxyService({ managedBy: obj?.spec?.managedBy });
 
   return (
     <>
@@ -335,7 +336,7 @@ export const PipelineRunLogsWithActiveTask: React.FC<
           activeTask={activeTask}
           activeStep={activeStep}
           taskRuns={taskRuns}
-          isHub={isHub}
+          isResourceManagedByKueue={isResourceManagedByKueue}
         />
       )}
     </>

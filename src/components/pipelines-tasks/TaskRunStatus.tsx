@@ -9,7 +9,7 @@ import { TaskRunModel } from '../../models';
 import StatusPopoverContent from '../status/StatusPopoverContent';
 import { getTRLogSnippet } from './taskRunLogSnippet';
 import { resourcePathFromModel } from '../utils/utils';
-import { useIsHubCluster } from '../hooks/useIsHubCluster';
+import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 
 type TaskRunStatusProps = {
   status: string;
@@ -17,7 +17,7 @@ type TaskRunStatusProps = {
 };
 const TaskRunStatus: React.FC<TaskRunStatusProps> = ({ status, taskRun }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [isHub] = useIsHubCluster();
+  const {isResourceManagedByKueue} = useMultiClusterProxyService({ labels: taskRun?.metadata?.labels });
   const pipelineRunName =
     taskRun.metadata?.labels?.[TektonResourceLabel.pipelinerun];
 
@@ -40,7 +40,7 @@ const TaskRunStatus: React.FC<TaskRunStatusProps> = ({ status, taskRun }) => {
             {t('View logs')}
           </Link>
         }
-        isHub={isHub}
+        isResourceManagedByKueue={isResourceManagedByKueue}
         pipelineRunName={pipelineRunName}
       />
     </PipelineResourceStatus>

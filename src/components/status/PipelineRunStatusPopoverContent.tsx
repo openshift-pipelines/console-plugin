@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom-v5-compat';
 import { PipelineRunModel } from '../../models';
 import { ComputedStatus, PipelineRunKind } from '../../types';
 import { useTaskRuns } from '../hooks/useTaskRuns';
-import { useIsHubCluster } from '../hooks/useIsHubCluster';
+import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 import LogSnippetBlock from '../logs/LogSnippetBlock';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import { LoadingInline } from '../Loading';
@@ -19,7 +19,7 @@ const PipelineRunStatusPopoverContent: React.FC<StatusPopoverContentProps> = ({
   pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [isHub] = useIsHubCluster();
+  const { isResourceManagedByKueue } = useMultiClusterProxyService({ managedBy: pipelineRun.spec.managedBy });
   const plrStatus = pipelineRunStatus(pipelineRun);
   const pipelineRunFinished =
     plrStatus !== ComputedStatus.Running &&
@@ -28,7 +28,10 @@ const PipelineRunStatusPopoverContent: React.FC<StatusPopoverContentProps> = ({
   const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
     pipelineRun.metadata.namespace,
     pipelineRun.metadata.name,
-    { pipelineRunFinished },
+    { 
+      pipelineRunFinished,
+      pipelineRunManagedBy: pipelineRun?.spec?.managedBy
+    },
   );
   if (!taskRunsLoaded) {
     return (
@@ -45,7 +48,7 @@ const PipelineRunStatusPopoverContent: React.FC<StatusPopoverContentProps> = ({
       <LogSnippetBlock
         logDetails={logDetails}
         namespace={pipelineRun.metadata.namespace}
-        isHub={isHub}
+        isResourceManagedByKueue={isResourceManagedByKueue}
         pipelineRunName={pipelineRun.metadata.name}
       >
         {(logSnippet: string) => (

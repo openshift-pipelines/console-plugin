@@ -71,7 +71,10 @@ const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
     plrStatus !== ComputedStatus.Running &&
     plrStatus !== ComputedStatus.Pending &&
     plrStatus !== ComputedStatus.Cancelling;
-  const [taskRuns] = useTaskRuns(namespace, name, { pipelineRunFinished });
+  const [taskRuns] = useTaskRuns(namespace, name, { 
+    pipelineRunFinished, 
+    pipelineRunManagedBy: pipelineRun?.spec?.managedBy 
+  });
   const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, name);
   const currentUser = useGetActiveUser();
 

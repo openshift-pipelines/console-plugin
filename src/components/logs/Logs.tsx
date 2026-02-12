@@ -23,7 +23,7 @@ type LogsProps = {
   activeStep?: string;
   taskName?: string;
   stillFetching?: boolean;
-  isHub?: boolean;
+  isResourceManagedByKueue?: boolean;
   pipelineRunName?: string;
   pipelineRunFinished?: boolean;
 };
@@ -66,7 +66,7 @@ const Logs: React.FC<LogsProps> = ({
   containers,
   setCurrentLogsGetter,
   activeStep,
-  isHub,
+  isResourceManagedByKueue,
   pipelineRunName,
   pipelineRunFinished,
 }) => {
@@ -279,12 +279,12 @@ const Logs: React.FC<LogsProps> = ({
       // Use WebSocket only for actively running containers
       const shouldUseHttp =
         resourceStatus === LOG_SOURCE_TERMINATED ||
-        (isHub && pipelineRunFinished);
+        (isResourceManagedByKueue && pipelineRunFinished);
 
       if (shouldUseHttp) {
         // Fetch complete logs via HTTP
         const logsUrl =
-          isHub && pipelineRunName
+          isResourceManagedByKueue && pipelineRunName
             ? getMultiClusterLogsUrl(
                 resNamespace,
                 pipelineRunName,
@@ -304,7 +304,7 @@ const Logs: React.FC<LogsProps> = ({
           });
       } else {
         // Stream logs via WebSocket for running containers
-        if (isHub && pipelineRunName) {
+        if (isResourceManagedByKueue && pipelineRunName) {
           // Use multi-cluster WebSocket for hub clusters
           const mcWsPath = getMultiClusterLogsStreamPath(
             resNamespace,
@@ -369,7 +369,7 @@ const Logs: React.FC<LogsProps> = ({
     resNamespace,
     resource?.status?.containerStatuses,
     activeContainers,
-    isHub,
+    isResourceManagedByKueue,
     pipelineRunName,
     pipelineRunFinished,
   ]);

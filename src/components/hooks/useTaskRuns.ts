@@ -1,10 +1,10 @@
 import {
   K8sGroupVersionKind,
-  K8sResourceCommon,
+  K8sResourceKind,
   Selector,
   getGroupVersionKindForModel,
   useFlag,
-  useK8sWatchResource,
+  useK8sWatchResource
 } from '@openshift-console/dynamic-plugin-sdk';
 import { differenceBy, uniqBy } from 'lodash-es';
 import * as React from 'react';
@@ -22,7 +22,7 @@ import {
 import { ApprovalTaskKind, PipelineRunKind, TaskRunKind } from '../../types';
 import { useDeepCompareMemoize } from '../utils/common-utils';
 import { EQ } from '../utils/tekton-results';
-import { useIsHubCluster } from './useIsHubCluster';
+import { useMultiClusterProxyService } from './useMultiClusterProxyService';
 import { useMultiClusterTaskRuns } from './useMultiClusterTaskRuns';
 import {
   GetNextPage,
@@ -69,6 +69,7 @@ export type UseTaskRunsOptions = {
   cacheKey?: string;
   pipelineRunUid?: string;
   pipelineRunFinished?: boolean;
+  pipelineRunManagedBy?: string;
 };
 
 export const useTaskRuns = (
@@ -76,7 +77,7 @@ export const useTaskRuns = (
   pipelineRunName?: string,
   options?: UseTaskRunsOptions,
 ): [TaskRunKind[], boolean, unknown, GetNextPage, boolean, boolean] => {
-  const { taskName, cacheKey, pipelineRunUid, pipelineRunFinished } =
+  const { taskName, cacheKey, pipelineRunUid, pipelineRunFinished, pipelineRunManagedBy } =
     options || {};
   const selector: Selector = React.useMemo(() => {
     if (pipelineRunName && pipelineRunUid) {
@@ -111,6 +112,7 @@ export const useTaskRuns = (
     },
     cacheKey,
     pipelineRunFinished,
+    pipelineRunManagedBy,
   );
 
   const sortedTaskRuns = React.useMemo(
@@ -158,6 +160,7 @@ export const useTaskRuns2 = (
   },
   cacheKey?: string,
   pipelineRunFinished?: boolean,
+  pipelineRunManagedBy?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage, boolean, boolean] =>
   useRuns<TaskRunKind>(
     getGroupVersionKindForModel(TaskRunModel),
@@ -165,6 +168,7 @@ export const useTaskRuns2 = (
     options,
     cacheKey,
     pipelineRunFinished,
+    pipelineRunManagedBy,
   );
 
 export const useApprovalTasks = (
@@ -235,7 +239,7 @@ export const usePipelineRun = (
   );
 };
 
-export const useRuns = <Kind extends K8sResourceCommon>(
+export const useRuns = <Kind extends K8sResourceKind>(
   groupVersionKind: K8sGroupVersionKind,
   namespace: string,
   options?: {
@@ -245,6 +249,7 @@ export const useRuns = <Kind extends K8sResourceCommon>(
   },
   cacheKey?: string,
   pipelineRunFinished?: boolean,
+  pipelineRunManagedBy?: string,
 ): [Kind[], boolean, unknown, GetNextPage, boolean, boolean] => {
   const etcdRunsRef = React.useRef<Kind[]>([]);
   const optionsMemo = useDeepCompareMemoize(options);
@@ -257,7 +262,7 @@ export const useRuns = <Kind extends K8sResourceCommon>(
     getGroupVersionKindForModel(PipelineRunModel)?.kind;
 
   // Hub cluster detection
-  const [isHub] = useIsHubCluster();
+  const { isResourceManagedByKueue } = useMultiClusterProxyService({ managedBy: pipelineRunManagedBy });
   const isTaskRunQuery =
     groupVersionKind?.kind === getGroupVersionKindForModel(TaskRunModel)?.kind;
 
@@ -266,7 +271,7 @@ export const useRuns = <Kind extends K8sResourceCommon>(
     optionsMemo?.selector?.matchLabels?.[TektonResourceLabel.pipelinerun];
 
   // Use multi-cluster hook for hub clusters fetching TaskRuns
-  const shouldUseMultiCluster = isHub && isTaskRunQuery && !!pipelineRunName;
+  const shouldUseMultiCluster = isResourceManagedByKueue && isTaskRunQuery && !!pipelineRunName;
   const [
     mcTaskRuns,
     mcLoaded,
@@ -276,7 +281,7 @@ export const useRuns = <Kind extends K8sResourceCommon>(
   ] = useMultiClusterTaskRuns<Kind>(
     shouldUseMultiCluster ? namespace : null,
     shouldUseMultiCluster ? pipelineRunName : null,
-    isHub,
+    isResourceManagedByKueue,
     pipelineRunFinished,
   );
 
@@ -395,10 +400,10 @@ export const useRuns = <Kind extends K8sResourceCommon>(
   const trGetNextPage = isPipelineRun ? trPRGetNextPage : trTRGetNextPage;
 
   return React.useMemo(() => {
-    // For hub clusters after PLR finished, prefer TR resources (have TR annotations) and dedupe PLR by name since UIDs differ between hub and spoke clusters; for other cases dedupe by UID
+    // dedupe PLR by name since UIDs differ between hub and spoke clusters; for other cases(TR) dedupe by UID
     const rResources =
       runs && trResources
-        ? isHub && !isTaskRunQuery
+        ? !isTaskRunQuery
           ? uniqBy([...runs, ...trResources], (r) => r.metadata.name)
           : uniqBy([...runs, ...trResources], (r) => r.metadata.uid)
         : runs || trResources;
@@ -453,7 +458,7 @@ export const useRuns = <Kind extends K8sResourceCommon>(
     shouldUseMultiCluster,
     mcPendingAdmission,
     mcProxyUnavailable,
-    isHub,
+    isResourceManagedByKueue,
     pipelineRunFinished,
   ]);
 };

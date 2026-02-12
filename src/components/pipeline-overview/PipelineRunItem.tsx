@@ -3,7 +3,7 @@ import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { useTaskRuns } from '../hooks/useTaskRuns';
-import { useIsHubCluster } from '../hooks/useIsHubCluster';
+import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 import { resourcePath } from '../utils/resource-link';
 import { PipelineRunModel } from '../../models';
 import { ComputedStatus, PipelineRunKind } from '../../types';
@@ -21,7 +21,7 @@ type PipelineRunItemProps = {
 
 const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [isHub] = useIsHubCluster();
+  const { isResourceManagedByKueue } = useMultiClusterProxyService({ managedBy: pipelineRun?.spec?.managedBy });
   const {
     metadata: { name, namespace, creationTimestamp },
     status,
@@ -34,7 +34,10 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
   const [taskRuns] = useTaskRuns(
     pipelineRun?.metadata?.namespace,
     pipelineRun?.metadata?.name,
-    { pipelineRunFinished },
+    { 
+      pipelineRunFinished, 
+      pipelineRunManagedBy: pipelineRun?.spec?.managedBy 
+    },
   );
   const path = resourcePath(PipelineRunModel, name, namespace);
   const lastUpdated = status
@@ -68,7 +71,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
             <LogSnippetBlock
               logDetails={logDetails}
               namespace={namespace}
-              isHub={isHub}
+              isResourceManagedByKueue={isResourceManagedByKueue}
               pipelineRunName={name}
             >
               {(logSnippet: string) => (

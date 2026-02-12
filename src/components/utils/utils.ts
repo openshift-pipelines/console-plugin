@@ -2,6 +2,8 @@ import { K8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import _ from 'lodash';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
+  KUEUE_LABEL_PREFIX,
+  PIPELINE_RUN_KUEUE_ORIGIN_LABEL,
   preferredNameAnnotation,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
   StartedByAnnotation,
@@ -214,8 +216,8 @@ export const getPipelineRunData = (
           },
         ),
         (_value, key) =>
-          latestRun?.metadata?.labels?.['kueue.x-k8s.io/multikueue-origin'] &&
-          key.startsWith('kueue.x-k8s.io/'),
+          latestRun?.metadata?.labels?.[PIPELINE_RUN_KUEUE_ORIGIN_LABEL] &&
+          key.startsWith(KUEUE_LABEL_PREFIX),
       ),
     },
     spec: {

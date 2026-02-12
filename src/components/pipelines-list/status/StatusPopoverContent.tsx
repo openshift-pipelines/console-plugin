@@ -7,14 +7,14 @@ type StatusPopoverContentProps = {
   link?: React.ReactNode;
   namespace: string;
   logDetails: CombinedErrorDetails;
-  isHub?: boolean;
+  isResourceManagedByKueue?: boolean;
   pipelineRunName?: string;
 };
 const StatusPopoverContent: React.FC<StatusPopoverContentProps> = ({
   namespace,
   logDetails,
   link = null,
-  isHub,
+  isResourceManagedByKueue,
   pipelineRunName,
 }) => {
   return (
@@ -22,7 +22,7 @@ const StatusPopoverContent: React.FC<StatusPopoverContentProps> = ({
       <LogSnippetBlock
         logDetails={logDetails}
         namespace={namespace}
-        isHub={isHub}
+        isResourceManagedByKueue={isResourceManagedByKueue}
         pipelineRunName={pipelineRunName}
       >
         {(logSnippet: string) => (

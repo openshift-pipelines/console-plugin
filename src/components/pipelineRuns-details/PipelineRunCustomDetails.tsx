@@ -31,7 +31,7 @@ import { convertBackingPipelineToPipelineResourceRefProps } from './utils';
 import RepositoryLinkList from './RepositoryLinkList';
 import PipelineRunVulnerabilities from '../pipelines-list/status/PipelineRunVulnerabilities';
 import { useTaskRuns } from '../hooks/useTaskRuns';
-import { useIsHubCluster } from '../hooks/useIsHubCluster';
+import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 import TriggeredBySection from './TriggeredBySection';
 import PipelineResourceRef from '../triggers-details/PipelineResourceRef';
 import WorkspaceResourceLinkList from '../workspaces/WorkspaceResourceLinkList';
@@ -44,7 +44,7 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({
   pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [isHub] = useIsHubCluster();
+  const { isResourceManagedByKueue } = useMultiClusterProxyService({ managedBy: pipelineRun?.spec?.managedBy });
   const plrStatus = pipelineRunFilterReducer(pipelineRun);
   const pipelineRunFinished =
     plrStatus !== ComputedStatus.Running &&
@@ -53,7 +53,10 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({
   const [taskRuns, taskRunsLoaded] = useTaskRuns(
     pipelineRun?.metadata?.namespace,
     pipelineRun?.metadata?.name,
-    { pipelineRunFinished },
+    { 
+      pipelineRunFinished,
+      pipelineRunManagedBy: pipelineRun?.spec?.managedBy
+    },
   );
 
   const sbomTaskRun = taskRunsLoaded ? getSbomTaskRun(taskRuns) : null;
@@ -76,7 +79,7 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({
           <RunDetailsErrorLog
             logDetails={getPLRLogSnippet(pipelineRun, taskRuns)}
             namespace={pipelineRun.metadata.namespace}
-            isHub={isHub}
+            isResourceManagedByKueue={isResourceManagedByKueue}
             pipelineRunName={pipelineRun.metadata.name}
           />
         )}

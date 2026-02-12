@@ -26,6 +26,7 @@ const PipelineRunVisualization: React.FC<PipelineRunVisualizationProps> = ({
   const [taskRuns, taskRunsLoaded, , , pendingAdmission, proxyUnavailable] =
     useTaskRuns(pipelineRun?.metadata?.namespace, pipelineRun?.metadata?.name, {
       pipelineRunFinished,
+      pipelineRunManagedBy: pipelineRun?.spec?.managedBy 
     });
   const pipeline: PipelineKind = usePipelineFromPipelineRun(pipelineRun);
   if (!pipeline) {

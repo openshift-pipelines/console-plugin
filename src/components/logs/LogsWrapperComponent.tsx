@@ -20,7 +20,6 @@ import { LoadingInline } from '../Loading';
 import { TektonResourceLabel } from '../../consts';
 import { getMultiClusterPods } from '../utils/multi-cluster-api';
 import { usePoll } from '../pipelines-metrics/poll-hook';
-//import { useTRTaskRunLog } from '../hooks/useTektonResult';
 
 type LogsWrapperComponentProps = {
   taskRun: TaskRunKind;
@@ -28,7 +27,7 @@ type LogsWrapperComponentProps = {
   onDownloadAll?: () => Promise<Error | null>;
   resource: WatchK8sResource;
   activeStep?: string;
-  isHub?: boolean;
+  isResourceManagedByKueue?: boolean;
   pipelineRunName?: string;
   pipelineRunFinished?: boolean;
 };
@@ -41,7 +40,7 @@ const LogsWrapperComponent: React.FC<
   onDownloadAll,
   downloadAllLabel = 'Download all',
   activeStep,
-  isHub,
+  isResourceManagedByKueue,
   pipelineRunName,
   pipelineRunFinished,
   ...props
@@ -49,13 +48,8 @@ const LogsWrapperComponent: React.FC<
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const resourceRef = React.useRef(null);
 
-  const k8sResource = isHub ? null : resource;
+  const k8sResource = isResourceManagedByKueue ? null : resource;
   const [obj, loaded, error] = useK8sWatchResource<PodKind>(k8sResource);
-  /* const [trResults, trLoaded, trError] = useTRTaskRunLog(
-    taskRun.metadata.namespace,
-    taskRun.metadata.name,
-    taskRun.metadata?.annotations?.['results.tekton.dev/record'],
-  ); */
 
   // Multi-cluster Pod state for hub clusters
   const [mcPod, setMcPod] = React.useState<PodKind | null>(null);
@@ -64,7 +58,7 @@ const LogsWrapperComponent: React.FC<
 
   /* Fetch Pod from multi-cluster API for hub clusters */
   const fetchMcPod = React.useCallback(async () => {
-    if (!isHub || !pipelineRunName || !resource?.name || !resource?.namespace) {
+    if (!isResourceManagedByKueue || !pipelineRunName || !resource?.name || !resource?.namespace) {
       return;
     }
     try {
@@ -85,11 +79,11 @@ const LogsWrapperComponent: React.FC<
       setMcError(e);
       setMcLoaded(true);
     }
-  }, [isHub, pipelineRunName, resource?.name, resource?.namespace]);
+  }, [isResourceManagedByKueue, pipelineRunName, resource?.name, resource?.namespace]);
 
   // Poll every 3 seconds while PipelineRun is running, null to disable
   const pollDelay =
-    isHub && !pipelineRunFinished && pipelineRunName ? 3000 : null;
+    isResourceManagedByKueue && !pipelineRunFinished && pipelineRunName ? 3000 : null;
   usePoll(fetchMcPod, pollDelay, resource?.name, resource?.namespace);
 
   const [isFullscreen, fullscreenRef, fullscreenToggle] =
@@ -101,13 +95,9 @@ const LogsWrapperComponent: React.FC<
     taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] ||
     taskRun?.spec.taskRef?.name ||
     '-';
-  const effectiveLoaded = isHub ? mcLoaded : loaded;
-  const effectiveError = isHub ? mcError : error;
-  const effectiveObj = isHub ? mcPod : obj;
-
-  // For hub clusters use TR logs instead of multi-stream when TR are available
-  /* const useTRLogs =
-    isHub && trLoaded && trResults && !trError && pipelineRunFinished; */
+  const effectiveLoaded = isResourceManagedByKueue ? mcLoaded : loaded;
+  const effectiveError = isResourceManagedByKueue ? mcError : error;
+  const effectiveObj = isResourceManagedByKueue ? mcPod : obj;
 
   if (
     effectiveLoaded &&
@@ -201,7 +191,7 @@ const LogsWrapperComponent: React.FC<
             resource={resourceRef.current}
             setCurrentLogsGetter={setLogGetter}
             activeStep={activeStep}
-            isHub={isHub}
+            isResourceManagedByKueue={isResourceManagedByKueue}
             pipelineRunName={pipelineRunName}
             pipelineRunFinished={pipelineRunFinished}
           />

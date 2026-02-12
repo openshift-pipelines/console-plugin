@@ -28,13 +28,13 @@ type UseMultiClusterTaskRunsResult<Kind> = [
  *
  * @param namespace - The namespace to fetch TaskRuns from
  * @param pipelineRunName - The PipelineRun name to filter TaskRuns
- * @param isHub - Whether this is a hub cluster
+ * @param isResourceManagedByKueue - Whether this is a hub cluster
  * @param pipelineRunFinished - Whether the PipelineRun has finished (stops polling)
  */
 export const useMultiClusterTaskRuns = <Kind extends K8sResourceCommon>(
   namespace: string | null,
   pipelineRunName: string | null,
-  isHub: boolean,
+  isResourceManagedByKueue: boolean,
   pipelineRunFinished?: boolean,
 ): UseMultiClusterTaskRunsResult<Kind> => {
   const [state, setState] = React.useState<MultiClusterState<Kind>>({
@@ -103,7 +103,7 @@ export const useMultiClusterTaskRuns = <Kind extends K8sResourceCommon>(
   }, [namespace, pipelineRunName]);
 
   // Should we fetch from multi-cluster API?
-  const shouldFetch = isHub && !!namespace && !!pipelineRunName;
+  const shouldFetch = isResourceManagedByKueue && !!namespace && !!pipelineRunName;
 
   // Should we continue polling after initial fetch?
   const shouldContinuePolling =

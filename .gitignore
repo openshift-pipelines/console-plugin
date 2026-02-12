@@ -7,3 +7,4 @@ integration-tests/screenshots
 yarn-error.log
 .DS_Store
 *.pem
+.yarn/*

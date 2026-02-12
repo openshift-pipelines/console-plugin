@@ -1,5 +1,5 @@
 ARG BUILDER=registry.redhat.io/ubi9/nodejs-20@sha256:b45e1ba00ca4bda7575f3ef2a5000ea679e64b9892daa1d8ec850ae38f1d9259
-ARG RUNTIME=registry.redhat.io/ubi9/nginx-124@sha256:b9c2c8657761ea521f49ade5b330e5f81ac03372a093588f142de736e13336af 
+ARG RUNTIME=registry.redhat.io/ubi9/nginx-124@sha256:b9c2c8657761ea521f49ade5b330e5f81ac03372a093588f142de736e13336af
 
 FROM $BUILDER AS builder-ui
 
@@ -15,11 +15,11 @@ RUN if [[ -d /cachi2/output/deps/npm/ ]]; then \
       corepack prepare yarn@4.6.0 --activate;  \
     fi
 
-
 # Install dependencies & build
 USER root
 RUN CYPRESS_INSTALL_BINARY=0 yarn install --immutable && \
     yarn build
+
 
 FROM $RUNTIME
 ARG VERSION=console-plugin-1.20

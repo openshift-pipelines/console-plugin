@@ -42,3 +42,4 @@ LABEL \
       io.k8s.description="Red Hat OpenShift Pipelines Console Plugin" \
       io.openshift.tags="pipelines,tekton,openshift" \
       cpe="cpe:/a:redhat:openshift_pipelines:1.15::el8"
+# trigger rebuild 2026-02-14

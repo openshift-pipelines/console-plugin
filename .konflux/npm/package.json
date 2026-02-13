@@ -1,7 +1,0 @@
-{
-  "name": "yarn4-nodejs22-ubil9-minimal",
-  "version": "1.0.0",
-  "description": "Konflux image containing rebuilds for tooling to assist in building with yarn",
-  "dependencies": {
-    "@yarnpkg/cli-dist": "4.6.0"}
-}

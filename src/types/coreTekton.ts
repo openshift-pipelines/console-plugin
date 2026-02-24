@@ -135,7 +135,7 @@ export interface Spec {
   pipeline: Pipeline;
   profile: string;
   pruner: Pruner;
-  role?: string;
+  scheduler?: Scheduler;
   targetNamespace: string;
   trigger: Trigger;
 }
@@ -154,3 +154,8 @@ export type TektonConfig = K8sResourceCommon & {
   spec: Spec;
   status: Status;
 };
+
+export interface Scheduler {
+  'multi-cluster-disabled': boolean;
+  'multi-cluster-role': string
+}

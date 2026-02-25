@@ -1,14 +1,23 @@
-ARG BUILDER=registry.redhat.io/ubi9/nodejs-20@sha256:938970e0012ddc784adda181ede5bc00a4dfda5e259ee4a57f67973720a565d1
+ARG BUILDER=registry.redhat.io/ubi9/nodejs-22@sha256:04e9f3020875f3f6e99b9a96fe55e35e1b5c38974a1765a19153102a90abf967
 ARG RUNTIME=registry.redhat.io/ubi9/nginx-124@sha256:aa73fdb10af2bf24611ba714a412c2e65cec88a00eee628a0f2a75e564ec18f2
 
 FROM $BUILDER AS builder-ui
 
 WORKDIR /go/src/github.com/openshift-pipelines/console-plugin
 COPY . .
-RUN npm install -g yarn-1.22.22.tgz
-RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
-COPY .konflux/yarn.lock .
-RUN yarn install --offline --frozen-lockfile --ignore-scripts && \
+#Install Yarn
+RUN if [[ -d /cachi2/output/deps/npm/ ]]; then \
+      npm install -g /cachi2/output/deps/npm/"$YARN_PKG" \
+      YARN_ENABLE_NETWORK=0; \
+    else \
+      npm install -g corepack; \
+      corepack enable ;\
+      corepack prepare yarn@4.6.0 --activate;  \
+    fi
+
+# Install dependencies & build
+USER root
+RUN CYPRESS_INSTALL_BINARY=0 yarn install --immutable && \
     yarn build
 
 FROM $RUNTIME

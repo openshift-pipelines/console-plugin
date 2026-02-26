@@ -70,6 +70,8 @@ export const useTaskRuns = (
   pipelineRunUid?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] => {
   const selector: Selector = React.useMemo(() => {
+    console.log('this is a test log triggering ci changes');
+
     if (pipelineRunName && pipelineRunUid) {
       return {
         matchLabels: {

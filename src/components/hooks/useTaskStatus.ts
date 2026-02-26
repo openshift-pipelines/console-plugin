@@ -6,6 +6,8 @@ export const useTaskStatus = (
   pipelineRun: PipelineRunKind,
   taskRuns: TaskRunKind[],
 ): TaskStatus => {
+  console.log('this is a test log triggering ci changes');
+
   const pipeline: PipelineKind = usePipelineFromPipelineRun(pipelineRun);
   return getTaskStatus(pipelineRun, pipeline, taskRuns);
 };

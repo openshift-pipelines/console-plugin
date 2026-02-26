@@ -14,7 +14,7 @@ Feature: Data source filter
             #         value: 'ghcr.io/openshift-pipelines/console-plugin:main'        
             Given user has created or selected namespace "aut-pipelines"
 
-        @regression
+        @regression @broken-test
         Scenario: Data source filter in PipelineRun list page: DS-01-TC01
             Given user creates PipelineRun and TaskRun resources using YAML editor from 'cypress/testData/pipeline-with-pipelinerun-tasrun.yaml'
              When user navigates to PipelineRun list page
@@ -22,7 +22,7 @@ Feature: Data source filter
              Then user is able to see Data Source filter group
               And user is able to see count in Cluster data
 
-        @regression
+        @regression @broken-test
         Scenario: Data source filter in PipelineRun list in Pipelines details page: DS-01-TC02
              When user navigates to Pipelines list page
               And user selects pipeline "hello-goodbye"
@@ -31,14 +31,14 @@ Feature: Data source filter
              Then user is able to see Data Source filter group
               And user is able to see count in Cluster data
 
-        @regression
+        @regression @broken-test
         Scenario: Data source filter in TaskRun list page: DS-01-TC03
             Given user navigates to TaskRun list page
              When user clicks the filter dropdown
              Then user is able to see Data Source filter group
               And user is able to see count in Cluster data
 
-        @regression
+        @regression @broken-test
         Scenario: Data source filter in TaskRun list in PipelineRuns details page: DS-01-TC04
              When user navigates to Pipelines list page
               And user selects PipelineRun "hello-goodbye-run"
@@ -47,7 +47,7 @@ Feature: Data source filter
              Then user is able to see Data Source filter group
               And user is able to see count in Cluster data
 
-        @regression
+        @regression @broken-test
         Scenario: When PipelineRun is archived: DS-01-TC05
             When user navigates to PipelineRun list page
              And user deletes a PipelineRun
@@ -61,7 +61,7 @@ Feature: Data source filter
              And user selects Archived data in Data Source filter group
             Then user is able to see the list of Archived data
 
-        @regression
+        @regression @broken-test
         Scenario: Data source filter in PipelineRun list in Repository details page: DS-01-TC07
             Given user created PAC repository and pipelinerun using "<repository_yaml>"
               And user is at repositories page

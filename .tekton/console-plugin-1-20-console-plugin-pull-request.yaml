@@ -34,9 +34,12 @@ spec:
     value: 5d
   - name: dockerfile
     value: .konflux/dockerfiles/console-plugin.Dockerfile
+  - name: build-platforms
+    value:
+    - linux/x86_64
   - name: prefetch-input
     value: |
-       [{"type": "yarn"}, {"type": "npm", "path": ".konflux/npm"}]
+      [{"type": "rpm", "path": ".konflux/rpms"}, {"type": "yarn"}]
   pipelineRef:
     name: docker-build-ta
   taskRunTemplate:

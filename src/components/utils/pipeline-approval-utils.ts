@@ -1,8 +1,8 @@
-import { t_chart_color_blue_400 as almostApprovedColor } from "@patternfly/react-tokens/dist/js/t_chart_color_blue_400";
-import { t_chart_color_blue_300 as partiallyApprovedColor } from "@patternfly/react-tokens/dist/js/t_chart_color_blue_300";
-import { t_chart_color_black_500 as waitColor } from "@patternfly/react-tokens/dist/js/t_chart_color_black_500";
-import { t_chart_color_green_500 as approveColor } from "@patternfly/react-tokens/dist/js/t_chart_color_green_500";
-import { t_chart_global_danger_color_100 as rejectColor } from "@patternfly/react-tokens/dist/js/t_chart_global_danger_color_100";
+import { t_chart_color_black_500 as waitColor } from '@patternfly/react-tokens/dist/js/t_chart_color_black_500';
+import { t_chart_color_blue_300 as partiallyApprovedColor } from '@patternfly/react-tokens/dist/js/t_chart_color_blue_300';
+import { t_chart_color_blue_400 as almostApprovedColor } from '@patternfly/react-tokens/dist/js/t_chart_color_blue_400';
+import { t_chart_color_green_500 as approveColor } from '@patternfly/react-tokens/dist/js/t_chart_color_green_500';
+import { t_chart_global_danger_color_100 as rejectColor } from '@patternfly/react-tokens/dist/js/t_chart_global_danger_color_100';
 import { ApprovalFields, ApprovalLabels } from '../../consts';
 import {
   ApprovalStatus,

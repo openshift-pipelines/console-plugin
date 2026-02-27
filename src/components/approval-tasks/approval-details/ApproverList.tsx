@@ -42,7 +42,7 @@ const ApproverBadge: React.FC<ApproverBadgeProps> = ({ approver, status }) => {
       color={color}
       icon={
         <div className={badgeClass}>
-          <svg width={30} height={30} viewBox="-12 -5 30 30">
+          <svg width={30} height={30} viewBox="-12 -7 30 30">
             <ApprovalStatusIcon status={status} />
           </svg>
         </div>

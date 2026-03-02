@@ -59,7 +59,8 @@ const PacOverview: React.FC<PacOverviewProps> = ({
     return (
       <>
         <NamespaceBar isDisabled={true} />
-        <PageSection hasBodyWrapper={false}
+        <PageSection
+          hasBodyWrapper={false}
           type="breadcrumb"
           className="co-m-nav-title--detail pipelines-console-plugin__background-transparent"
         >
@@ -88,7 +89,8 @@ const PacOverview: React.FC<PacOverviewProps> = ({
   return (
     <>
       <NamespaceBar isDisabled={true} />
-      <PageSection hasBodyWrapper={false}
+      <PageSection
+        hasBodyWrapper={false}
         type="breadcrumb"
         className="co-m-nav-title--detail pipelines-console-plugin__background-transparent"
       >

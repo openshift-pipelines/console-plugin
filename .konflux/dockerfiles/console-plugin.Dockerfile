@@ -20,7 +20,7 @@ RUN CYPRESS_INSTALL_BINARY=0 yarn install --immutable && \
     yarn build
 
 FROM $RUNTIME
-ARG VERSION=console-plugin-main_ocp_4.22
+ARG VERSION=console-plugin-master
 
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/dist /usr/share/nginx/html
 COPY --from=builder-ui /go/src/github.com/openshift-pipelines/console-plugin/nginx.conf /etc/nginx/nginx.conf

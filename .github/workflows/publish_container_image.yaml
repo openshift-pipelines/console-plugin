@@ -5,12 +5,12 @@ on:
     branches:
       - main
       - release-v* # example: release-v1.14
-      - main_ocp_4.22
+      - master
     tags: ['v*']
   pull_request:
     branches:
       - main
-      - main_ocp_4.22
+      - master
   workflow_dispatch:
 
 jobs:

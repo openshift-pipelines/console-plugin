@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useMemo, memo } from 'react';
 import classnames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -62,7 +63,7 @@ interface ApprovalTaskComponentProps {
 
 const FILTER_ID = 'SvgTaskDropShadowFilterId';
 
-const ApprovalTaskComponent: React.FC<ApprovalTaskComponentProps> = ({
+const ApprovalTaskComponent: FC<ApprovalTaskComponentProps> = ({
   pipelineRunName,
   namespace,
   task,
@@ -76,8 +77,8 @@ const ApprovalTaskComponent: React.FC<ApprovalTaskComponentProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const showStatusState = !!pipelineRunName;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
-  const nameRef = React.useRef();
-  const pillRef = React.useRef();
+  const nameRef = useRef();
+  const pillRef = useRef();
 
   const path = customTask?.metadata?.name
     ? `/dev-pipelines/ns/${namespace}/approvals?name=${customTask?.metadata?.name}`
@@ -89,7 +90,7 @@ const ApprovalTaskComponent: React.FC<ApprovalTaskComponentProps> = ({
     : getApprovalStatusInfo(ApprovalStatus.Idle).pftoken.value;
 
   const [hover, hoverRef] = useHover();
-  const truncatedVisualName = React.useMemo(
+  const truncatedVisualName = useMemo(
     () =>
       truncateMiddle(visualName, {
         length: showStatusState ? 11 : 14,
@@ -178,7 +179,7 @@ const ApprovalTaskComponent: React.FC<ApprovalTaskComponentProps> = ({
   );
 };
 
-const ApprovalTaskNode: React.FC<ApprovalTaskNodeProps> = ({
+const ApprovalTaskNode: FC<ApprovalTaskNodeProps> = ({
   element,
   disableTooltip,
 }) => {
@@ -227,4 +228,4 @@ const ApprovalTaskNode: React.FC<ApprovalTaskNodeProps> = ({
   return taskComponent;
 };
 
-export default React.memo(observer(ApprovalTaskNode));
+export default memo(observer(ApprovalTaskNode));

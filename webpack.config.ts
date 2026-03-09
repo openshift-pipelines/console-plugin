@@ -129,6 +129,7 @@ const config: Configuration = {
     client: {
       overlay: false,
     },
+    hot: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
@@ -145,12 +146,36 @@ const config: Configuration = {
     new CopyWebpackPlugin({
       patterns: [{ from: path.resolve(__dirname, 'locales'), to: 'locales' }],
     }),
+    // PatchEntryCallbackPlugin in @openshift/dynamic-plugin-sdk-webpack validates entry chunks
+    // but doesn't skip hot-update assets, causing false-positive errors during HMR.
+    // afterEmit runs after the error is pushed (processAssets) but before done reports it.
+    {
+      apply: (compiler: import('webpack').Compiler) => {
+        compiler.hooks.afterEmit.tap(
+          'SuppressHotUpdateEntryError',
+          (compilation) => {
+            compilation.errors = compilation.errors.filter(
+              (e) =>
+                !(
+                  e.message === 'Missing call to loadPluginEntry' &&
+                  (e as import('webpack').WebpackError).file?.includes(
+                    '.hot-update.',
+                  )
+                ),
+            );
+          },
+        );
+      },
+    },
     // new NodePolyfillPlugin(),
   ],
   devtool: 'source-map',
   optimization: {
     chunkIds: 'named',
     minimize: false,
+
+    runtimeChunk: false,
+    splitChunks: false,
   },
 };
 

@@ -3,7 +3,7 @@ import {
   SetFeatureFlag,
   k8sGet,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import {
   FLAG_HIDE_STATIC_PIPELINE_PLUGIN_APPROVALS_LIST,
   FLAG_HIDE_STATIC_PIPELINE_PLUGIN_CLUSTERTASKS_LIST,
@@ -136,8 +136,8 @@ export const useFlagHookProvider = (setFeatureFlag: SetFeatureFlag) => {
 export const useTektonResultInstallProvider = (
   setFeatureFlag: SetFeatureFlag,
 ) => {
-  const [data, setData] = React.useState<K8sResourceCommon>();
-  React.useEffect(() => {
+  const [data, setData] = useState<K8sResourceCommon>();
+  useEffect(() => {
     const fetch = async () => {
       try {
         const resource = await k8sGet({

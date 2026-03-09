@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Alert,
   AlertActionCloseButton,
@@ -31,7 +32,7 @@ type PacOverviewProps = {
   showSuccessAlert?: boolean;
 };
 
-const PacOverview: React.FC<PacOverviewProps> = ({
+const PacOverview: FC<PacOverviewProps> = ({
   namespace,
   secret,
   loadError,
@@ -39,9 +40,9 @@ const PacOverview: React.FC<PacOverviewProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [alertVisible, setAlertVisible] =
-    React.useState<boolean>(showSuccessAlert);
+    useState<boolean>(showSuccessAlert);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setAlertVisible(showSuccessAlert);
   }, [showSuccessAlert]);
 

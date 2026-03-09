@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { SortByDirection, sortable } from '@patternfly/react-table';
@@ -101,7 +102,7 @@ const useTaskColumns = () => {
   return [columns, activeColumns];
 };
 
-const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
+const TaskRunsList: FC<TaskRunsListPageProps> = ({
   showPipelineColumn = true,
   showTitle = true,
   hideColumnManagement = false,
@@ -109,7 +110,7 @@ const TaskRunsList: React.FC<TaskRunsListPageProps> = ({
   ...props
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [columns, activeColumns] = useTaskColumns();
   const params = useParams();
   const { ns: namespace } = params;

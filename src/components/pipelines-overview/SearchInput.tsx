@@ -1,5 +1,5 @@
 import { SearchInput } from '@patternfly/react-core';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type SearchInputProps = {
@@ -8,7 +8,7 @@ type SearchInputProps = {
   searchText: string;
 };
 
-const SearchInputField: React.FC<SearchInputProps> = ({
+const SearchInputField: FC<SearchInputProps> = ({
   pageFlag,
   handleNameChange,
   searchText,

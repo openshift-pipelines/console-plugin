@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactElement, ReactNode, MouseEvent, Ref } from 'react';
+import { useState, useCallback, useEffect, isValidElement } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +29,7 @@ type DropdownItemProps = {
   resource: K8sResourceKind;
 };
 
-const DropdownItem: React.FC<DropdownItemProps> = ({
+const DropdownItem: FC<DropdownItemProps> = ({
   name,
   namespace,
   resource,
@@ -53,7 +54,7 @@ const DropdownItem: React.FC<DropdownItemProps> = ({
 };
 
 export interface ResourceDropdownItems {
-  [key: string]: string | React.ReactElement;
+  [key: string]: string | ReactElement;
 }
 
 export const getNamespace = <A extends K8sResourceCommon = K8sResourceCommon>(
@@ -73,13 +74,13 @@ export interface ResourceDropdownProps {
   menuClassName?: string;
   buttonClassName?: string;
   dropDownContentClassName?: string;
-  title?: React.ReactNode;
+  title?: ReactNode;
   titlePrefix?: string;
   allApplicationsKey?: string;
   userSettingsPrefix?: string;
   storageKey?: string;
   disabled?: boolean;
-  helpText?: React.ReactNode;
+  helpText?: ReactNode;
   fullWidth?: boolean;
   allSelectorItem?: {
     allSelectorKey?: string;
@@ -114,7 +115,7 @@ export interface ResourceDropdownProps {
   appendItems?: ResourceDropdownItems;
 }
 
-const ResourceDropdown: React.FC<ResourceDropdownProps> = (props) => {
+const ResourceDropdown: FC<ResourceDropdownProps> = (props) => {
   const { t } = useTranslation();
   const {
     id,
@@ -144,19 +145,19 @@ const ResourceDropdown: React.FC<ResourceDropdownProps> = (props) => {
     autocompleteFilter,
   } = props;
 
-  const [resourcesState, setResourcesState] = React.useState({});
-  const [items, setItems] = React.useState({});
-  const [title, setTitle] = React.useState<React.ReactNode>(
+  const [resourcesState, setResourcesState] = useState({});
+  const [items, setItems] = useState<Record<string, any>>({});
+  const [title, setTitle] = useState<React.ReactNode>(
     loaded ? (
       <span className="btn-dropdown__item--placeholder">{placeholder}</span>
     ) : (
       <LoadingInline />
     ),
   );
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [filterValue, setFilterValue] = React.useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const [filterValue, setFilterValue] = useState('');
 
-  const craftResourceKey = React.useCallback(
+  const craftResourceKey = useCallback(
     (resource: K8sResourceKind): { customKey: string; key: string } => {
       let key;
       if (resourceFilter && resourceFilter(resource)) {
@@ -172,7 +173,7 @@ const ResourceDropdown: React.FC<ResourceDropdownProps> = (props) => {
     [customResourceKey, resourceFilter, dataSelector],
   );
 
-  const getResourceList = React.useCallback(
+  const getResourceList = useCallback(
     (currentResources: FirehoseResult[]) => {
       const resourceList = {};
       _.each(currentResources, ({ data }) => {
@@ -189,7 +190,7 @@ const ResourceDropdown: React.FC<ResourceDropdownProps> = (props) => {
     [craftResourceKey],
   );
 
-  const getDropdownList = React.useCallback(
+  const getDropdownList = useCallback(
     (currentResources: FirehoseResult[]) => {
       const unsortedList = { ...appendItems };
       const namespaces = new Set(
@@ -260,7 +261,7 @@ const ResourceDropdown: React.FC<ResourceDropdownProps> = (props) => {
   );
 
   // Handle data updates and initial load
-  React.useEffect(() => {
+  useEffect(() => {
     if (!loaded && !loadError) {
       setTitle(<LoadingInline />);
       return;
@@ -344,7 +345,7 @@ const ResourceDropdown: React.FC<ResourceDropdownProps> = (props) => {
   };
 
   const onSelect = (
-    _event: React.MouseEvent | undefined,
+    _event: MouseEvent | undefined,
     value: string | number | undefined,
   ) => {
     const key = String(value);
@@ -374,7 +375,7 @@ const ResourceDropdown: React.FC<ResourceDropdownProps> = (props) => {
     return _.pickBy(items, (item) => {
       if (autocompleteFilter) {
         // For custom filters, create an object structure that filters expect
-        if (React.isValidElement(item)) {
+        if (isValidElement(item)) {
           // Ensure props.name is a string for React elements
           const itemProxy = {
             props: {
@@ -387,7 +388,7 @@ const ResourceDropdown: React.FC<ResourceDropdownProps> = (props) => {
         }
       } else {
         // For default fuzzy search, extract string value
-        const itemString = React.isValidElement(item)
+        const itemString = isValidElement(item)
           ? (item.props as any)?.name || ''
           : String(item || '');
         return fuzzy(filterValue, itemString);
@@ -398,7 +399,7 @@ const ResourceDropdown: React.FC<ResourceDropdownProps> = (props) => {
   const filteredItems = getFilteredItems();
   const displayTitle = propsTitle || title;
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
       onClick={onToggle}

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState } from 'react';
 import {
   getGroupVersionKindForModel,
   K8sResourceCommon,
@@ -25,9 +26,9 @@ type EventListenersKebabProps = {
 
 getResourceModelFromBindingKind;
 
-const EventListenersKebab: React.FC<EventListenersKebabProps> = ({ obj }) => {
+const EventListenersKebab: FC<EventListenersKebabProps> = ({ obj }) => {
   const model = getResourceModelFromBindingKind(obj?.kind);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const onToggle = () => {
     setIsOpen(!isOpen);
@@ -40,10 +41,10 @@ const EventListenersKebab: React.FC<EventListenersKebabProps> = ({ obj }) => {
   const dropdownItems = K8sCommonKebabMenu(obj, model);
 
   return (
-    <Dropdown
+    (<Dropdown
       onSelect={onSelect}
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+      toggle={(toggleRef: Ref<MenuToggleElement>) => (
         <MenuToggle
           ref={toggleRef}
           aria-label="kebab menu"
@@ -61,11 +62,11 @@ const EventListenersKebab: React.FC<EventListenersKebabProps> = ({ obj }) => {
       popperProps={{ position: 'right' }}
     >
       <DropdownList>{dropdownItems}</DropdownList>
-    </Dropdown>
+    </Dropdown>)
   );
 };
 
-const EventListenersRow: React.FC<RowProps<K8sResourceCommon>> = ({
+const EventListenersRow: FC<RowProps<K8sResourceCommon>> = ({
   activeColumnIDs,
   obj,
 }) => {

@@ -1,9 +1,11 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import PopperJS, { PopperOptions } from 'popper.js';
 import Portal from './Portal';
 import { useEventListener } from './useEventListener';
 
 type TippyProps = {
+  children?: ReactNode;
   placement?:
     | 'bottom-end'
     | 'bottom-start'
@@ -25,7 +27,7 @@ type TippyProps = {
   onHide?: (event: Event) => void;
 };
 
-export const Tippy: React.FC<TippyProps> = ({
+export const Tippy: FC<TippyProps> = ({
   placement = 'top',
   reference,
   children,
@@ -35,17 +37,17 @@ export const Tippy: React.FC<TippyProps> = ({
   onShow,
   onHide,
 }) => {
-  const popperInstance = React.useRef<PopperJS>(null);
-  const nodeRef = React.useRef<HTMLDivElement>(null);
+  const popperInstance = useRef<PopperJS>(null);
+  const nodeRef = useRef<HTMLDivElement>(null);
   const targetElement =
     typeof reference === 'function' ? reference() : reference;
-  const [isOpen, setOpen] = React.useState(false);
+  const [isOpen, setOpen] = useState(false);
 
-  const popperRef = React.useCallback((instance: PopperJS) => {
+  const popperRef = useCallback((instance: PopperJS) => {
     popperInstance.current = instance;
   }, []);
 
-  const initialize = React.useCallback(() => {
+  const initialize = useCallback(() => {
     nodeRef.current &&
       popperRef(
         new PopperJS(targetElement, nodeRef.current, {
@@ -55,12 +57,12 @@ export const Tippy: React.FC<TippyProps> = ({
       );
   }, [placement, popperRef, targetElement, tippyOptions]);
 
-  const destroy = React.useCallback(() => {
+  const destroy = useCallback(() => {
     popperInstance.current?.destroy();
     popperRef(null);
   }, [popperRef]);
 
-  const nodeRefCallback = React.useCallback(
+  const nodeRefCallback = useCallback(
     (node) => {
       nodeRef.current = node;
       initialize();
@@ -68,7 +70,7 @@ export const Tippy: React.FC<TippyProps> = ({
     [initialize],
   );
 
-  const show = React.useCallback(
+  const show = useCallback(
     (e) => {
       if (!isOpen) {
         setOpen(true);
@@ -77,7 +79,7 @@ export const Tippy: React.FC<TippyProps> = ({
     },
     [setOpen, onShow, isOpen],
   );
-  const hide = React.useCallback(
+  const hide = useCallback(
     (e) => {
       if (isOpen) {
         setOpen(false);
@@ -93,7 +95,7 @@ export const Tippy: React.FC<TippyProps> = ({
   useEventListener(targetElement, 'focus', show);
   useEventListener(targetElement, 'blur', hide);
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       destroy();
     };

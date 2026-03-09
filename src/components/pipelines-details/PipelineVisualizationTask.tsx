@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import * as React from 'react';
+import type { FC } from 'react';
+
+import { useRef, useMemo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
 import cx from 'classnames';
@@ -74,7 +76,7 @@ interface PipelineVisualizationTaskProp {
 
 const FILTER_ID = 'SvgTaskDropShadowFilterId';
 
-export const PipelineVisualizationTask: React.FC<
+export const PipelineVisualizationTask: FC<
   PipelineVisualizationTaskProp
 > = ({
   pipelineRunName,
@@ -130,7 +132,7 @@ export const PipelineVisualizationTask: React.FC<
 
   return taskComponent;
 };
-const TaskComponent: React.FC<TaskProps> = ({
+const TaskComponent: FC<TaskProps> = ({
   pipelineRunName,
   namespace,
   task,
@@ -150,8 +152,8 @@ const TaskComponent: React.FC<TaskProps> = ({
   );
   const showStatusState: boolean = isPipelineRun && !!status && !!status.reason;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
-  const nameRef = React.useRef();
-  const pillRef = React.useRef();
+  const nameRef = useRef();
+  const pillRef = useRef();
   const path = pipelineRunName
     ? `${resourcePathFromModel(
         PipelineRunModel,
@@ -171,7 +173,7 @@ const TaskComponent: React.FC<TaskProps> = ({
     : getRunStatusColor(ComputedStatus.Cancelled, t).pftoken.value;
 
   const [hover, hoverRef] = useHover();
-  const truncatedVisualName = React.useMemo(
+  const truncatedVisualName = useMemo(
     () =>
       truncateMiddle(visualName, {
         length: showStatusState ? 11 : 14,
@@ -302,7 +304,7 @@ interface SvgTaskStatusProps {
   width: number;
 }
 
-const SvgTaskStatus: React.FC<SvgTaskStatusProps> = ({
+const SvgTaskStatus: FC<SvgTaskStatusProps> = ({
   steps,
   x,
   y,

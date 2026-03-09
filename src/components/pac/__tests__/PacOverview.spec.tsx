@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 import PacOverview from '../PacOverview';
 import { sampleSecretData } from '../../../test-data/pac-data';

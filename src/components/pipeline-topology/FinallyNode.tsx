@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { observer, Node, NodeModel, Point } from '@patternfly/react-topology';
 
 import {
@@ -19,7 +19,7 @@ type FinallyNodeProps = {
   element: Node<NodeModel, FinallyNodeModel>;
 };
 
-const FinallyNode: React.FC<FinallyNodeProps> = ({ element }) => {
+const FinallyNode: FC<FinallyNodeProps> = ({ element }) => {
   const { task, pipeline, pipelineRun } = element.getData();
   const { width, height } = element.getBounds();
   const nodeCenter = NODE_HEIGHT + NODE_HEIGHT / 2;

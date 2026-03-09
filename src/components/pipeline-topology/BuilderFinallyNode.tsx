@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { observer, Node, NodeModel, Point } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import {
@@ -26,7 +26,7 @@ type BuilderFinallyNodeProps = {
   element: Node<NodeModel, BuilderFinallyNodeModel>;
 };
 
-const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
+const BuilderFinallyNode: FC<BuilderFinallyNodeProps> = ({ element }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { width, height } = element.getBounds();
   const {

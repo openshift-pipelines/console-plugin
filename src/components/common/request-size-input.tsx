@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, FormEvent, MouseEvent, Ref, ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   InputGroup,
@@ -11,7 +12,7 @@ import {
   MenuToggleElement,
 } from '@patternfly/react-core';
 
-export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
+export const RequestSizeInput: FC<RequestSizeInputProps> = ({
   children,
   defaultRequestSizeUnit,
   defaultRequestSizeValue,
@@ -36,11 +37,11 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
   const defaultValue = Number.isFinite(parsedRequestSizeValue)
     ? parsedRequestSizeValue
     : 0;
-  const [unit, setUnit] = React.useState<string>(defaultRequestSizeUnit);
-  const [value, setValue] = React.useState<number>(defaultValue);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [unit, setUnit] = useState<string>(defaultRequestSizeUnit);
+  const [value, setValue] = useState<number>(defaultValue);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const onValueChange = (event: React.FormEvent<HTMLInputElement>) => {
+  const onValueChange = (event: FormEvent<HTMLInputElement>) => {
     const newValue = allowDecimalValue
       ? parseFloat(event.currentTarget.value)
       : parseInt(event.currentTarget.value, 10);
@@ -62,7 +63,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
   };
 
   const onUnitChange = (
-    _event: React.MouseEvent | undefined,
+    _event: MouseEvent | undefined,
     newUnit: string | number | undefined,
   ) => {
     const unitValue = String(newUnit);
@@ -71,7 +72,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
     onChange({ value, unit: unitValue });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setUnit(defaultRequestSizeUnit);
     const numValue =
       typeof defaultValue === 'number'
@@ -83,7 +84,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const inputName = `${name}Value`;
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}
@@ -147,6 +148,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
 };
 
 export type RequestSizeInputProps = {
+  children?: ReactNode;
   placeholder?: string;
   name: string;
   onChange: Function;

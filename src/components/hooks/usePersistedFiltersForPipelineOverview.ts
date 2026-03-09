@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useState, useEffect } from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,8 +25,8 @@ export const usePersistedTimespanWithUrl = (
   const dispatch = useDispatch();
   const reduxTimespan = useSelector(getPipelinesOverviewTimespan);
   const location = useLocation();
-  const prevNamespaceRef = React.useRef(namespace);
-  const [timespan, setTimespanValue] = React.useState(() => {
+  const prevNamespaceRef = useRef(namespace);
+  const [timespan, setTimespanValue] = useState(() => {
     const urlParams = new URLSearchParams(location.search);
     const urlValue = urlParams.has('timerange')
       ? urlParams.get('timerange')
@@ -38,7 +38,7 @@ export const usePersistedTimespanWithUrl = (
   });
 
   // Reset to default when namespace changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (prevNamespaceRef.current !== namespace) {
       prevNamespaceRef.current = namespace;
       setTimespanValue(defaultValue);
@@ -46,7 +46,7 @@ export const usePersistedTimespanWithUrl = (
   }, [namespace, defaultValue]);
 
   // Persist to Redux whenever value changes
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(setTimespanAction(timespan));
   }, [timespan, dispatch]);
 
@@ -58,7 +58,7 @@ export const usePersistedTimespanWithUrl = (
     ...options,
   });
 
-  return [timespan, setTimespanValue];
+  return [timespan, setTimespanValue] as const;
 };
 
 export const usePersistedIntervalWithUrl = (
@@ -73,8 +73,8 @@ export const usePersistedIntervalWithUrl = (
   const dispatch = useDispatch();
   const reduxInterval = useSelector(getPipelinesOverviewInterval);
   const location = useLocation();
-  const prevNamespaceRef = React.useRef(namespace);
-  const [interval, setIntervalValue] = React.useState(() => {
+  const prevNamespaceRef = useRef(namespace);
+  const [interval, setIntervalValue] = useState(() => {
     const urlParams = new URLSearchParams(location.search);
     const urlValue = urlParams.has('refreshinterval')
       ? urlParams.get('refreshinterval')
@@ -87,7 +87,7 @@ export const usePersistedIntervalWithUrl = (
   });
 
   // Reset to default when namespace changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (prevNamespaceRef.current !== namespace) {
       prevNamespaceRef.current = namespace;
       setIntervalValue(defaultValue);
@@ -95,7 +95,7 @@ export const usePersistedIntervalWithUrl = (
   }, [namespace, defaultValue]);
 
   // Persist to Redux whenever value changes
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(setIntervalAction(interval));
   }, [interval, dispatch]);
 
@@ -107,5 +107,5 @@ export const usePersistedIntervalWithUrl = (
     ...options,
   });
 
-  return [interval, setIntervalValue];
+  return [interval, setIntervalValue] as const;
 };

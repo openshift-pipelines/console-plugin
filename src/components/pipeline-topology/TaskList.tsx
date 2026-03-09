@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useMemo } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { useHover } from '@patternfly/react-topology';
 import classnames from 'classnames';
@@ -37,7 +38,7 @@ const taskToOption = (
   };
 };
 
-const TaskList: React.FC<any> = ({
+const TaskList: FC<any> = ({
   width,
   height,
   listOptions,
@@ -47,8 +48,8 @@ const TaskList: React.FC<any> = ({
   onTaskSearch,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const triggerRef = React.useRef(null);
-  const textRef = React.useRef();
+  const triggerRef = useRef(null);
+  const textRef = useRef();
   const [hover, hoverRef] = useHover();
 
   const options = _.sortBy(
@@ -57,7 +58,7 @@ const TaskList: React.FC<any> = ({
   );
   const unselectedTaskText = unselectedText || t('Add task');
 
-  const truncatedTaskText = React.useMemo(
+  const truncatedTaskText = useMemo(
     () =>
       truncateMiddle(unselectedTaskText, {
         length: 10,

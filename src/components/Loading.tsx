@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Bullseye, Spinner, SpinnerProps } from '@patternfly/react-core';
 
 type LoadingProps = {
@@ -8,7 +8,7 @@ type LoadingProps = {
   ariaLabel?: string;
 };
 
-export const Loading: React.FC<LoadingProps> = ({
+export const Loading: FC<LoadingProps> = ({
   className,
   isInline,
   size,
@@ -20,5 +20,5 @@ export const Loading: React.FC<LoadingProps> = ({
 );
 Loading.displayName = 'Loading';
 
-export const LoadingInline: React.FC = () => <Loading isInline={true} />;
+export const LoadingInline: FC = () => <Loading isInline={true} />;
 LoadingInline.displayName = 'LoadingInline';

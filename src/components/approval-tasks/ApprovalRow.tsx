@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Split, SplitItem, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
@@ -26,7 +26,7 @@ import ApprovalTaskActionDropdown from './ApprovalTaskActionDropdown';
 
 import './ApprovalRow.scss';
 
-const ApprovalRow: React.FC<
+const ApprovalRow: FC<
   RowProps<
     ApprovalTaskKind,
     {

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, MouseEvent } from 'react';
+import { useState, useEffect } from 'react';
 import * as _ from 'lodash-es';
 import {
   Breadcrumb,
@@ -26,17 +27,17 @@ const getRef = (definition: SwaggerDefinition): string => {
   return ref && re.test(ref) ? ref.replace(re, '') : null;
 };
 
-export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
+export const ExploreType: FC<ExploreTypeProps> = (props) => {
   // Track the previously selected items to build breadcrumbs. Each history
   // entry contains the name, description, and path to the definition in the
   // OpenAPI document.
-  const [drilldownHistory, setDrilldownHistory] = React.useState([]);
+  const [drilldownHistory, setDrilldownHistory] = useState([]);
   const { kindObj, schema } = props;
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [allDefinitions, setAllDefinitions] =
-    React.useState<SwaggerDefinitions>(null);
+    useState<SwaggerDefinitions>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (kindObj) {
       fetchSwagger()
         .then((response) => {
@@ -83,7 +84,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
     : [];
 
   const drilldown = (
-    e: React.MouseEvent<HTMLButtonElement>,
+    e: MouseEvent<HTMLButtonElement>,
     name: string,
     desc: string,
     path: string[],
@@ -99,7 +100,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   };
 
   const breadcrumbClicked = (
-    e: React.MouseEvent<HTMLButtonElement>,
+    e: MouseEvent<HTMLButtonElement>,
     i: number,
   ) => {
     e.preventDefault();

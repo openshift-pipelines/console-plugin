@@ -6,7 +6,7 @@ import {
   useListPageFilter,
   VirtualizedTable,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useDefaultColumns } from '../list-pages/default-resources';
@@ -19,7 +19,7 @@ type TriggerBindingsListProps = {
   hideNameLabelFilters?: boolean;
 };
 
-const TriggerBindingsList: React.FC<TriggerBindingsListProps> = ({
+const TriggerBindingsList: FC<TriggerBindingsListProps> = ({
   namespace,
   hideNameLabelFilters,
 }) => {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as React from 'react';
+import type { FC } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
@@ -24,7 +24,7 @@ import {
 } from '../../../models';
 import { Project } from '../../../types';
 
-const PipelineRunsForPipelinesRowK8s: React.FC<
+const PipelineRunsForPipelinesRowK8s: FC<
   RowProps<
     SummaryProps,
     {

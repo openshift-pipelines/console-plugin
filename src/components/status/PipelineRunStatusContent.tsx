@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import PipelineResourceStatus from './PipelineResourceStatus';
 import PipelineRunStatusPopoverContent from './PipelineRunStatusPopoverContent';
@@ -11,12 +12,12 @@ type PipelineRunStatusProps = {
   pipelineRun: PipelineRunKind;
   title?: string;
 };
-const PipelineRunStatusContent: React.FC<PipelineRunStatusProps> = ({
+const PipelineRunStatusContent: FC<PipelineRunStatusProps> = ({
   status,
   pipelineRun,
   title,
 }) => {
-  const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const PopoverContent = () => {
     return (

@@ -7,7 +7,7 @@ import {
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { differenceBy, uniqBy } from 'lodash-es';
-import * as React from 'react';
+import { useMemo, useRef } from 'react';
 import {
   ApprovalFields,
   ApprovalLabels,
@@ -69,7 +69,7 @@ export const useTaskRuns = (
   cacheKey?: string,
   pipelineRunUid?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] => {
-  const selector: Selector = React.useMemo(() => {
+  const selector: Selector = useMemo(() => {
     if (pipelineRunName && pipelineRunUid) {
       return {
         matchLabels: {
@@ -96,7 +96,7 @@ export const useTaskRuns = (
     cacheKey,
   );
 
-  const sortedTaskRuns = React.useMemo(
+  const sortedTaskRuns = useMemo(
     () =>
       taskRuns?.sort((a, b) => {
         if (a?.status?.completionTime) {
@@ -113,7 +113,7 @@ export const useTaskRuns = (
       }),
     [taskRuns],
   );
-  return React.useMemo(
+  return useMemo(
     () => [sortedTaskRuns, loaded, error, getNextPage],
     [sortedTaskRuns, loaded, error, getNextPage],
   );
@@ -138,7 +138,7 @@ export const useApprovalTasks = (
   namespace: string,
   pipelineRunName?: string,
 ): [ApprovalTaskKind[], boolean, any] => {
-  const selector: Selector = React.useMemo(() => {
+  const selector: Selector = useMemo(() => {
     if (pipelineRunName) {
       return {
         matchLabels: {
@@ -148,7 +148,7 @@ export const useApprovalTasks = (
     }
     return undefined;
   }, [pipelineRunName]);
-  const watchedResource = React.useMemo(
+  const watchedResource = useMemo(
     () => ({
       isList: true,
       groupVersionKind: {
@@ -187,7 +187,7 @@ export const usePipelineRun = (
 ): [PipelineRunKind, boolean, string] => {
   const result = usePipelineRuns(
     namespace,
-    React.useMemo(
+    useMemo(
       () => ({
         name: pipelineRunName,
         limit: 1,
@@ -196,7 +196,7 @@ export const usePipelineRun = (
     ),
   ) as unknown as [PipelineRunKind[], boolean, string];
 
-  return React.useMemo(
+  return useMemo(
     () => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]],
     [result],
   );
@@ -212,13 +212,13 @@ export const useRuns = <Kind extends K8sResourceCommon>(
   },
   cacheKey?: string,
 ): [Kind[], boolean, unknown, GetNextPage] => {
-  const etcdRunsRef = React.useRef<Kind[]>([]);
+  const etcdRunsRef = useRef<Kind[]>([]);
   const optionsMemo = useDeepCompareMemoize(options);
   const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
   const isList = !optionsMemo?.name;
   const limit = optionsMemo?.limit;
   // do not include the limit when querying etcd because result order is not sorted
-  const watchOptions = React.useMemo(() => {
+  const watchOptions = useMemo(() => {
     // reset cached runs as the options have changed
     etcdRunsRef.current = [];
     return {
@@ -231,7 +231,7 @@ export const useRuns = <Kind extends K8sResourceCommon>(
   }, [groupVersionKind, namespace, optionsMemo, isList]);
   const [resources, loaded, error] = useK8sWatchResource(watchOptions);
   // if a pipeline run was removed from etcd, we want to still include it in the return value without re-querying tekton-results
-  const etcdRuns = React.useMemo(() => {
+  const etcdRuns = useMemo(() => {
     if (!loaded || error) {
       return [];
     }
@@ -240,7 +240,7 @@ export const useRuns = <Kind extends K8sResourceCommon>(
     return resourcesArray;
   }, [isList, resources, loaded, error]);
 
-  const runs = React.useMemo(() => {
+  const runs = useMemo(() => {
     if (!etcdRuns) {
       return etcdRuns;
     }
@@ -274,7 +274,7 @@ export const useRuns = <Kind extends K8sResourceCommon>(
       (namespace &&
         ((runs && loaded && optionsMemo.limit > runs.length) || error)));
 
-  const trOptions: typeof optionsMemo = React.useMemo(() => {
+  const trOptions: typeof optionsMemo = useMemo(() => {
     if (optionsMemo?.name) {
       const { name, ...rest } = optionsMemo;
       return {
@@ -300,7 +300,7 @@ export const useRuns = <Kind extends K8sResourceCommon>(
       ])
     : [[], true, undefined, undefined];
 
-  return React.useMemo(() => {
+  return useMemo(() => {
     const rResources =
       runs && trResources
         ? uniqBy([...runs, ...trResources], (r) => r.metadata.uid)
@@ -339,7 +339,7 @@ export const useTaskRun = (
 ): [TaskRunKind, boolean, string] => {
   const result = useTaskRuns2(
     namespace,
-    React.useMemo(
+    useMemo(
       () => ({
         name: taskRunName,
         limit: 1,
@@ -348,7 +348,7 @@ export const useTaskRun = (
     ),
   ) as unknown as [TaskRunKind[], boolean, string];
 
-  return React.useMemo(
+  return useMemo(
     () => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]],
     [result],
   );

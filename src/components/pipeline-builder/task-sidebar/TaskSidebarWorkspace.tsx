@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { TektonWorkspace } from '../../../types';
@@ -19,7 +19,7 @@ interface WorkspaceLink {
   workspace: string;
 }
 
-const TaskSidebarWorkspace: React.FC<TaskSidebarWorkspaceProps> = (props) => {
+const TaskSidebarWorkspace: FC<TaskSidebarWorkspaceProps> = (props) => {
   const {
     availableWorkspaces,
     hasWorkspace,

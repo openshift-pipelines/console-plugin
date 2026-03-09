@@ -2,7 +2,7 @@ import {
   ResourceLink,
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DescriptionListDescription,
@@ -19,7 +19,7 @@ export interface VolumeClaimTemplatesSectionProps {
   ownerResourceKind?: string;
 }
 
-const VolumeClaimTemplatesSection: React.FC<
+const VolumeClaimTemplatesSection: FC<
   VolumeClaimTemplatesSectionProps
 > = ({
   namespace,

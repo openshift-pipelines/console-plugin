@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Select,
   SelectList,
@@ -20,12 +21,12 @@ interface PipelineQuickSearchVersionDropdownProps {
   onChange: (key: string) => void;
 }
 
-const PipelineQuickSearchVersionDropdown: React.FC<
+const PipelineQuickSearchVersionDropdown: FC<
   PipelineQuickSearchVersionDropdownProps
 > = ({ item, versions, onChange, selectedVersion }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [isOpen, setOpen] = React.useState(false);
-  const toggleIsOpen = React.useCallback(() => setOpen((v) => !v), []);
+  const [isOpen, setOpen] = useState(false);
+  const toggleIsOpen = useCallback(() => setOpen((v) => !v), []);
 
   if (!versions || !versions.length) {
     return null;
@@ -40,7 +41,7 @@ const PipelineQuickSearchVersionDropdown: React.FC<
     return acc;
   }, {});
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       className="opp-quick-search-details__version-dropdown"
       onClick={toggleIsOpen}

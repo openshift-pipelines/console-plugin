@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PipelineKind } from '../../types';
@@ -23,7 +23,7 @@ type PipelineStartButtonProps = {
   namespace: string;
 };
 
-const PipelineStartButton: React.FC<PipelineStartButtonProps & StateProps> = ({
+const PipelineStartButton: FC<PipelineStartButtonProps & StateProps> = ({
   pipeline,
   namespace,
   impersonate,

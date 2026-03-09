@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
@@ -27,7 +28,7 @@ type PipelineRunsListPageProps = {
   interval: number;
 };
 
-const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
+const PipelineRunsListPage: FC<PipelineRunsListPageProps> = ({
   bordered,
   namespace,
   timespan,
@@ -36,24 +37,24 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
 
-  const [pageFlag, setPageFlag] = React.useState(1);
-  const [loaded, setloaded] = React.useState(false);
-  const [pipelineRunsListError, setPipelineRunsListError] = React.useState<
+  const [pageFlag, setPageFlag] = useState(1);
+  const [loaded, setloaded] = useState(false);
+  const [pipelineRunsListError, setPipelineRunsListError] = useState<
     string | undefined
   >();
-  const [summaryData, setSummaryData] = React.useState<SummaryProps[]>([]);
-  const [searchText, setSearchText] = React.useState('');
-  const [summaryDataFiltered, setSummaryDataFiltered] = React.useState<
+  const [summaryData, setSummaryData] = useState<SummaryProps[]>([]);
+  const [searchText, setSearchText] = useState('');
+  const [summaryDataFiltered, setSummaryDataFiltered] = useState<
     SummaryProps[]
   >([]);
-  const abortControllerRef = React.useRef<AbortController>();
+  const abortControllerRef = useRef<AbortController>();
 
   const date = getDropDownDate(timespan).toISOString();
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();
     };
@@ -112,7 +113,7 @@ const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = ({
 
   useInterval(getSummaryData, interval, namespace, date, pageFlag);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setloaded(false);
     setPipelineRunsListError(undefined);
     setSummaryData([]);

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
 import { PIPELINE_NAMESPACE } from '../../../consts';
@@ -17,15 +17,15 @@ export const usePacData = (
   loadError: Error;
   isFirstSetup: boolean;
 } => {
-  const apiCallProgressRef = React.useRef(false);
-  const [loaded, setloaded] = React.useState<boolean>(false);
-  const [secretData, setSecretData] = React.useState<SecretKind>();
-  const [loadError, setLoadError] = React.useState(null);
-  const [isFirstSetup, setIsFirstSetup] = React.useState<boolean>(false);
+  const apiCallProgressRef = useRef(false);
+  const [loaded, setloaded] = useState<boolean>(false);
+  const [secretData, setSecretData] = useState<SecretKind>();
+  const [loadError, setLoadError] = useState(null);
+  const [isFirstSetup, setIsFirstSetup] = useState<boolean>(false);
   const [pacSecretData, pacSecretDataLoaded, pacSecretDataError] =
     useK8sGet<SecretKind>(SecretModel, PAC_SECRET_NAME, PIPELINE_NAMESPACE);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let mounted = true;
     const configureGitHubApp = async () => {
       if (code && !apiCallProgressRef.current) {
@@ -71,7 +71,7 @@ export const usePacData = (
     };
   }, [code]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (pacSecretDataLoaded && pacSecretData && !pacSecretDataError) {
       setSecretData(pacSecretData);
       setloaded(true);

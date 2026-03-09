@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import {
   Action,
   k8sCreate,
@@ -69,7 +69,7 @@ export const usePipelineRunActionsProvider = (resource: PipelineRunKind) => {
     namespace,
   });
 
-  const message = React.useMemo(
+  const message = useMemo(
     () => (
       <p>
         {t(
@@ -88,7 +88,7 @@ export const usePipelineRunActionsProvider = (resource: PipelineRunKind) => {
     shouldShowMessage ? message : undefined,
   );
 
-  return React.useMemo<[Action[], boolean, any]>(() => {
+  return useMemo<[Action[], boolean, any]>(() => {
     const actions: Action[] = [
       {
         id: 'rerun-pipelinerun',

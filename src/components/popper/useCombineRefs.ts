@@ -1,16 +1,17 @@
-import * as React from 'react';
+import type { Ref, MutableRefObject } from 'react';
+import { useCallback } from 'react';
 
 export const useCombineRefs = <RefType>(
-  ...refs: (React.Ref<RefType> | undefined)[]
+  ...refs: (Ref<RefType> | undefined)[]
 ) =>
-  React.useCallback(
+  useCallback(
     (element: RefType | null): void =>
       refs.forEach((ref) => {
         if (ref) {
           if (typeof ref === 'function') {
             ref(element);
           } else {
-            (ref as React.MutableRefObject<any>).current = element;
+            (ref as MutableRefObject<any>).current = element;
           }
         }
       }),

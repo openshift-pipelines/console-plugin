@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import { SortByDirection } from '@patternfly/react-table';
@@ -26,7 +27,7 @@ type PipelineRunsListProps = {
   PLRsForKind?: string;
 };
 
-const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
+const PipelineRunsList: FC<PipelineRunsListProps> = ({
   namespace,
   hideTextFilter,
   repositoryPLRs,
@@ -34,7 +35,7 @@ const PipelineRunsList: React.FC<PipelineRunsListProps> = ({
   PLRsForKind,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const { ns } = useParams();
   const currentUser = useGetActiveUser();
   namespace = namespace || ns;

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactElement, FC } from 'react';
+import { cloneElement } from 'react';
 import classNames from 'classnames';
 import {
   CamelCaseWrap,
@@ -7,7 +8,7 @@ import {
 import '../styles/common.scss';
 
 type StatusIconAndTextProps = StatusComponentProps & {
-  icon?: React.ReactElement;
+  icon?: ReactElement;
   spin?: boolean;
 };
 
@@ -24,7 +25,7 @@ type StatusIconAndTextProps = StatusComponentProps & {
  * <StatusIconAndText title={title} icon={renderIcon} />
  * ```
  */
-const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
+const StatusIconAndText: FC<StatusIconAndTextProps> = ({
   icon,
   title,
   spin,
@@ -37,12 +38,12 @@ const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
   }
 
   return (
-    <span
+    (<span
       className={classNames('co-icon-and-text', className)}
       title={iconOnly && !noTooltip ? title : undefined}
     >
       {icon &&
-        React.cloneElement(icon, {
+        cloneElement(icon, {
           className: classNames(
             spin && 'pipelines-console-plugin__spin',
             icon.props.className,
@@ -50,7 +51,7 @@ const StatusIconAndText: React.FC<StatusIconAndTextProps> = ({
           ),
         })}
       {!iconOnly && <CamelCaseWrap value={title} dataTest="status-text" />}
-    </span>
+    </span>)
   );
 };
 

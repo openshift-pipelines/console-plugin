@@ -1,7 +1,9 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import './TopologySideBarTabSection.scss';
 
-const TopologySideBarTabSection: React.FC = ({ children }) => {
+const TopologySideBarTabSection: FC<{ children?: ReactNode }> = ({
+  children,
+}) => {
   return <div className="opp-sidebar-tabsection">{children}</div>;
 };
 

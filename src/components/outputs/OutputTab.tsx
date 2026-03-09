@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   EmptyState,
   EmptyStateVariant,
@@ -10,7 +10,7 @@ import { PipelineRunKind } from '../../types';
 
 import ResultsList from './ResultsList';
 
-const OutputTab: React.FC<{ obj: PipelineRunKind }> = ({
+const OutputTab: FC<{ obj: PipelineRunKind }> = ({
   obj: pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

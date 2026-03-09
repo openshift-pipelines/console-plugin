@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FunctionComponent, MouseEvent, ReactNode, Ref } from 'react';
 import { Decorator as PfDecorator } from '@patternfly/react-topology';
 import { Link } from 'react-router-dom-v5-compat';
 import { CustomSVGDefsProvider } from './CustomSVGDefsProvider';
@@ -6,17 +6,18 @@ import { CustomSVGDefsProvider } from './CustomSVGDefsProvider';
 import './Decorator.scss';
 
 type DecoratorTypes = {
+  children?: ReactNode;
   x: number;
   y: number;
   radius: number;
-  onClick?(event: React.MouseEvent<SVGGElement, MouseEvent>): void;
+  onClick?(event: MouseEvent<SVGGElement>): void;
   href?: string;
   ariaLabel?: string;
   external?: boolean;
-  circleRef?: React.Ref<SVGCircleElement>;
+  circleRef?: Ref<SVGCircleElement>;
 };
 
-const Decorator: React.FunctionComponent<DecoratorTypes> = ({
+const Decorator: FunctionComponent<DecoratorTypes> = ({
   x,
   y,
   radius,

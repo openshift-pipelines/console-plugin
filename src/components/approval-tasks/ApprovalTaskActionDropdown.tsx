@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState, useEffect } from 'react';
 import { ApprovalTaskKind, PipelineRunKind } from '../../types';
 import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import {
@@ -27,7 +28,7 @@ type ApprovalTaskActionDropdownProps = {
   pipelineRun: PipelineRunKind;
 };
 
-const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
+const ApprovalTaskActionDropdown: FC<ApprovalTaskActionDropdownProps> = ({
   approvalTask,
   pipelineRun,
 }) => {
@@ -39,8 +40,8 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
     status: { state },
     spec: { approvers },
   } = approvalTask;
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [isAuthorized, setIsAuthorized] = React.useState<boolean | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const onToggle = () => {
     setIsOpen(!isOpen);
   };
@@ -76,7 +77,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
   });
 
   // Check group-based authorization
-  React.useEffect(() => {
+  useEffect(() => {
     const checkAuthorization = async () => {
       if (currentUser && approvers) {
         try {
@@ -159,7 +160,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
       <Dropdown
         onSelect={onSelect}
         onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        toggle={(toggleRef: Ref<MenuToggleElement>) => (
           <MenuToggle
             ref={toggleRef}
             aria-label="kebab menu"
@@ -183,7 +184,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
     <Dropdown
       onSelect={onSelect}
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+      toggle={(toggleRef: Ref<MenuToggleElement>) => (
         <MenuToggle
           ref={toggleRef}
           aria-label="kebab menu"

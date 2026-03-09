@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useRef, useCallback } from 'react';
 
 type FullScreenAPI = {
   requestFullscreen: string;
@@ -58,17 +58,17 @@ export const useFullscreen = <T extends HTMLElement>(): [
   () => void,
   boolean,
 ] => {
-  const [isFullscreen, setIsFullscreen] = React.useState<boolean>(false);
-  const fullscreenRef = React.useRef<boolean>(isFullscreen);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const fullscreenRef = useRef<boolean>(isFullscreen);
   fullscreenRef.current = isFullscreen;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const elementRef = React.useRef<any>();
+  const elementRef = useRef<any>();
 
-  const listener = React.useCallback((event) => {
+  const listener = useCallback((event) => {
     setIsFullscreen(document[nativeAPI.fullscreenElement] === event.target);
   }, []);
 
-  const targetCallbackRef = React.useCallback(
+  const targetCallbackRef = useCallback(
     (node: T) => {
       if (document[nativeAPI.fullscreenEnabled]) {
         if (elementRef.current && elementRef.current !== node) {
@@ -91,7 +91,7 @@ export const useFullscreen = <T extends HTMLElement>(): [
     [listener],
   );
 
-  const fullscreenToggleCallback = React.useCallback(() => {
+  const fullscreenToggleCallback = useCallback(() => {
     if (elementRef.current && document[nativeAPI.fullscreenEnabled]) {
       fullscreenRef.current
         ? document[nativeAPI.exitFullscreen]()

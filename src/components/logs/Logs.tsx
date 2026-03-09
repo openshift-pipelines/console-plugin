@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { LogViewer } from '@patternfly/react-log-viewer';
 import { Base64 } from 'js-base64';
@@ -50,7 +51,7 @@ const processLogData = (
   return result;
 };
 
-const Logs: React.FC<LogsProps> = ({
+const Logs: FC<LogsProps> = ({
   resource,
   containers,
   setCurrentLogsGetter,
@@ -60,15 +61,15 @@ const Logs: React.FC<LogsProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { metadata = {} } = resource;
   const { name: resName, namespace: resNamespace } = metadata;
-  const [error, setError] = React.useState<boolean>(false);
-  const [logData, setLogData] = React.useState<LogData>({});
-  const [formattedLogString, setFormattedLogString] = React.useState('');
-  const [scrollToRow, setScrollToRow] = React.useState<number>(0);
-  const [activeContainers, setActiveContainers] = React.useState<Set<string>>(
+  const [error, setError] = useState<boolean>(false);
+  const [logData, setLogData] = useState<LogData>({});
+  const [formattedLogString, setFormattedLogString] = useState('');
+  const [scrollToRow, setScrollToRow] = useState<number>(0);
+  const [activeContainers, setActiveContainers] = useState<Set<string>>(
     new Set(),
   );
 
-  const findTargetRowForActiveStep = React.useMemo(
+  const findTargetRowForActiveStep = useMemo(
     () => (formattedString: string) => {
       if (!activeStep) return null;
       const lines = formattedString.split('\n');
@@ -85,13 +86,13 @@ const Logs: React.FC<LogsProps> = ({
     [activeStep],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCurrentLogsGetter(() => {
       return formattedLogString;
     });
   }, [setCurrentLogsGetter, formattedLogString]);
 
-  const appendMessage = React.useCallback(
+  const appendMessage = useCallback(
     (containerName: string, blockContent: string, resourceStatus: string) => {
       if (blockContent) {
         setLogData((prevLogData) => {
@@ -151,7 +152,7 @@ const Logs: React.FC<LogsProps> = ({
     return ws;
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     containers.forEach((container) => {
       if (activeContainers.has(container.name)) return;
       setActiveContainers((prev) => new Set(prev).add(container.name));
@@ -223,7 +224,7 @@ const Logs: React.FC<LogsProps> = ({
     activeContainers,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const formattedString = processLogData(logData, containers);
     const targetRow = findTargetRowForActiveStep(formattedString);
     if (typeof targetRow === 'number') {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { ResourceSummary } from '../details-page/details-page';
 import { PipelineRunKind } from '../../types';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ type PipelineRunDetailsProps = {
   obj: PipelineRunKind;
 };
 
-const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({
+const PipelineRunDetails: FC<PipelineRunDetailsProps> = ({
   obj: pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

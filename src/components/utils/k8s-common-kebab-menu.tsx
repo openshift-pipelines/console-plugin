@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { DropdownItem } from '@patternfly/react-core';

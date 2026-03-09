@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
 import {

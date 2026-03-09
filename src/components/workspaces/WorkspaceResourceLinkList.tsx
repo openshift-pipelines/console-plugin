@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import EmptyDirectoriesSection from './EmptyDirectoriesSection';
 import VolumeClaimTemplateSection from './VolumeClaimTemplateSection';
 import WorkspaceResourcesSection from './WorkspaceResourcesSection';
@@ -11,7 +11,7 @@ export interface WorkspaceResourceLinkListProps {
   ownerResourceKind?: string;
 }
 
-const WorkspaceResourceLinkList: React.FC<WorkspaceResourceLinkListProps> = ({
+const WorkspaceResourceLinkList: FC<WorkspaceResourceLinkListProps> = ({
   workspaces,
   namespace,
   ownerResourceName,

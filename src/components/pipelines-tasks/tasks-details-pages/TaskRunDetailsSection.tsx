@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Grid, GridItem, Title } from '@patternfly/react-core';
 
@@ -11,7 +11,7 @@ export interface TaskRunDetailsSectionProps {
   taskRun: TaskRunKind;
 }
 
-const TaskRunDetailsSection: React.FC<TaskRunDetailsSectionProps> = ({
+const TaskRunDetailsSection: FC<TaskRunDetailsSectionProps> = ({
   taskRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

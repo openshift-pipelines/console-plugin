@@ -3,7 +3,7 @@ import {
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
-import * as React from 'react';
+import { useMemo, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import {
@@ -33,13 +33,13 @@ const PipelineDetailsPage = () => {
     name,
   });
 
-  const resourceTitleFunc = React.useMemo(() => {
+  const resourceTitleFunc = useMemo(() => {
     return (
       <div className="Pipeline-details-page">{pipeline?.metadata?.name} </div>
     );
   }, [pipeline]);
 
-  const customActionMenu = React.useCallback((_kindObj, obj) => {
+  const customActionMenu = useCallback((_kindObj, obj) => {
     const reference = getReferenceForModel(PipelineModel);
     const context = { [reference]: obj };
     return (

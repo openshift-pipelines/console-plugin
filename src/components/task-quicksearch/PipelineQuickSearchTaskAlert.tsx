@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CTALabel } from './const';
@@ -7,7 +7,7 @@ interface PipelineQuickSearchTaskAlertProps {
   ctaType: string;
 }
 
-const PipelineQuickSearchTaskAlert: React.FC<
+const PipelineQuickSearchTaskAlert: FC<
   PipelineQuickSearchTaskAlertProps
 > = ({ ctaType }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

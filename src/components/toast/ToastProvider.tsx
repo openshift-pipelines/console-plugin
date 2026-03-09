@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   Alert,
   AlertGroup,
@@ -7,10 +8,10 @@ import {
 } from '@patternfly/react-core';
 import { ToastOptions, ToastContext, ToastContextType } from './ToastContext';
 
-export const ToastProvider: React.FC = ({ children }) => {
-  const [toasts, setToasts] = React.useState<ToastOptions[]>([]);
+export const ToastProvider: FC<{ children?: ReactNode }> = ({ children }) => {
+  const [toasts, setToasts] = useState<ToastOptions[]>([]);
 
-  const removeToast = React.useCallback((id: string) => {
+  const removeToast = useCallback((id: string) => {
     setToasts((state) => {
       const index = state.findIndex((t) => t.id === id);
       if (index !== -1) {
@@ -27,7 +28,7 @@ export const ToastProvider: React.FC = ({ children }) => {
     });
   }, []);
 
-  const addToast = React.useMemo(() => {
+  const addToast = useMemo(() => {
     let counter = 0;
     return (toast: ToastOptions) => {
       const clone: ToastOptions = {
@@ -49,7 +50,7 @@ export const ToastProvider: React.FC = ({ children }) => {
     };
   }, []);
 
-  const controller: ToastContextType = React.useMemo<ToastContextType>(
+  const controller: ToastContextType = useMemo<ToastContextType>(
     () => ({
       addToast,
       removeToast,

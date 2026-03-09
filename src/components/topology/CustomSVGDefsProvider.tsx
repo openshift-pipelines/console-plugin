@@ -1,13 +1,14 @@
 import SVGDefsContext from '@patternfly/react-topology/dist/esm/components/defs/SVGDefsContext';
-import React, { useMemo } from 'react';
+import type { ReactNode, FC } from 'react';
+import { useMemo } from 'react';
 
-export const CustomSVGDefsProvider: React.FC<{ children: React.ReactNode }> = ({
+export const CustomSVGDefsProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const defsMap = useMemo(() => new Map<string, React.ReactNode>(), []);
 
   const contextValue = {
-    addDef: (id: string, element: React.ReactNode) => {
+    addDef: (id: string, element: ReactNode) => {
       defsMap.set(id, element);
     },
     removeDef: (id: string) => {

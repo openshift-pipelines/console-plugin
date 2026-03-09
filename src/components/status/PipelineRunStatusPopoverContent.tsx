@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { PipelineRunModel } from '../../models';
@@ -13,7 +13,7 @@ import './StatusPopoverContent.scss';
 type StatusPopoverContentProps = {
   pipelineRun: PipelineRunKind;
 };
-const PipelineRunStatusPopoverContent: React.FC<StatusPopoverContentProps> = ({
+const PipelineRunStatusPopoverContent: FC<StatusPopoverContentProps> = ({
   pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

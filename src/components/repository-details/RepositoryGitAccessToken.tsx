@@ -3,14 +3,14 @@ import {
   K8sResourceKind,
   ResourceLink,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import type { FC } from 'react';
 import { SecretModel } from '../../models';
 
 type RepositoryGitAccessTokenProps = {
   obj: K8sResourceKind;
 };
 
-const RepositoryGitAccessToken: React.FC<RepositoryGitAccessTokenProps> = ({
+const RepositoryGitAccessToken: FC<RepositoryGitAccessTokenProps> = ({
   obj,
 }) => {
   return (

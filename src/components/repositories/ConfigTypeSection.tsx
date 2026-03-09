@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   FormGroup,
   Flex,
@@ -24,7 +24,7 @@ type ConfigTypeSectionProps = {
   formContextField?: string;
 };
 
-const ConfigTypeSection: React.FC<ConfigTypeSectionProps> = ({
+const ConfigTypeSection: FC<ConfigTypeSectionProps> = ({
   pac,
   formContextField,
 }) => {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,7 @@ type RepositoryFormExtendedProps = RepositoryFormProps & {
   isSubmittingForm: boolean;
 };
 
-export const RepositoryForm: React.FC<RepositoryFormExtendedProps> = ({
+export const RepositoryForm: FC<RepositoryFormExtendedProps> = ({
   values,
   status,
   isSubmitting,

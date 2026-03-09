@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { memo } from 'react';
 import * as PropTypes from 'prop-types';
 import { Button } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
@@ -28,7 +28,7 @@ const TogglePlayComponent = ({ className, active, onClick }) => {
   );
 };
 
-export const TogglePlay = React.memo(
+export const TogglePlay = memo(
   TogglePlayComponent,
   (prevProps, nextProps) => {
     // Return true if props are equal (should NOT update)

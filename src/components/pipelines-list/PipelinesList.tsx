@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useParams } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { SortByDirection } from '@patternfly/react-table';
@@ -24,7 +24,7 @@ type PipelineListProps = {
   hideTextFilter?: boolean;
 };
 
-const PipelinesList: React.FC<PipelineListProps> = ({
+const PipelinesList: FC<PipelineListProps> = ({
   namespace,
   hideTextFilter,
 }) => {

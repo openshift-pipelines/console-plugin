@@ -1,8 +1,8 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { observer, Node } from '@patternfly/react-topology';
 import LoadingTask from './LoadingTask';
 
-const LoadingNode: React.FC<{ element: Node }> = ({ element }) => {
+const LoadingNode: FC<{ element: Node }> = ({ element }) => {
   const { height, width } = element.getBounds();
   const {
     task: { name },

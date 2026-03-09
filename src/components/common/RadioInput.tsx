@@ -1,7 +1,8 @@
-import * as React from 'react';
+import type { ReactNode, InputHTMLAttributes, FC } from 'react';
 import { Radio } from '@patternfly/react-core';
 
 export type RadioInputProps = {
+  children?: ReactNode;
   checked: boolean;
   desc?: string | JSX.Element;
   onChange: (v: any) => void;
@@ -10,9 +11,9 @@ export type RadioInputProps = {
   disabled?: boolean;
   title?: string;
   name?: string;
-} & React.InputHTMLAttributes<any>;
+} & Omit<InputHTMLAttributes<any>, 'children'>;
 
-export const RadioInput: React.FC<RadioInputProps> = (props) => {
+export const RadioInput: FC<RadioInputProps> = (props) => {
   const {
     checked,
     desc,

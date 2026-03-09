@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useK8sGet } from '../hooks/use-k8sGet-hook';
 import { ConfigMapModel } from '../../models';
 import { K8sResourceKind } from '@openshift-console/dynamic-plugin-sdk';

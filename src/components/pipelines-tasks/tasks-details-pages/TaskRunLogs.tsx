@@ -1,4 +1,4 @@
-import React from 'react';
+import type { PropsWithChildren, FC } from 'react';
 import LogsWrapperComponent from '../../logs/LogsWrapperComponent';
 import { PodModel } from '../../../models';
 import { ComputedStatus, TaskRunKind } from '../../../types';
@@ -10,7 +10,7 @@ type Props = {
   activeStep?: string;
 };
 
-const TaskRunLogs: React.FC<React.PropsWithChildren<Props>> = ({
+const TaskRunLogs: FC<PropsWithChildren<Props>> = ({
   taskRun,
   status,
   activeStep,

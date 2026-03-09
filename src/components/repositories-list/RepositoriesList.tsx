@@ -5,7 +5,7 @@ import {
   useK8sWatchResource,
   useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import type { FC } from 'react';
 import { PipelineRunModel, RepositoryModel } from '../../models';
 import { PipelineRunKind, RepositoryKind } from '../../types';
 import useRepositoriesColumns from './useRepositoriesColumns';
@@ -20,7 +20,7 @@ type RepositoriesListProps = {
   hideTextFilter?: boolean;
 };
 
-const RepositoriesList: React.FC<RepositoriesListProps> = ({
+const RepositoriesList: FC<RepositoriesListProps> = ({
   namespace,
   hideTextFilter,
 }) => {

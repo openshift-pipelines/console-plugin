@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { AngleDoubleRightIcon } from '@patternfly/react-icons/dist/esm/icons/angle-double-right-icon';
@@ -31,7 +31,7 @@ interface StatusIconProps {
   disableSpin?: boolean;
 }
 
-export const StatusIcon: React.FC<StatusIconProps> = ({
+export const StatusIcon: FC<StatusIconProps> = ({
   status,
   disableSpin,
   ...props
@@ -57,7 +57,7 @@ export const StatusIcon: React.FC<StatusIconProps> = ({
       return <HourglassHalfIcon {...props} />;
 
     case ComputedStatus.Cancelled:
-      return <YellowExclamationTriangleIcon {...props} />;
+      return <YellowExclamationTriangleIcon />;
 
     case ComputedStatus.Skipped:
       return <AngleDoubleRightIcon {...props} />;
@@ -67,7 +67,7 @@ export const StatusIcon: React.FC<StatusIconProps> = ({
   }
 };
 
-export const ApprovalStatusIcon: React.FC<StatusIconProps> = ({
+export const ApprovalStatusIcon: FC<StatusIconProps> = ({
   status,
   ...others
 }) => {
@@ -95,7 +95,7 @@ export const ApprovalStatusIcon: React.FC<StatusIconProps> = ({
   }
 };
 
-export const ColoredStatusIcon: React.FC<StatusIconProps> = ({
+export const ColoredStatusIcon: FC<StatusIconProps> = ({
   status,
   ...others
 }) => {

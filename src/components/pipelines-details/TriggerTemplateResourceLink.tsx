@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   ClipboardCopy,
   ClipboardCopyVariant,
@@ -19,7 +19,7 @@ type TriggerTemplateResourceLinkProps = {
   model: K8sKind;
   links: RouteTemplate[];
 };
-const TriggerTemplateResourceLink: React.FC<
+const TriggerTemplateResourceLink: FC<
   TriggerTemplateResourceLinkProps
 > = ({ links = [], namespace, model }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

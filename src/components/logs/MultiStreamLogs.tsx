@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import Logs from './Logs';
 import { getRenderContainers } from './logs-utils';
 import { PodKind } from '../../types';
@@ -12,7 +12,7 @@ type MultiStreamLogsProps = {
   activeStep?: string;
 };
 
-export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
+export const MultiStreamLogs: FC<MultiStreamLogsProps> = ({
   resource,
   taskName,
   setCurrentLogsGetter,

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon } from '@patternfly/react-icons';
@@ -31,7 +32,7 @@ interface PipelinesRunsDurationProps {
   bordered?: boolean;
 }
 
-const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
+const PipelinesRunsTotalCard: FC<PipelinesRunsDurationProps> = ({
   namespace,
   timespan,
   interval,
@@ -40,22 +41,22 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
 
-  const [totalRun, setTotalRun] = React.useState(0);
-  const [plrRun, setPlrRun] = React.useState(0);
-  const [repoRun, setRepoRun] = React.useState(0);
-  const [loaded, setLoaded] = React.useState(false);
-  const [pipelineRunsTotalError, setPipelineRunsTotalError] = React.useState<
+  const [totalRun, setTotalRun] = useState(0);
+  const [plrRun, setPlrRun] = useState(0);
+  const [repoRun, setRepoRun] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+  const [pipelineRunsTotalError, setPipelineRunsTotalError] = useState<
     string | undefined
   >();
-  const abortControllerRefPipeline = React.useRef<AbortController>();
-  const abortControllerRefRepo = React.useRef<AbortController>();
-  const abortControllerRefAll = React.useRef<AbortController>();
+  const abortControllerRefPipeline = useRef<AbortController>();
+  const abortControllerRefRepo = useRef<AbortController>();
+  const abortControllerRefAll = useRef<AbortController>();
 
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     setLoaded(false);
     setPipelineRunsTotalError(undefined);
     // Clear stale data when namespace or timespan changes
@@ -64,7 +65,7 @@ const PipelinesRunsTotalCard: React.FC<PipelinesRunsDurationProps> = ({
     setRepoRun(0);
   }, [namespace, timespan]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       abortControllerRefPipeline.current?.abort();
       abortControllerRefRepo.current?.abort();

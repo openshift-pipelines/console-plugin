@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ReactEventHandler } from 'react';
+import { useState, useEffect } from 'react';
 import {
   FormGroup,
   Alert,
@@ -226,7 +227,7 @@ interface RequestSize {
   unit: string;
 }
 
-const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
+const VolumeClaimTemplateForm: FC<VolumeClaimTemplateFormProps> = ({
   name,
   initialSizeValue = '1',
   initialSizeUnit = 'Gi',
@@ -236,28 +237,28 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
   const [field] = useField(name);
   const initAccessModeHelp = t('Permissions to the mounted drive.');
   const [accessModeHelp, setAccessModeHelp] =
-    React.useState(initAccessModeHelp);
+    useState(initAccessModeHelp);
   const { setFieldValue, setFieldTouched, errors } =
     useFormikContext<FormikValues>();
   const [allowedAccessModes, setAllowedAccessModes] =
-    React.useState<string[]>(initialAccessModes);
-  const [volumeMode, setVolumeMode] = React.useState(initialVolumeMode);
-  const [accessMode, setAccessMode] = React.useState('ReadWriteOnce');
-  const [requestSizeError, setRequestSizeError] = React.useState(null);
+    useState<string[]>(initialAccessModes);
+  const [volumeMode, setVolumeMode] = useState(initialVolumeMode);
+  const [accessMode, setAccessMode] = useState('ReadWriteOnce');
+  const [requestSizeError, setRequestSizeError] = useState(null);
   const [requestSizeValue, setRequestSizeValue] =
-    React.useState(initialSizeValue);
-  const [requestSizeUnit, setRequestSizeUnit] = React.useState(initialSizeUnit);
-  const [storageProvisioner, setStorageProvisioner] = React.useState('');
-  const [storageClass, setStorageClass] = React.useState('');
+    useState(initialSizeValue);
+  const [requestSizeUnit, setRequestSizeUnit] = useState(initialSizeUnit);
+  const [storageProvisioner, setStorageProvisioner] = useState('');
+  const [storageClass, setStorageClass] = useState('');
   useFormikValidationFix(field.value);
 
-  const handleAccessMode: React.ReactEventHandler<HTMLInputElement> = (
+  const handleAccessMode: ReactEventHandler<HTMLInputElement> = (
     event,
   ) => {
     setAccessMode(event.currentTarget.value);
   };
 
-  const handleVolumeMode: React.ReactEventHandler<HTMLInputElement> = (
+  const handleVolumeMode: ReactEventHandler<HTMLInputElement> = (
     event,
   ) => {
     setVolumeMode(event.currentTarget.value);
@@ -288,7 +289,7 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
     setRequestSizeUnit(unit);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setRequestSizeError(null);
     const volumeClaimTemplate = {
       spec: {

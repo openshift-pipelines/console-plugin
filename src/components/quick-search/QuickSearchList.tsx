@@ -22,7 +22,7 @@ import { getIconProps } from '../catalog/catalog-utils';
 import { CatalogType } from '../catalog/types';
 
 import './QuickSearchList.scss';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom-v5-compat';
 
 interface QuickSearchListProps {
   listItems: CatalogItem[];
@@ -51,7 +51,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
   onListChange,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const history = useHistory();
+  const navigate = useNavigate();
   const [itemsCount, setItemsCount] = React.useState<number>(
     limitItemCount || listItems.length,
   );
@@ -117,7 +117,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                   item.uid === selectedItemId,
               })}
               onDoubleClick={(e: React.SyntheticEvent) => {
-                handleCta(e, item, closeModal, history);
+                handleCta(e, item, closeModal, navigate);
               }}
             >
               <DataListItemRow className="ocs-quick-search-list__item-row">

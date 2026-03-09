@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { PipelineRunsList } from '../pipelineRuns-list';
 import { K8sResourceKind } from '@openshift-console/dynamic-plugin-sdk';
 
@@ -9,7 +9,7 @@ type RepositoryPipelineRunsListProps = {
   obj?: K8sResourceKind;
 };
 
-const RepositoryPipelineRunsList: React.FC<RepositoryPipelineRunsListProps> = (
+const RepositoryPipelineRunsList: FC<RepositoryPipelineRunsListProps> = (
   props,
 ) => {
   const { ns, obj } = props;

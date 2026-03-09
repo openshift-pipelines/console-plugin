@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import { PageSection } from '@patternfly/react-core';
 import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
@@ -237,13 +237,13 @@ const EventStream = ({
   textFilter,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [active, setActive] = React.useState(true);
-  const [sortedEvents, setSortedEvents] = React.useState([]);
-  const [error, setError] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
-  const ws = React.useRef(null);
+  const [active, setActive] = useState(true);
+  const [sortedEvents, setSortedEvents] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const ws = useRef(null);
 
-  const filteredEvents = React.useMemo(() => {
+  const filteredEvents = useMemo(() => {
     return filterEvents(sortedEvents, { kind, type, filter, textFilter }).slice(
       0,
       maxMessages,
@@ -251,7 +251,7 @@ const EventStream = ({
   }, [sortedEvents, kind, type, filter, textFilter]);
 
   // Handle websocket setup and teardown when dependent props change
-  React.useEffect(() => {
+  useEffect(() => {
     ws.current?.destroy();
     if (!mock) {
       const webSocketID = `${namespace || 'all'}-sysevents`;
@@ -324,7 +324,7 @@ const EventStream = ({
   }, [namespace, fieldSelector, mock, t]);
 
   // Pause/unpause the websocket when the active state changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (active) {
       ws.current?.unpause();
     } else {

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import cx from 'classnames';
 import * as models from '../../models';
 import {
@@ -28,7 +28,7 @@ type PipelineResourceRefProps = {
   resourceApiVersion?: string;
 };
 
-const PipelineResourceRef: React.FC<PipelineResourceRefProps> = ({
+const PipelineResourceRef: FC<PipelineResourceRefProps> = ({
   disableLink,
   displayName,
   largeIcon,

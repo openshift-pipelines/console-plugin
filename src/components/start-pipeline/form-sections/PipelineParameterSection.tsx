@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { Fragment } from 'react';
 import { FormSection, TextInputTypes } from '@patternfly/react-core';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +16,7 @@ type ParametersSectionProps = {
   autoCompleteValues?: string[];
 };
 
-const PipelineParameterSection: React.FC<ParametersSectionProps> = ({
+const PipelineParameterSection: FC<ParametersSectionProps> = ({
   autoCompleteValues,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -26,7 +27,7 @@ const PipelineParameterSection: React.FC<ParametersSectionProps> = ({
   } = useFormikContext<CommonPipelineModalFormikValues>();
 
   return (
-    <FieldArray
+    (<FieldArray
       name="parameters"
       key="parameters-row"
       render={() =>
@@ -78,7 +79,7 @@ const PipelineParameterSection: React.FC<ParametersSectionProps> = ({
                   }
                 </TextColumnField>
               ) : (
-                <React.Fragment key={parameter.name}>
+                <Fragment key={parameter.name}>
                   {autoCompleteValues ? (
                     <AutoCompletePopover
                       autoCompleteValues={autoCompleteValues}
@@ -91,13 +92,13 @@ const PipelineParameterSection: React.FC<ParametersSectionProps> = ({
                   ) : (
                     input()
                   )}
-                </React.Fragment>
+                </Fragment>
               );
             })}
           </FormSection>
         )
       }
-    />
+    />)
   );
 };
 

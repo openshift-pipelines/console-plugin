@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import { createRef, PureComponent, ReactNode } from 'react';
 import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { useTranslation, withTranslation } from 'react-i18next';
@@ -9,14 +9,14 @@ import { CheckIcon } from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import { StarIcon } from '@patternfly/react-icons/dist/esm/icons/star-icon';
 import { ResourceName } from './ResourceName';
 
-class DropdownMixin extends React.PureComponent {
+class DropdownMixin extends PureComponent {
   constructor(props) {
     super(props);
     this.listener = this._onWindowClick.bind(this);
     this.state = { active: !!props.active, selectedKey: props.selectedKey };
     this.toggle = this.toggle.bind(this);
-    this.dropdownElement = React.createRef();
-    this.dropdownList = React.createRef();
+    this.dropdownElement = createRef();
+    this.dropdownList = createRef();
   }
 
   _onWindowClick(event) {
@@ -104,7 +104,7 @@ class DropdownMixin extends React.PureComponent {
   }
 }
 
-class DropDownRowWithTranslation extends React.PureComponent {
+class DropDownRowWithTranslation extends PureComponent {
   render() {
     const {
       itemKey,
@@ -478,7 +478,7 @@ class Dropdown_ extends DropdownMixin {
     //render PF4 dropdown markup if this is not the autocomplete filter
     if (autocompleteFilter) {
       return (
-        <div
+        (<div
           className={className}
           ref={this.dropdownElement}
           style={this.props.style}
@@ -520,7 +520,7 @@ class Dropdown_ extends DropdownMixin {
             </button>
             {active && (
               // Style the Application menu to match the Project selection menu
-              <div className="pf-v6-c-menu pf-m-scrollable co-namespace-dropdown__menu">
+              (<div className="pf-v6-c-menu pf-m-scrollable co-namespace-dropdown__menu">
                 <div
                   className="pf-v6-c-menu__content"
                   style={{ maxHeight: '60vh' }}
@@ -561,10 +561,10 @@ class Dropdown_ extends DropdownMixin {
                     {rows}
                   </ul>
                 </div>
-              </div>
+              </div>)
             )}
           </div>
-        </div>
+        </div>)
       );
     }
 
@@ -644,7 +644,7 @@ Dropdown.propTypes = {
   storageKey: PropTypes.string,
   spacerBefore: PropTypes.instanceOf(Set),
   textFilter: PropTypes.string,
-  title: React.ReactNode,
+  title: ReactNode,
   disabled: PropTypes.bool,
   id: PropTypes.string,
   onChange: PropTypes.func,

@@ -1,34 +1,36 @@
-import * as React from 'react';
+import type { ReactElement, PropsWithChildren, FC } from 'react';
+import { isValidElement, Fragment } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 
 type BreadCrumbsProps = {
-  breadcrumbs: ({ name: string; path: string } | React.ReactElement)[];
+  breadcrumbs: ({ name: string; path: string } | ReactElement)[];
   className?: string;
 };
 
-export const BreadCrumbs: React.FC<
-  React.PropsWithChildren<BreadCrumbsProps>
+export const BreadCrumbs: FC<
+  PropsWithChildren<BreadCrumbsProps>
 > = ({ breadcrumbs, className }) => (
   <Breadcrumb className={className}>
     {breadcrumbs.map((crumb, i, { length }) => {
       const isLast = i === length - 1;
 
-      if (React.isValidElement(crumb)) {
-        return <React.Fragment key={crumb.key}>{crumb}</React.Fragment>;
+      if (isValidElement(crumb)) {
+        return <Fragment key={crumb.key}>{crumb}</Fragment>;
       }
 
+      const crumbData = crumb as { name: string; path: string };
       return (
-        <BreadcrumbItem key={crumb.name} component="div" isActive={isLast}>
-          {isLast || !crumb.path ? (
-            crumb.name
+        <BreadcrumbItem key={crumbData.name} component="div" isActive={isLast}>
+          {isLast || !crumbData.path ? (
+            crumbData.name
           ) : (
             <Link
               className="pf-v6-c-breadcrumb__link"
-              to={crumb.path}
+              to={crumbData.path}
               data-test-id={`breadcrumb-link-${i}`}
             >
-              {crumb.name}
+              {crumbData.name}
             </Link>
           )}
         </BreadcrumbItem>

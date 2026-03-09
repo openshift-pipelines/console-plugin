@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
@@ -23,7 +24,7 @@ type PipelineRunsForRepositoriesListProps = {
   loaded: boolean;
 };
 
-const PipelineRunsForRepositoriesList: React.FC<
+const PipelineRunsForRepositoriesList: FC<
   PipelineRunsForRepositoriesListProps
 > = ({ summaryData, summaryDataFiltered, loaded }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -32,7 +33,7 @@ const PipelineRunsForRepositoriesList: React.FC<
     </EmptyState>
   );
 
-  const plrColumns = React.useMemo<TableColumn<SummaryProps>[]>(
+  const plrColumns = useMemo<TableColumn<SummaryProps>[]>(
     () => [
       {
         id: 'repoName',

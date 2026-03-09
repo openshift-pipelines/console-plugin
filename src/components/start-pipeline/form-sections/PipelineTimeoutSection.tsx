@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo } from 'react';
 import { RequestSizeInput } from '../../common/request-size-input';
 import { useTranslation } from 'react-i18next';
 import { FormikValues, useField, useFormikContext } from 'formik';
@@ -14,8 +14,8 @@ const PipelineTimeoutSection = () => {
   const [, { touched, error }] = useField<string | string[]>(
     'timeouts.timeValue',
   );
-  const [timeoutUnit, setTimeoutUnit] = React.useState('m');
-  const [timeoutValue, setTimeoutValue] = React.useState(60);
+  const [timeoutUnit, setTimeoutUnit] = useState('m');
+  const [timeoutValue, setTimeoutValue] = useState(60);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const isValid = !(touched && !!error);
   const errorMessage = !isValid ? error : '';
@@ -27,7 +27,7 @@ const PipelineTimeoutSection = () => {
     setFieldTouched('timeouts.timeValue', true);
     setFieldValue('timeouts.timeUnit', unit);
   };
-  const dropdownUnits = React.useMemo(
+  const dropdownUnits = useMemo(
     () => ({
       h: t('Hr'),
       m: t('Min'),

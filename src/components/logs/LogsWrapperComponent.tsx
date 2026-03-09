@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as React from 'react';
+import type { PropsWithChildren, FC } from 'react';
+
+import { useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import {
@@ -28,8 +30,8 @@ type LogsWrapperComponentProps = {
   activeStep?: string;
 };
 
-const LogsWrapperComponent: React.FC<
-  React.PropsWithChildren<LogsWrapperComponentProps>
+const LogsWrapperComponent: FC<
+  PropsWithChildren<LogsWrapperComponentProps>
 > = ({
   resource,
   taskRun,
@@ -39,12 +41,12 @@ const LogsWrapperComponent: React.FC<
   ...props
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const resourceRef = React.useRef(null);
+  const resourceRef = useRef(null);
   const [obj, loaded, error] = useK8sWatchResource<PodKind>(resource);
   const [isFullscreen, fullscreenRef, fullscreenToggle] =
     useFullscreen<HTMLDivElement>();
-  const [downloadAllStatus, setDownloadAllStatus] = React.useState(false);
-  const currentLogGetterRef = React.useRef<() => string>();
+  const [downloadAllStatus, setDownloadAllStatus] = useState(false);
+  const currentLogGetterRef = useRef<() => string>();
 
   const taskName =
     taskRun?.metadata?.labels?.[TektonResourceLabel.pipelineTask] ||
@@ -65,7 +67,7 @@ const LogsWrapperComponent: React.FC<
     });
     saveAs(blob, `${taskName}.log`);
   };
-  const setLogGetter = React.useCallback(
+  const setLogGetter = useCallback(
     (getter: any) => (currentLogGetterRef.current = getter),
     [],
   );

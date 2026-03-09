@@ -1,5 +1,5 @@
 import { ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ClusterTriggerBindingModel } from '../../models';
 import ClusterTriggerBindingsList from './ClusterTriggerBindingsList';
@@ -10,7 +10,7 @@ type ClusterTriggerBindingsListPageProps = {
   hideNameLabelFilters?: boolean;
 };
 
-const ClusterTriggerBindingsListPage: React.FC<
+const ClusterTriggerBindingsListPage: FC<
   ClusterTriggerBindingsListPageProps
 > = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

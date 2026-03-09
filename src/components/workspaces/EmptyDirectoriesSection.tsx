@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DescriptionListDescription,
@@ -11,7 +11,7 @@ type EmptyDirectoriesSectionProps = {
   workspaces: PipelineRunWorkspace[];
 };
 
-const EmptyDirectoriesSection: React.FC<EmptyDirectoriesSectionProps> = ({
+const EmptyDirectoriesSection: FC<EmptyDirectoriesSectionProps> = ({
   workspaces,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

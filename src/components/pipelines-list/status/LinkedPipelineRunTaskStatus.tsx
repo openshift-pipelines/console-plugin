@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
@@ -19,7 +19,7 @@ export interface LinkedPipelineRunTaskStatusProps {
  * Will attempt to render a link to the log file associated with the pipelineRun if it has the data.
  * If it does not, it'll just render the pipeline status.
  */
-const LinkedPipelineRunTaskStatus: React.FC<
+const LinkedPipelineRunTaskStatus: FC<
   LinkedPipelineRunTaskStatusProps
 > = ({ pipelineRun, taskRuns, taskRunsLoaded, taskRunStatusObj }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

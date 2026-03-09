@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Bullseye,
   EmptyState,
@@ -16,7 +16,7 @@ export interface ResultsListProps {
   status: string;
 }
 
-const ResultsList: React.FC<ResultsListProps> = ({
+const ResultsList: FC<ResultsListProps> = ({
   results,
   resourceName,
   status,

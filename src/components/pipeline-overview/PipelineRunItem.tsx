@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
@@ -18,7 +18,7 @@ type PipelineRunItemProps = {
   pipelineRun: PipelineRunKind;
 };
 
-const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
+const PipelineRunItem: FC<PipelineRunItemProps> = ({ pipelineRun }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
     metadata: { name, namespace, creationTimestamp },

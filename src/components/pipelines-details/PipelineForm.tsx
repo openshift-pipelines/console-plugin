@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentType, FC } from 'react';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -10,13 +10,13 @@ import { PipelineModel } from '../../models';
 import { sanitizePipelineParams } from './utils';
 
 export interface PipelineFormProps {
-  PipelineFormComponent: React.ComponentType<any>;
+  PipelineFormComponent: ComponentType<any>;
   formName: string;
   validationSchema: any;
   obj: K8sResourceKind;
 }
 
-const PipelineForm: React.FC<PipelineFormProps> = ({
+const PipelineForm: FC<PipelineFormProps> = ({
   PipelineFormComponent,
   formName,
   validationSchema,

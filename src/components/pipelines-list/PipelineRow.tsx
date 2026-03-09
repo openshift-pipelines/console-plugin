@@ -5,7 +5,8 @@ import {
   Timestamp,
   getGroupVersionKindForModel,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import type { FC } from 'react';
+import { memo } from 'react';
 import { PipelineWithLatest } from '../../types/pipelineRun';
 import { ComputedStatus, TaskRunKind } from '../../types';
 import { useTaskRuns } from '../hooks/useTaskRuns';
@@ -49,7 +50,7 @@ type PipelineRowWithTaskRunsProps = {
 const TASKRUNSFORPLRCACHE: { [key: string]: TaskRunKind[] } = {};
 const InFlightStoreForTaskRunsForPLR: { [key: string]: boolean } = {};
 
-const PipelineStatus: React.FC<PipelineStatusProps> = ({ obj }) => {
+const PipelineStatus: FC<PipelineStatusProps> = ({ obj }) => {
   return (
     <PipelineRunStatusContent
       status={pipelineFilterReducer(obj)}
@@ -147,8 +148,8 @@ const PipelineRowTable = ({
   );
 };
 
-const PipelineRowWithoutTaskRuns: React.FC<PipelineRowWithoutTaskRunsProps> =
-  React.memo(({ obj, taskRunStatusObj, activeColumnIDs }) => {
+const PipelineRowWithoutTaskRuns: FC<PipelineRowWithoutTaskRunsProps> =
+  memo(({ obj, taskRunStatusObj, activeColumnIDs }) => {
     return (
       <PipelineRowTable
         obj={obj}
@@ -160,8 +161,8 @@ const PipelineRowWithoutTaskRuns: React.FC<PipelineRowWithoutTaskRunsProps> =
     );
   });
 
-const PipelineRowWithTaskRunsFetch: React.FC<PipelineRowWithTaskRunsProps> =
-  React.memo(({ obj, activeColumnIDs }) => {
+const PipelineRowWithTaskRunsFetch: FC<PipelineRowWithTaskRunsProps> =
+  memo(({ obj, activeColumnIDs }) => {
     const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
     const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
       obj.latestRun.metadata.namespace,
@@ -184,8 +185,8 @@ const PipelineRowWithTaskRunsFetch: React.FC<PipelineRowWithTaskRunsProps> =
     );
   });
 
-const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> =
-  React.memo(({ obj, activeColumnIDs }) => {
+const PipelineRowWithTaskRuns: FC<PipelineRowWithTaskRunsProps> =
+  memo(({ obj, activeColumnIDs }) => {
     let PLRTaskRuns: TaskRunKind[];
     let taskRunsLoaded: boolean;
     const cacheKey = `${obj.latestRun.metadata.namespace}-${obj.latestRun.metadata.name}`;
@@ -216,7 +217,7 @@ const PipelineRowWithTaskRuns: React.FC<PipelineRowWithTaskRunsProps> =
     );
   });
 
-const PipelineRow: React.FC<RowProps<PipelineWithLatest>> = ({
+const PipelineRow: FC<RowProps<PipelineWithLatest>> = ({
   obj,
   activeColumnIDs,
 }) => {

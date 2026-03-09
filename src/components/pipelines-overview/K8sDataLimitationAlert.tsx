@@ -1,8 +1,8 @@
-import React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
 
-export const K8sDataLimitationAlert: React.FC = () => {
+export const K8sDataLimitationAlert: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <Alert isInline variant="info" title={t('Info')}>

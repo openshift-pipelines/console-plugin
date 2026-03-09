@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { FC, ReactElement } from 'react';
 import { SVGProps } from 'react';
 
-const SignedBadgeIcon: React.FC<SVGProps<SVGSVGElement>> = (
+const SignedBadgeIcon: FC<SVGProps<SVGSVGElement>> = (
   props,
-): React.ReactElement => {
+): ReactElement => {
   const { width = 16, height = 16 } = props;
   return (
     <svg

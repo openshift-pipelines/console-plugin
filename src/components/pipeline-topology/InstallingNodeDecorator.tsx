@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons/dist/esm/icons/in-progress-icon';
 import { BUILDER_NODE_DECORATOR_RADIUS } from './const';
@@ -11,12 +12,12 @@ type InstallingNodeDecoratorProps = {
   x: number;
   y: number;
 };
-const InstallingNodeDecorator: React.FC<InstallingNodeDecoratorProps> = ({
+const InstallingNodeDecorator: FC<InstallingNodeDecoratorProps> = ({
   content,
   x,
   y,
 }) => {
-  const iconRef = React.useRef();
+  const iconRef = useRef();
   return (
     <Tooltip triggerRef={iconRef} content={content}>
       <g

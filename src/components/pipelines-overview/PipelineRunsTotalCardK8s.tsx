@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon } from '@patternfly/react-icons';
@@ -33,14 +34,14 @@ interface PipelinesRunsDurationProps {
   bordered?: boolean;
 }
 
-const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
+const PipelineRunsTotalCardK8s: FC<PipelinesRunsDurationProps> = ({
   namespace,
   timespan,
   interval,
   bordered,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [pipelineRunsTotalError, setPipelineRunsTotalError] = React.useState<
+  const [pipelineRunsTotalError, setPipelineRunsTotalError] = useState<
     string | null
   >(null);
   const [
@@ -66,14 +67,14 @@ const PipelineRunsTotalCardK8s: React.FC<PipelinesRunsDurationProps> = ({
         });
   const [tickValues, type] = getXaxisValues(timespan);
 
-  const totalPipelineRuns = React.useMemo(() => {
+  const totalPipelineRuns = useMemo(() => {
     if (totalPipelineRunsError) {
       return '-';
     }
     return getTotalPipelineRuns(totalPipelineRunsData, tickValues, type);
   }, [totalPipelineRunsData, tickValues, type, totalPipelineRunsError]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const hasNonAbortError =
       totalPipelineRunsError && totalPipelineRunsError.name !== 'AbortError';
     setPipelineRunsTotalError(

@@ -25,6 +25,8 @@ rules:
   '@typescript-eslint/ban-types': off
   '@typescript-eslint/no-explicit-any': off
   'react/display-name': 0
+  "react/jsx-uses-react": "off"
+  "react/react-in-jsx-scope": "off"
 settings:
   react:
     version: detect

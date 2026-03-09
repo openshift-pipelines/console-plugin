@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Nav, NavItem, NavList } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +37,7 @@ interface PipelineRunLogsProps {
   taskRuns: TaskRunKind[];
 }
 
-const PipelineRunLogs: React.FC<PipelineRunLogsProps> = ({
+const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
   obj,
   activeTask,
   activeStep,
@@ -45,10 +46,10 @@ const PipelineRunLogs: React.FC<PipelineRunLogsProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const launchOverlay = useOverlay();
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
-  const [activeItem, setActiveItem] = React.useState<string>(null);
-  const [navUntouched, setNavUntouched] = React.useState(true);
+  const [activeItem, setActiveItem] = useState<string>(null);
+  const [navUntouched, setNavUntouched] = useState(true);
 
-  const getActiveTaskRun = React.useCallback(
+  const getActiveTaskRun = useCallback(
     (taskRuns: TaskRunKind[], activeTask: string): string => {
       const activeTaskRun = activeTask
         ? taskRuns.find(
@@ -65,7 +66,7 @@ const PipelineRunLogs: React.FC<PipelineRunLogsProps> = ({
     [],
   );
 
-  const getSortedTaskRun = React.useCallback(
+  const getSortedTaskRun = useCallback(
     (tRuns: TaskRunKind[], tasks: PipelineTask[]): TaskRunKind[] => {
       const taskRuns = tRuns?.sort((a, b) => {
         if (_.get(a, ['status', 'completionTime'], false)) {
@@ -103,7 +104,7 @@ const PipelineRunLogs: React.FC<PipelineRunLogsProps> = ({
   };
 
   // Update activeItem when activeTask or taskRuns change
-  React.useEffect(() => {
+  useEffect(() => {
     const sortedTaskRuns = getSortedTaskRun(tRuns, [
       ...(obj?.status?.pipelineSpec?.tasks || []),
       ...(obj?.status?.pipelineSpec?.finally || []),
@@ -261,7 +262,7 @@ type PipelineRunLogsWithActiveTaskProps = {
   obj: PipelineRunKind;
 };
 
-export const PipelineRunLogsWithActiveTask: React.FC<
+export const PipelineRunLogsWithActiveTask: FC<
   PipelineRunLogsWithActiveTaskProps
 > = ({ obj }) => {
   const location = useLocation();

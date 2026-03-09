@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -35,7 +35,7 @@ jest.mock('./TriggersOverview', () => () => (
 ));
 
 describe('Pipeline sidebar overview', () => {
-  let props: React.ComponentProps<typeof PipelinesOverview>;
+  let props: ComponentProps<typeof PipelinesOverview>;
 
   beforeEach(() => {
     props = {

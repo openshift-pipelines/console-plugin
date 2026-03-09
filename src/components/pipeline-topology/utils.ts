@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-topology';
 import * as dagre from 'dagre';
 import * as _ from 'lodash';
-import { TFunction } from 'react-i18next';
+import { TFunction } from 'i18next';
 import {
   ComputedStatus,
   PipelineKind,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TriggerBindingKind } from '../../types';
 import { useTriggerBindingEventListenerNames } from '../utils/triggers';
 import { EventListenerModel } from '../../models';
@@ -8,7 +8,7 @@ type TriggerBindingEventListenersProps = {
   obj: TriggerBindingKind;
 };
 
-const TriggerBindingEventListeners: React.FC<
+const TriggerBindingEventListeners: FC<
   TriggerBindingEventListenersProps
 > = ({ obj }) => {
   const namespace = obj?.metadata.namespace;

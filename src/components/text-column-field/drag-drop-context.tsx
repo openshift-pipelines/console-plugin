@@ -1,16 +1,20 @@
-import * as React from 'react';
-import { DndProvider } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
+import type { ReactNode, ComponentType, ComponentClass, FC } from 'react';
+import { DndProvider, DndProviderProps } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+
+const DndProviderWithChildren = DndProvider as ComponentType<
+  DndProviderProps<any, any> & { children?: ReactNode }
+>;
 
 const withDragDropContext =
   <TProps extends {}>(
-    Component: React.ComponentClass<TProps> | React.FC<TProps>,
+    Component: ComponentClass<TProps> | FC<TProps>,
   ) =>
   (props: TProps) => {
     return (
-      <DndProvider backend={HTML5Backend} context={window}>
+      <DndProviderWithChildren backend={HTML5Backend} context={window}>
         <Component {...props} />
-      </DndProvider>
+      </DndProviderWithChildren>
     );
   };
 

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CriticalRiskIcon,
@@ -33,7 +33,7 @@ type PipelineRunVulnerabilitiesProps = {
   condensed?: boolean;
 };
 
-const PipelineRunVulnerabilities: React.FC<PipelineRunVulnerabilitiesProps> = ({
+const PipelineRunVulnerabilities: FC<PipelineRunVulnerabilitiesProps> = ({
   pipelineRun,
   condensed,
 }) => {

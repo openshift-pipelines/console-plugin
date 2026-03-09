@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -14,7 +14,7 @@ import { getFieldId } from '../pipelines-details/multi-column-field/utils';
 import MultiColumnFieldFooter from '../pipelines-details/multi-column-field/MultiColumnFieldFooter';
 import { RedExclamationCircleIcon } from '@openshift-console/dynamic-plugin-sdk';
 
-const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
+const TextColumnField: FC<TextColumnFieldProps> = (props) => {
   const {
     required,
     name,

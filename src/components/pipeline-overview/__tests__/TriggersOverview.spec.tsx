@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 import { usePipelineTriggerTemplateNames } from '../../utils/triggers';
 import TriggersOverview from '../TriggersOverview';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo } from 'react';
 import { Label } from '@patternfly/react-core';
 import {
   TektonHubTask,
@@ -69,7 +69,7 @@ const useTektonHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, string] => {
   const [normalizedTektonHubTasks, setNormalizedTektonHubTasks] =
-    React.useState<CatalogItem<TektonHubTask>[]>([]);
+    useState<CatalogItem<TektonHubTask>[]>([]);
 
   const canCreateTask = useAccessReview({
     group: TaskModel.apiGroup,
@@ -93,7 +93,7 @@ const useTektonHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
     canCreateTask && canUpdateTask && integrationEnabled && baseURLLoaded,
   );
 
-  React.useMemo(
+  useMemo(
     () =>
       setNormalizedTektonHubTasks(
         normalizeTektonHubTasks(tektonHubTasks, apiURL, uiURL),

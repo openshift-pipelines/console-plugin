@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useField } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
 import { PipelineKind } from '../../types';
@@ -15,7 +15,7 @@ type TriggerTemplateSelectorProps = {
   placeholder: string;
 };
 
-const TriggerTemplateSelector: React.FC<TriggerTemplateSelectorProps> = (
+const TriggerTemplateSelector: FC<TriggerTemplateSelectorProps> = (
   props,
 ) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

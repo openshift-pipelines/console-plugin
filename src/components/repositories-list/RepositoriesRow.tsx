@@ -6,7 +6,7 @@ import {
   Timestamp,
   getGroupVersionKindForModel,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import type { FC } from 'react';
 import { PipelineRunKind, RepositoryKind, TaskRunKind } from '../../types';
 import { Link } from 'react-router-dom-v5-compat';
 import { PipelineRunModel, RepositoryModel } from '../../models';
@@ -35,7 +35,7 @@ export const repositoriesTableColumnClasses = [
   'dropdown-kebab-pf pf-v6-c-table__action',
 ];
 
-const RepositoriesRow: React.FC<
+const RepositoriesRow: FC<
   RowProps<
     RepositoryKind,
     {

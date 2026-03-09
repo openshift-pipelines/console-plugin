@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars, no-undef */
-import * as React from 'react';
+import type { FC } from 'react';
 import { Checkbox } from '@patternfly/react-core';
 import ToggleableFieldBase, { CheckboxFieldProps } from './ToggleableFieldBase';
 
-const CheckboxField: React.FC<CheckboxFieldProps> = (baseProps) => (
+const CheckboxField: FC<CheckboxFieldProps> = (baseProps) => (
   <ToggleableFieldBase {...baseProps}>
     {(props) => <Checkbox {...props} data-checked-state={props.isChecked} />}
   </ToggleableFieldBase>

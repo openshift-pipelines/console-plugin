@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState } from 'react';
 import {
   K8sResourceCommon,
   ResourceLink,
@@ -25,8 +26,8 @@ type TasksKebabProps = {
   obj: K8sResourceCommon;
 };
 
-const TaskKebab: React.FC<TasksKebabProps> = ({ obj }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+const TaskKebab: FC<TasksKebabProps> = ({ obj }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
   const onToggle = () => {
     setIsOpen(!isOpen);
@@ -39,10 +40,10 @@ const TaskKebab: React.FC<TasksKebabProps> = ({ obj }) => {
   const dropdownItems = K8sCommonKebabMenu(obj, TaskModel);
 
   return (
-    <Dropdown
+    (<Dropdown
       onSelect={onSelect}
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+      toggle={(toggleRef: Ref<MenuToggleElement>) => (
         <MenuToggle
           ref={toggleRef}
           aria-label="kebab menu"
@@ -60,11 +61,11 @@ const TaskKebab: React.FC<TasksKebabProps> = ({ obj }) => {
       popperProps={{ position: 'right' }}
     >
       <DropdownList>{dropdownItems}</DropdownList>
-    </Dropdown>
+    </Dropdown>)
   );
 };
 
-const TaskRow: React.FC<RowProps<TaskKind>> = ({ activeColumnIDs, obj }) => {
+const TaskRow: FC<RowProps<TaskKind>> = ({ activeColumnIDs, obj }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return (

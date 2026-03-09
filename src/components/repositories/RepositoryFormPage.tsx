@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
@@ -14,9 +15,9 @@ import {
 import { usePacInfo } from './hooks';
 import { defaultRepositoryFormValues } from './const';
 
-const RepositoryFormPage: React.FC = () => {
+const RepositoryFormPage: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [isSubmittingForm, setIsSubmittingForm] = React.useState(false);
+  const [isSubmittingForm, setIsSubmittingForm] = useState(false);
 
   const [pac, loaded] = usePacInfo();
 
@@ -47,14 +48,14 @@ const RepositoryFormPage: React.FC = () => {
   };
 
   return (
-    <Formik
+    (<Formik
       initialValues={defaultRepositoryFormValues}
       onSubmit={handleSubmit}
-      onReset={history.goBack}
+      onReset={history.back}
       validationSchema={repositoryValidationSchema(t)}
     >
       {(formikProps) => {
-        React.useEffect(() => {
+        useEffect(() => {
           if (formikProps?.values?.showOverviewPage) {
             setIsSubmittingForm(false);
           }
@@ -67,7 +68,7 @@ const RepositoryFormPage: React.FC = () => {
           />
         );
       }}
-    </Formik>
+    </Formik>)
   );
 };
 

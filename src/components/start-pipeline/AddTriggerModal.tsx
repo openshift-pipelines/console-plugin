@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { Formik, FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
 import {
@@ -37,7 +37,7 @@ const AddTriggerModal: OverlayComponent<AddTriggerModalProps> = ({
   );
   const launchOverlay = useOverlay();
 
-  const initialValues: AddTriggerFormValues = React.useMemo(() => {
+  const initialValues: AddTriggerFormValues = useMemo(() => {
     if (!pipelinePVCLoaded) return;
     return {
       ...convertPipelineToModalData(pipeline, pipelinePVC?.metadata?.name),

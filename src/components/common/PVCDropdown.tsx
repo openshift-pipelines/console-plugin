@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import {
@@ -25,7 +25,7 @@ interface PVCDropdownProps {
   name: string;
 }
 
-const PVCDropdown: React.FC<PVCDropdownProps> = ({ name }) => {
+const PVCDropdown: FC<PVCDropdownProps> = ({ name }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [field, { touched, error }] = useField(name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();

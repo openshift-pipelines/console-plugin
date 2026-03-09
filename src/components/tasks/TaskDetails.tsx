@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TaskModel } from '../../models';
 import { TaskKind } from '../../types';
@@ -11,7 +11,7 @@ export interface TaskDetailsProps {
   obj: TaskKind;
 }
 
-const TaskDetails: React.FC<TaskDetailsProps> = ({ obj: task }) => {
+const TaskDetails: FC<TaskDetailsProps> = ({ obj: task }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <PageSection hasBodyWrapper={false} isFilled >

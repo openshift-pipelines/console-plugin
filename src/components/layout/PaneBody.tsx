@@ -1,7 +1,7 @@
-import * as React from 'react';
+import type { FC, ReactNode, CSSProperties } from 'react';
 import { PageSection } from '@patternfly/react-core';
 
-const PaneBody: React.FC<PaneBodyProps> = ({
+const PaneBody: FC<PaneBodyProps> = ({
   children,
   className,
   fullHeight,
@@ -22,11 +22,11 @@ const PaneBody: React.FC<PaneBodyProps> = ({
 };
 
 export type PaneBodyProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   fullHeight?: boolean;
   sectionHeading?: boolean;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 };
 
 export default PaneBody;

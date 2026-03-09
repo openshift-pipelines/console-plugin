@@ -9,7 +9,7 @@ import {
   useK8sWatchResources,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { flatten, mapValues } from 'lodash';
-import * as React from 'react';
+import { useMemo } from 'react';
 import {
   EventListenerModel,
   PipelineRunModel,
@@ -50,7 +50,7 @@ const useEventListenerRoutes = (
   namespace: string,
   eventListenerResources: EventListenerKind[],
 ): RouteMap => {
-  const memoResources: WatchK8sResources<RouteMap> = React.useMemo(() => {
+  const memoResources: WatchK8sResources<RouteMap> = useMemo(() => {
     return (eventListenerResources || [])
       .map(getEventListenerGeneratedName)
       .reduce(
@@ -77,7 +77,7 @@ const useEventListenerRoutes = (
 };
 
 const useAllEventListeners = (namespace: string) => {
-  const eventListenerResource: WatchK8sResource = React.useMemo(
+  const eventListenerResource: WatchK8sResource = useMemo(
     () => ({
       groupVersionKind: getGroupVersionKindForModel(EventListenerModel),
       isList: true,
@@ -104,7 +104,7 @@ export const usePipelineTriggerTemplateNames = (
   const eventListenerResources = useAllEventListeners(namespace);
 
   const triggerTemplateResources: WatchK8sResources<TriggerTemplateMapping> =
-    React.useMemo(() => {
+    useMemo(() => {
       if (!eventListenerResources) {
         return {};
       }

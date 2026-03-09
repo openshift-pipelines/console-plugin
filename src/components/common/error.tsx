@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   EmptyState,
@@ -7,7 +7,7 @@ import {
 import BanIcon from '@patternfly/react-icons/dist/esm/icons/ban-icon';
 import { DocumentTitle } from '@openshift-console/dynamic-plugin-sdk';
 
-export const ErrorPage404: React.FC = () => {
+export const ErrorPage404: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <div>
@@ -20,7 +20,7 @@ export const ErrorPage404: React.FC = () => {
   );
 };
 
-export const AccessDenied: React.FC = () => {
+export const AccessDenied: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <div>

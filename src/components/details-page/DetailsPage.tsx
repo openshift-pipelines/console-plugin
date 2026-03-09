@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, ReactElement, PropsWithChildren, FC, Ref } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dropdown,
@@ -27,32 +28,32 @@ import './DetailsPage.scss';
 export type Action = {
   type?: string;
   key: string;
-  label: React.ReactNode;
+  label: ReactNode;
   hidden?: boolean;
-  disabledTooltip?: React.ReactNode;
+  disabledTooltip?: ReactNode;
 } & Omit<DropdownItemProps, 'label'>;
 
 type DetailsPageProps = {
   obj?: K8sResourceKind;
-  title: React.ReactNode;
+  title: ReactNode;
   headTitle?: string;
-  preComponent?: React.ReactNode;
-  children?: React.ReactNode;
-  footer?: React.ReactNode;
-  description?: React.ReactNode;
-  breadcrumbs?: ({ name: string; path: string } | React.ReactElement)[];
+  preComponent?: ReactNode;
+  children?: ReactNode;
+  footer?: ReactNode;
+  description?: ReactNode;
+  breadcrumbs?: ({ name: string; path: string } | ReactElement)[];
   actions?: Action[];
   customActionMenu?: (
     kindObj: K8sModel,
     obj: K8sResourceKind,
-  ) => React.ReactNode;
+  ) => ReactNode;
   baseURL?: string;
   onTabSelect?: (selectedTabKey: string) => void;
   model?: K8sModel;
   pages?: NavPage[];
 };
 
-const DetailsPage: React.FC<React.PropsWithChildren<DetailsPageProps>> = ({
+const DetailsPage: FC<PropsWithChildren<DetailsPageProps>> = ({
   obj,
   title,
   preComponent = null,
@@ -65,11 +66,11 @@ const DetailsPage: React.FC<React.PropsWithChildren<DetailsPageProps>> = ({
   pages,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [isOpen, setIsOpen] = React.useState(false);
-  const toggleIsOpen = React.useCallback(() => setIsOpen((v) => !v), []);
-  const setClosed = React.useCallback(() => setIsOpen(false), []);
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleIsOpen = useCallback(() => setIsOpen((v) => !v), []);
+  const setClosed = useCallback(() => setIsOpen(false), []);
 
-  const dropdownItems = React.useMemo(
+  const dropdownItems = useMemo(
     () =>
       actions?.reduce((acc, action) => {
         const { key, label, isDisabled, component, ...props } = action;
@@ -90,21 +91,21 @@ const DetailsPage: React.FC<React.PropsWithChildren<DetailsPageProps>> = ({
         );
 
         return acc;
-      }, [] as React.ReactNode[]),
+      }, [] as ReactNode[]),
     [actions],
   );
 
-  const renderActionMenu = React.useCallback(() => {
+  const renderActionMenu = useCallback(() => {
     if (customActionMenu && model && obj) {
       return customActionMenu(model, obj);
     }
     // Render default action menu as fallback
     if (dropdownItems && dropdownItems.length > 0) {
       return (
-        <Dropdown
+        (<Dropdown
           onSelect={setClosed}
           onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+          toggle={(toggleRef: Ref<MenuToggleElement>) => (
             <MenuToggle
               ref={toggleRef}
               aria-label="Actions"
@@ -119,7 +120,7 @@ const DetailsPage: React.FC<React.PropsWithChildren<DetailsPageProps>> = ({
           popperProps={{ position: 'right' }}
         >
           <DropdownList>{dropdownItems}</DropdownList>
-        </Dropdown>
+        </Dropdown>)
       );
     }
     return null;

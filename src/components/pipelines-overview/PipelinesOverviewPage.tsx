@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flex, FlexItem, PageSection, Title } from '@patternfly/react-core';
 import PipelineRunsStatusCard from './PipelineRunsStatusCard';
@@ -23,7 +23,7 @@ import {
   usePersistedIntervalWithUrl,
 } from '../hooks/usePersistedFiltersForPipelineOverview';
 
-const PipelinesOverviewPage: React.FC = () => {
+const PipelinesOverviewPage: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const canListNS = useFlag(FLAGS.CAN_LIST_NS);
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();

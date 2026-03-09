@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import {
   ResourceLink,
@@ -16,7 +16,7 @@ import { RepositoryModel } from '../../../models';
 
 const repositoryReference = getReferenceForModel(RepositoryModel);
 
-const PipelineRunsForRepositoriesRow: React.FC<RowProps<SummaryProps>> = ({
+const PipelineRunsForRepositoriesRow: FC<RowProps<SummaryProps>> = ({
   obj,
 }) => {
   const [activeNamespace] = useActiveNamespace();

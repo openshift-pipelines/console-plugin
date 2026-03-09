@@ -4,7 +4,7 @@ import {
   useFlag,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { uniqBy } from 'lodash';
-import * as React from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   FLAG_PIPELINE_TEKTON_RESULT_INSTALLED,
   RepositoryFields,
@@ -40,25 +40,25 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
   cacheKey?: string,
 ): [Kind[], boolean, unknown, GetNextPage] => {
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
-  const [nextPageToken, setNextPageToken] = React.useState<string>(null);
-  const [localCacheKey, setLocalCacheKey] = React.useState(cacheKey);
+  const [nextPageToken, setNextPageToken] = useState<string>(null);
+  const [localCacheKey, setLocalCacheKey] = useState(cacheKey);
 
   if (cacheKey !== localCacheKey) {
     // force update local cache key
     setLocalCacheKey(cacheKey);
   }
 
-  const [result, setResult] = React.useState<
+  const [result, setResult] = useState<
     [Kind[], boolean, unknown, GetNextPage]
   >([[], false, undefined, undefined]);
 
   // reset token if namespace or options change
-  React.useEffect(() => {
+  useEffect(() => {
     setNextPageToken(null);
   }, [namespace, options, cacheKey]);
 
   // eslint-disable-next-line consistent-return
-  React.useEffect(() => {
+  useEffect(() => {
     let disposed = false;
     (async () => {
       try {
@@ -153,7 +153,7 @@ export const useGetPipelineRuns = (
     },
   );
 
-  return React.useMemo(
+  return useMemo(
     () => [pipelineRuns, loaded, error, getNextPage],
     [pipelineRuns, loaded, error, getNextPage],
   );
@@ -208,14 +208,14 @@ export const useTRTaskRunLog = (
   taskRunName: string,
   taskRunPath: string,
 ): [string, boolean, unknown] => {
-  const [result, setResult] = React.useState<[string, boolean, unknown]>([
+  const [result, setResult] = useState<[string, boolean, unknown]>([
     null,
     false,
     undefined,
   ]);
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let disposed = false;
     if (namespace && taskRunName) {
       (async () => {

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -77,7 +78,7 @@ const getChartData = (
   return chartData;
 };
 
-const PipelinesAverageDurationK8s: React.FC<PipelinesAverageDurationProps> = ({
+const PipelinesAverageDurationK8s: FC<PipelinesAverageDurationProps> = ({
   timespan,
   domain,
   bordered,
@@ -95,11 +96,11 @@ const PipelinesAverageDurationK8s: React.FC<PipelinesAverageDurationProps> = ({
     y: domainY || undefined,
   };
   const [tickValues, type] = getXaxisValues(timespan);
-  const [averageDurationError, setAverageDurationError] = React.useState<
+  const [averageDurationError, setAverageDurationError] = useState<
     string | null
   >(null);
   const [averageDurationLoading, setAverageDurationLoading] =
-    React.useState(true);
+    useState(true);
 
   const [totalPipelineRunsCountData, countError, countLoading] =
     parentName && namespace
@@ -159,7 +160,7 @@ const PipelinesAverageDurationK8s: React.FC<PipelinesAverageDurationProps> = ({
           timeout: 90000,
         });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const hasNonAbortError =
       (countError && countError.name !== 'AbortError') ||
       (durationError && durationError.name !== 'AbortError');
@@ -168,7 +169,7 @@ const PipelinesAverageDurationK8s: React.FC<PipelinesAverageDurationProps> = ({
     );
   }, [countError, durationError]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setAverageDurationLoading(countLoading || durationLoading);
   }, [countLoading, durationLoading]);
 

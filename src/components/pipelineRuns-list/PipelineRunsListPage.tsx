@@ -1,5 +1,5 @@
 import { ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PipelineRunModel } from '../../models';
 import PipelineRunsList from './PipelineRunsList';
@@ -10,7 +10,7 @@ type PipelineRunsListPageProps = {
   hideTextFilter?: boolean;
 };
 
-const PipelineRunsListPage: React.FC<PipelineRunsListPageProps> = (props) => {
+const PipelineRunsListPage: FC<PipelineRunsListPageProps> = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { namespace, hideTextFilter } = props;
   return (

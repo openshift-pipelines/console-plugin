@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as React from 'react';
+import type { FC } from 'react';
 import classNames from 'classnames';
 import { Title } from '@patternfly/react-core';
 
@@ -18,7 +18,7 @@ export type SidebarSectionHeadingProps = {
   text: string;
 };
 
-export const SectionHeading: React.SFC<SectionHeadingProps> = ({
+export const SectionHeading: FC<SectionHeadingProps> = ({
   text,
   children,
   style,
@@ -42,7 +42,7 @@ export const SectionHeading: React.SFC<SectionHeadingProps> = ({
   </h2>
 );
 
-export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({
+export const SidebarSectionHeading: FC<SidebarSectionHeadingProps> = ({
   text,
   children,
   style,

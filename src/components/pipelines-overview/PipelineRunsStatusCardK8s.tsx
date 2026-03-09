@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { DomainPropType, DomainTuple } from 'victory-core';
@@ -223,7 +224,7 @@ const transformPrometheusResultToSummary = (
   return finalResult;
 };
 
-const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
+const PipelineRunsStatusCardK8s: FC<PipelinesRunsStatusCardProps> = ({
   timespan,
   domain,
   bordered,
@@ -240,7 +241,7 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
     x: domainX || [startDate, endDate],
     y: domainY || undefined,
   };
-  const [pipelineRunsStatusError, setPipelineRunsStatusError] = React.useState<
+  const [pipelineRunsStatusError, setPipelineRunsStatusError] = useState<
     string | null
   >(null);
   const [
@@ -312,14 +313,14 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
 
   const [tickValues, type] = getXaxisValues(timespan);
 
-  const totalPipelineRuns = React.useMemo(() => {
+  const totalPipelineRuns = useMemo(() => {
     if (totalPipelineRunsError) {
       return [];
     }
     return getTotalPipelineRuns(totalPipelineRunsData, tickValues, type);
   }, [totalPipelineRunsData, tickValues, type, totalPipelineRunsError]);
 
-  const promQueryToSummaryResponse = React.useMemo(() => {
+  const promQueryToSummaryResponse = useMemo(() => {
     if (runSuccessRatioError) {
       return [];
     }
@@ -477,7 +478,7 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
     othersColor.value,
   ];
 
-  const donutDataObjK8s = React.useMemo(() => {
+  const donutDataObjK8s = useMemo(() => {
     if (totalPipelineRunsError || runSuccessRatioError) {
       return;
     }
@@ -514,7 +515,7 @@ const PipelineRunsStatusCardK8s: React.FC<PipelinesRunsStatusCardProps> = ({
     };
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const hasNonAbortError =
       (runSuccessRatioError && runSuccessRatioError.name !== 'AbortError') ||
       (totalPipelineRunsError && totalPipelineRunsError.name !== 'AbortError');

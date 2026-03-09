@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom-v5-compat';
 import {
@@ -24,7 +24,7 @@ interface TaskListProps {
 }
 const taskModelRef = getReferenceForModel(TaskModel);
 
-const TasksList: React.FC<TaskListProps> = ({
+const TasksList: FC<TaskListProps> = ({
   showTitle = true,
   hideColumnManagement = false,
   hideNameLabelFilters = false,

@@ -5,7 +5,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom-v5-compat';
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom-v5-compat';
 import { ArchiveIcon } from '@patternfly/react-icons';
 import { ResourceStatus } from '@openshift-console/dynamic-plugin-sdk';
@@ -32,11 +32,11 @@ const TaskRunDetailsPage = () => {
   const params = useParams();
   const { name, ns: namespace } = params;
   const [data, loaded] = useTaskRun(namespace, name);
-  const trStatus = React.useMemo(
+  const trStatus = useMemo(
     () => loaded && data && taskRunStatus(data),
     [loaded, data],
   );
-  const resourceTitleFunc = React.useMemo(() => {
+  const resourceTitleFunc = useMemo(() => {
     return (
       <div className="taskrun-details-page">
         {data?.metadata?.name}{' '}

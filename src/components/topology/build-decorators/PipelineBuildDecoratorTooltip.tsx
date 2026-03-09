@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getRunStatusColor } from '../../utils/pipeline-augment';
 import { useTaskStatus } from '../../hooks/useTaskStatus';
@@ -13,7 +13,7 @@ export interface PipelineBuildDecoratorTooltipProps {
   taskRuns: TaskRunKind[];
 }
 
-const PipelineBuildDecoratorTooltip: React.FC<
+const PipelineBuildDecoratorTooltip: FC<
   PipelineBuildDecoratorTooltipProps
 > = ({ pipelineRun, status, taskRuns }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

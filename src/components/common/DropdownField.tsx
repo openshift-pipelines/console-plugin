@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, FC, MouseEvent, Ref } from 'react';
+import { useState } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -19,7 +20,7 @@ import { RedExclamationCircleIcon } from '@openshift-console/dynamic-plugin-sdk'
 export interface DropdownFieldProps extends FieldProps {
   items?: object;
   selectedKey?: string;
-  title?: React.ReactNode;
+  title?: ReactNode;
   fullWidth?: boolean;
   disabled?: boolean;
   autocompleteFilter?: (text: string, item: object, key?: string) => boolean;
@@ -27,7 +28,7 @@ export interface DropdownFieldProps extends FieldProps {
   placeholder?: string;
 }
 
-const DropdownField: React.FC<DropdownFieldProps> = ({
+const DropdownField: FC<DropdownFieldProps> = ({
   label,
   helpText,
   required,
@@ -38,12 +39,12 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
   const fieldId = getFieldId(props.name, 'dropdown');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useFormikValidationFix(field.value);
 
   const onSelect = (
-    _event: React.MouseEvent | undefined,
+    _event: MouseEvent | undefined,
     value: string | number | undefined,
   ) => {
     const stringValue = String(value);
@@ -53,7 +54,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({
     setIsOpen(false);
   };
 
-  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+  const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}

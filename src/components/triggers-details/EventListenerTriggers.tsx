@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import * as _ from 'lodash';
 import { getEventListenerTriggerBindingNames } from '../utils/triggers';
 import {
@@ -18,7 +18,7 @@ interface EventListenerTriggersProps {
   obj: EventListenerKind;
 }
 
-const EventListenerTriggers: React.FC<EventListenerTriggersProps> = ({
+const EventListenerTriggers: FC<EventListenerTriggersProps> = ({
   obj,
 }) => {
   const namespace = obj?.metadata.namespace;

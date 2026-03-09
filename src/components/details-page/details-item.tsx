@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, ReactNode, MouseEvent } from 'react';
 import * as _ from 'lodash-es';
 import Linkify from 'react-linkify';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import './details-item.scss';
 
-export const PropertyPath: React.FC<{
+export const PropertyPath: FC<{
   kind: string;
   path: string | string[];
 }> = ({ kind, path }) => {
@@ -42,7 +42,7 @@ export const PropertyPath: React.FC<{
   );
 };
 
-const EditButton: React.SFC<EditButtonProps> = (props) => {
+const EditButton: FC<EditButtonProps> = (props) => {
   return (
     <Button
       icon={
@@ -63,7 +63,7 @@ const EditButton: React.SFC<EditButtonProps> = (props) => {
   );
 };
 
-export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({
+export const LinkifyExternal: FC<{ children: ReactNode }> = ({
   children,
 }) => (
   <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>
@@ -71,7 +71,7 @@ export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({
   </Linkify>
 );
 
-export const DetailsItem: React.FC<DetailsItemProps> = ({
+export const DetailsItem: FC<DetailsItemProps> = ({
   children,
   defaultValue = '-',
   description,
@@ -89,7 +89,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const hide = hideEmpty && _.isEmpty(_.get(obj, path));
   const popoverContent: string = description;
-  const value: React.ReactNode = children || _.get(obj, path, defaultValue);
+  const value: ReactNode = children || _.get(obj, path, defaultValue);
   const editable = onEdit && canEdit;
   return hide ? null : (
     <>
@@ -157,22 +157,24 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
 };
 
 export type DetailsItemProps = {
+  children?: ReactNode;
   canEdit?: boolean;
-  defaultValue?: React.ReactNode;
+  defaultValue?: ReactNode;
   description?: string;
   editAsGroup?: boolean;
   hideEmpty?: boolean;
   label: string;
   labelClassName?: string;
   obj?: K8sResourceKind;
-  onEdit?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onEdit?: (e: MouseEvent<HTMLButtonElement>) => void;
   path?: string | string[];
   valueClassName?: string;
   model?: K8sModel;
 };
 
 type EditButtonProps = {
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  children?: ReactNode;
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
   testId?: string;
 };
 

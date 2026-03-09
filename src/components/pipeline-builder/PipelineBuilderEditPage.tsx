@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom-v5-compat';
@@ -11,13 +12,13 @@ import { k8sGet } from '@openshift-console/dynamic-plugin-sdk';
 
 import './PipelineBuilderEditPage.scss';
 
-const PipelineBuilderEditPage: React.FC = (props) => {
+const PipelineBuilderEditPage: FC = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [editPipeline, setEditPipeline] = React.useState<PipelineKind>(null);
-  const [error, setError] = React.useState<string>(null);
+  const [editPipeline, setEditPipeline] = useState<PipelineKind>(null);
+  const [error, setError] = useState<string>(null);
   const { ns, pipelineName } = useParams();
 
-  React.useEffect(() => {
+  useEffect(() => {
     k8sGet({ model: PipelineModel, name: pipelineName, ns })
       .then((res: PipelineKind) => {
         setEditPipeline(res);

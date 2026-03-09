@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon';
 import { Formik, useField, useFormikContext } from 'formik';
@@ -24,7 +24,7 @@ const initialValues = {
   formData: {},
 };
 
-const PipelineSecretSection: React.FC = () => {
+const PipelineSecretSection: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [secretOpenField] = useField<boolean>('secretOpen');
   const {

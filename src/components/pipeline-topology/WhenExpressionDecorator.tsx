@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { NODE_HEIGHT } from './const';
 import { getWhenExpressionDiamondState } from './utils';
@@ -18,7 +19,7 @@ type WhenExpressionDecoratorProps = {
   isPipelineRun: boolean;
 };
 
-const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
+const WhenExpressionDecorator: FC<WhenExpressionDecoratorProps> = ({
   width,
   height,
   enableTooltip,
@@ -28,7 +29,7 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
   isFinallyTask,
   isPipelineRun,
 }) => {
-  const nodeRef = React.useRef();
+  const nodeRef = useRef();
   const rotation = 45; // 45deg
   const { tooltipContent, diamondColor } = getWhenExpressionDiamondState(
     status,

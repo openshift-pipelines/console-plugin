@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
@@ -24,7 +25,7 @@ type PipelineRunsForPipelinesListProps = {
   hideLastRunTime?: boolean;
 };
 
-const PipelineRunsForPipelinesList: React.FC<
+const PipelineRunsForPipelinesList: FC<
   PipelineRunsForPipelinesListProps
 > = ({ summaryData, summaryDataFiltered, loaded, hideLastRunTime }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -33,7 +34,7 @@ const PipelineRunsForPipelinesList: React.FC<
     </EmptyState>
   );
 
-  const plrColumns = React.useMemo<TableColumn<SummaryProps>[]>(() => {
+  const plrColumns = useMemo<TableColumn<SummaryProps>[]>(() => {
     const columns: TableColumn<SummaryProps>[] = [
       {
         id: 'pipelineName',

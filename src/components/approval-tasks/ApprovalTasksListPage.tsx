@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
 import ListPageCreateButton from '../list-pages/ListPageCreateButton';
@@ -10,7 +10,7 @@ type ApprovalTasksListPageProps = {
   hideTextFilter?: boolean;
 };
 
-const ApprovalTasksListPage: React.FC<ApprovalTasksListPageProps> = (props) => {
+const ApprovalTasksListPage: FC<ApprovalTasksListPageProps> = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { namespace, hideTextFilter } = props;
   return (

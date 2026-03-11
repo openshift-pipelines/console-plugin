@@ -1,6 +1,5 @@
 import { Node } from '@patternfly/react-topology';
 import PipelineRunDecorator from './PipelineRunDecorator';
-import React from 'react';
 
 export const getPipelineRunDecorator = (
   element: Node,

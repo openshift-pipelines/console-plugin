@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Button,
   ButtonType,
@@ -22,7 +22,7 @@ type TaskSidebarWhenExpressionProps = {
   selectedData: SelectedBuilderTask;
 };
 
-const TaskSidebarWhenExpression: React.FC<TaskSidebarWhenExpressionProps> = (
+const TaskSidebarWhenExpression: FC<TaskSidebarWhenExpressionProps> = (
   props,
 ) => {
   const { name, selectedData } = props;

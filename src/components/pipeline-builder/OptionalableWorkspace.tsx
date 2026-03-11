@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import InputField from '../pipelines-details/multi-column-field/InputField';
@@ -9,7 +9,7 @@ type OptionalableWorkspace = {
   isReadOnly?: boolean;
 };
 
-const OptionalableWorkspace: React.FC<OptionalableWorkspace> = ({
+const OptionalableWorkspace: FC<OptionalableWorkspace> = ({
   namePrefix,
   isReadOnly,
 }) => {

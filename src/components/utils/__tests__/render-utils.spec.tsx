@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render } from '@testing-library/react';
 import { handleURLs, GROUP_MATCH_REGEXP } from '../render-utils';
 

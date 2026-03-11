@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import {
   formatPrometheusDuration,
@@ -23,14 +24,14 @@ type PipelinesMetricsPageProps = {
   obj: PipelineKind;
 };
 
-const PipelinesMetricsPageK8s: React.FC<PipelinesMetricsPageProps> = ({
+const PipelinesMetricsPageK8s: FC<PipelinesMetricsPageProps> = ({
   obj,
 }) => {
   const {
     metadata: { namespace, name: parentName },
   } = obj;
-  const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1d'));
-  const [interval, setInterval] = React.useState(
+  const [timespan, setTimespan] = useState(parsePrometheusDuration('1d'));
+  const [interval, setInterval] = useState(
     parsePrometheusDuration('30s'),
   );
 

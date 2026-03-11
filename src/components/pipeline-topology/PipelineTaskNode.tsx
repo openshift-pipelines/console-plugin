@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FunctionComponent } from 'react';
+import { useRef, useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import {
@@ -38,7 +39,7 @@ type PipelineTaskNodeProps = {
 } & WithContextMenuProps &
   WithSelectionProps;
 
-const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
+const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
   element,
   onContextMenu,
   contextMenuOpen,
@@ -47,7 +48,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const data = element.getData();
   const [hover, hoverRef] = useHover();
-  const taskRef = React.useRef();
+  const taskRef = useRef();
   const detailsLevel = useDetailsLevel();
   const isFinallyTask = element.getType() === NodeType.FINALLY_NODE;
   let resources;
@@ -124,7 +125,7 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
       ? `${succeededStepsCount}/${stepStatusList.length}`
       : null;
 
-  const passedData = React.useMemo(() => {
+  const passedData = useMemo(() => {
     const newData = { ...data };
     Object.keys(newData).forEach((key) => {
       if (newData[key] === undefined) {
@@ -222,4 +223,4 @@ const PipelineTaskNode: React.FunctionComponent<PipelineTaskNodeProps> = ({
   );
 };
 
-export default React.memo(observer(PipelineTaskNode));
+export default memo(observer(PipelineTaskNode));

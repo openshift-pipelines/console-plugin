@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { DomainPropType, DomainTuple } from 'victory-core';
@@ -92,7 +93,7 @@ const getChartData = (
   return chartData;
 };
 
-const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
+const PipelinesRunsStatusCard: FC<PipelinesRunsStatusCardProps> = ({
   timespan,
   domain,
   bordered,
@@ -103,14 +104,14 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
-  const [data, setData] = React.useState<SummaryResponse>();
-  const [data2, setData2] = React.useState<SummaryResponse>();
-  const [loaded, setLoaded] = React.useState(false);
-  const [pipelineRunsStatusError, setPipelineRunsStatusError] = React.useState<
+  const [data, setData] = useState<SummaryResponse>();
+  const [data2, setData2] = useState<SummaryResponse>();
+  const [loaded, setLoaded] = useState(false);
+  const [pipelineRunsStatusError, setPipelineRunsStatusError] = useState<
     string | undefined
   >();
-  const abortControllerRefDonut = React.useRef<AbortController>();
-  const abortControllerRefLineChart = React.useRef<AbortController>();
+  const abortControllerRefDonut = useRef<AbortController>();
+  const abortControllerRefLineChart = useRef<AbortController>();
 
   const startTimespan = timespan - parsePrometheusDuration('1d');
   const endDate = new Date(Date.now()).setHours(0, 0, 0, 0);
@@ -126,7 +127,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
     namespace = '-';
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       abortControllerRefDonut.current?.abort();
       abortControllerRefLineChart.current?.abort();
@@ -188,7 +189,7 @@ const PipelinesRunsStatusCard: React.FC<PipelinesRunsStatusCardProps> = ({
     namespace,
     date,
   );
-  React.useEffect(() => {
+  useEffect(() => {
     setLoaded(false);
     setPipelineRunsStatusError(undefined);
     // Clear stale data when namespace or timespan changes

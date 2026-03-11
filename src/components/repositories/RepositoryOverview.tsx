@@ -12,7 +12,6 @@ import {
 import { useFormikContext } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
 
-import React from 'react';
 import { RepositoryFormValues } from './types';
 import { ExternalLink } from '../utils/link';
 import { GitProvider } from '../utils/repository-utils';

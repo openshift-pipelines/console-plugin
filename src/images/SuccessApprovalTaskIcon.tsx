@@ -1,9 +1,9 @@
-import * as React from 'react';
+import type { FC, ReactElement } from 'react';
 import { SVGProps } from 'react';
 
-const SuccessApprovalTaskIcon: React.FC<SVGProps<SVGSVGElement>> = (
+const SuccessApprovalTaskIcon: FC<SVGProps<SVGSVGElement>> = (
   props,
-): React.ReactElement => {
+): ReactElement => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

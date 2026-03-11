@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -66,7 +67,7 @@ const getChartData = (
   return chartData;
 };
 
-const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
+const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
   timespan,
   domain,
   bordered,
@@ -77,11 +78,11 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
-  const [data, setData] = React.useState<SummaryResponse>();
-  const [loaded, setLoaded] = React.useState(false);
+  const [data, setData] = useState<SummaryResponse>();
+  const [loaded, setLoaded] = useState(false);
   const [pipelineAverageDurationError, setPipelineAverageDurationError] =
-    React.useState<string | undefined>();
-  const abortControllerRef = React.useRef<AbortController>();
+    useState<string | undefined>();
+  const abortControllerRef = useRef<AbortController>();
   const startTimespan = timespan - parsePrometheusDuration('1d');
   const endDate = new Date(Date.now()).setHours(0, 0, 0, 0);
   const startDate = new Date(Date.now() - startTimespan).setHours(0, 0, 0, 0);
@@ -95,13 +96,13 @@ const PipelinesAverageDuration: React.FC<PipelinesAverageDurationProps> = ({
     namespace = '-';
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();
     };
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setLoaded(false);
     setPipelineAverageDurationError(undefined);
     setData(undefined);

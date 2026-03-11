@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useCallback } from 'react';
 import { useResizeObserver } from '../hooks/useScrollShadows';
 
 type BoundingClientRect = ClientRect | null;
@@ -6,11 +6,11 @@ type BoundingClientRect = ClientRect | null;
 export const useBoundingClientRect = (
   targetElement: HTMLElement | null,
 ): BoundingClientRect => {
-  const [clientRect, setClientRect] = React.useState<BoundingClientRect>(() =>
+  const [clientRect, setClientRect] = useState<BoundingClientRect>(() =>
     targetElement ? targetElement.getBoundingClientRect() : null,
   );
 
-  const observerCallback = React.useCallback(() => {
+  const observerCallback = useCallback(() => {
     setClientRect(targetElement ? targetElement.getBoundingClientRect() : null);
   }, [targetElement]);
 

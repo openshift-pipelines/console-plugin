@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
   Drawer,
   DrawerContent,
@@ -50,14 +51,14 @@ type PipelineBuilderFormProps = FormikProps<PipelineBuilderFormikValues> & {
   namespace: string;
 };
 
-const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
+const PipelineBuilderForm: FC<PipelineBuilderFormProps> = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const launchOverlay = useOverlay();
   const [selectedTask, setSelectedTask] =
-    React.useState<SelectedBuilderTask>(null);
-  const selectedTaskRef = React.useRef<SelectedBuilderTask>(null);
+    useState<SelectedBuilderTask>(null);
+  const selectedTaskRef = useRef<SelectedBuilderTask>(null);
   selectedTaskRef.current = selectedTask;
-  const contentRef = React.useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const {
     existingPipeline,
@@ -75,9 +76,9 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   useFormikFetchAndSaveTasks(namespace, validateForm);
   useExplicitPipelineTaskTouch();
 
-  const statusRef = React.useRef(status);
-  const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
-  const savedCallback = React.useRef(() => {});
+  const statusRef = useRef(status);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const savedCallback = useRef(() => {});
 
   statusRef.current = status;
 
@@ -135,7 +136,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     updateTasks(applyChange(updatedTaskGroup, op, namespace));
   };
 
-  const closeSidebarAndHandleReset = React.useCallback(() => {
+  const closeSidebarAndHandleReset = useCallback(() => {
     resetSelectedTask();
     handleReset();
   }, [handleReset]);
@@ -163,7 +164,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     />
   );
 
-  const closeRef = React.useCallback(() => {
+  const closeRef = useCallback(() => {
     if (!!contentRef.current && !!selectedTask) {
       const currentSelection: SelectedBuilderTask = selectedTaskRef.current;
       setTimeout(() => {
@@ -179,7 +180,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     }
   }, [selectedTask]);
 
-  const handleRemoveTask = React.useCallback(
+  const handleRemoveTask = useCallback(
     async (taskName: string) => {
       setSelectedTask(null);
       updateTasks(

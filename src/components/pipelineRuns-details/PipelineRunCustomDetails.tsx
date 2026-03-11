@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   ClipboardCopy,
   DescriptionList,
@@ -39,7 +39,7 @@ export type PipelineRunCustomDetailsProps = {
   pipelineRun: PipelineRunKind;
 };
 
-const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({
+const PipelineRunCustomDetails: FC<PipelineRunCustomDetailsProps> = ({
   pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

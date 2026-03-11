@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { observer, Node, NodeModel } from '@patternfly/react-topology';
 
 import { TaskNodeModelData } from './types';
@@ -10,7 +10,7 @@ type TaskNodeProps = {
   disableTooltip?: boolean;
 };
 
-const TaskNode: React.FC<TaskNodeProps> = ({ element, disableTooltip }) => {
+const TaskNode: FC<TaskNodeProps> = ({ element, disableTooltip }) => {
   const { height, width } = element.getBounds();
   const { pipeline, pipelineRun, task, selected } = element.getData();
   const isTaskSkipped = pipelineRun?.status?.skippedTasks?.some(

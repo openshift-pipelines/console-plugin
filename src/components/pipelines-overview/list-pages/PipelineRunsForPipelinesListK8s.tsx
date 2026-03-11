@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
@@ -27,7 +28,7 @@ type PipelineRunsForPipelinesListProps = {
   projectsLoaded?: boolean;
 };
 
-const PipelineRunsForPipelinesListK8s: React.FC<
+const PipelineRunsForPipelinesListK8s: FC<
   PipelineRunsForPipelinesListProps
 > = ({
   summaryData,
@@ -43,7 +44,7 @@ const PipelineRunsForPipelinesListK8s: React.FC<
     </EmptyState>
   );
 
-  const plrColumns = React.useMemo<TableColumn<SummaryProps>[]>(() => {
+  const plrColumns = useMemo<TableColumn<SummaryProps>[]>(() => {
     const columns: TableColumn<SummaryProps>[] = [
       {
         id: 'pipelineName',

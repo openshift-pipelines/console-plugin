@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import classNames from 'classnames';
 import { Button } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
@@ -41,7 +42,7 @@ const SampleResource: WatchK8sResource = {
   isList: true,
 };
 
-const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
+const CodeEditorField: FC<CodeEditorFieldProps> = ({
   name,
   label,
   model,
@@ -56,9 +57,9 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
   const [field] = useField(name);
   const { setFieldValue, setStatus } = useFormikContext<FormikValues>();
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const editorRef = React.useRef();
+  const editorRef = useRef();
 
-  const [sidebarOpen, setSidebarOpen] = React.useState<boolean>(true);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
   const [sampleResources, loaded, loadError] =
     useK8sWatchResource<K8sResourceCommon[]>(SampleResource);
@@ -80,7 +81,7 @@ const CodeEditorField: React.FC<CodeEditorFieldProps> = ({
   const [templateExtensions] =
     useResolvedExtensions<YAMLTemplate>(isYAMLTemplate);
 
-  const sanitizeYamlContent = React.useCallback(
+  const sanitizeYamlContent = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (id = 'default', yaml = '', kind: string) => {
       if (yaml) {

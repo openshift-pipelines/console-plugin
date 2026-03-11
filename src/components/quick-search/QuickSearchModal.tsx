@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, SetStateAction, Dispatch, FC } from 'react';
 import {
 	Modal,
 	ModalVariant
@@ -20,13 +20,13 @@ interface QuickSearchModalProps {
   searchPlaceholder: string;
   viewContainer?: HTMLElement;
   limitItemCount?: number;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   detailsRenderer?: DetailsRendererFunction;
   callback?: TaskSearchCallback;
-  setFailedTasks?: React.Dispatch<React.SetStateAction<string[]>>;
+  setFailedTasks?: Dispatch<SetStateAction<string[]>>;
 }
 
-const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
+const QuickSearchModal: FC<QuickSearchModalProps> = ({
   isOpen,
   namespace,
   closeModal,

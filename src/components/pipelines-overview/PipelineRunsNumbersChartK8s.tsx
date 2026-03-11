@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import * as _ from 'lodash';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -105,7 +106,7 @@ const getChartData = (
   return chartData;
 };
 
-const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
+const PipelineRunsNumbersChartK8s: FC<PipelinesRunsNumbersChartProps> = ({
   namespace,
   timespan,
   interval,
@@ -123,7 +124,7 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
     x: domainX || [startDate, endDate],
     y: domainY || undefined,
   };
-  const [pipelineRunsChartError, setPipelineRunsChartError] = React.useState<
+  const [pipelineRunsChartError, setPipelineRunsChartError] = useState<
     string | null
   >(null);
   const [
@@ -159,7 +160,7 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
           timeout: 90000,
         });
 
-  const convertToSummaryData = React.useMemo(() => {
+  const convertToSummaryData = useMemo(() => {
     if (runSuccessRatioError) {
       return [];
     }
@@ -242,7 +243,7 @@ const PipelineRunsNumbersChartK8s: React.FC<PipelinesRunsNumbersChartProps> = ({
     };
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     const hasNonAbortError =
       runSuccessRatioError && runSuccessRatioError.name !== 'AbortError';
     setPipelineRunsChartError(

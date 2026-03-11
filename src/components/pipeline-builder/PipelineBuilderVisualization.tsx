@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { ModelKind } from '@patternfly/react-topology';
 import { useFormikContext } from 'formik';
@@ -30,7 +30,7 @@ type PipelineBuilderVisualizationProps = {
   taskResources: PipelineBuilderTaskResources;
 };
 
-const PipelineBuilderVisualization: React.FC<
+const PipelineBuilderVisualization: FC<
   PipelineBuilderVisualizationProps
 > = ({
   onTaskSelection,

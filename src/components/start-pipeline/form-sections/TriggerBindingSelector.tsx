@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC, ReactElement } from 'react';
 import { useFormikContext, useField, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +31,7 @@ type TriggerBindingSelectorProps = {
 
 const KEY_DIVIDER = '~';
 
-const TriggerBindingSelector: React.FC<TriggerBindingSelectorProps> = (
+const TriggerBindingSelector: FC<TriggerBindingSelectorProps> = (
   props,
 ) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -50,7 +50,7 @@ const TriggerBindingSelector: React.FC<TriggerBindingSelectorProps> = (
 
   const autoCompleteFilter = (
     strText: string,
-    item: React.ReactElement,
+    item: ReactElement,
   ): boolean => fuzzy(strText, item?.props?.name);
   const onTriggerChange = (
     key: string,

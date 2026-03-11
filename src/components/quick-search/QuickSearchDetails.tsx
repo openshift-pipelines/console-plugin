@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { SetStateAction, Dispatch, ReactNode, FC } from 'react';
 import {
   Button,
   ButtonVariant,
   Content,
   Title,
 } from '@patternfly/react-core';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
 import CatalogBadges from '../catalog/CatalogBadges';
@@ -19,17 +19,17 @@ export type QuickSearchDetailsRendererProps = {
   closeModal: () => void;
   namespace?: string;
   callback?: TaskSearchCallback;
-  setFailedTasks?: React.Dispatch<React.SetStateAction<string[]>>;
+  setFailedTasks?: Dispatch<SetStateAction<string[]>>;
 };
 export type DetailsRendererFunction = (
   props: QuickSearchDetailsRendererProps,
-) => React.ReactNode;
+) => ReactNode;
 export interface QuickSearchDetailsProps
   extends QuickSearchDetailsRendererProps {
   detailsRenderer: DetailsRendererFunction;
 }
 
-const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
+const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
   selectedItem,
   closeModal,
   detailsRenderer,
@@ -38,10 +38,10 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
   setFailedTasks,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const history = useHistory();
+  const navigate = useNavigate();
   const defaultContentRenderer: DetailsRendererFunction = (
     props: QuickSearchDetailsProps,
-  ): React.ReactNode => {
+  ): ReactNode => {
     return (
       <>
         <Title headingLevel="h4">{props.selectedItem.name}</Title>
@@ -60,7 +60,7 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
           className="ocs-quick-search-details__form-button"
           data-test="create-quick-search"
           onClick={(e) => {
-            handleCta(e, props.selectedItem, props.closeModal, history);
+            handleCta(e, props.selectedItem, props.closeModal, navigate);
           }}
         >
           {props.selectedItem.cta.label}

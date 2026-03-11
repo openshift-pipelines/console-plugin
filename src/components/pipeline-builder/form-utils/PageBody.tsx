@@ -1,12 +1,12 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import classnames from 'classnames';
 
 interface PageBodyProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   flexLayout?: boolean;
 }
 
-const PageBody: React.FC<PageBodyProps> = ({ children, flexLayout }) => (
+const PageBody: FC<PageBodyProps> = ({ children, flexLayout }) => (
   <div
     className={classnames('co-m-pane__body', { 'co-m-page__body': flexLayout })}
     style={{ paddingBottom: 0 }}

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Form, PageSection } from '@patternfly/react-core';
 import { FormikProps, FormikValues, getIn } from 'formik';
 import * as _ from 'lodash';
@@ -11,7 +11,7 @@ type PipelineParametersFormProps = FormikProps<FormikValues> & {
   namespace: string;
 };
 
-const PipelineParametersForm: React.FC<PipelineParametersFormProps> = ({
+const PipelineParametersForm: FC<PipelineParametersFormProps> = ({
   namespace,
   handleSubmit,
   handleReset,

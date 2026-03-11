@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Button } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,7 @@ type TriggerLastRunButtonProps = {
   impersonate?;
 };
 
-const TriggerLastRunButton: React.FC<TriggerLastRunButtonProps> = ({
+const TriggerLastRunButton: FC<TriggerLastRunButtonProps> = ({
   pipelineRuns,
   namespace,
   impersonate,

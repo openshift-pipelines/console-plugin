@@ -6,6 +6,7 @@ import { CustomSVGDefsProvider } from './CustomSVGDefsProvider';
 import './Decorator.scss';
 
 type DecoratorTypes = {
+  children?: React.ReactNode;
   x: number;
   y: number;
   radius: number;

@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Flex, FlexItem, PageSection, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import './PipelineBuilderHeader.scss';
 
-const PipelineBuilderHeader: React.FC = () => {
+const PipelineBuilderHeader: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return (

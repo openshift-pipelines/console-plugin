@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DocumentTitle,
@@ -22,7 +22,7 @@ interface TaskRunsListPageProps {
 
 const taskRunModelRef = getReferenceForModel(TaskRunModel);
 
-const TaskRunsListPage: React.FC<TaskRunsListPageProps> = ({
+const TaskRunsListPage: FC<TaskRunsListPageProps> = ({
   showPipelineColumn = true,
   namespace,
   showTitle = true,

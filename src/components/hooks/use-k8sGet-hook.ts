@@ -4,17 +4,17 @@ import {
   K8sResourceCommon,
   k8sGet,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 
 export const useK8sGet = <R extends K8sResourceCommon = K8sResourceCommon>(
   kind: K8sModel | K8sKind,
   name?: string,
   namespace?: string,
 ): [R, boolean, unknown] => {
-  const [data, setData] = React.useState<R>();
-  const [loaded, setLoaded] = React.useState(false);
-  const [loadError, setLoadError] = React.useState();
-  React.useEffect(() => {
+  const [data, setData] = useState<R>();
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState();
+  useEffect(() => {
     const fetch = async () => {
       try {
         setLoadError(null);

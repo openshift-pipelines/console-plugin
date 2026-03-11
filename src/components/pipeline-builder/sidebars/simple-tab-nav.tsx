@@ -1,10 +1,11 @@
-import * as React from 'react';
+import type { FunctionComponent, ReactElement, FC } from 'react';
+import { useState, isValidElement, createElement } from 'react';
 import classNames from 'classnames';
 import { Tabs, Tab } from '@patternfly/react-core';
 
 export type Tab = {
   name: string;
-  component: React.FunctionComponent<{}> | React.ReactElement;
+  component: FunctionComponent<{}> | ReactElement;
 };
 
 type SimpleTabNavProps = {
@@ -17,7 +18,7 @@ type SimpleTabNavProps = {
   noInset?: boolean;
 };
 
-export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
+export const SimpleTabNav: FC<SimpleTabNavProps> = ({
   onClickTab,
   selectedTab,
   tabProps = null,
@@ -26,7 +27,7 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
   withinSidebar,
   noInset,
 }) => {
-  const [activeKey, setActiveKey] = React.useState<string>(
+  const [activeKey, setActiveKey] = useState<string>(
     selectedTab || tabs[0]?.name,
   );
 
@@ -36,7 +37,7 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
   };
 
   return (
-    <div>
+    (<div>
       <Tabs
         activeKey={activeKey}
         onSelect={handleTabClick}
@@ -48,10 +49,10 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
       >
         {tabs.map((tab) => {
           const content =
-            !React.isValidElement(tab.component) &&
+            !isValidElement(tab.component) &&
             !Array.isArray(tab.component)
-              ? React.createElement(
-                  tab.component as React.FunctionComponent,
+              ? createElement(
+                  tab.component as FunctionComponent,
                   tabProps,
                 )
               : tab.component;
@@ -68,6 +69,6 @@ export const SimpleTabNav: React.FC<SimpleTabNavProps> = ({
           );
         })}
       </Tabs>
-    </div>
+    </div>)
   );
 };

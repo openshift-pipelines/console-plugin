@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   render,
   fireEvent,
@@ -29,6 +28,10 @@ jest.mock('@openshift-console/dynamic-plugin-sdk', () => ({
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},
+}));
+
+jest.mock('react-router-dom-v5-compat', () => ({
+  useNavigate: jest.fn(() => jest.fn()),
 }));
 
 // FIXME Remove this code when jest is updated to at least 25.1.0 -- see https://github.com/jsdom/jsdom/issues/1555

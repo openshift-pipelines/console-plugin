@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
@@ -35,7 +36,7 @@ interface PipelinesRunsDurationProps {
   kind?: string;
 }
 
-const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
+const PipelinesRunsDurationCard: FC<PipelinesRunsDurationProps> = ({
   namespace,
   timespan,
   parentName,
@@ -45,23 +46,23 @@ const PipelinesRunsDurationCard: React.FC<PipelinesRunsDurationProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
-  const [summaryData, setSummaryData] = React.useState<SummaryProps>({});
-  const [loaded, setLoaded] = React.useState(false);
+  const [summaryData, setSummaryData] = useState<SummaryProps>({});
+  const [loaded, setLoaded] = useState(false);
   const [pipelineRunsDurationError, setPipelineRunsDurationError] =
-    React.useState<string | undefined>();
-  const abortControllerRef = React.useRef<AbortController>();
+    useState<string | undefined>();
+  const abortControllerRef = useRef<AbortController>();
 
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     setLoaded(false);
     setPipelineRunsDurationError(undefined);
     setSummaryData({});
   }, [namespace, timespan]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();
     };

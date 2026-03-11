@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, ComponentType } from 'react';
+import { useState } from 'react';
 import { Alert, Button } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +28,7 @@ export const YAML_TO_JS_OPTIONS = {
 //
 //  This means that when switching from YAML to Form, you can lose changes if the YAML editor contains unparsable YAML
 //  TODO Add an extra step when switching from yaml to form to warn user if they are about to lose changes.
-export const SyncedEditor: React.FC<SyncedEditorProps> = ({
+export const SyncedEditor: FC<SyncedEditorProps> = ({
   context = { formContext: {}, yamlContext: {} },
   FormEditor,
   initialData = {},
@@ -39,15 +40,15 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
 }) => {
   const { formContext, yamlContext } = context;
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [formData, setFormData] = React.useState<K8sResourceKind>(initialData);
-  const [yaml, setYAML] = React.useState(
+  const [formData, setFormData] = useState<K8sResourceKind>(initialData);
+  const [yaml, setYAML] = useState(
     safeJSToYAML(initialData, 'yamlData', {
       skipInvalid: true,
     }),
   );
-  const [switchError, setSwitchError] = React.useState<string | undefined>();
-  const [yamlWarning, setYAMLWarning] = React.useState<boolean>(false);
-  const [editorType, setEditorType] = React.useState<EditorType>(
+  const [switchError, setSwitchError] = useState<string | undefined>();
+  const [yamlWarning, setYAMLWarning] = useState<boolean>(false);
+  const [editorType, setEditorType] = useState<EditorType>(
     (localStorage.getItem(LOCAL_STORAGE_KEY_EDITOR_TYPE) as EditorType) ||
       EditorType.Form,
   );
@@ -170,13 +171,13 @@ type SyncedEditorProps = {
     formContext: { [key: string]: any };
     yamlContext: { [key: string]: any };
   };
-  FormEditor: React.ComponentType<FormEditorProps>;
+  FormEditor: ComponentType<FormEditorProps>;
   initialType?: EditorType;
   initialData?: K8sResourceKind;
   onChangeEditorType?: (newType: EditorType) => void;
   onChange?: (data: K8sResourceKind) => void;
   prune?: (data: K8sResourceKind) => any;
-  YAMLEditor: React.ComponentType<YAMLEditorProps>;
+  YAMLEditor: ComponentType<YAMLEditorProps>;
   lastViewUserSettingKey: string;
   displayConversionError?: boolean;
 };

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as React from 'react';
+import type { FC } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import {
   SummaryProps,
@@ -16,7 +16,7 @@ import { formatTime, formatTimeLastRunTime } from '../dateTime';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
 import { PipelineModel, PipelineModelV1Beta1 } from '../../../models';
 
-const PipelineRunsForPipelinesRow: React.FC<
+const PipelineRunsForPipelinesRow: FC<
   RowProps<
     SummaryProps,
     {

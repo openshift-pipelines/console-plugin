@@ -4,7 +4,7 @@ import {
   ListPageCreateLink,
 } from '@openshift-console/dynamic-plugin-sdk';
 import classNames from 'classnames';
-import * as React from 'react';
+import type { FC } from 'react';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useTranslation } from 'react-i18next';
 import './ListPage.scss';
@@ -31,7 +31,7 @@ const getCreateLink = (model: K8sKind, namespace: string) => {
   }/${getReferenceForModel(model)}/~new`;
 };
 
-const ListPageCreateButton: React.FC<ListPageCreateButtonProps> = ({
+const ListPageCreateButton: FC<ListPageCreateButtonProps> = ({
   model,
   namespace,
   hideTitle,

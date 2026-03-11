@@ -1,16 +1,26 @@
-import { shallow } from 'enzyme';
+import type { ReactElement } from 'react';
+import { render } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom-v5-compat';
 import { PipeLineRunWithRepoMetadata } from '../../../test-data/pipeline-data';
-import { getLabelValue, sanitizeBranchName } from '../repository-utils';
-import React from 'react';
+import { getLabelValue, sanitizeBranchName } from '../../utils/repository-utils';
 import RepositoryLinkList from '../../pipelineRuns-details/RepositoryLinkList';
 
-jest.mock('../repository-utils', () => ({
+jest.mock('../../utils/repository-utils', () => ({
   getLabelValue: jest.fn(),
   sanitizeBranchName: jest.fn(),
+  getGitProviderIcon: jest.fn(() => null),
+}));
+
+jest.mock('@openshift-console/dynamic-plugin-sdk', () => ({
+  ResourceIcon: () => null,
+  getGroupVersionKindForModel: jest.fn(() => ({})),
 }));
 
 const getLabelValueMock = getLabelValue as jest.Mock;
 const sanitizeBranchNameMock = sanitizeBranchName as jest.Mock;
+
+const renderWithRouter = (ui: ReactElement) =>
+  render(<MemoryRouter>{ui}</MemoryRouter>);
 
 beforeEach(() => {
   jest.resetAllMocks();
@@ -20,55 +30,47 @@ beforeEach(() => {
 
 describe('RepositoryLinkList', () => {
   it('should not render when repo label is missing', () => {
-    const repositoryWrapper = shallow(
+    const { container } = renderWithRouter(
       <RepositoryLinkList
         pipelineRun={PipeLineRunWithRepoMetadata.PipelineRunWithNoRepoLabel}
       />,
     );
-    expect(repositoryWrapper.isEmptyRender()).toBe(true);
+    expect(container.firstChild).toBeNull();
   });
 
   it('should render repository links when repo label is present', () => {
-    const repositoryWrapper = shallow(
+    const { container } = renderWithRouter(
       <RepositoryLinkList
         pipelineRun={PipeLineRunWithRepoMetadata.PipelineRunWithRepoLabel}
       />,
     );
-    expect(
-      repositoryWrapper.find('[data-test="pl-repository-link"]').exists(),
-    ).toBe(true);
+    expect(container.querySelector('[data-test="pl-repository-link"]')).not.toBeNull();
   });
 
   it('should render repository branch details when repo & branch label are present', () => {
-    const repositoryWrapper = shallow(
+    const { container } = renderWithRouter(
       <RepositoryLinkList
         pipelineRun={PipeLineRunWithRepoMetadata.PipelineRunWithBranchLabel}
       />,
     );
-    expect(
-      repositoryWrapper.find('[data-test="pl-repository-branch"]').exists(),
-    ).toBe(true);
+    expect(container.querySelector('[data-test="pl-repository-branch"]')).not.toBeNull();
   });
 
   it('should render commit id when repo & sha label are present', () => {
-    const repositoryWrapper = shallow(
+    const { container } = renderWithRouter(
       <RepositoryLinkList
         pipelineRun={PipeLineRunWithRepoMetadata.PipelineRunWithSHALabel}
       />,
     );
-    expect(repositoryWrapper.find('[data-test="pl-sha-url"]').exists()).toBe(
-      true,
-    );
+    expect(container.querySelector('a[href="https://www.github.com/dummy/commit/3212345"]')).not.toBeNull();
   });
 
   it('should render event type when repo & EventType label are present', () => {
-    const repositoryWrapper = shallow(
+    const { container } = renderWithRouter(
       <RepositoryLinkList
         pipelineRun={PipeLineRunWithRepoMetadata.PipelineRunWithEventTypeLabel}
       />,
     );
-    expect(repositoryWrapper.find('[data-test="pl-event-type"]').exists()).toBe(
-      true,
-    );
+    expect(container.querySelector('[data-test="pl-event-type"]')).not.toBeNull();
   });
 });

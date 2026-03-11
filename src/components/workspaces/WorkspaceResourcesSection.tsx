@@ -1,5 +1,5 @@
 import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DescriptionListDescription,
@@ -23,7 +23,7 @@ type WorkspaceResourcesSectionProps = {
   workspaces: PipelineRunWorkspace[];
 };
 
-const WorkspaceResourcesSection: React.FC<WorkspaceResourcesSectionProps> = ({
+const WorkspaceResourcesSection: FC<WorkspaceResourcesSectionProps> = ({
   namespace,
   workspaces,
 }) => {

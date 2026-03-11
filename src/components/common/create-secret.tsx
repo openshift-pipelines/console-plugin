@@ -1,6 +1,8 @@
-import * as React from 'react';
-import { WithT } from 'i18next';
-import { withTranslation } from 'react-i18next';
+import type { ReactEventHandler } from 'react';
+import { Component } from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
+
+type WithT = Pick<WithTranslation, 't'>;
 import { DroppableFileInput } from './file-input';
 import _ from 'lodash';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
@@ -39,7 +41,7 @@ type SSHAuthSubformState = {
   'ssh-privatekey': string;
 };
 
-class BasicAuthSubformWithTranslation extends React.Component<
+class BasicAuthSubformWithTranslation extends Component<
   BasicAuthSubformProps & WithT,
   BasicAuthSubformState
 > {
@@ -122,7 +124,7 @@ export const BasicAuthSubform = withTranslation()(
   BasicAuthSubformWithTranslation,
 );
 
-class SSHAuthSubformWithTranslation extends React.Component<
+class SSHAuthSubformWithTranslation extends Component<
   SSHAuthSubformProps & WithT,
   SSHAuthSubformState
 > {
@@ -189,7 +191,7 @@ type ConfigEntryFormProps = {
   onChange: Function;
 };
 
-class ConfigEntryFormWithTranslation extends React.Component<
+class ConfigEntryFormWithTranslation extends Component<
   ConfigEntryFormProps & WithT,
   ConfigEntryFormState
 > {
@@ -232,7 +234,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
     );
   };
 
-  onBlurHandler: React.ReactEventHandler<HTMLInputElement> = (event) => {
+  onBlurHandler: ReactEventHandler<HTMLInputElement> = (event) => {
     const { name, value } = event.currentTarget;
     this.setState(
       (prevState) => ({
@@ -362,7 +364,7 @@ type CreateConfigSubformProps = {
   };
 };
 
-class CreateConfigSubformWithTranslation extends React.Component<
+class CreateConfigSubformWithTranslation extends Component<
   CreateConfigSubformProps & WithT,
   CreateConfigSubformState
 > {

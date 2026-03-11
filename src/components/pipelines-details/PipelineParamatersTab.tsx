@@ -1,11 +1,11 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { PipelineDetailsTabProps } from './types';
 
 import PipelineForm from './PipelineForm';
 import PipelineParametersForm from './PipelineParametersForm';
 import { parametersValidationSchema } from './pipelineForm-validation-utils';
 
-const PipelineParamatersTab: React.FC<PipelineDetailsTabProps> = ({
+const PipelineParamatersTab: FC<PipelineDetailsTabProps> = ({
   obj: pipeline,
 }) => {
   return (

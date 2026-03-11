@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DocumentTitle,
@@ -19,7 +19,7 @@ type TasksListPageProps = {
   hideNameLabelFilters?: boolean;
 };
 
-const TasksListPage: React.FC<TasksListPageProps> = ({
+const TasksListPage: FC<TasksListPageProps> = ({
   namespace,
   showTitle = true,
   hideColumnManagement = false,

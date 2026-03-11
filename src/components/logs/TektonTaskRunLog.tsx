@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useEffect, useMemo } from 'react';
 import { LogViewer } from '@patternfly/react-log-viewer';
 import { HttpError } from '@openshift-console/dynamic-plugin-sdk/lib/utils/error/http-error';
 import { TaskRunKind } from '../../types';
@@ -14,7 +15,7 @@ type TektonTaskRunLogProps = {
   setCurrentLogsGetter: (getter: () => string) => void;
 };
 
-export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
+export const TektonTaskRunLog: FC<TektonTaskRunLogProps> = ({
   taskRun,
   setCurrentLogsGetter,
 }) => {
@@ -27,11 +28,11 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
     taskRun.metadata.name,
     taskRun.metadata?.annotations?.['results.tekton.dev/record'],
   );
-  React.useEffect(() => {
+  useEffect(() => {
     setCurrentLogsGetter(() => formattedResults);
   }, [setCurrentLogsGetter, trResults]);
 
-  const errorMessage = React.useMemo(() => {
+  const errorMessage = useMemo(() => {
     if (!trError) return null;
     return (trError as HttpError)?.code === 404 ||
       (trError as HttpError)?.code === 500
@@ -40,7 +41,7 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
   }, [trError, taskName, t]);
 
   // Format trResults to include taskName
-  const formattedResults = React.useMemo(() => {
+  const formattedResults = useMemo(() => {
     if (!trResults) return '';
     const formattedTaskName = `${taskName.toUpperCase()}`;
 

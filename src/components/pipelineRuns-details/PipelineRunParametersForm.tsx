@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { PageSection } from '@patternfly/react-core';
 import { Formik } from 'formik';
 import * as _ from 'lodash';
@@ -10,7 +10,7 @@ export interface PipelineRunParametersFormProps {
   obj: K8sResourceKind;
 }
 
-const PipelineRunParametersForm: React.FC<PipelineRunParametersFormProps> = ({
+const PipelineRunParametersForm: FC<PipelineRunParametersFormProps> = ({
   obj,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

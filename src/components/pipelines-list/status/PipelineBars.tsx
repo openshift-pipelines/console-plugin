@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { ComputedStatus, PipelineRunKind, TaskRunKind } from '../../../types';
 import TaskStatusToolTip from './TaskStatusTooltip';
@@ -17,7 +17,7 @@ export interface PipelineBarsForTaskRunsStatus {
   taskRunStatusObj: TaskStatus;
 }
 
-export const PipelineBars: React.FC<PipelineBarProps> = ({
+export const PipelineBars: FC<PipelineBarProps> = ({
   pipelinerun,
   taskRuns,
 }) => {
@@ -38,7 +38,7 @@ export const PipelineBars: React.FC<PipelineBarProps> = ({
   );
 };
 
-export const PipelineBarsForTaskRunsStatus: React.FC<
+export const PipelineBarsForTaskRunsStatus: FC<
   PipelineBarsForTaskRunsStatus
 > = ({ taskRunStatusObj }) => (
   <Tooltip content={<TaskStatusToolTip taskStatus={taskRunStatusObj} />}>

@@ -1,10 +1,10 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Button, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Shortcut, ShortcutTable } from '../../shortcuts';
 
-const TaskSidebarShortcuts: React.FC = () => {
+const TaskSidebarShortcuts: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return (

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   Alert,
   AlertActionCloseButton,
@@ -12,7 +12,7 @@ type PipelineOverviewAlertProps = {
   onClose?: () => void;
 };
 
-const PipelineOverviewAlert: React.FC<
+const PipelineOverviewAlert: FC<
   PipelineOverviewAlertProps & AlertProps
 > = ({ title, onClose }) => {
   return (

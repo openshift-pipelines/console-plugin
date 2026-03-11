@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Stack, StackItem, Title } from '@patternfly/react-core';
 import { FormikErrors, useField } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
@@ -41,7 +41,7 @@ function safeIndex<T>(list: T[], comparatorFunc: (v: T) => boolean): number {
   return idx === -1 ? list.length : idx;
 }
 
-const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
+const TaskSidebar: FC<TaskSidebarProps> = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
     onRemoveTask,

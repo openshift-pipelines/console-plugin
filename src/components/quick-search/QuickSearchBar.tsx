@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FormEvent, ReactNode, FC } from 'react';
+import { useRef } from 'react';
 import {
   Bullseye,
   InputGroup,
@@ -16,15 +17,15 @@ interface QuickSearchBarProps {
   autoFocus: boolean;
   searchTerm: string;
   onSearch: (
-    event: React.FormEvent<HTMLInputElement>,
+    event: FormEvent<HTMLInputElement>,
     searchTerm: string,
   ) => void;
   searchPlaceholder: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   showError: boolean;
 }
 
-const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
+const QuickSearchBar: FC<QuickSearchBarProps> = ({
   showNoResults,
   itemsLoaded,
   autoFocus = false,
@@ -35,8 +36,8 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
   showError
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const spanRef = React.useRef<HTMLSpanElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const spanRef = useRef<HTMLSpanElement>(null);
   return (
     <InputGroup
       onClick={() => inputRef.current?.focus()}

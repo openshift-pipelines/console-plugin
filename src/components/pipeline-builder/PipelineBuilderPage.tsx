@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Formik, FormikBag } from 'formik';
 import { load } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +27,7 @@ type PipelineBuilderPageProps = {
   existingPipeline?: PipelineKind;
 };
 
-const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
+const PipelineBuilderPage: FC<PipelineBuilderPageProps> = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const navigate = useNavigate();
   const { ns } = useParams();

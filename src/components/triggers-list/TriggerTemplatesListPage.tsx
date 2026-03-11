@@ -1,5 +1,5 @@
 import { ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TriggerTemplateModel } from '../../models';
 import TriggerTemplatesList from './TriggerTemplatesList';
@@ -10,7 +10,7 @@ type TriggerTemplatesListPageProps = {
   hideNameLabelFilters?: boolean;
 };
 
-const TriggerTemplatesListPage: React.FC<TriggerTemplatesListPageProps> = (
+const TriggerTemplatesListPage: FC<TriggerTemplatesListPageProps> = (
   props,
 ) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import * as _ from 'lodash';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -66,7 +67,7 @@ const getChartData = (
   return chartData;
 };
 
-const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
+const PipelinesRunsNumbersChart: FC<PipelinesRunsNumbersChartProps> = ({
   namespace,
   timespan,
   interval,
@@ -87,18 +88,18 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
     y: domainY || undefined,
   };
 
-  const [data, setData] = React.useState<SummaryResponse>();
-  const [loaded, setLoaded] = React.useState(false);
-  const [pipelineRunsChartError, setPipelineRunsChartError] = React.useState<
+  const [data, setData] = useState<SummaryResponse>();
+  const [loaded, setLoaded] = useState(false);
+  const [pipelineRunsChartError, setPipelineRunsChartError] = useState<
     string | undefined
   >();
-  const abortControllerRef = React.useRef<AbortController>();
+  const abortControllerRef = useRef<AbortController>();
 
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();
     };
@@ -146,7 +147,7 @@ const PipelinesRunsNumbersChart: React.FC<PipelinesRunsNumbersChartProps> = ({
       });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setLoaded(false);
     setPipelineRunsChartError(undefined);
     setData(undefined);

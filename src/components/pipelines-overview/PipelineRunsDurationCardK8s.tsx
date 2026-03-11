@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import {
@@ -43,7 +44,7 @@ interface PipelinesRunsDurationProps {
   bordered?: boolean;
 }
 
-const PipelineRunsDurationCardK8s: React.FC<PipelinesRunsDurationProps> = ({
+const PipelineRunsDurationCardK8s: FC<PipelinesRunsDurationProps> = ({
   namespace,
   timespan,
   parentName,
@@ -52,7 +53,7 @@ const PipelineRunsDurationCardK8s: React.FC<PipelinesRunsDurationProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [pipelineRunsDurationError, setPipelineRunsDurationError] =
-    React.useState<string | null>(null);
+    useState<string | null>(null);
 
   const [
     totalPipelineRunsCountData,
@@ -88,7 +89,7 @@ const PipelineRunsDurationCardK8s: React.FC<PipelinesRunsDurationProps> = ({
         });
   const [tickValues, type] = getXaxisValues(timespan);
 
-  const totalPipelineRuns = React.useMemo(() => {
+  const totalPipelineRuns = useMemo(() => {
     if (totalPipelineRunsCountError) {
       return;
     }
@@ -134,7 +135,7 @@ const PipelineRunsDurationCardK8s: React.FC<PipelinesRunsDurationProps> = ({
         });
 
   const [totalPipelineRunsDuration, totalPipelineRunsDurationValue] =
-    React.useMemo(() => {
+    useMemo(() => {
       if (totalPipelineRunsDurationError) {
         return ['-', 0];
       }
@@ -150,7 +151,7 @@ const PipelineRunsDurationCardK8s: React.FC<PipelinesRunsDurationProps> = ({
       type,
     ]);
 
-  const averageDuration = React.useMemo(() => {
+  const averageDuration = useMemo(() => {
     if (
       totalPipelineRunsDurationError ||
       totalPipelineRunsCountError ||
@@ -164,7 +165,7 @@ const PipelineRunsDurationCardK8s: React.FC<PipelinesRunsDurationProps> = ({
     );
   }, [totalPipelineRunsDurationValue, totalPipelineRuns]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const hasNonAbortError =
       (totalPipelineRunsCountError &&
         totalPipelineRunsCountError.name !== 'AbortError') ||

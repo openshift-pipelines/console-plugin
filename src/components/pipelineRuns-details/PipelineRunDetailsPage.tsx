@@ -1,7 +1,8 @@
 import { ResourceStatus } from '@openshift-console/dynamic-plugin-sdk';
 import { LazyActionMenu } from '@openshift-console/dynamic-plugin-sdk-internal';
 import { ActionMenuVariant } from '@openshift-console/dynamic-plugin-sdk-internal/lib/api/internal-types';
-import * as React from 'react';
+import type { FC } from 'react';
+import { useCallback, useMemo } from 'react';
 import { PipelineRunModel } from '../../models';
 import { LoadingBox } from '../status/status-box';
 import DetailsPage from '../details-page/DetailsPage';
@@ -39,14 +40,14 @@ type PipelineRunDetailsPageProps = {
   namespace: string;
 };
 
-const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
+const PipelineRunDetailsPage: FC<PipelineRunDetailsPageProps> = ({
   name,
   namespace,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [pipelineRun, pipelineRunLoaded] = usePipelineRun(namespace, name);
 
-  const customActionMenu = React.useCallback((_kindObj, obj) => {
+  const customActionMenu = useCallback((_kindObj, obj) => {
     const reference = getReferenceForModel(PipelineRunModel);
     const context = { [reference]: obj };
     return (
@@ -58,7 +59,7 @@ const PipelineRunDetailsPage: React.FC<PipelineRunDetailsPageProps> = ({
     );
   }, []);
 
-  const resourceTitleFunc = React.useMemo((): string | JSX.Element => {
+  const resourceTitleFunc = useMemo((): string | JSX.Element => {
     return (
       <div className="pipelinerun-details-page pf-v6-l-flex pf-m-row pf-m-gap-sm">
         {pipelineRun?.metadata?.name}{' '}

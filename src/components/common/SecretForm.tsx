@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { TextInputTypes, Title } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
@@ -60,7 +61,7 @@ interface SecretFormValues {
   formData: any;
 }
 
-const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
+const SecretForm: FC<FormikProps<SecretFormValues>> = ({
   values,
   setFieldValue,
   setFieldTouched,
@@ -70,13 +71,13 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
   isSubmitting,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [stringData, setStringData] = React.useState({
+  const [stringData, setStringData] = useState({
     [SecretType.basicAuth]: {},
     [SecretType.sshAuth]: {},
     [SecretType.dockerconfigjson]: {},
   });
 
-  const secretTypes = React.useMemo<Record<string, string>>(
+  const secretTypes = useMemo<Record<string, string>>(
     () => ({
       [SecretAnnotationId.Git]: t('Git Server'),
       [SecretAnnotationId.Image]: t('Image Registry'),
@@ -84,7 +85,7 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
     [t],
   );
 
-  const authTypes = React.useMemo<Record<string, string>>(() => {
+  const authTypes = useMemo<Record<string, string>>(() => {
     switch (values.annotations.key) {
       case SecretAnnotationId.Git:
         return {
@@ -101,7 +102,7 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
     }
   }, [values.annotations.key, t]);
 
-  const clearServerURL = React.useCallback(() => {
+  const clearServerURL = useCallback(() => {
     setFieldValue('annotations', {
       key: values.annotations.key,
       value: '', // clear url
@@ -109,7 +110,7 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
     setFieldTouched('annotations', false);
   }, [setFieldTouched, setFieldValue, values.annotations.key]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const availableAuthTypes = Object.keys(authTypes);
     if (!availableAuthTypes.includes(values.type)) {
       setFieldValue('type', SecretType.basicAuth);
@@ -118,7 +119,7 @@ const SecretForm: React.FC<FormikProps<SecretFormValues>> = ({
   }, [authTypes, values.type, setFieldValue, clearServerURL]);
 
   // Uses a memo instead of const outside of the function so that we can add i18n right here
-  const helpText = React.useMemo(
+  const helpText = useMemo(
     () => ({
       [SecretType.dockerconfigjson]: t(
         'The base server url (e.g. https://quay.io/)',

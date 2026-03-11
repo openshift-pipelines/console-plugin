@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import { Button, Modal, ModalHeader, ModalVariant, ModalBody, ModalFooter } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { OverlayComponent } from '@openshift-console/dynamic-plugin-sdk';
@@ -24,7 +24,7 @@ export const ModalErrorContent : OverlayComponent<ErrorModalProps> = (props) => 
 
 export const useErrorModal = () => {
   const launchOverlay = useOverlay();
-  return React.useCallback((props: ErrorModalProps) => launchOverlay<ErrorModalProps>(ModalErrorContent, props)
+  return useCallback((props: ErrorModalProps) => launchOverlay<ErrorModalProps>(ModalErrorContent, props)
   , [launchOverlay]);
 };
 

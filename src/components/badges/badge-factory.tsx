@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactElement } from 'react';
 import DevPreviewBadge from './DevPreviewBadge';
 import { InlineDevPreviewBadge, InlineTechPreviewBadge } from './InlineBadge';
 import TechPreviewBadge from './TechPreviewBadge';
@@ -11,7 +11,7 @@ export enum BadgeType {
 
 export const getBadgeFromType = (
   badge: ModelBadge | BadgeType,
-): React.ReactElement => {
+): ReactElement => {
   switch (badge) {
     case ModelBadge.DEV:
     case BadgeType.DEV:
@@ -26,7 +26,7 @@ export const getBadgeFromType = (
 
 export const getInlineBadgeFromType = (
   badge: ModelBadge | BadgeType,
-): React.ReactElement => {
+): ReactElement => {
   switch (badge) {
     case ModelBadge.DEV:
     case BadgeType.DEV:

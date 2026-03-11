@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, ReactElement, FC } from 'react';
+import { Children, cloneElement } from 'react';
 import {
   Tooltip,
   Button,
@@ -25,8 +26,8 @@ export interface MultiColumnFieldRowProps
   extends Omit<RowRendererProps, 'fieldName'> {
   name: string;
   rowIndex: number;
-  children?: React.ReactNode;
-  rowRenderer?: (row: RowRendererProps) => React.ReactNode;
+  children?: ReactNode;
+  rowRenderer?: (row: RowRendererProps) => ReactNode;
 }
 
 const DEFAULT_ROW_RENDERER = ({
@@ -38,12 +39,12 @@ const DEFAULT_ROW_RENDERER = ({
   disableDeleteRow,
   tooltipDeleteRow,
   onDelete,
-}): React.ReactNode => {
+}): ReactNode => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
-    <div className="odc-multi-column-field__row" data-test={`row ${fieldName}`}>
+    (<div className="odc-multi-column-field__row" data-test={`row ${fieldName}`}>
       <Grid>
-        {React.Children.map(children, (child: React.ReactElement, i) => {
+        {Children.map(children, (child: ReactElement, i) => {
           let newProps = child.props;
           if (complexFields[i]) {
             newProps = { ...newProps, namePrefix: fieldName };
@@ -54,11 +55,11 @@ const DEFAULT_ROW_RENDERER = ({
             };
           }
           return (
-            <GridItem span={spans[i]} key={fieldName}>
+            (<GridItem span={spans[i]} key={fieldName}>
               <div className="odc-multi-column-field__col">
-                {React.cloneElement(child, newProps)}
+                {cloneElement(child, newProps)}
               </div>
-            </GridItem>
+            </GridItem>)
           );
         })}
       </Grid>
@@ -77,11 +78,11 @@ const DEFAULT_ROW_RENDERER = ({
           </Tooltip>
         </div>
       )}
-    </div>
+    </div>)
   );
 };
 
-const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
+const MultiColumnFieldRow: FC<MultiColumnFieldRowProps> = ({
   name,
   rowIndex,
   onDelete,

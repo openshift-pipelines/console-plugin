@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef, useMemo, memo } from 'react';
 import cx from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -53,7 +54,7 @@ interface CustomTaskProps {
 
 const FILTER_ID = 'SvgTaskDropShadowFilterId';
 
-const CustomTaskComponent: React.FC<CustomTaskProps> = ({
+const CustomTaskComponent: FC<CustomTaskProps> = ({
   pipelineRunName,
   namespace,
   task,
@@ -66,8 +67,8 @@ const CustomTaskComponent: React.FC<CustomTaskProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const showStatusState = !!pipelineRunName;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
-  const nameRef = React.useRef();
-  const pillRef = React.useRef();
+  const nameRef = useRef();
+  const pillRef = useRef();
 
   const path = `${resourcePathFromModel(
     CustomRunModelV1Beta1,
@@ -76,7 +77,7 @@ const CustomTaskComponent: React.FC<CustomTaskProps> = ({
   )}`;
   const enableLogLink = !!path;
   const [hover, hoverRef] = useHover();
-  const truncatedVisualName = React.useMemo(
+  const truncatedVisualName = useMemo(
     () =>
       truncateMiddle(visualName, {
         length: showStatusState ? 11 : 14,
@@ -163,7 +164,7 @@ const CustomTaskComponent: React.FC<CustomTaskProps> = ({
   );
 };
 
-const CustomTaskNode: React.FC<CustomTaskNodeProps> = ({
+const CustomTaskNode: FC<CustomTaskNodeProps> = ({
   element,
   disableTooltip,
 }) => {
@@ -200,4 +201,4 @@ const CustomTaskNode: React.FC<CustomTaskNodeProps> = ({
   return taskComponent;
 };
 
-export default React.memo(observer(CustomTaskNode));
+export default memo(observer(CustomTaskNode));

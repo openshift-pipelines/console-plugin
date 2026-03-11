@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   ActionGroup,
   Alert,
@@ -34,7 +34,7 @@ export interface FormFooterProps {
   shadow?: boolean;
 }
 
-const FormFooter: React.FC<FormFooterProps> = ({
+const FormFooter: FC<FormFooterProps> = ({
   handleSubmit,
   handleReset,
   handleCancel,

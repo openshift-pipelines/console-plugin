@@ -2,7 +2,7 @@ import {
   K8sResourceCommon,
   useFlag,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import {
   FLAGS,
   PipelineRunKind,
@@ -27,25 +27,25 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
   cacheKey?: string,
 ): [Kind[], boolean, unknown, GetNextPage] => {
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
-  const [nextPageToken, setNextPageToken] = React.useState<string>(null);
-  const [localCacheKey, setLocalCacheKey] = React.useState(cacheKey);
+  const [nextPageToken, setNextPageToken] = useState<string>(null);
+  const [localCacheKey, setLocalCacheKey] = useState(cacheKey);
 
   if (cacheKey !== localCacheKey) {
     // force update local cache key
     setLocalCacheKey(cacheKey);
   }
 
-  const [result, setResult] = React.useState<
+  const [result, setResult] = useState<
     [Kind[], boolean, unknown, GetNextPage]
   >([[], false, undefined, undefined]);
 
   // reset token if namespace or options change
-  React.useEffect(() => {
+  useEffect(() => {
     setNextPageToken(null);
   }, [namespace, options, cacheKey]);
 
   // eslint-disable-next-line consistent-return
-  React.useEffect(() => {
+  useEffect(() => {
     let disposed = false;
     (async () => {
       try {

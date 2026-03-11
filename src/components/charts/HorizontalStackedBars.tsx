@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as React from 'react';
+import type { FC } from 'react';
 import classNames from 'classnames';
 import './HorizontalStackedBars.scss';
 
@@ -17,7 +17,7 @@ export type HorizontalStackedBarsProps = {
   width?: number | string;
 };
 
-const HorizontalStackedBars: React.FC<HorizontalStackedBarsProps> = ({
+const HorizontalStackedBars: FC<HorizontalStackedBarsProps> = ({
   barGap,
   height,
   inline,

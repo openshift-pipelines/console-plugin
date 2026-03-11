@@ -1,21 +1,23 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
+import { useState } from 'react';
 import { ExpandableSection } from '@patternfly/react-core';
 
 interface ExpandCollapseProps {
+  children?: ReactNode;
   textExpanded: string;
   textCollapsed: string;
   onToggle?: (isExpanded: boolean) => void;
   dataTest?: string;
 }
 
-export const ExpandCollapse: React.FC<ExpandCollapseProps> = ({
+export const ExpandCollapse: FC<ExpandCollapseProps> = ({
   textCollapsed,
   textExpanded,
   onToggle,
   dataTest,
   children,
 }) => {
-  const [isExpanded, toggleExpandCollapse] = React.useState(false);
+  const [isExpanded, toggleExpandCollapse] = useState(false);
   return (
     <ExpandableSection
       toggleText={isExpanded ? textExpanded : textCollapsed}

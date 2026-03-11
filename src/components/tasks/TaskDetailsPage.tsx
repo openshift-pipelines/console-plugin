@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   BreadcrumbItem,
@@ -28,7 +29,7 @@ type TaskDetailsPageProps = {
   namespace: string;
 };
 
-const TaskDetailsPage: React.FC<TaskDetailsPageProps> = () => {
+const TaskDetailsPage: FC<TaskDetailsPageProps> = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const params = useParams();
   const { name, ns: namespace } = params;
@@ -38,11 +39,11 @@ const TaskDetailsPage: React.FC<TaskDetailsPageProps> = () => {
     name,
   });
 
-  const resourceTitleFunc = React.useMemo(() => {
+  const resourceTitleFunc = useMemo(() => {
     return <div className="task-details-page">{getTaskName(task)} </div>;
   }, [task]);
 
-  const customActionMenu = React.useCallback((_kindObj, obj) => {
+  const customActionMenu = useCallback((_kindObj, obj) => {
     const reference = getReferenceForModel(TaskModel);
     const context = { [reference]: obj };
     return (

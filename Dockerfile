@@ -14,7 +14,8 @@ ADD . /usr/src/app
 WORKDIR /usr/src/app
 
 # Install dependencies & build
-RUN yarn install && yarn build
+RUN yarn install --immutable && \
+    yarn build
 
 # Stage 2: Serve with Nginx
 FROM $RUNTIME

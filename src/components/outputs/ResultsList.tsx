@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Thead, Tbody, Th, Td, Tr } from '@patternfly/react-table';
 import { Table } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ export interface ResultsListProps {
   resourceName: string;
 }
 
-const ResultsList: React.FC<ResultsListProps> = ({ results, resourceName }) => {
+const ResultsList: FC<ResultsListProps> = ({ results, resourceName }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   if (!results.length) return null;
 

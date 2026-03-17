@@ -6,7 +6,7 @@ import {
   useDeleteModal,
   useLabelsModal,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { getReferenceForModel } from '../components/pipelines-overview/utils';
@@ -68,13 +68,13 @@ export const useDefaultActionsProvider = (resource: K8sResourceCommon) => {
   });
 
   // Building the path to the YAML editor
-  const editURL = React.useMemo(() => {
+  const editURL = useMemo(() => {
     if (!model || !name || !namespace) return '';
     const reference = getReferenceForModel(model);
     return `/k8s/ns/${namespace}/${reference}/${encodeURIComponent(name)}/yaml`;
   }, [model, name, namespace]);
 
-  return React.useMemo<[Action[], boolean, any]>(() => {
+  return useMemo<[Action[], boolean, any]>(() => {
     const actions: Action[] = [
       {
         id: 'edit-labels',

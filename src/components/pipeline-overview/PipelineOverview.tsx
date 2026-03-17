@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useEffect } from 'react';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +32,7 @@ type PipelinesOverviewProps = {
   };
 };
 
-const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
+const PipelinesOverview: FC<PipelinesOverviewProps> = ({
   item: {
     pipelines: [pipeline],
     pipelineRuns,
@@ -41,11 +42,11 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
     metadata: { name, namespace },
   } = pipeline;
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [showAlert, setShowAlert] = React.useState(
+  const [showAlert, setShowAlert] = useState(
     isPipelineNotStarted(name, namespace),
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setShowAlert(isPipelineNotStarted(name, namespace));
   }, [name, namespace]);
 

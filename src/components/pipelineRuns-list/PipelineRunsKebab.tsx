@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC, Ref } from 'react';
+import { useState } from 'react';
 import { PipelineRunKind, TaskRunKind } from '../../types';
 import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
 import {
@@ -40,7 +41,7 @@ type PipelineRunsKebabProps = {
   currentUser: string;
 };
 
-const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
+const PipelineRunsKebab: FC<PipelineRunsKebabProps> = ({
   obj,
   taskRuns,
   taskRunStatusObj,
@@ -59,7 +60,7 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
     !isResourceLoadedFromTR(obj) && tektonResultsFlag(obj)
       ? useDeleteModal(obj, undefined, message)
       : useDeleteModal(obj);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { name, namespace } = obj.metadata;
   const PLRTasks = getTaskRunsOfPipelineRun(taskRuns, name);
   const hidePLRCancel = taskRunStatusObj
@@ -213,10 +214,10 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
   ];
 
   return (
-    <Dropdown
+    (<Dropdown
       onSelect={onSelect}
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+      toggle={(toggleRef: Ref<MenuToggleElement>) => (
         <MenuToggle
           ref={toggleRef}
           aria-label="kebab menu"
@@ -234,7 +235,7 @@ const PipelineRunsKebab: React.FC<PipelineRunsKebabProps> = ({
       popperProps={{ position: 'right' }}
     >
       <DropdownList>{dropdownItems}</DropdownList>
-    </Dropdown>
+    </Dropdown>)
   );
 };
 

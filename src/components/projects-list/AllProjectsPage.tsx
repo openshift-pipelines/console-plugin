@@ -4,7 +4,7 @@ import {
   Content,
   ContentVariants,
   } from '@patternfly/react-core';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import ProjectsList from './ProjectsList';
 import './AllProjectsPage.scss';
@@ -13,7 +13,7 @@ interface AllProjectsPageProps {
   pageTitle?: string;
 }
 
-const AllProjectsPage: React.FC<AllProjectsPageProps> = ({ pageTitle }) => {
+const AllProjectsPage: FC<AllProjectsPageProps> = ({ pageTitle }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <>

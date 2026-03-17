@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
 
 import './render-utils.scss';
 import { ExternalLink } from './link';
@@ -10,7 +10,7 @@ export const GROUP_MATCH_REGEXP = new RegExp(
   'i',
 );
 
-export const handleURLs = (value: string): React.ReactNode => {
+export const handleURLs = (value: string): ReactNode => {
   if (typeof value !== 'string') return JSON.stringify(value, null, 2);
 
   const matches = value.match(GROUP_MATCH_REGEXP);

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode, MouseEvent, Ref } from 'react';
+import { Component } from 'react';
 import { LoadingInline } from '../Loading';
 import _ from 'lodash';
 import {
@@ -33,7 +34,7 @@ export type StorageClassDropdownInnerState = {
   items: any;
   name: string;
   selectedKey: string;
-  title: React.ReactNode;
+  title: ReactNode;
   defaultClass: string;
   isOpen: boolean;
   filterValue: string;
@@ -96,7 +97,7 @@ const StorageClassDropdownNoStorageClassOption = (props) => {
   );
 };
 
-export class StorageClassDropdownInnerWithTranslation extends React.Component<
+export class StorageClassDropdownInnerWithTranslation extends Component<
   StorageClassDropdownInnerProps,
   StorageClassDropdownInnerState
 > {
@@ -115,7 +116,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
   };
 
   private onSelect = (
-    _event: React.MouseEvent | undefined,
+    _event: MouseEvent | undefined,
     value: string | number | undefined,
   ) => {
     const key = String(value);
@@ -163,7 +164,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
 
     const state = {
       items: {},
-      title: {},
+      title: null as ReactNode,
       defaultClass: '',
     };
     let unorderedItems = {};
@@ -281,7 +282,7 @@ export class StorageClassDropdownInnerWithTranslation extends React.Component<
     // Only show the dropdown if 'no storage class' is not the only option which depends on defaultClass
     const itemsAvailableToShow = defaultClass || _.size(this.state.items) > 1;
     
-    const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    const toggle = (toggleRef: Ref<MenuToggleElement>) => (
       <MenuToggle
         ref={toggleRef}
         onClick={this.onToggle}

@@ -4,7 +4,7 @@ import {
   WatchK8sResults,
   useK8sWatchResources,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import { useMemo } from 'react';
 import { TektonResourceLabel } from '../../../../consts';
 import { PipelineRunModel, PodModel, TaskRunModel } from '../../../../models';
 import { PipelineRunKind, TaskRunKind } from '../../../../types';
@@ -41,7 +41,7 @@ export const usePipelineRunRelatedResources = (
   pipelineRunName: string,
 ): WatchK8sResults<ResourcesType> => {
   const plrRelatedResources: WatchK8sResources<ResourcesType> =
-    React.useMemo(() => {
+    useMemo(() => {
       return {
         taskruns: {
           kind: getReferenceForModel(TaskRunModel),
@@ -69,7 +69,7 @@ export const useTaskRunRelatedResources = (
   taskRunName: string,
 ): WatchK8sResults<ResourcesType> => {
   const tsrRelatedResources: WatchK8sResources<ResourcesType> =
-    React.useMemo(() => {
+    useMemo(() => {
       return {
         pods: getPodsByLabels(namespace, {
           [TektonResourceLabel.taskrun]: taskRunName,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Alert, FormSection } from '@patternfly/react-core';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import * as _ from 'lodash';
@@ -73,7 +73,7 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
   }
 };
 
-const PipelineWorkspacesSection: React.FC = () => {
+const PipelineWorkspacesSection: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { setFieldValue } = useFormikContext<FormikValues>();
   const [{ value: workspaces }] =

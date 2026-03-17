@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { FormGroup, TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import PipelineBuilderVisualization from './PipelineBuilderVisualization';
@@ -24,7 +24,7 @@ type PipelineBuilderFormEditorProps = {
   onUpdateTasks: UpdateTasksCallback;
 };
 
-const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (
+const PipelineBuilderFormEditor: FC<PipelineBuilderFormEditorProps> = (
   props,
 ) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

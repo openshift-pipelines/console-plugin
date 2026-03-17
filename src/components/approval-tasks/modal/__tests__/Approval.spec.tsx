@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { k8sPatch } from '@openshift-console/dynamic-plugin-sdk';
 import Approval from '../Approval';
@@ -30,7 +30,7 @@ jest.mock('react-i18next', () => ({
 
 // Mock react-router-dom-v5-compat
 jest.mock('react-router-dom-v5-compat', () => ({
-  Link: ({ children, to }: { children: React.ReactNode; to: string }) => (
+  Link: ({ children, to }: { children: ReactNode; to: string }) => (
     <a href={to}>{children}</a>
   ),
 }));

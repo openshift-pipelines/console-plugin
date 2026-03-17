@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   TextInputTypes,
   Button,
@@ -23,7 +23,7 @@ interface MultipleKeySelectorProps {
   tooltip?: string;
 }
 
-const MultipleKeySelector: React.FC<MultipleKeySelectorProps> = ({
+const MultipleKeySelector: FC<MultipleKeySelectorProps> = ({
   name,
   keys,
   addString,

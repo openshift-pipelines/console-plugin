@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
@@ -12,7 +12,7 @@ type TriggersOverviewProps = {
   pipeline: PipelineKind;
 };
 
-const TriggersOverview: React.FC<TriggersOverviewProps> = ({ pipeline }) => {
+const TriggersOverview: FC<TriggersOverviewProps> = ({ pipeline }) => {
   const {
     metadata: { name, namespace },
   } = pipeline;

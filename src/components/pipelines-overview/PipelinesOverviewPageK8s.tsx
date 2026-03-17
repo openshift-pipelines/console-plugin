@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flex, FlexItem, PageSection, Title } from '@patternfly/react-core';
 import {
@@ -25,7 +25,7 @@ import {
 } from '../hooks/usePersistedFiltersForPipelineOverview';
 import './PipelinesOverview.scss';
 
-const PipelinesOverviewPageK8s: React.FC = () => {
+const PipelinesOverviewPageK8s: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const canListNS = useFlag(FLAGS.CAN_LIST_NS);
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();

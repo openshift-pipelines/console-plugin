@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { usePipelineFromPipelineRun } from '../hooks/usePipelineFromPipelineRun';
 import { useTaskRuns } from '../hooks/useTaskRuns';
 import { PipelineKind, PipelineRunKind } from '../../types';
@@ -10,7 +10,7 @@ type PipelineRunVisualizationProps = {
   pipelineRun: PipelineRunKind;
 };
 
-const PipelineRunVisualization: React.FC<PipelineRunVisualizationProps> = ({
+const PipelineRunVisualization: FC<PipelineRunVisualizationProps> = ({
   pipelineRun,
 }) => {
   const [taskRuns, taskRunsLoaded] = useTaskRuns(

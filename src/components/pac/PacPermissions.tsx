@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import {
   FormGroup,
   ExpandableSection,
@@ -9,9 +10,9 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-const PacPermissions: React.FC = () => {
+const PacPermissions: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <ExpandableSection
       toggleText={t('See GitHub permissions')}

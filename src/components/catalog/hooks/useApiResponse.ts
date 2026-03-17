@@ -1,5 +1,5 @@
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 
 export type ApiResult<R extends any[]> = [R, boolean, string];
 export type UseApiResponse = <R>(
@@ -11,11 +11,11 @@ const useApiResponse: UseApiResponse = (
   url: string,
   hasPermission: boolean,
 ) => {
-  const [resultData, setResult] = React.useState([]);
-  const [loaded, setLoaded] = React.useState(false);
-  const [loadedError, setLoadedError] = React.useState<string>();
+  const [resultData, setResult] = useState([]);
+  const [loaded, setLoaded] = useState(false);
+  const [loadedError, setLoadedError] = useState<string>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     let mounted = true;
     if (hasPermission) {
       consoleFetch(url)

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   K8sResourceKind,
   ResourceYAMLEditor,
@@ -8,7 +8,7 @@ export interface ResourceYAMLEditorTabProps {
   obj: K8sResourceKind;
 }
 
-const ResourceYAMLEditorTab: React.FC<ResourceYAMLEditorTabProps> = ({
+const ResourceYAMLEditorTab: FC<ResourceYAMLEditorTabProps> = ({
   obj,
 }) => {
   return <ResourceYAMLEditor initialResource={obj} />;

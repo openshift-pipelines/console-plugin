@@ -6,7 +6,7 @@ import {
   useListPageFilter,
   VirtualizedTable,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDefaultColumns } from '../list-pages/default-resources';
 import { ClusterTriggerBindingModel } from '../../models';
@@ -17,7 +17,7 @@ type ClusterTriggerBindingsListProps = {
   hideNameLabelFilters?: boolean;
 };
 
-const ClusterTriggerBindingsList: React.FC<ClusterTriggerBindingsListProps> = ({
+const ClusterTriggerBindingsList: FC<ClusterTriggerBindingsListProps> = ({
   hideNameLabelFilters,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

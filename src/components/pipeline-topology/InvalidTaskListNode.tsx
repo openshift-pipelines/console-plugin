@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Node, NodeModel, observer } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { BUILDER_NODE_DECORATOR_RADIUS } from './const';
@@ -10,7 +10,7 @@ type InvalidTaskListNodeProps = {
   element: Node<NodeModel, TaskListNodeModelData>;
 };
 
-const InvalidTaskListNode: React.FC<InvalidTaskListNodeProps> = ({
+const InvalidTaskListNode: FC<InvalidTaskListNodeProps> = ({
   element,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

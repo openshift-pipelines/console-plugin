@@ -3,14 +3,14 @@ import {
   K8sResourceKind,
   ResourceLink,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import type { FC } from 'react';
 import { SecretModel } from '../../models';
 
 type RepositoryWebhookSecretProps = {
   obj: K8sResourceKind;
 };
 
-const RepositoryWebhookSecret: React.FC<RepositoryWebhookSecretProps> = ({
+const RepositoryWebhookSecret: FC<RepositoryWebhookSecretProps> = ({
   obj,
 }) => {
   return (

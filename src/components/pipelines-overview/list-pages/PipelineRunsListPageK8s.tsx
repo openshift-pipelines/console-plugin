@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import classNames from 'classnames';
 import { Alert, Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
 import {
@@ -117,14 +118,14 @@ const processData = (
   });
 };
 
-const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
+const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
   bordered,
   namespace,
   timespan,
   interval,
 }) => {
-  const [pageFlag, setPageFlag] = React.useState(1);
-  const [searchText, setSearchText] = React.useState('');
+  const [pageFlag, setPageFlag] = useState(1);
+  const [searchText, setSearchText] = useState('');
   const [tickValues, type] = getXaxisValues(timespan);
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
@@ -133,7 +134,7 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
     kind: 'Project',
     optional: true,
   });
-  const [pipelineRunsListError, setPipelineRunsListError] = React.useState<
+  const [pipelineRunsListError, setPipelineRunsListError] = useState<
     string | null
   >(null);
   const [
@@ -183,7 +184,7 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
           timeout: 90000,
         });
 
-  const summaryDataK8s = React.useMemo(() => {
+  const summaryDataK8s = useMemo(() => {
     if (pipelineRunsMetricsCountError || pipelineRunsMetricsSumError) {
       return [];
     }
@@ -202,7 +203,7 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
     type,
   ]);
 
-  const summaryDataFiltered = React.useMemo(() => {
+  const summaryDataFiltered = useMemo(() => {
     return summaryDataK8s.filter((summary) =>
       summary.group_value
         .split('/')[1]
@@ -238,7 +239,7 @@ const PipelineRunsListPageK8s: React.FC<PipelineRunsListPageProps> = ({
     setSearchText(value);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const hasNonAbortError =
       (pipelineRunsMetricsCountError &&
         pipelineRunsMetricsCountError.name !== 'AbortError') ||

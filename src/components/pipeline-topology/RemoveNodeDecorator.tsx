@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons/dist/esm/icons/trash-icon';
 import { t_chart_color_black_500 as greyColor } from '@patternfly/react-tokens/dist/js/t_chart_color_black_500';
@@ -13,13 +14,13 @@ type RemoveNodeDecoratorProps = {
   removeCallback?: () => void;
 };
 
-const RemoveNodeDecorator: React.FC<RemoveNodeDecoratorProps> = ({
+const RemoveNodeDecorator: FC<RemoveNodeDecoratorProps> = ({
   content,
   x,
   y,
   removeCallback = () => {},
 }) => {
-  const trashRef = React.useRef();
+  const trashRef = useRef();
   return (
     <Tooltip triggerRef={trashRef} content={content}>
       <g

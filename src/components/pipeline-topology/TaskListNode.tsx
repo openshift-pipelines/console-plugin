@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { observer, Node, NodeModel } from '@patternfly/react-topology';
 import TaskList from './TaskList';
 import { TaskListNodeModelData } from './types';
@@ -10,7 +10,7 @@ type TaskListNodeProps = {
   unselectedText?: string;
 };
 
-const TaskListNode: React.FC<TaskListNodeProps> = ({
+const TaskListNode: FC<TaskListNodeProps> = ({
   element,
   unselectedText,
 }) => {

@@ -2,7 +2,7 @@
 import { K8sKind } from '@openshift-console/dynamic-plugin-sdk';
 import { TOptions } from 'i18next';
 import _ from 'lodash';
-import React from 'react';
+import { useRef } from 'react';
 import { getI18n } from 'react-i18next';
 import { RESOURCE_LOADED_FROM_RESULTS_ANNOTATION } from '../../consts';
 import { Options, resourceURL } from './k8s-utils';
@@ -14,7 +14,7 @@ export const useDeepCompareMemoize = <T = any>(
   value: T,
   strinfigy?: boolean,
 ): T => {
-  const ref = React.useRef<T>();
+  const ref = useRef<T>();
 
   if (
     strinfigy

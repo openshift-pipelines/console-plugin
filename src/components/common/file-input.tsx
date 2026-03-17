@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Component } from 'react';
 import withDragDropContext from '../text-column-field/drag-drop-context';
 import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd/lib/interfaces';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -18,7 +18,7 @@ export const containsNonPrintableCharacters = (value: string) => {
   return /[\x00-\x09\x0E-\x1F]/.test(value);
 };
 
-class FileInputWithTranslation extends React.Component<
+class FileInputWithTranslation extends Component<
   FileInputProps,
   FileInputState
 > {
@@ -194,7 +194,7 @@ const FileInputComponent = DropTarget(
 )(FileInput);
 
 const DroppableFileInputWithTranslation = withDragDropContext(
-  class DroppableFileInput extends React.Component<
+  class DroppableFileInput extends Component<
     DroppableFileInputProps,
     DroppableFileInputState
   > {

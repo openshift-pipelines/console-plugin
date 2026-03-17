@@ -8,7 +8,7 @@ import {
   useOverlay,
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as _ from 'lodash';
-import * as React from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { useGetActiveUser } from '../components/hooks/hooks';
@@ -90,7 +90,7 @@ export const usePipelineActionsProvider = (resource: PipelineWithLatest) => {
   });
 
   // Callback to navigate to the newly created PipelineRun
-  const handlePipelineRunSubmit = React.useCallback(
+  const handlePipelineRunSubmit = useCallback(
     (pipelineRun: PipelineRunKind) => {
       navigate(
         resourcePathFromModel(
@@ -103,7 +103,7 @@ export const usePipelineActionsProvider = (resource: PipelineWithLatest) => {
     [navigate],
   );
 
-  return React.useMemo<[Action[], boolean, any]>(() => {
+  return useMemo<[Action[], boolean, any]>(() => {
     const actions: Action[] = [
       {
         id: 'start-pipeline',

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { PipelineRunModel } from '../../../models';
@@ -16,7 +16,7 @@ type PipelineRunStatusProps = {
   taskRuns: TaskRunKind[];
   taskRunsLoaded: boolean;
 };
-const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({
+const PipelineRunStatus: FC<PipelineRunStatusProps> = ({
   status,
   pipelineRun,
   title,

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FocusEvent, ChangeEvent } from 'react';
+import { useRef } from 'react';
 import {
   Flex,
   FlexItem,
@@ -29,7 +30,7 @@ import './RepositoryForm.scss';
 
 const RepositoryFormSection = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const templatesRef = React.useRef({});
+  const templatesRef = useRef({});
   const { setFieldValue } = useFormikContext<RepositoryFormValues>();
 
   const [builderImages] = useBuilderImages();
@@ -82,35 +83,33 @@ const RepositoryFormSection = () => {
     </Flex>
   );
 
-  return (
-    <>
-      <FormHeader title={title} />
-      <FormSection className="pipelines-console-plugin__page-section-width">
-        <InputField
-          label={t('Git Repo URL')}
-          name="gitUrl"
-          type={TextInputTypes.text}
-          required
-          onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
-            const trimmedURL = e.target.value.trim();
-            if (e.target.value !== trimmedURL) {
-              debouncedHandleGitUrlChange(trimmedURL, '', '');
-            }
-          }}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            debouncedHandleGitUrlChange(e.target.value.trim(), '', '');
-          }}
-        />
-        <InputField
-          label={t('Name')}
-          name="name"
-          type={TextInputTypes.text}
-          required
-        />
-        <AdvancedConfigurations />
-      </FormSection>
-    </>
-  );
+  return (<>
+    <FormHeader title={title} />
+    <FormSection className="pipelines-console-plugin__page-section-width">
+      <InputField
+        label={t('Git Repo URL')}
+        name="gitUrl"
+        type={TextInputTypes.text}
+        required
+        onBlur={(e: FocusEvent<HTMLInputElement>) => {
+          const trimmedURL = e.target.value.trim();
+          if (e.target.value !== trimmedURL) {
+            debouncedHandleGitUrlChange(trimmedURL, '', '');
+          }
+        }}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          debouncedHandleGitUrlChange(e.target.value.trim(), '', '');
+        }}
+      />
+      <InputField
+        label={t('Name')}
+        name="name"
+        type={TextInputTypes.text}
+        required
+      />
+      <AdvancedConfigurations />
+    </FormSection>
+  </>);
 };
 
 export default RepositoryFormSection;

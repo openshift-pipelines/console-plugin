@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   NamespaceBar,
@@ -38,7 +38,7 @@ type PageContentsProps = {
   perspective: string;
 };
 
-export const PageContents: React.FC<PageContentsProps> = ({
+export const PageContents: FC<PageContentsProps> = ({
   namespace,
   perspective,
 }) => {
@@ -128,7 +128,7 @@ export const PageContents: React.FC<PageContentsProps> = ({
   );
 };
 
-const PipelinesTabbedPage: React.FC = () => {
+const PipelinesTabbedPage: FC = () => {
   const { ns } = useParams();
   const location = useLocation();
   const perspective = location?.pathname.includes('dev-pipelines')

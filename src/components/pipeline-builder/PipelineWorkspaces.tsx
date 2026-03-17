@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import OptionalableWorkspace from './OptionalableWorkspace';
 import MultiColumnField from '../pipelines-details/multi-column-field/MultiColumnField';
@@ -9,7 +9,7 @@ type PipelineWorkspacesParam = {
   isReadOnly?: boolean;
 };
 
-const PipelineWorkspaces: React.FC<PipelineWorkspacesParam> = (props) => {
+const PipelineWorkspaces: FC<PipelineWorkspacesParam> = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
     addLabel = t('Add Pipeline workspace'),

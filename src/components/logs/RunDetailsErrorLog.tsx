@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DescriptionList,
@@ -14,7 +14,7 @@ type RunDetailErrorLogProps = {
   namespace: string;
 };
 
-const RunDetailsErrorLog: React.FC<RunDetailErrorLogProps> = ({
+const RunDetailsErrorLog: FC<RunDetailErrorLogProps> = ({
   logDetails,
   namespace,
 }) => {

@@ -6,7 +6,6 @@ import { GitlabIcon } from '@patternfly/react-icons/dist/esm/icons/gitlab-icon';
 import { RepositoryKind } from './types';
 import { detectGitType } from './repository-form-utils';
 import { GitProvider } from '../utils/repository-utils';
-import React from 'react';
 
 export const getLatestRepositoryPLRName = (repository: RepositoryKind) => {
   const runNames = repository.pipelinerun_status

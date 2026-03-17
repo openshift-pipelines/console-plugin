@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import * as _ from 'lodash';
 import {
   ARTIFACTHUB,
@@ -134,7 +134,7 @@ const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
     canCreateTask && canUpdateTask && artifactHubIntegration,
     isDevConsoleProxyAvailable,
   );
-  const normalizedArtifactHubTasks = React.useMemo<
+  const normalizedArtifactHubTasks = useMemo<
     CatalogItem<TektonHubTask>[]
   >(
     () => normalizeArtifactHubTasks(artifactHubTasks, tektonTasks),

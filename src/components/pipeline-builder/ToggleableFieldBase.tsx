@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -17,10 +17,10 @@ export interface CheckboxFieldProps extends FieldProps {
 }
 
 type ToggleableFieldBaseProps = CheckboxFieldProps & {
-  children: (props) => React.ReactNode;
+  children: (props) => ReactNode;
 };
 
-const ToggleableFieldBase: React.FC<ToggleableFieldBaseProps> = ({
+const ToggleableFieldBase: FC<ToggleableFieldBaseProps> = ({
   label,
   formLabel,
   helpText,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { Link } from 'react-router-dom-v5-compat';
 import cx from 'classnames';
 import { getReference } from '../pipelines-overview/utils';
@@ -25,8 +25,8 @@ export type ResourceLinkProps = {
   dataTest?: string;
   onClick?: () => void;
   truncate?: boolean;
-  nameSuffix?: React.ReactNode;
-  children?: React.ReactNode;
+  nameSuffix?: ReactNode;
+  children?: ReactNode;
   model?: K8sModel;
 };
 
@@ -41,7 +41,7 @@ export const resourcePath = (
   return resourcePathFromModel(model, name, namespace);
 };
 
-export const ResourceLinkWithIcon: React.FC<ResourceLinkProps> = ({
+export const ResourceLinkWithIcon: FC<ResourceLinkProps> = ({
   className,
   displayName,
   inline = false,

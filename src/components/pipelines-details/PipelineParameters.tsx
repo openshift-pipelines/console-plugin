@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { PageSection, TextInputTypes } from '@patternfly/react-core';
 import MultiColumnField from './multi-column-field/MultiColumnField';
 import InputField from './multi-column-field/InputField';
@@ -18,7 +18,7 @@ type PipelineParametersProps = {
   className?: string;
 };
 
-const PipelineParameters: React.FC<PipelineParametersProps> = ({
+const PipelineParameters: FC<PipelineParametersProps> = ({
   addLabel,
   nameLabel,
   nameFieldName,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DescriptionList,
@@ -12,7 +12,7 @@ export interface WorkspaceDefinitionListProps {
   obj: TaskKind | PipelineKind;
 }
 
-const WorkspaceDefinitionList: React.FC<WorkspaceDefinitionListProps> = ({
+const WorkspaceDefinitionList: FC<WorkspaceDefinitionListProps> = ({
   obj,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

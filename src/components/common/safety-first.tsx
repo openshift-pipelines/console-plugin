@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import * as React from 'react';
+import type { SetStateAction, Dispatch } from 'react';
+
+import { useRef, useEffect, useState, useCallback } from 'react';
 
 /**
  * @deprecated - This hook is not related to console functionality.
@@ -11,12 +13,12 @@ import * as React from 'react';
  */
 export const useSafetyFirst = <S,>(
   initialState: S | (() => S),
-): [S, React.Dispatch<React.SetStateAction<S>>] => {
-  const mounted = React.useRef(true);
-  React.useEffect(() => () => (mounted.current = false), []);
+): [S, Dispatch<SetStateAction<S>>] => {
+  const mounted = useRef(true);
+  useEffect(() => () => (mounted.current = false), []);
 
-  const [value, setValue] = React.useState(initialState);
-  const setValueSafe = React.useCallback((newValue: S) => {
+  const [value, setValue] = useState(initialState);
+  const setValueSafe = useCallback((newValue: S) => {
     if (mounted.current) {
       setValue(newValue);
     }

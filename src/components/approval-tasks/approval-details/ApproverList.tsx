@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Label, LabelGroup } from '@patternfly/react-core';
@@ -21,7 +21,7 @@ export interface ApproverBadgeProps {
   status: ApproverInput;
 }
 
-const ApproverBadge: React.FC<ApproverBadgeProps> = ({ approver, status }) => {
+const ApproverBadge: FC<ApproverBadgeProps> = ({ approver, status }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const badgeClass = cx({
     'pipelines-approval-approver__wait': status === ApprovalStatus.RequestSent,
@@ -55,7 +55,7 @@ const ApproverBadge: React.FC<ApproverBadgeProps> = ({ approver, status }) => {
   );
 };
 
-const ApproverListSection: React.FC<ApproverListProps> = ({ obj }) => {
+const ApproverListSection: FC<ApproverListProps> = ({ obj }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
     spec: { approvers },

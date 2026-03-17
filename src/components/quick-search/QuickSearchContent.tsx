@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { SetStateAction, Dispatch, FC } from 'react';
 import { Split, SplitItem, Divider } from '@patternfly/react-core';
 import cx from 'classnames';
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
@@ -25,10 +25,10 @@ interface QuickSearchContentProps {
   detailsRenderer?: DetailsRendererFunction;
   onListChange?: (items: number) => void;
   callback?: TaskSearchCallback;
-  setFailedTasks?: React.Dispatch<React.SetStateAction<string[]>>;
+  setFailedTasks?: Dispatch<SetStateAction<string[]>>;
 }
 
-const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
+const QuickSearchContent: FC<QuickSearchContentProps> = ({
   catalogItems,
   catalogItemTypes,
   viewAll,

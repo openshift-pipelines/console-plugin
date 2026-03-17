@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { Button, Level, LevelItem, Title } from '@patternfly/react-core';
 import MonacoEditor from 'react-monaco-editor';
 import { ChevronDownIcon } from '@patternfly/react-icons/dist/esm/icons/chevron-down-icon';
@@ -11,7 +12,7 @@ import { referenceFor } from '../../utils/k8s-utils';
 import { Sample } from '../types';
 import { FirehoseResult, K8sKind } from '@openshift-console/dynamic-plugin-sdk';
 
-const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
+const ResourceSidebarSample: FC<ResourceSidebarSampleProps> = ({
   sample,
   loadSampleYaml,
   downloadSampleYaml,
@@ -91,7 +92,7 @@ interface ResourceSidebarSnippetProps {
   insertSnippetYaml: (id: string, yaml: string, reference: string) => void;
 }
 
-const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
+const ResourceSidebarSnippet: FC<ResourceSidebarSnippetProps> = ({
   snippet,
   insertSnippetYaml,
 }) => {
@@ -105,8 +106,8 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
     description,
   } = snippet;
 
-  const [yamlPreview, setYamlPreview] = React.useState<string>(yaml);
-  const [yamlPreviewOpen, setYamlPreviewOpen] = React.useState(false);
+  const [yamlPreview, setYamlPreview] = useState<string>(yaml);
+  const [yamlPreviewOpen, setYamlPreviewOpen] = useState(false);
 
   const resolveYaml = async (callback: (resolvedYaml: string) => void) => {
     if (yaml) {
@@ -192,7 +193,7 @@ interface ResourceSidebarSnippetsProps {
   insertSnippetYaml(id: string, yaml: string, reference: string);
 }
 
-export const ResourceSidebarSnippets: React.FC<
+export const ResourceSidebarSnippets: FC<
   ResourceSidebarSnippetsProps
 > = ({ snippets, insertSnippetYaml }) => {
   return (
@@ -211,7 +212,7 @@ export const ResourceSidebarSnippets: React.FC<
   );
 };
 
-export const ResourceSidebarSamples: React.FC<ResourceSidebarSamplesProps> = ({
+export const ResourceSidebarSamples: FC<ResourceSidebarSamplesProps> = ({
   samples,
   loadSampleYaml,
   downloadSampleYaml,

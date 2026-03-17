@@ -4,7 +4,7 @@ import {
   K8sResourceKindReference,
   PrometheusResponse,
 } from '@openshift-console/dynamic-plugin-sdk';
-import * as React from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 import { ALL_NAMESPACES_KEY } from '../../consts';
@@ -101,10 +101,10 @@ export const IntervalOptions = () => {
 export const useBoolean = (
   initialValue: boolean,
 ): [boolean, () => void, () => void, () => void] => {
-  const [value, setValue] = React.useState(initialValue);
-  const toggle = React.useCallback(() => setValue((v) => !v), []);
-  const setTrue = React.useCallback(() => setValue(true), []);
-  const setFalse = React.useCallback(() => setValue(false), []);
+  const [value, setValue] = useState(initialValue);
+  const toggle = useCallback(() => setValue((v) => !v), []);
+  const setTrue = useCallback(() => setValue(true), []);
+  const setFalse = useCallback(() => setValue(false), []);
   return [value, toggle, setTrue, setFalse];
 };
 
@@ -244,7 +244,7 @@ export const useInterval = (
   date: string,
   pageFlag?: number,
 ) => {
-  React.useEffect(() => {
+  useEffect(() => {
     getData();
     if (interval !== null) {
       const intervalID = setInterval(() => getData(), interval);
@@ -286,7 +286,7 @@ export const useQueryParams = (param) => {
     loadFormat,
     value,
   } = param;
-  const [isLoaded, setIsLoaded] = React.useState(0);
+  const [isLoaded, setIsLoaded] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = {};
@@ -313,7 +313,7 @@ export const useQueryParams = (param) => {
   }
 
   //Loads Url Params Data
-  React.useEffect(() => {
+  useEffect(() => {
     if (queryParams[key]) {
       const paramValue = queryParams[key];
       if (!options || options[paramValue])
@@ -321,7 +321,7 @@ export const useQueryParams = (param) => {
     }
   }, []);
   //If Url Params doesn't contain a key, initializes with defaultValue
-  React.useEffect(() => {
+  useEffect(() => {
     if (isLoaded >= 0) {
       if (!queryParams[key]) {
         const newValue = displayFormat
@@ -337,7 +337,7 @@ export const useQueryParams = (param) => {
     }
   }, [isLoaded]);
   //Updating Url Params when values of filter changes
-  React.useEffect(() => {
+  useEffect(() => {
     const newValue = displayFormat ? displayFormat(value) : value;
     if (newValue) {
       setQueryParams(key, newValue);

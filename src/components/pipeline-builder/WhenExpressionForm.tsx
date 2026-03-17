@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Grid, GridItem, TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,7 @@ type WhenExpressionFormProps = {
   autoCompleteValues: string[];
 };
 
-const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
+const WhenExpressionForm: FC<WhenExpressionFormProps> = ({
   namePrefix,
   autoCompleteValues,
 }) => {

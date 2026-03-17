@@ -8,7 +8,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import Status from '@openshift-console/dynamic-plugin-sdk/lib/app/components/status/Status';
 import _ from 'lodash';
-import * as React from 'react';
+import type { MouseEvent, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useSearchParams } from 'react-router-dom-v5-compat';
 import { formatNamespaceRoute } from '../pipelines-overview/utils';
@@ -20,11 +20,11 @@ const getRequester = (obj: K8sResourceKind): string =>
   obj.metadata.annotations?.['openshift.io/requester'];
 
 // Check for a modified mouse event. For example - Ctrl + Click
-const isModifiedEvent = (event: React.MouseEvent<HTMLElement>) => {
+const isModifiedEvent = (event: MouseEvent<HTMLElement>) => {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 };
 
-const ProjectsRow: React.FC<RowProps<K8sResourceKind>> = ({
+const ProjectsRow: FC<RowProps<K8sResourceKind>> = ({
   obj: project,
   activeColumnIDs,
 }) => {

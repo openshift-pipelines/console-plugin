@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import './ApprovalRow.scss';
 import {
@@ -37,7 +37,7 @@ const pipelineApprovalFilterReducer = (obj: ApprovalTaskKind, pipelineRuns) => {
   return status || ApprovalStatus.Unknown;
 };
 
-const ApprovalTasksList: React.FC<ApprovalTasksListProps> = ({
+const ApprovalTasksList: FC<ApprovalTasksListProps> = ({
   namespace,
   hideTextFilter,
 }) => {

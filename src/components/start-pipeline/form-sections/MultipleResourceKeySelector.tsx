@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useState, useMemo } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -32,7 +33,7 @@ interface MultipleResourceKeySelectorProps {
   addString?: string;
 }
 
-const MultipleResourceKeySelector: React.FC<
+const MultipleResourceKeySelector: FC<
   MultipleResourceKeySelectorProps
 > = ({
   label,
@@ -48,11 +49,11 @@ const MultipleResourceKeySelector: React.FC<
   const [field, { touched, error }] = useField(resourceNameField);
   const isValid = !(touched && error);
   const fieldId = getFieldId(resourceNameField, 'res-dropdown');
-  const [keys, setKeys] = React.useState({});
+  const [keys, setKeys] = useState({});
 
   useFormikValidationFix(field.value);
 
-  const resource: WatchK8sResource = React.useMemo(
+  const resource: WatchK8sResource = useMemo(
     () => ({
       kind: resourceModel.kind,
       isList: true,

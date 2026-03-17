@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import {
@@ -36,10 +37,10 @@ type StateProps = {
   };
 };
 
-export const ConnectedPipelineRunDecorator: React.FC<
+export const ConnectedPipelineRunDecorator: FC<
   PipelineRunDecoratorProps & StateProps
 > = ({ pipeline, pipelineRuns, radius, x, y, impersonate }) => {
-  const ref = React.useRef();
+  const ref = useRef();
   const launchOverlay = useOverlay();
 
   const { latestPipelineRun, status } =

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import {
   FormGroup,
   FormHelperText,
@@ -26,7 +26,7 @@ export type FormSelectFieldProps = FieldProps & {
   onChange?: (selectedValue: any) => void;
 };
 
-const FormSelectField: React.FC<FormSelectFieldProps> = ({
+const FormSelectField: FC<FormSelectFieldProps> = ({
   label,
   helpText,
   required,

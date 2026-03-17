@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { Icon, Split, SplitItem } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon';
 import { t_chart_global_warning_color_100 as warningColor } from "@patternfly/react-tokens/dist/js/t_chart_global_warning_color_100";
@@ -10,7 +10,7 @@ type RemoveTriggerFormProps = {
   pipeline: PipelineKind;
 };
 
-const RemoveTriggerForm: React.FC<RemoveTriggerFormProps> = (props) => {
+const RemoveTriggerForm: FC<RemoveTriggerFormProps> = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { pipeline } = props;
   const pipelineName = pipeline.metadata.name;

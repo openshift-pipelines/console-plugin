@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 // import { Tooltip } from '@patternfly/react-core';
 // import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
 import { configure, render, screen } from '@testing-library/react';
@@ -7,7 +7,7 @@ import WhenExpressionDecorator from '../WhenExpressionDecorator';
 
 configure({ testIdAttribute: 'data-test' });
 
-type WhenExpressionDecoratorProps = React.ComponentProps<
+type WhenExpressionDecoratorProps = ComponentProps<
   typeof WhenExpressionDecorator
 >;
 

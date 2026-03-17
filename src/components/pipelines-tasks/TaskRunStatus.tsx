@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { TaskRunKind } from '../../types';
@@ -13,7 +13,7 @@ type TaskRunStatusProps = {
   status: string;
   taskRun: TaskRunKind;
 };
-const TaskRunStatus: React.FC<TaskRunStatusProps> = ({ status, taskRun }) => {
+const TaskRunStatus: FC<TaskRunStatusProps> = ({ status, taskRun }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   return (

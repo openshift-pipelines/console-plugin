@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { FC } from 'react';
+import { useRef } from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { ExclamationIcon } from '@patternfly/react-icons/dist/esm/icons/exclamation-icon';
 import { t_chart_global_danger_color_100 as redColor } from "@patternfly/react-tokens/dist/js/t_chart_global_danger_color_100";
@@ -12,12 +13,12 @@ type ErrorNodeDecoratorProps = {
   y: number;
 };
 
-const ErrorNodeDecorator: React.FC<ErrorNodeDecoratorProps> = ({
+const ErrorNodeDecorator: FC<ErrorNodeDecoratorProps> = ({
   errorStr,
   x,
   y,
 }) => {
-  const iconRef = React.useRef();
+  const iconRef = useRef();
   return (
     <Tooltip triggerRef={iconRef} content={errorStr}>
       <g

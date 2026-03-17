@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { ReactNode, FC } from 'react';
 import { ActionList, ActionListGroup, ActionListItem, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom-v5-compat';
@@ -7,7 +7,7 @@ import {
   MenuAction,
   SecondaryButtonAction,
 } from './multi-tab-list-page-types';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import {
   HorizontalNav,
@@ -20,14 +20,14 @@ import './MultiTabListPage.scss';
 
 interface MultiTabListPageProps {
   title: string;
-  badge?: React.ReactNode;
+  badge?: ReactNode;
   menuActions?: MenuActions;
   pages: NavPage[];
   secondaryButtonAction?: SecondaryButtonAction;
   telemetryPrefix?: string;
 }
 
-const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
+const MultiTabListPage: FC<MultiTabListPageProps> = ({
   title,
   badge,
   pages,
@@ -37,7 +37,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { ns } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onSelectCreateAction = (actionName: string) => {
     const selectedMenuItem: MenuAction = menuActions[actionName];
@@ -53,7 +53,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
       url = selectedMenuItem.onSelection(actionName, selectedMenuItem, url);
     }
     if (url) {
-      history.push(url);
+      navigate(url);
     }
   };
 

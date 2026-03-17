@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   EventListenerModel,
@@ -13,7 +13,7 @@ import ClusterTriggerBindingsList from './ClusterTriggerBindingsList';
 import { MultiTabListPage } from '../multi-tab-list';
 import { NamespaceBar, NavPage } from '@openshift-console/dynamic-plugin-sdk';
 
-const TriggersTabbedPage: React.FC = () => {
+const TriggersTabbedPage: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const menuActions = {
     eventListener: { model: EventListenerModel },

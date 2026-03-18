@@ -199,11 +199,11 @@ export const NoMatchingEvents = ({ allCount }) => {
       <div className="cos-status-box__title">{t('No matching events')}</div>
       <div className="cp-text-align-center cos-status-box__detail">
         {allCount >= maxMessages
-          ? t('{{count}}+ event exist, but none match the current filter', {
-              count: maxMessages,
+          ? t('{{value}}+ event exist, but none match the current filter', {
+              value: maxMessages,
             })
-          : t('{{count}} event exist, but none match the current filter', {
-              count: allCount,
+          : t('{{value}} event exist, but none match the current filter', {
+              value: allCount,
             })}
       </div>
     </Box>
@@ -374,8 +374,8 @@ const EventStream = ({
   });
   const messageCount =
     count < maxMessages
-      ? t('Showing {{count}} event', { count })
-      : t('Showing most recent {{count}} event', { count });
+      ? t('Showing {{value}} event', { value: count })
+      : t('Showing most recent {{value}} event', { value: count });
 
   return (
     <PageSection hasBodyWrapper={false} isFilled >

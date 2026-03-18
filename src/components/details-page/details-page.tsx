@@ -134,13 +134,13 @@ export const ResourceSummary: FC<ResourceSummaryProps> = ({
               onClick={annotationsModalLauncher}
               variant="link"
             >
-              {t('{{count}} annotation', {
-                count: _.size(metadata.annotations),
+              {t('{{value}} annotation', {
+                value: _.size(metadata.annotations),
               })}
             </Button>
           ) : (
-            t('{{count}} annotation', {
-              count: _.size(metadata.annotations),
+            t('{{value}} annotation', {
+              value: _.size(metadata.annotations),
             })
           )}
         </DetailsItem>

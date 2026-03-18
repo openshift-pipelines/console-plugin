@@ -26,7 +26,7 @@ type TasksKebabProps = {
   obj: K8sResourceCommon;
 };
 
-const TaskKebab: FC<TasksKebabProps> = ({ obj }) => {
+export const TaskKebab: FC<TasksKebabProps> = ({ obj }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const onToggle = () => {

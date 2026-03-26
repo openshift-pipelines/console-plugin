@@ -1,8 +1,8 @@
 import {
+  getGroupVersionKindForModel,
   K8sGroupVersionKind,
   K8sResourceCommon,
   Selector,
-  getGroupVersionKindForModel,
   useFlag,
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
@@ -22,11 +22,10 @@ import {
 import { ApprovalTaskKind, PipelineRunKind, TaskRunKind } from '../../types';
 import { useDeepCompareMemoize } from '../utils/common-utils';
 import { EQ } from '../utils/tekton-results';
-import {
-  GetNextPage,
-  useTRPipelineRuns,
-  useTRTaskRuns,
-} from './useTektonResults';
+import { useTRRuns } from './useTektonResults';
+
+const PIPELINE_RUN_GVK = getGroupVersionKindForModel(PipelineRunModel);
+const TASK_RUN_GVK = getGroupVersionKindForModel(TaskRunModel);
 
 export const getTaskRunsOfPipelineRun = (
   taskRuns: TaskRunKind[],
@@ -66,9 +65,9 @@ export const useTaskRuns = (
   namespace: string,
   pipelineRunName?: string,
   taskName?: string,
-  cacheKey?: string,
   pipelineRunUid?: string,
-): [TaskRunKind[], boolean, unknown, GetNextPage] => {
+  skipFetch?: boolean,
+): [TaskRunKind[], boolean, boolean, Error | undefined] => {
   const selector: Selector = useMemo(() => {
     if (pipelineRunName && pipelineRunUid) {
       return {
@@ -88,13 +87,10 @@ export const useTaskRuns = (
     }
     return undefined;
   }, [taskName, pipelineRunName, pipelineRunUid]);
-  const [taskRuns, loaded, error, getNextPage] = useTaskRuns2(
-    namespace,
-    selector && {
-      selector,
-    },
-    cacheKey,
-  );
+  const [taskRuns, k8sLoaded, trLoaded, error] = useTaskRuns2(namespace, {
+    selector,
+    skipFetch,
+  });
 
   const sortedTaskRuns = useMemo(
     () =>
@@ -114,8 +110,8 @@ export const useTaskRuns = (
     [taskRuns],
   );
   return useMemo(
-    () => [sortedTaskRuns, loaded, error, getNextPage],
-    [sortedTaskRuns, loaded, error, getNextPage],
+    () => [sortedTaskRuns, k8sLoaded, trLoaded, error],
+    [sortedTaskRuns, k8sLoaded, trLoaded, error],
   );
 };
 
@@ -124,15 +120,10 @@ export const useTaskRuns2 = (
   options?: {
     selector?: Selector;
     limit?: number;
+    skipFetch?: boolean;
   },
-  cacheKey?: string,
-): [TaskRunKind[], boolean, unknown, GetNextPage] =>
-  useRuns<TaskRunKind>(
-    getGroupVersionKindForModel(TaskRunModel),
-    namespace,
-    options,
-    cacheKey,
-  );
+): [TaskRunKind[], boolean, boolean, Error | undefined] =>
+  useRuns<TaskRunKind>(TASK_RUN_GVK, namespace, options);
 
 export const useApprovalTasks = (
   namespace: string,
@@ -172,19 +163,13 @@ export const usePipelineRuns = (
     selector?: Selector;
     limit?: number;
   },
-  cacheKey?: string,
-): [PipelineRunKind[], boolean, unknown, GetNextPage] =>
-  useRuns<PipelineRunKind>(
-    getGroupVersionKindForModel(PipelineRunModel),
-    namespace,
-    options,
-    cacheKey,
-  );
+): [PipelineRunKind[], boolean, boolean, Error | undefined] =>
+  useRuns<PipelineRunKind>(PIPELINE_RUN_GVK, namespace, options);
 
 export const usePipelineRun = (
   namespace: string,
   pipelineRunName: string,
-): [PipelineRunKind, boolean, string] => {
+): [PipelineRunKind, boolean, boolean, Error | undefined] => {
   const result = usePipelineRuns(
     namespace,
     useMemo(
@@ -194,12 +179,14 @@ export const usePipelineRun = (
       }),
       [pipelineRunName],
     ),
-  ) as unknown as [PipelineRunKind[], boolean, string];
+  ) as unknown as [PipelineRunKind[], boolean, boolean, Error | undefined];
 
-  return useMemo(
-    () => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]],
-    [result],
-  );
+  return [
+    result[0]?.[0],
+    result[1],
+    result[2],
+    result[0]?.[0] ? undefined : result[3],
+  ];
 };
 
 export const useRuns = <Kind extends K8sResourceCommon>(
@@ -209,9 +196,9 @@ export const useRuns = <Kind extends K8sResourceCommon>(
     selector?: Selector;
     limit?: number;
     name?: string;
+    skipFetch?: boolean;
   },
-  cacheKey?: string,
-): [Kind[], boolean, unknown, GetNextPage] => {
+): [Kind[], boolean, boolean, Error | undefined] => {
   const etcdRunsRef = useRef<Kind[]>([]);
   const optionsMemo = useDeepCompareMemoize(options);
   const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
@@ -219,6 +206,9 @@ export const useRuns = <Kind extends K8sResourceCommon>(
   const limit = optionsMemo?.limit;
   // do not include the limit when querying etcd because result order is not sorted
   const watchOptions = useMemo(() => {
+    if (optionsMemo?.skipFetch) {
+      return null;
+    }
     // reset cached runs as the options have changed
     etcdRunsRef.current = [];
     return {
@@ -288,55 +278,52 @@ export const useRuns = <Kind extends K8sResourceCommon>(
   // tekton-results includes items in etcd, therefore options must use the same limit
   // these duplicates will later be de-duped
 
-  const [trResources, trLoaded, trError, trGetNextPage] = isTektonResultEnabled
-    ? ((groupVersionKind?.kind ===
-        getGroupVersionKindForModel(PipelineRunModel)?.kind
-        ? useTRPipelineRuns
-        : useTRTaskRuns)(queryTr ? namespace : null, trOptions, cacheKey) as [
-        [],
-        boolean,
-        unknown,
-        GetNextPage,
-      ])
-    : [[], true, undefined, undefined];
-
+  const [trResources, trLoaded, trError] = useTRRuns<Kind>(
+    namespace,
+    groupVersionKind,
+    trOptions,
+    isTektonResultEnabled,
+    optionsMemo?.skipFetch,
+  );
+  /* If tekton result is not enabled we are returning trLoaded as true */
   return useMemo(() => {
-    const rResources =
+    const rResources: Kind[] =
       runs && trResources
         ? uniqBy([...runs, ...trResources], (r) => r.metadata.uid)
         : runs || trResources;
+    const isTrLoaded = trLoaded || !!trError;
     return [
       rResources,
-      !!(rResources?.[0] || (loaded && (trLoaded || trError))),
+      loaded,
+      isTrLoaded,
       namespace
         ? queryTr
           ? isList
             ? trError && error
-            : // when searching by name, return an error if we have no result
-              trError && (trLoaded && !trResources.length ? error : undefined)
+            : trError && (trLoaded && !trResources.length ? error : undefined)
           : error
         : error
         ? error
         : undefined,
-      trGetNextPage,
     ];
   }, [
     runs,
     trResources,
+    loaded,
     trLoaded,
+    isTektonResultEnabled,
     namespace,
     queryTr,
     isList,
     trError,
     error,
-    trGetNextPage,
   ]);
 };
 
 export const useTaskRun = (
   namespace: string,
   taskRunName: string,
-): [TaskRunKind, boolean, string] => {
+): [TaskRunKind, boolean, boolean, string] => {
   const result = useTaskRuns2(
     namespace,
     useMemo(
@@ -346,10 +333,15 @@ export const useTaskRun = (
       }),
       [taskRunName],
     ),
-  ) as unknown as [TaskRunKind[], boolean, string];
+  ) as unknown as [TaskRunKind[], boolean, boolean, string];
 
   return useMemo(
-    () => [result[0]?.[0], result[1], result[0]?.[0] ? undefined : result[2]],
+    () => [
+      result[0]?.[0],
+      result[1],
+      result[2],
+      result[0]?.[0] ? undefined : result[3],
+    ],
     [result],
   );
 };

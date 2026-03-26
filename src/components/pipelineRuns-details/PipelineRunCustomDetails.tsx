@@ -43,10 +43,12 @@ const PipelineRunCustomDetails: FC<PipelineRunCustomDetailsProps> = ({
   pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [taskRuns, taskRunsLoaded] = useTaskRuns(
+  const [taskRuns, k8sLoaded, trLoaded] = useTaskRuns(
     pipelineRun?.metadata?.namespace,
     pipelineRun?.metadata?.name,
   );
+  /* this needs decoupling */
+  const taskRunsLoaded = k8sLoaded && trLoaded;
 
   const sbomTaskRun = taskRunsLoaded ? getSbomTaskRun(taskRuns) : null;
   const buildImage = getImageUrl(pipelineRun);

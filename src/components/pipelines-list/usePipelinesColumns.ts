@@ -2,71 +2,74 @@ import {
   K8sResourceCommon,
   TableColumn,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 
-const tableColumnClasses = [
-  'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-33-on-xs', // name
-  'pf-v6-u-w-8-on-xl pf-v6-u-w-16-on-xs', // namespace
-  'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-33-on-xs', // last run
-  'pf-v6-m-hidden pf-m-visible-on-lg', // task status
-  'pf-v6-m-hidden pf-m-visible-on-xl', // last run status
-  'pf-v6-m-hidden pf-m-visible-on-xl', // last run time
+export const tableColumnInfo = [
+  {
+    id: 'name',
+    classNames: 'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-33-on-xs',
+  },
+  { id: 'namespace', classNames: 'pf-v6-u-w-8-on-xl pf-v6-u-w-16-on-xs' },
+  {
+    id: 'last-run',
+    classNames: 'pf-v6-u-w-16-on-xl pf-v6-u-w-25-on-lg pf-v6-u-w-33-on-xs',
+  },
+  { id: 'task-run', classNames: 'pf-v6-m-hidden pf-m-visible-on-lg' },
+  { id: 'status', classNames: 'pf-v6-m-hidden pf-m-visible-on-xl' },
+  { id: 'last-run-time', classNames: 'pf-v6-m-hidden pf-m-visible-on-xl' },
+  { id: 'action', classNames: 'dropdown-kebab-pf pf-v6-c-table__action' },
 ];
 
 const usePipelinesColumns = (namespace): TableColumn<K8sResourceCommon>[] => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const columns = [
     {
-      id: 'name',
+      id: tableColumnInfo[0].id,
       title: t('Name'),
       sort: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
+      props: { className: tableColumnInfo[0].classNames, modifier: 'nowrap' },
     },
     ...(!namespace
       ? [
           {
             title: t('Namespace'),
             sort: 'metadata.namespace',
-            transforms: [sortable],
-            props: { className: tableColumnClasses[1] },
-            id: 'namespace',
+            props: {
+              className: tableColumnInfo[1].classNames,
+              modifier: 'nowrap',
+            },
+            id: tableColumnInfo[1].id,
           },
         ]
       : []),
     {
-      id: 'last-run',
+      id: tableColumnInfo[2].id,
       title: t('Last run'),
       sort: 'latestRun.metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
+      props: { className: tableColumnInfo[2].classNames, modifier: 'nowrap' },
     },
     {
-      id: 'task-run',
+      id: tableColumnInfo[3].id,
       title: t('Task status'),
       sort: 'latestRun.status.succeededCondition',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
+      props: { className: tableColumnInfo[3].classNames, modifier: 'nowrap' },
     },
     {
-      id: 'last-run-status',
+      id: tableColumnInfo[4].id,
       title: t('Last run status'),
       sort: 'latestRun.status.succeededCondition',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
+      props: { className: tableColumnInfo[4].classNames, modifier: 'nowrap' },
     },
     {
-      id: 'last-run-time',
+      id: tableColumnInfo[5].id,
       title: t('Last run time'),
       sort: 'latestRun.status.completionTime',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
+      props: { className: tableColumnInfo[5].classNames },
     },
     {
-      id: '',
+      id: tableColumnInfo[6].id,
       title: '',
-      props: { className: 'dropdown-kebab-pf pf-v6-c-table__action' },
+      props: { className: tableColumnInfo[6].classNames },
     },
   ];
   return columns;

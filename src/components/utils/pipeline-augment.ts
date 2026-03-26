@@ -1,6 +1,7 @@
 import {
   GroupVersionKind,
   K8sKind,
+  ObjectMetadata,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { chart_color_black_400 as skippedColor } from '@patternfly/react-tokens/dist/js/chart_color_black_400';
 import { chart_color_black_500 as cancelledColor } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
@@ -31,13 +32,8 @@ import {
   pipelineRunFilterReducer,
 } from './pipeline-filter-reducer';
 
-interface Metadata {
-  name: string;
-  namespace?: string;
-}
-
 export interface PropPipelineData {
-  metadata: Metadata;
+  metadata: ObjectMetadata;
   latestRun?: PipelineRunKind;
 }
 

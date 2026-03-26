@@ -19,7 +19,6 @@ import { TaskRunModel } from '../../models';
 import { ALL_NAMESPACES_KEY, TektonResourceLabel } from '../../consts';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useTaskRunsFilters } from './useTaskRunsFilters';
-import { useLoadMoreOnScroll } from '../utils/tekton-results';
 import { ListPageFilter } from '../list-pages/ListPageFilter';
 import { sortPipelineAndTaskRunsByDuration } from '../pipelines-details/pipeline-step-utils';
 
@@ -118,10 +117,9 @@ const TaskRunsList: FC<TaskRunsListPageProps> = ({
   const sortColumnIndex = !namespace ? 6 : 5;
   const parentName = props?.obj?.metadata?.name;
   const parentUid = props?.obj?.metadata?.uid;
-  const [taskRuns, loaded, loadError, nextPageToken] = useTaskRuns(
+  const [taskRuns, loaded, loadError] = useTaskRuns(
     ns,
     parentName,
-    undefined,
     undefined,
     parentUid,
   );
@@ -130,7 +128,7 @@ const TaskRunsList: FC<TaskRunsListPageProps> = ({
     useTaskRunsFilters(),
   );
 
-  useLoadMoreOnScroll(loadMoreRef, nextPageToken, loaded);
+  //useLoadMoreOnScroll(loadMoreRef, nextPageToken, loaded);
 
   return (
     <>

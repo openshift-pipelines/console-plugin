@@ -44,7 +44,7 @@ export const useTaskRunsK8s = (
 ): [TaskRunKind[], boolean, unknown] => {
   const taskRunResource = pipelineRunName
     ? {
-        groupVersionKind: getGroupVersionKindForModel(TaskRunModel),
+        groupVersionKind: TASK_RUN_GVK,
         namespace,
         selector: {
           matchLabels: {
@@ -54,7 +54,7 @@ export const useTaskRunsK8s = (
         isList: true,
       }
     : {
-        groupVersionKind: getGroupVersionKindForModel(TaskRunModel),
+        groupVersionKind: TASK_RUN_GVK,
         namespace,
         isList: true,
       };

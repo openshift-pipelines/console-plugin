@@ -49,7 +49,7 @@ type TaskRunKebabProps = {
   obj: K8sResourceCommon;
 };
 
-const TaskRunKebab: FC<TaskRunKebabProps> = ({ obj }) => {
+export const TaskRunKebab: FC<TaskRunKebabProps> = ({ obj }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [isOpen, setIsOpen] = useState(false);
 

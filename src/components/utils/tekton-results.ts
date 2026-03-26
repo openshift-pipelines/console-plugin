@@ -218,7 +218,13 @@ export const fetchTektonResultsURLConfig = async (
   const searchParams = `${new URLSearchParams({
     // default sort should always be by `create_time desc`
     // order_by: 'create_time desc', not supported yet
-    page_size: '5',
+    page_size: `${Math.max(
+      MINIMUM_PAGE_SIZE,
+      Math.min(
+        MAXIMUM_PAGE_SIZE,
+        options?.limit >= 0 ? options.limit : options?.pageSize ?? 50,
+      ),
+    )}`,
     ...(nextPageToken ? { page_token: nextPageToken } : {}),
     filter: AND(
       EQ('data_type', dataType.toString()),
@@ -626,6 +632,20 @@ export const consoleProxyFetchLog = <T>(
   });
 };
 
+export const getTRURLHost = async () => {
+  const tektonResult: K8sResourceKind = await k8sGet({
+    model: TektonResultModel,
+    name: 'result',
+  });
+  const targetNamespace = tektonResult?.spec?.targetNamespace;
+  const route: K8sResourceKind = await k8sGet({
+    model: RouteModel,
+    name: 'tekton-results-api-service',
+    ns: targetNamespace,
+  });
+  return route?.spec.host;
+};
+
 export async function* fetchAllTektonResultsPages<
   Kind extends K8sResourceCommon,
 >(
@@ -655,21 +675,7 @@ export async function* fetchAllTektonResultsPages<
     );
     isFirstCall = false;
     allRecords.push(...records);
-    token = list.nextPageToken ?? list.next_page_token;
     yield [...allRecords];
+    token = list.nextPageToken ?? list.next_page_token;
   }
 }
-
-export const getTRURLHost = async () => {
-  const tektonResult: K8sResourceKind = await k8sGet({
-    model: TektonResultModel,
-    name: 'result',
-  });
-  const targetNamespace = tektonResult?.spec?.targetNamespace;
-  const route: K8sResourceKind = await k8sGet({
-    model: RouteModel,
-    name: 'tekton-results-api-service',
-    ns: targetNamespace,
-  });
-  return route?.spec.host;
-};

@@ -269,10 +269,12 @@ export const PipelineRunLogsWithActiveTask: FC<
   const params = new URLSearchParams(location.search);
   const activeTask = params?.get('taskName');
   const activeStep = params?.get('step');
-  const [taskRuns, taskRunsLoaded] = useTaskRuns(
+  const [taskRuns, k8sLoaded, trLoaded] = useTaskRuns(
     obj?.metadata?.namespace,
     obj?.metadata?.name,
   );
+  /* this needs decoupling */
+  const taskRunsLoaded = k8sLoaded && trLoaded;
 
   return (
     taskRunsLoaded && (

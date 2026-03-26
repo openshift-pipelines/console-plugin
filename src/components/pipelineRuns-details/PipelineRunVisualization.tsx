@@ -13,10 +13,12 @@ type PipelineRunVisualizationProps = {
 const PipelineRunVisualization: FC<PipelineRunVisualizationProps> = ({
   pipelineRun,
 }) => {
-  const [taskRuns, taskRunsLoaded] = useTaskRuns(
+  const [taskRuns, k8sLoaded, trLoaded] = useTaskRuns(
     pipelineRun?.metadata?.namespace,
     pipelineRun?.metadata?.name,
   );
+  /* this needs decoupling */
+  const taskRunsLoaded = k8sLoaded && trLoaded;
   const pipeline: PipelineKind = usePipelineFromPipelineRun(pipelineRun);
   if (!pipeline) {
     return (

@@ -1,23 +1,21 @@
 import type { FC } from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams, useSearchParams } from 'react-router-dom-v5-compat';
 import { useTranslation } from 'react-i18next';
-import { SortByDirection } from '@patternfly/react-table';
 import {
-  K8sResourceCommon,
   ListPageBody,
-  VirtualizedTable,
   getGroupVersionKindForModel,
   useK8sWatchResource,
-  useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
 import usePipelinesColumns from './usePipelinesColumns';
-import { usePipelinesFilters } from './usePipelinesFilters';
-import PipelineRow from './PipelineRow';
+import { getPipelineListDataViewRows } from './PipelineRow';
 import { useGetPipelineRuns } from '../hooks/useTektonResult';
 import { PipelineModel } from '../../models';
 import { PropPipelineData, augmentRunsToData } from '../utils/pipeline-augment';
-import { ListPageFilter } from '../list-pages/ListPageFilter';
 import { useGetActiveUser } from '../hooks/hooks';
+import { ConsoleDataView } from '@openshift-console/dynamic-plugin-sdk-internal';
+import { useEffect } from 'react';
+import { DataViewFilterToolbar } from '../common/DataViewFilterToolbar';
+import { useDataViewFilter } from '../hooks/useDataViewFilter';
 
 type PipelineListProps = {
   namespace?: string;
@@ -32,9 +30,19 @@ const PipelinesList: FC<PipelineListProps> = ({
   const { ns } = useParams();
   namespace = namespace || ns;
   const columns = usePipelinesColumns(namespace);
-  const filters = usePipelinesFilters();
   const currentUser = useGetActiveUser();
-  const sortColumnIndex = !namespace ? 5 : 4;
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    if (!searchParams.has('sortBy')) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('sortBy', t('Last run time'));
+        next.set('orderBy', 'desc');
+        return next;
+      });
+    }
+  }, []);
+
   const [pipelines, pipelinesLoaded, pipelinesLoadError] = useK8sWatchResource<
     PropPipelineData[]
   >({
@@ -43,47 +51,43 @@ const PipelinesList: FC<PipelineListProps> = ({
     namespace,
     optional: true,
   });
-  const [pipelineRuns, pipelineRunsLoaded, pipelineRunsLoadError] =
+  const [pipelineRuns, k8sPLRLoaded, trPLRLoaded, pipelineRunsLoadError] =
     useGetPipelineRuns(namespace);
   const pipelinesData = augmentRunsToData(pipelines, pipelineRuns);
-  const [data, filteredData, onFilterChange] = useListPageFilter(
-    pipelinesData,
-    filters,
-  );
+
+  const {
+    filterValues,
+    onFilterChange,
+    onClearAll,
+    filteredData,
+    updatedCheckboxFilters,
+  } = useDataViewFilter<PropPipelineData>({
+    data: pipelinesData || [],
+    resourceType: 'Pipeline',
+  });
+
   return (
     <ListPageBody>
-      <ListPageFilter
-        columnLayout={{
-          columns: columns?.map(({ id, title }) => ({ id, title })),
-          id: 'pipeline-list',
-          type: 'Pipeline',
-          selectedColumns: new Set(['name']),
-        }}
-        rowFilters={filters}
-        onFilterChange={onFilterChange}
-        data={data}
-        loaded={pipelinesLoaded && pipelineRunsLoaded}
-        hideColumnManagement
-        hideNameLabelFilters={hideTextFilter}
-      />
-      <VirtualizedTable<K8sResourceCommon>
-        key={sortColumnIndex}
-        EmptyMsg={() => (
-          <div className="cp-text-align-center" id="no-resource-msg">
-            {t('No Pipelines found')}
-          </div>
-        )}
+      {!hideTextFilter && (
+        <DataViewFilterToolbar
+          filterValues={filterValues}
+          onFilterChange={onFilterChange}
+          onClearAll={onClearAll}
+          checkboxFilters={updatedCheckboxFilters}
+        />
+      )}
+      <ConsoleDataView<PropPipelineData>
+        label={t('Pipelines')}
         columns={columns}
         data={filteredData}
-        loaded={pipelinesLoaded && pipelineRunsLoaded}
+        loaded={pipelinesLoaded && k8sPLRLoaded && trPLRLoaded}
         loadError={pipelinesLoadError || pipelineRunsLoadError}
-        Row={PipelineRow}
-        rowData={{
+        getDataViewRows={getPipelineListDataViewRows}
+        hideColumnManagement
+        hideNameLabelFilters
+        customRowData={{
           currentUser,
         }}
-        unfilteredData={data}
-        sortColumnIndex={sortColumnIndex}
-        sortDirection={SortByDirection.desc}
       />
     </ListPageBody>
   );

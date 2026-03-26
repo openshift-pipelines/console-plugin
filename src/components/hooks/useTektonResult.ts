@@ -4,7 +4,7 @@ import {
   useFlag,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { uniqBy } from 'lodash';
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import {
   FLAG_PIPELINE_TEKTON_RESULT_INSTALLED,
   RepositoryFields,
@@ -48,9 +48,9 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
     setLocalCacheKey(cacheKey);
   }
 
-  const [result, setResult] = useState<
-    [Kind[], boolean, unknown, GetNextPage]
-  >([[], false, undefined, undefined]);
+  const [result, setResult] = useState<[Kind[], boolean, unknown, GetNextPage]>(
+    [[], false, undefined, undefined],
+  );
 
   // reset token if namespace or options change
   useEffect(() => {
@@ -132,7 +132,7 @@ export const useTRTaskRuns = (
 export const useGetPipelineRuns = (
   ns: string,
   options?: { name: string; kind: string },
-): [PipelineRunKind[], boolean, unknown, GetNextPage] => {
+): [PipelineRunKind[], boolean, boolean, unknown] => {
   let selector: Selector;
 
   if (options?.kind === 'Pipeline') {
@@ -146,16 +146,11 @@ export const useGetPipelineRuns = (
     };
   }
 
-  const [pipelineRuns, loaded, error, getNextPage] = usePipelineRuns(
+  return usePipelineRuns(
     ns,
     selector && {
       selector,
     },
-  );
-
-  return useMemo(
-    () => [pipelineRuns, loaded, error, getNextPage],
-    [pipelineRuns, loaded, error, getNextPage],
   );
 };
 
@@ -173,10 +168,16 @@ export const useGetTaskRuns = (
       },
     };
   }
-  const [k8sTaskRuns, k8sTaskRunsLoaded, k8sTaskRunsLoadError] = useTaskRuns(
-    ns,
-    pipelineRunName,
-  );
+  const [
+    k8sTaskRuns,
+    k8sTaskRunsK8sLoaded,
+    k8sTaskRunsTrLoaded,
+    k8sTaskRunsLoadError,
+  ] = useTaskRuns(ns, pipelineRunName);
+
+  /* this needs decoupling */
+
+  const k8sTaskRunsLoaded = k8sTaskRunsK8sLoaded && k8sTaskRunsTrLoaded;
   const [
     resultTaskRuns,
     resultTaskRunsLoaded,

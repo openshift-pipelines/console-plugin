@@ -2,6 +2,7 @@
 import {
   consoleFetchJSON,
   k8sGet,
+  K8sGroupVersionKind,
   K8sResourceCommon,
   K8sResourceKind,
   MatchExpression,
@@ -17,7 +18,7 @@ import {
   TEKTON_RESULTS_FETCH_URL,
   TEKTON_RESULTS_TASKRUN_LOGS_URL,
 } from '../../consts';
-import { RouteModel, TektonResultModel } from '../../models';
+import { PipelineRunModel, RouteModel, TektonResultModel } from '../../models';
 import {
   DataType,
   DevConsoleEndpointResponse,
@@ -217,13 +218,7 @@ export const fetchTektonResultsURLConfig = async (
   const searchParams = `${new URLSearchParams({
     // default sort should always be by `create_time desc`
     // order_by: 'create_time desc', not supported yet
-    page_size: `${Math.max(
-      MINIMUM_PAGE_SIZE,
-      Math.min(
-        MAXIMUM_PAGE_SIZE,
-        options?.limit >= 0 ? options.limit : options?.pageSize ?? 50,
-      ),
-    )}`,
+    page_size: '5',
     ...(nextPageToken ? { page_token: nextPageToken } : {}),
     filter: AND(
       EQ('data_type', dataType.toString()),
@@ -630,6 +625,40 @@ export const consoleProxyFetchLog = <T>(
       : response.body;
   });
 };
+
+export async function* fetchAllTektonResultsPages<
+  Kind extends K8sResourceCommon,
+>(
+  namespace: string,
+  groupVersionKind: K8sGroupVersionKind,
+  isDevConsoleProxyAvailable: boolean,
+  filter?: string,
+  options?: TektonResultsOptions,
+): AsyncGenerator<Kind[]> {
+  const allRecords: Kind[] = [];
+  let token: string | undefined;
+  let isFirstCall = true;
+  const dataType =
+    groupVersionKind.kind === PipelineRunModel.kind
+      ? DataType.PipelineRun
+      : DataType.TaskRun;
+
+  while (token || isFirstCall) {
+    const [records, list] = await getFilteredRecord<Kind>(
+      namespace,
+      dataType,
+      filter,
+      options,
+      token,
+      undefined,
+      isDevConsoleProxyAvailable,
+    );
+    isFirstCall = false;
+    allRecords.push(...records);
+    token = list.nextPageToken ?? list.next_page_token;
+    yield [...allRecords];
+  }
+}
 
 export const getTRURLHost = async () => {
   const tektonResult: K8sResourceKind = await k8sGet({

@@ -17,10 +17,12 @@ const PipelineRunStatusPopoverContent: FC<StatusPopoverContentProps> = ({
   pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [PLRTaskRuns, taskRunsLoaded] = useTaskRuns(
+  const [PLRTaskRuns, k8sLoaded, trLoaded] = useTaskRuns(
     pipelineRun.metadata.namespace,
     pipelineRun.metadata.name,
   );
+  /* this needs decoupling */
+  const taskRunsLoaded = k8sLoaded && trLoaded;
   if (!taskRunsLoaded) {
     return (
       <div style={{ minHeight: '300px' }}>

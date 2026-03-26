@@ -44,7 +44,8 @@ const ApprovalTasksList: FC<ApprovalTasksListProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { ns, name: pipelineRunName } = useParams();
   namespace = namespace || ns;
-  const [pipelineRuns, pipelineRunsLoaded] = usePipelineRuns(namespace);
+  const [pipelineRuns, k8sLoaded, trLoaded] = usePipelineRuns(namespace);
+  const pipelineRunsLoaded = k8sLoaded && trLoaded;
   const [approvalTasks, approvalTasksLoaded, approvalTasksLoadError] =
     useApprovalTasks(namespace, pipelineRunName);
   const columns = useApprovalsColumns(namespace);

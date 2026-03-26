@@ -31,6 +31,7 @@ export interface CheckboxFilterConfig {
   title: string;
   placeholder?: string;
   options: FilterOption[];
+  defaultValues?: string[];
 }
 
 export interface FilterValues {

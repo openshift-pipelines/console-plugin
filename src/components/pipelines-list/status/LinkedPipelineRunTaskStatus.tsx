@@ -7,11 +7,12 @@ import { LoadingInline } from '../../Loading';
 import { PipelineRunModel } from '../../../models';
 import { getReferenceForModel } from '../../pipelines-overview/utils';
 import { TaskStatus } from '../../utils/pipeline-augment';
+import { useLinkedPipelineRunTaskStatus } from './useLinkedPipelineRunTaskStatus';
 
 export interface LinkedPipelineRunTaskStatusProps {
   pipelineRun: PipelineRunKind;
-  taskRuns: TaskRunKind[];
-  taskRunsLoaded: boolean;
+  taskRuns?: TaskRunKind[];
+  taskRunsLoaded?: boolean;
   taskRunStatusObj?: TaskStatus;
 }
 
@@ -19,10 +20,16 @@ export interface LinkedPipelineRunTaskStatusProps {
  * Will attempt to render a link to the log file associated with the pipelineRun if it has the data.
  * If it does not, it'll just render the pipeline status.
  */
-const LinkedPipelineRunTaskStatus: FC<
-  LinkedPipelineRunTaskStatusProps
-> = ({ pipelineRun, taskRuns, taskRunsLoaded, taskRunStatusObj }) => {
+const LinkedPipelineRunTaskStatus: FC<LinkedPipelineRunTaskStatusProps> = ({ 
+  pipelineRun,
+  taskRuns: propTaskRuns,
+  taskRunsLoaded: propTaskRunsLoaded,
+  taskRunStatusObj: propTaskRunStatusObj
+}) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+
+  const {taskRuns, taskRunsLoaded, taskRunStatusObj} = useLinkedPipelineRunTaskStatus(pipelineRun, propTaskRuns, propTaskRunsLoaded, propTaskRunStatusObj);
+
   const pipelineStatus =
     taskRunStatusObj &&
     Object.values(taskRunStatusObj)?.every((value) => value === 0) ? (

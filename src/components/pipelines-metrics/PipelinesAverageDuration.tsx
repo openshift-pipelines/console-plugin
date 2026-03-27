@@ -38,6 +38,7 @@ interface PipelinesAverageDurationProps {
   parentName?: string;
   kind?: string;
   namespace?: string;
+  width?: number;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
@@ -75,6 +76,7 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
   parentName,
   namespace,
   kind,
+  width = 530
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
@@ -236,24 +238,30 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
 
   return (
     <>
-      <Card
-        className={classNames('pipeline-overview__number-of-plr-card', {
+     <Card
+        className={classNames('pipeline-overview__min-width-full pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column', {
+          'pipeline-overview__number-of-plr-card': !pipelineAverageDurationError,
           'card-border': bordered,
+          'pf-v6-u-h-100': !pipelineAverageDurationError,
         })}
       >
         <CardTitle className="pipeline-overview__number-of-plr-card__title">
           <span>{t('Average duration')}</span>
         </CardTitle>
-        <CardBody className="pipeline-overview__number-of-plr-card__body">
+         <CardBody
+            className={classNames({
+              'pf-v6-u-flex-1 pipeline-overview__min-height-0 pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-justify-content-flex-end pf-v6-u-align-items-flex-start pf-v6-u-p-0': !pipelineAverageDurationError,
+            })}
+          >
           {pipelineAverageDurationError ? (
             <Alert
               variant="danger"
               isInline
               title={t('Unable to load average duration')}
-              className="pf-v5-u-my-lg pf-v5-u-ml-lg"
+              className="pf-v6-u-mb-md pf-v6-u-ml-lg pf-v6-u-mt-lg"
             />
           ) : (
-            <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
+            <div className="pf-v6-u-flex-shrink-0">
               {loaded ? (
                 <Chart
                   containerComponent={
@@ -266,11 +274,12 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
                   domain={domainValue}
                   domainPadding={{ x: [30, 25] }}
                   height={145}
-                  width={400}
+                  width={width}
                   padding={{
                     top: 10,
                     bottom: 55,
                     left: 50,
+                    right: 50,
                   }}
                   themeColor={ChartThemeColor.blue}
                 >
@@ -290,7 +299,7 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
                   </ChartGroup>
                 </Chart>
               ) : (
-                <div className="pipeline-overview__number-of-plr-card__loading pf-v5-u-h-100">
+                <div className="pipeline-overview__number-of-plr-card__loading pf-v6-u-h-100">
                   <LoadingInline />
                 </div>
               )}

@@ -13,7 +13,6 @@ import {
   useQueryParams,
 } from '../pipelines-overview/utils';
 import { PipelineKind } from '../../types';
-import './PipelinesMetrics.scss';
 import PipelineRunsStatusCardK8s from '../pipelines-overview/PipelineRunsStatusCardK8s';
 import PipelineRunsNumbersChartK8s from '../pipelines-overview/PipelineRunsNumbersChartK8s';
 import PipelineRunsDurationCardK8s from '../pipelines-overview/PipelineRunsDurationCardK8s';

@@ -126,8 +126,11 @@ const config: Configuration = {
     port: 9001,
     // Allow bridge running in a container to connect to the plugin dev server.
     allowedHosts: 'all',
+    liveReload: true,
     client: {
       overlay: false,
+      // Connect to plugin dev server, not console
+      webSocketURL: 'ws://localhost:9001/ws',
     },
     hot: true,
     headers: {
@@ -140,6 +143,7 @@ const config: Configuration = {
     devMiddleware: {
       writeToDisk: true,
     },
+    watchFiles: ['src/**/*'],
   },
   plugins: [
     new ConsoleRemotePlugin(),

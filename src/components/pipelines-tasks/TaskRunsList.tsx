@@ -22,7 +22,13 @@ import {
 import { ArchiveIcon } from '@patternfly/react-icons';
 import { Tooltip } from '@patternfly/react-core';
 import { useTaskRuns } from '../hooks/useTaskRuns';
-import { TaskRunModel, PipelineModel } from '../../models';
+import {
+  TaskRunModel,
+  PipelineModel,
+  NamespaceModel,
+  TaskModel,
+  PodModel,
+} from '../../models';
 import {
   ALL_NAMESPACES_KEY,
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
@@ -40,11 +46,11 @@ import { pipelineRunDuration } from '../utils/pipeline-utils';
 import { TaskRunKebab } from './TaskRunsRow';
 import { DataViewFilterToolbar } from '../common/DataViewFilterToolbar';
 import { useDataViewFilter } from '../hooks/useDataViewFilter';
-
+import { ComputedStatus, PipelineRunKind } from '../../types';
+import { pipelineRunFilterReducer } from '../utils/pipeline-filter-reducer';
 import './TasksNavigationPage.scss';
 
 const taskRunModelRef = getReferenceForModel(TaskRunModel);
-const pipelineReference = getReferenceForModel(PipelineModel);
 
 const getTaskRunDataViewRows =
   (showPipelineColumn: boolean) =>
@@ -57,7 +63,7 @@ const getTaskRunDataViewRows =
         name: {
           cell: (
             <ResourceLinkWithIcon
-              kind={taskRunModelRef}
+              groupVersionKind={getGroupVersionKindForModel(TaskRunModel)}
               model={TaskRunModel}
               name={obj.metadata.name}
               namespace={obj.metadata.namespace}
@@ -83,12 +89,17 @@ const getTaskRunDataViewRows =
           props: getNameCellProps(obj.metadata.name),
         },
         namespace: {
-          cell: <ResourceLink kind="Namespace" name={obj.metadata.namespace} />,
+          cell: (
+            <ResourceLink
+              groupVersionKind={getGroupVersionKindForModel(NamespaceModel)}
+              name={obj.metadata.namespace}
+            />
+          ),
         },
         pipeline: {
           cell: obj.metadata.labels?.[TektonResourceLabel.pipeline] ? (
             <ResourceLink
-              kind={pipelineReference}
+              groupVersionKind={getGroupVersionKindForModel(PipelineModel)}
               name={obj.metadata.labels[TektonResourceLabel.pipeline]}
               namespace={obj.metadata.namespace}
             />
@@ -108,7 +119,7 @@ const getTaskRunDataViewRows =
                 )?.value;
                 return taskName ? (
                   <ResourceLink
-                    kind={getModelReferenceFromTaskKind('Task')}
+                    groupVersionKind={getGroupVersionKindForModel(TaskModel)}
                     displayName={
                       obj.metadata.labels?.[TektonResourceLabel.pipelineTask]
                     }
@@ -135,7 +146,7 @@ const getTaskRunDataViewRows =
         pod: {
           cell: obj.status?.podName ? (
             <ResourceLink
-              kind="Pod"
+              groupVersionKind={getGroupVersionKindForModel(PodModel)}
               name={obj.status.podName}
               namespace={obj.metadata.namespace}
             />
@@ -193,6 +204,12 @@ const TaskRunsList: FC<TaskRunsListPageProps> = ({
   const ns = namespace === ALL_NAMESPACES_KEY ? '-' : namespace;
   const parentName = props?.obj?.metadata?.name;
   const parentUid = props?.obj?.metadata?.uid;
+  const pipelineRun = props?.obj as PipelineRunKind;
+  const plrStatus = pipelineRunFilterReducer(pipelineRun);
+  const pipelineRunFinished =
+    plrStatus !== ComputedStatus.Running &&
+    plrStatus !== ComputedStatus.Pending &&
+    plrStatus !== ComputedStatus.Cancelling;
 
   const columnManagementID = taskRunModelRef;
 
@@ -285,6 +302,10 @@ const TaskRunsList: FC<TaskRunsListPageProps> = ({
     parentName,
     undefined,
     parentUid,
+    {
+      pipelineRunFinished,
+      pipelineRunManagedBy: pipelineRun?.spec?.managedBy,
+    },
   );
 
   const {

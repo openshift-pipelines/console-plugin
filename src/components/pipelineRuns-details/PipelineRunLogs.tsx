@@ -1,33 +1,35 @@
 import type { FC } from 'react';
-import { useState, useCallback, useEffect } from 'react';
-import { Nav, NavItem, NavList } from '@patternfly/react-core';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import { Nav, NavItem, NavList, Alert, Banner } from '@patternfly/react-core';
+import { LogViewer } from '@patternfly/react-log-viewer';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom-v5-compat';
 import {
-  useFlag,
   WatchK8sResource,
   useOverlay,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { PipelineRunModel } from '../../models';
 import {
   ComputedStatus,
-  FLAGS,
   PipelineRunKind,
   PipelineTask,
   TaskRunKind,
 } from '../../types';
 import { TektonResourceLabel } from '../../consts';
 import { useTaskRuns } from '../hooks/useTaskRuns';
+import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 import { ErrorDetailsWithStaticLog } from '../logs/log-snippet-types';
-import { getDownloadAllLogsCallback } from '../logs/logs-utils';
+import {
+  getDownloadAllLogsCallback,
+  getDownloadAllLogsCallbackMultiCluster,
+} from '../logs/logs-utils';
 import LogsWrapperComponent from '../logs/LogsWrapperComponent';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import { taskRunStatus } from '../utils/pipeline-utils';
 import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
 import { ColoredStatusIcon } from '../pipeline-topology/StatusIcons';
 import { resourcePathFromModel } from '../utils/utils';
-
 import './PipelineRunLogs.scss';
 
 interface PipelineRunLogsProps {
@@ -35,111 +37,127 @@ interface PipelineRunLogsProps {
   activeTask?: string;
   activeStep?: string;
   taskRuns: TaskRunKind[];
+  isResourceManagedByKueue?: boolean;
 }
+
+type PipelineRunLogsWithActiveTaskProps = {
+  obj: PipelineRunKind;
+};
 
 const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
   obj,
   activeTask,
   activeStep,
   taskRuns: tRuns,
+  isResourceManagedByKueue,
 }) => {
-  const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const launchOverlay = useOverlay();
-  const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
+  const { t } = useTranslation();
   const [activeItem, setActiveItem] = useState<string>(null);
   const [navUntouched, setNavUntouched] = useState(true);
+  const launchOverlay = useOverlay();
 
-  const getActiveTaskRun = useCallback(
-    (taskRuns: TaskRunKind[], activeTask: string): string => {
-      const activeTaskRun = activeTask
-        ? taskRuns.find(
-            (taskRun) =>
-              taskRun.metadata?.labels?.[TektonResourceLabel.pipelineTask] ===
-              activeTask,
-          )
-        : taskRuns.find(
-            (taskRun) => taskRunStatus(taskRun) === ComputedStatus.Failed,
-          ) || taskRuns[taskRuns.length - 1];
-
-      return activeTaskRun?.metadata.name;
-    },
-    [],
-  );
-
-  const getSortedTaskRun = useCallback(
-    (tRuns: TaskRunKind[], tasks: PipelineTask[]): TaskRunKind[] => {
-      const taskRuns = tRuns?.sort((a, b) => {
-        if (_.get(a, ['status', 'completionTime'], false)) {
-          return b.status?.completionTime &&
-            new Date(a.status.completionTime) >
-              new Date(b.status.completionTime)
-            ? 1
-            : -1;
-        }
-        return b.status?.completionTime ||
-          new Date(a.status?.startTime) > new Date(b.status?.startTime)
-          ? 1
-          : -1;
-      });
-
-      const pipelineTaskNames = tasks?.map((t) => t?.name);
-      return (
-        taskRuns?.sort(
-          (c, d) =>
-            pipelineTaskNames?.indexOf(
-              c?.metadata?.labels?.[TektonResourceLabel.pipelineTask],
-            ) -
-            pipelineTaskNames?.indexOf(
-              d?.metadata?.labels?.[TektonResourceLabel.pipelineTask],
-            ),
-        ) || []
-      );
-    },
-    [],
-  );
-
-  const onNavSelect = (e, item) => {
-    setActiveItem(item.itemId);
-    setNavUntouched(false);
-  };
-
-  // Update activeItem when activeTask or taskRuns change
-  useEffect(() => {
-    const sortedTaskRuns = getSortedTaskRun(tRuns, [
+  const pipelineTasks = useMemo(
+    () => [
       ...(obj?.status?.pipelineSpec?.tasks || []),
       ...(obj?.status?.pipelineSpec?.finally || []),
-    ]);
+    ],
+    [obj?.status?.pipelineSpec?.tasks, obj?.status?.pipelineSpec?.finally],
+  );
+
+  const getActiveTaskRun = (
+    taskRuns: TaskRunKind[],
+    activeTask: string,
+  ): string => {
+    const activeTaskRun = activeTask
+      ? taskRuns.find(
+          (taskRun) =>
+            taskRun.metadata?.labels?.[TektonResourceLabel.pipelineTask] ===
+            activeTask,
+        )
+      : taskRuns.find(
+          (taskRun) => taskRunStatus(taskRun) === ComputedStatus.Failed,
+        ) || taskRuns[taskRuns.length - 1];
+
+    return activeTaskRun?.metadata.name;
+  };
+
+  const getSortedTaskRun = (
+    tRuns: TaskRunKind[],
+    tasks: PipelineTask[],
+  ): TaskRunKind[] => {
+    const taskRuns = tRuns?.sort((a, b) => {
+      if (_.get(a, ['status', 'completionTime'], false)) {
+        return b.status?.completionTime &&
+          new Date(a.status.completionTime) > new Date(b.status.completionTime)
+          ? 1
+          : -1;
+      }
+      return b.status?.completionTime ||
+        new Date(a.status?.startTime) > new Date(b.status?.startTime)
+        ? 1
+        : -1;
+    });
+
+    const pipelineTaskNames = tasks?.map((t) => t?.name);
+    return (
+      taskRuns?.sort(
+        (c, d) =>
+          pipelineTaskNames?.indexOf(
+            c?.metadata?.labels?.[TektonResourceLabel.pipelineTask],
+          ) -
+          pipelineTaskNames?.indexOf(
+            d?.metadata?.labels?.[TektonResourceLabel.pipelineTask],
+          ),
+      ) || []
+    );
+  };
+
+  // Set initial active item on mount
+  useEffect(() => {
+    const sortedTaskRuns = getSortedTaskRun(tRuns, pipelineTasks);
     const newActiveItem = getActiveTaskRun(sortedTaskRuns, activeTask);
+    setActiveItem(newActiveItem);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Update active item when obj or taskRuns change (only if nav is untouched)
+  useEffect(() => {
     if (navUntouched) {
+      const sortedTaskRuns = getSortedTaskRun(tRuns, pipelineTasks);
+      const newActiveItem = getActiveTaskRun(sortedTaskRuns, activeTask);
       setActiveItem(newActiveItem);
     }
-  }, [
-    activeTask,
-    tRuns,
-    obj,
-    navUntouched,
-    getSortedTaskRun,
-    getActiveTaskRun,
-  ]);
+  }, [obj, tRuns, activeTask, pipelineTasks, navUntouched]);
 
-  const taskRunNames = getSortedTaskRun(tRuns, [
-    ...(obj?.status?.pipelineSpec?.tasks || []),
-    ...(obj?.status?.pipelineSpec?.finally || []),
-  ])?.map((tRun) => tRun.metadata.name);
+  const onNavSelect = useCallback((_e, item) => {
+    setActiveItem(item.itemId);
+    setNavUntouched(false);
+  }, []);
+
+  const taskRunNames =
+    getSortedTaskRun(tRuns, pipelineTasks)?.map((tRun) => tRun.metadata.name) ??
+    [];
+
   const logDetails = getPLRLogSnippet(obj, tRuns) as ErrorDetailsWithStaticLog;
   const pipelineStatus = pipelineRunStatus(obj);
   const taskCount = taskRunNames.length;
   const downloadAllCallback =
     taskCount > 1
-      ? getDownloadAllLogsCallback(
-          taskRunNames,
-          tRuns,
-          obj.metadata?.namespace,
-          obj.metadata?.name,
-          launchOverlay,
-          isDevConsoleProxyAvailable,
-        )
+      ? isResourceManagedByKueue
+        ? getDownloadAllLogsCallbackMultiCluster(
+            taskRunNames,
+            tRuns,
+            obj.metadata?.namespace,
+            obj.metadata?.name,
+          )
+        : getDownloadAllLogsCallback(
+            taskRunNames,
+            tRuns,
+            obj.metadata?.namespace,
+            obj.metadata?.name,
+            launchOverlay,
+          )
       : undefined;
+
   const activeTaskRun = tRuns.find(
     (taskRun) => taskRun.metadata.name === activeItem,
   );
@@ -156,11 +174,11 @@ const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
     };
   const waitingForPods = !!(activeItem && !resources);
 
-  const selectedItemRef = (item: HTMLSpanElement) => {
+  const selectedItemRef = useCallback((item: HTMLSpanElement) => {
     if (item?.scrollIntoView) {
       item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-  };
+  }, []);
 
   const logsPath = `${resourcePathFromModel(
     PipelineRunModel,
@@ -169,8 +187,8 @@ const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
   )}/logs`;
 
   return (
-    <div className="odc-pipeline-run-logs-main-div">
-      <div className="odc-pipeline-run-logs">
+    <div className="odc-pipeline-run-logs-main-div pf-v6-u-h-100">
+      <div className="odc-pipeline-run-logs pf-v6-u-h-100 pf-v6-u-py-xl">
         <div
           className="odc-pipeline-run-logs__tasklist"
           data-test-id="logs-tasklist"
@@ -216,75 +234,107 @@ const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
               </NavList>
             </Nav>
           ) : (
-            <div className="odc-pipeline-run-logs__nav">
+            <div className="odc-pipeline-run-logs__nav pf-v6-u-text-align-center">
               {t('No task runs found')}
             </div>
           )}
         </div>
-        <div className="odc-pipeline-run-logs__container">
-          {activeItem && resources ? (
-            <LogsWrapperComponent
-              key={taskName}
-              resource={resources}
-              downloadAllLabel={t('Download all task logs')}
-              onDownloadAll={downloadAllCallback}
-              taskRun={activeTaskRun}
-              activeStep={activeStep}
+        {activeItem && resources ? (
+          <LogsWrapperComponent
+            key={taskName}
+            resource={resources}
+            downloadAllLabel={t('Download all task logs')}
+            onDownloadAll={downloadAllCallback}
+            taskRun={activeTaskRun}
+            activeStep={activeStep}
+            isResourceManagedByKueue={isResourceManagedByKueue}
+            pipelineRunName={obj.metadata?.name}
+            pipelineRunFinished={pipelineRunFinished}
+          />
+        ) : (
+          <div
+            className="pf-v6-u-w-100 pf-v6-u-pr-xl"
+            data-test-id="task-logs-error"
+          >
+            <LogViewer
+              header={
+                <Banner className="pf-v6-u-font-size-md">{taskName}</Banner>
+              }
+              hasLineNumbers={false}
+              isTextWrapped={false}
+              theme="dark"
+              height="100%"
+              data={
+                waitingForPods && !pipelineRunFinished
+                  ? `Waiting for ${taskName} task to start`
+                  : !resources && pipelineRunFinished && !obj.status
+                  ? t('No logs found')
+                  : logDetails?.staticMessage ?? ''
+              }
             />
-          ) : (
-            <div className="odc-pipeline-run-logs__log">
-              <div
-                className="odc-pipeline-run-logs__logtext"
-                data-test-id="task-logs-error"
-              >
-                {waitingForPods &&
-                  !pipelineRunFinished &&
-                  `Waiting for ${taskName} task to start `}
-                {!resources &&
-                  pipelineRunFinished &&
-                  !obj.status &&
-                  t('No logs found')}
-                {logDetails && (
-                  <div className="odc-pipeline-run-logs__logsnippet">
-                    {logDetails.staticMessage}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-type PipelineRunLogsWithActiveTaskProps = {
-  obj: PipelineRunKind;
-};
-
 export const PipelineRunLogsWithActiveTask: FC<
   PipelineRunLogsWithActiveTaskProps
 > = ({ obj }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const activeTask = params?.get('taskName');
   const activeStep = params?.get('step');
-  const [taskRuns, k8sLoaded, trLoaded] = useTaskRuns(
-    obj?.metadata?.namespace,
-    obj?.metadata?.name,
-  );
-  /* this needs decoupling */
-  const taskRunsLoaded = k8sLoaded && trLoaded;
+  const plrStatus = pipelineRunStatus(obj);
+  const pipelineRunFinished =
+    plrStatus !== ComputedStatus.Running &&
+    plrStatus !== ComputedStatus.Pending &&
+    plrStatus !== ComputedStatus.Cancelling;
+  const [taskRuns, taskRunsLoaded, , , pendingAdmission, proxyUnavailable] =
+    useTaskRuns(
+      obj?.metadata?.namespace,
+      obj?.metadata?.name,
+      undefined,
+      undefined,
+      {
+        pipelineRunFinished,
+        pipelineRunManagedBy: obj?.spec?.managedBy,
+      },
+    );
+  const { isResourceManagedByKueue } = useMultiClusterProxyService({
+    managedBy: obj?.spec?.managedBy,
+  });
 
   return (
-    taskRunsLoaded && (
-      <PipelineRunLogs
-        obj={obj}
-        activeTask={activeTask}
-        activeStep={activeStep}
-        taskRuns={taskRuns}
-      />
-    )
+    <>
+      {proxyUnavailable && (
+        <Alert
+          isInline
+          variant="warning"
+          title={t(
+            'The multi-cluster connection is unavailable. Logs and status may be delayed until connection is restored.',
+          )}
+        />
+      )}
+      {pendingAdmission && (
+        <Alert
+          isInline
+          variant="info"
+          title={t('PipelineRun is waiting to be admitted to a worker cluster')}
+        />
+      )}
+      {taskRunsLoaded && (
+        <PipelineRunLogs
+          obj={obj}
+          activeTask={activeTask}
+          activeStep={activeStep}
+          taskRuns={taskRuns}
+          isResourceManagedByKueue={isResourceManagedByKueue}
+        />
+      )}
+    </>
   );
 };
 

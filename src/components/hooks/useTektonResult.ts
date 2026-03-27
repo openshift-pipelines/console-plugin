@@ -132,7 +132,14 @@ export const useTRTaskRuns = (
 export const useGetPipelineRuns = (
   ns: string,
   options?: { name: string; kind: string },
-): [PipelineRunKind[], boolean, boolean, unknown] => {
+): [
+  PipelineRunKind[],
+  boolean,
+  boolean,
+  Error | undefined,
+  boolean,
+  boolean,
+] => {
   let selector: Selector;
 
   if (options?.kind === 'Pipeline') {

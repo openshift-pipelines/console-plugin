@@ -4,9 +4,10 @@ import { LogViewer } from '@patternfly/react-log-viewer';
 import { HttpError } from '@openshift-console/dynamic-plugin-sdk/lib/utils/error/http-error';
 import { TaskRunKind } from '../../types';
 import { TektonResourceLabel } from '../../consts';
-import { Loading } from '../Loading';
+import { LoadingInline } from '../Loading';
 import { useTRTaskRunLog } from '../hooks/useTektonResult';
-import './MultiStreamLogs.scss';
+import { Banner } from '@patternfly/react-core';
+import './TektonTaskRunLog.scss';
 import '../pipelineRuns-details/PipelineRunLogs.scss';
 import { useTranslation } from 'react-i18next';
 
@@ -52,48 +53,34 @@ export const TektonTaskRunLog: FC<TektonTaskRunLogProps> = ({
   return (
     <>
       <div
-        className="odc-multi-stream-logs__taskName"
-        data-test-id="logs-taskName"
+        data-test-id="tr-logs-task-container"
+        className="odc-tekton-taskrun-log pf-v6-u-h-100 pf-v6-u-w-100"
       >
-        {taskName}
-      </div>
-      {!trLoaded && !errorMessage ? (
-        <Loading
-          size="md"
-          className="odc-multi-stream-logs__taskName__loading-indicator"
-          data-test-id="loading-indicator"
+        <LogViewer
+          useAnsiClasses={true}
+          header={
+            <Banner className="pf-v6-l-flex pf-v6-l-gap-md">
+              <span
+                data-test-id="logs-taskName"
+                className="pf-v6-u-font-size-md"
+              >
+                {taskName}
+              </span>
+              {!trLoaded && !errorMessage ? (
+                <span data-test-id="loading-indicator">
+                  <LoadingInline />
+                </span>
+              ) : null}
+            </Banner>
+          }
+          hasLineNumbers={false}
+          isTextWrapped={false}
+          data={errorMessage ?? (!trLoaded ? '' : formattedResults)}
+          height="100%"
+          scrollToRow={lastRowIndex}
+          theme="dark"
         />
-      ) : (
-        <div
-          className="odc-multi-stream-logs__logviewer"
-          data-test-id="tr-logs-task-container"
-        >
-          {errorMessage ? (
-            <div
-              className="odc-multi-stream-logs__taskName__loading-indicator pf-v6-u-pl-md pf-v6-u-font-size-xs"
-              data-testid="tr-logs-error-message"
-            >
-              {errorMessage}
-            </div>
-          ) : !formattedResults ? (
-            <div
-              className="odc-multi-stream-logs__taskName__loading-indicator pf-v6-u-pl-md pf-v6-u-font-size-xs"
-              data-testid="tr-logs-no-data"
-            >
-              {t('No logs to display for {{taskName}} task')}
-            </div>
-          ) : (
-            <LogViewer
-              hasLineNumbers={false}
-              isTextWrapped={false}
-              data={formattedResults}
-              theme="dark"
-              height="100%"
-              scrollToRow={lastRowIndex}
-            />
-          )}
-        </div>
-      )}
+      </div>
     </>
   );
 };

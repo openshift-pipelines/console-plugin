@@ -11,8 +11,6 @@ import {
 import { IntervalOptions } from './utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from './dateTime';
 
-import './PipelinesOverview.scss';
-
 const OFF_KEY = 'OFF_KEY';
 
 type Props = {
@@ -51,7 +49,6 @@ const IntervalDropdown: FC<Props> = ({ id, interval, setInterval }) => {
           {intervalOptions[selectedKey]}
         </MenuToggle>
       )}
-      className="pipeline-overview__variable-dropdown"
     >
       <DropdownList>
         {_.map(intervalOptions, (name, key) => (

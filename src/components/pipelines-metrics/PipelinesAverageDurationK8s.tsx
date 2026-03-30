@@ -101,8 +101,7 @@ const PipelinesAverageDurationK8s: FC<PipelinesAverageDurationProps> = ({
   const [averageDurationError, setAverageDurationError] = useState<
     string | null
   >(null);
-  const [averageDurationLoading, setAverageDurationLoading] =
-    useState(true);
+  const [averageDurationLoading, setAverageDurationLoading] = useState(true);
 
   const [totalPipelineRunsCountData, countError, countLoading] =
     parentName && namespace

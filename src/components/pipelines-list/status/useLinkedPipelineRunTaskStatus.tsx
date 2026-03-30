@@ -35,7 +35,7 @@ export const useLinkedPipelineRunTaskStatus = (
     pipelineRun.metadata.name,
     undefined,
     undefined,
-    skipFetch,
+    { skipFetch },
   );
 
   INFLIGHT_STORE_FOR_TASKRUNS_FOR_PLR[cacheKey] = false;

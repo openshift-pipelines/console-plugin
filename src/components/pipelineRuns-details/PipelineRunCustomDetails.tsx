@@ -15,7 +15,7 @@ import Status from '../status/Status';
 import { ExternalLink } from '../utils/link';
 import { TaskRunModel } from '../../models';
 import { Timestamp } from '@openshift-console/dynamic-plugin-sdk';
-import { PipelineRunKind } from '../../types';
+import { ComputedStatus, PipelineRunKind } from '../../types';
 import {
   pipelineRunFilterReducer,
   pipelineRunTitleFilterReducer,
@@ -31,6 +31,7 @@ import { convertBackingPipelineToPipelineResourceRefProps } from './utils';
 import RepositoryLinkList from './RepositoryLinkList';
 import PipelineRunVulnerabilities from '../pipelines-list/status/PipelineRunVulnerabilities';
 import { useTaskRuns } from '../hooks/useTaskRuns';
+import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 import TriggeredBySection from './TriggeredBySection';
 import PipelineResourceRef from '../triggers-details/PipelineResourceRef';
 import WorkspaceResourceLinkList from '../workspaces/WorkspaceResourceLinkList';
@@ -43,9 +44,23 @@ const PipelineRunCustomDetails: FC<PipelineRunCustomDetailsProps> = ({
   pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const { isResourceManagedByKueue } = useMultiClusterProxyService({
+    managedBy: pipelineRun?.spec?.managedBy,
+  });
+  const plrStatus = pipelineRunFilterReducer(pipelineRun);
+  const pipelineRunFinished =
+    plrStatus !== ComputedStatus.Running &&
+    plrStatus !== ComputedStatus.Pending &&
+    plrStatus !== ComputedStatus.Cancelling;
   const [taskRuns, k8sLoaded, trLoaded] = useTaskRuns(
     pipelineRun?.metadata?.namespace,
     pipelineRun?.metadata?.name,
+    undefined,
+    undefined,
+    {
+      pipelineRunFinished,
+      pipelineRunManagedBy: pipelineRun?.spec?.managedBy,
+    },
   );
   /* this needs decoupling */
   const taskRunsLoaded = k8sLoaded && trLoaded;
@@ -70,6 +85,8 @@ const PipelineRunCustomDetails: FC<PipelineRunCustomDetailsProps> = ({
           <RunDetailsErrorLog
             logDetails={getPLRLogSnippet(pipelineRun, taskRuns)}
             namespace={pipelineRun.metadata.namespace}
+            isResourceManagedByKueue={isResourceManagedByKueue}
+            pipelineRunName={pipelineRun.metadata.name}
           />
         )}
         <DescriptionListGroup>

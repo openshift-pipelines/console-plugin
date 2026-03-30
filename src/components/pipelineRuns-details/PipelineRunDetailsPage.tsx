@@ -1,8 +1,6 @@
-import { ResourceStatus } from '@openshift-console/dynamic-plugin-sdk';
-import { LazyActionMenu } from '@openshift-console/dynamic-plugin-sdk-internal';
-import { ActionMenuVariant } from '@openshift-console/dynamic-plugin-sdk-internal/lib/api/internal-types';
 import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
+import { ResourceStatus } from '@openshift-console/dynamic-plugin-sdk';
 import { PipelineRunModel } from '../../models';
 import { LoadingBox } from '../status/status-box';
 import DetailsPage from '../details-page/DetailsPage';
@@ -21,8 +19,9 @@ import {
   chainsSignedAnnotation,
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
+  PIPELINE_RUN_MANAGED_BY_KUEUE_LABEL,
 } from '../../consts';
-import { ArchiveIcon } from '@patternfly/react-icons';
+import { ArchiveIcon, MulticlusterIcon } from '@patternfly/react-icons';
 import SignedBadgeIcon from '../../images/SignedBadge';
 import Status from '../status/Status';
 import {
@@ -34,6 +33,8 @@ import { PipelineRunLogsWithActiveTask } from './PipelineRunLogs';
 import PipelineRunEvents from './PipelineRunEvents';
 import { usePipelineRun } from '../hooks/useTaskRuns';
 import { getReferenceForModel } from '../pipelines-overview/utils';
+import { LazyActionMenu } from '@openshift-console/dynamic-plugin-sdk-internal';
+import { ActionMenuVariant } from '@openshift-console/dynamic-plugin-sdk-internal/lib/api/internal-types';
 
 type PipelineRunDetailsPageProps = {
   name: string;
@@ -63,7 +64,7 @@ const PipelineRunDetailsPage: FC<PipelineRunDetailsPageProps> = ({
 
   const resourceTitleFunc = useMemo((): string | JSX.Element => {
     return (
-      <div className="pipelinerun-details-page pf-v6-l-flex pf-m-row pf-m-gap-sm">
+      <div className="pipelinerun-details-page pf-v6-l-flex pf-v6-l-gap-md pf-v6-u-align-items-center">
         {pipelineRun?.metadata?.name}{' '}
         {pipelineRun?.metadata?.annotations?.[chainsSignedAnnotation] ===
           'true' && (
@@ -81,6 +82,12 @@ const PipelineRunDetailsPage: FC<PipelineRunDetailsPageProps> = ({
           ] === 'true') && (
           <Tooltip content={t('Archived in Tekton results')}>
             <ArchiveIcon className="pipelinerun-details-page__results-indicator" />
+          </Tooltip>
+        )}
+        {pipelineRun?.spec?.managedBy ===
+          PIPELINE_RUN_MANAGED_BY_KUEUE_LABEL && (
+          <Tooltip content={t('Multicluster Pipeline Run')}>
+            <MulticlusterIcon className="pipelinerun-details-page__results-indicator" />
           </Tooltip>
         )}
         <ResourceStatus>

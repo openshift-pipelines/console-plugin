@@ -1,3 +1,5 @@
+@use '../logs/ansi-log-colors' as *;
+
 .odc-pipeline-run-logs {
   display: flex;
   flex: 1;
@@ -5,6 +7,14 @@
   position: absolute;
   top: 0;
   bottom: 0;
+  overflow: hidden;
+
+  .pf-v5-c-log-viewer__text {
+    white-space: pre;
+  }
+
+  @include ansi-log-colors;
+
   padding: var(--pf-t--global--spacer--xl) 0;
   &__nav {
     padding-top: 0;

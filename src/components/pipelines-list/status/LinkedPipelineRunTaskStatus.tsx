@@ -20,15 +20,21 @@ export interface LinkedPipelineRunTaskStatusProps {
  * Will attempt to render a link to the log file associated with the pipelineRun if it has the data.
  * If it does not, it'll just render the pipeline status.
  */
-const LinkedPipelineRunTaskStatus: FC<LinkedPipelineRunTaskStatusProps> = ({ 
+const LinkedPipelineRunTaskStatus: FC<LinkedPipelineRunTaskStatusProps> = ({
   pipelineRun,
   taskRuns: propTaskRuns,
   taskRunsLoaded: propTaskRunsLoaded,
-  taskRunStatusObj: propTaskRunStatusObj
+  taskRunStatusObj: propTaskRunStatusObj,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
-  const {taskRuns, taskRunsLoaded, taskRunStatusObj} = useLinkedPipelineRunTaskStatus(pipelineRun, propTaskRuns, propTaskRunsLoaded, propTaskRunStatusObj);
+  const { taskRuns, taskRunsLoaded, taskRunStatusObj } =
+    useLinkedPipelineRunTaskStatus(
+      pipelineRun,
+      propTaskRuns,
+      propTaskRunsLoaded,
+      propTaskRunStatusObj,
+    );
 
   const pipelineStatus =
     taskRunStatusObj &&

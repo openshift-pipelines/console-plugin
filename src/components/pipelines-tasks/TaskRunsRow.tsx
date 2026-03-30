@@ -29,7 +29,7 @@ import {
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
   TektonResourceLabel,
 } from '../../consts';
-import { TaskRunKind } from '../../types';
+import { ComputedStatus, TaskRunKind } from '../../types';
 import { taskRunFilterReducer } from '../utils/pipeline-filter-reducer';
 import TaskRunStatus from './TaskRunStatus';
 import { ResourceLinkWithIcon } from '../utils/resource-link';
@@ -41,6 +41,7 @@ import {
 } from '../utils/common-utils';
 import { getModelReferenceFromTaskKind } from '../utils/pipeline-augment';
 import { pipelineRunDuration } from '../utils/pipeline-utils';
+import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 
 const taskRunsReference = getReferenceForModel(TaskRunModel);
 const pipelineReference = getReferenceForModel(PipelineModel);
@@ -144,10 +145,21 @@ const TaskRunsRow: FC<RowProps<TaskRunKind>> = ({
   obj,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const {isResourceManagedByKueue} = useMultiClusterProxyService({ labels: obj?.metadata?.labels });
   return (
     <>
       <TableData activeColumnIDs={activeColumnIDs} id="name">
         <ResourceLinkWithIcon
+          linkTo={
+            !isResourceManagedByKueue
+              ? true
+              : taskRunFilterReducer(obj) == ComputedStatus.Succeeded ||
+                taskRunFilterReducer(obj) == ComputedStatus.Failed ||
+                taskRunFilterReducer(obj) == ComputedStatus.Cancelled ||
+                taskRunFilterReducer(obj) == ComputedStatus.Skipped
+              ? true
+              : false
+          }
           kind={taskRunsReference}
           model={TaskRunModel}
           name={obj.metadata.name}

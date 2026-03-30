@@ -2,14 +2,15 @@ import type { FC } from 'react';
 import Logs from './Logs';
 import { getRenderContainers } from './logs-utils';
 import { PodKind } from '../../types';
-import { Loading } from '../Loading';
-import './MultiStreamLogs.scss';
 
 type MultiStreamLogsProps = {
   resource: PodKind;
   taskName?: string;
   setCurrentLogsGetter?: (getter: () => string) => void;
   activeStep?: string;
+  isResourceManagedByKueue?: boolean;
+  pipelineRunName?: string;
+  pipelineRunFinished?: boolean;
 };
 
 export const MultiStreamLogs: FC<MultiStreamLogsProps> = ({
@@ -17,37 +18,30 @@ export const MultiStreamLogs: FC<MultiStreamLogsProps> = ({
   taskName,
   setCurrentLogsGetter,
   activeStep,
+  isResourceManagedByKueue,
+  pipelineRunName,
+  pipelineRunFinished,
 }) => {
   const { containers, stillFetching } = getRenderContainers(resource);
 
   return (
     <>
       <div
-        className="odc-multi-stream-logs__taskName"
-        data-test-id="logs-taskName"
+        data-test-id="logs-task-container"
+        className="pf-v6-u-h-100 pf-v6-u-w-100"
       >
-        {taskName}
-      </div>
-      {stillFetching ? (
-        <Loading
-          size="md"
-          data-test-id="loading-indicator"
-          isInline={true}
-          className="odc-multi-stream-logs__taskName__loading-indicator"
+        <Logs
+          stillFetching={stillFetching}
+          taskName={taskName}
+          resource={resource}
+          containers={containers}
+          setCurrentLogsGetter={setCurrentLogsGetter}
+          activeStep={activeStep}
+          isResourceManagedByKueue={isResourceManagedByKueue}
+          pipelineRunName={pipelineRunName}
+          pipelineRunFinished={pipelineRunFinished}
         />
-      ) : (
-        <div
-          className="odc-multi-stream-logs__logviewer"
-          data-test-id="logs-task-container"
-        >
-          <Logs
-            resource={resource}
-            containers={containers}
-            setCurrentLogsGetter={setCurrentLogsGetter}
-            activeStep={activeStep}
-          />
-        </div>
-      )}
+      </div>
     </>
   );
 };

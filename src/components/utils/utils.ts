@@ -2,6 +2,8 @@ import { K8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import _ from 'lodash';
 import {
   DELETED_RESOURCE_IN_K8S_ANNOTATION,
+  KUEUE_LABEL_PREFIX,
+  PIPELINE_RUN_KUEUE_ORIGIN_LABEL,
   preferredNameAnnotation,
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
   StartedByAnnotation,
@@ -204,13 +206,18 @@ export const getPipelineRunData = (
       namespace: pipeline
         ? pipeline.metadata.namespace
         : latestRun.metadata.namespace,
-      labels: _.merge(
-        {},
-        pipeline?.metadata?.labels,
-        latestRun?.metadata?.labels,
-        (latestRun?.spec.pipelineRef || pipeline) && {
-          'tekton.dev/pipeline': pipelineName,
-        },
+      labels: _.omitBy(
+        _.merge(
+          {},
+          pipeline?.metadata?.labels,
+          latestRun?.metadata?.labels,
+          (latestRun?.spec.pipelineRef || pipeline) && {
+            'tekton.dev/pipeline': pipelineName,
+          },
+        ),
+        (_value, key) =>
+          latestRun?.metadata?.labels?.[PIPELINE_RUN_KUEUE_ORIGIN_LABEL] &&
+          key.startsWith(KUEUE_LABEL_PREFIX),
       ),
     },
     spec: {

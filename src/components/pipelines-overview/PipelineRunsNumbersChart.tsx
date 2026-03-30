@@ -237,7 +237,7 @@ const PipelinesRunsNumbersChart: FC<PipelinesRunsNumbersChartProps> = ({
   return (
     <>
       <Card
-        className={classNames('pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column', {
+        className={classNames('pipeline-overview__min-width-full pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column', {
           'pipeline-overview__number-of-plr-card': !pipelineRunsChartError,
           'card-border': bordered,
           'pf-v6-u-h-100': !pipelineRunsChartError,

@@ -113,7 +113,7 @@ const PipelinesRunsDurationCard: FC<PipelinesRunsDurationProps> = ({
   return (
     <>
       <Card
-        className={classNames('pf-v6-u-h-100', {
+        className={classNames('pf-v6-u-h-100 pipeline-overview__min-width-full pf-v6-u-font-size-lg', {
           'card-border': bordered,
         })}
       >

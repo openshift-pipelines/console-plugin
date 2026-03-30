@@ -42,6 +42,7 @@ interface PipelinesAverageDurationProps {
   interval?: number;
   parentName?: string;
   namespace?: string;
+  width?: number;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
@@ -85,6 +86,7 @@ const PipelinesAverageDurationK8s: FC<PipelinesAverageDurationProps> = ({
   interval,
   parentName,
   namespace,
+  width = 530
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const startTimespan = timespan - parsePrometheusDuration('1d');
@@ -297,23 +299,28 @@ const PipelinesAverageDurationK8s: FC<PipelinesAverageDurationProps> = ({
   return (
     <>
       <Card
-        className={classNames('pipeline-overview__number-of-plr-card', {
+        className={classNames({
+          'pf-v6-u-h-100 pipeline-overview__min-width-full pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column': !averageDurationError,
           'card-border': bordered,
         })}
       >
-        <CardTitle className="pipeline-overview__number-of-plr-card__title">
+        <CardTitle className="pf-v6-u-pb-0">
           <span>{t('Average duration')}</span>
         </CardTitle>
-        <CardBody className="pipeline-overview__number-of-plr-card__body">
+        <CardBody 
+          className={classNames({
+            'pf-v6-u-flex-1 pipeline-overview__min-height-0 pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-justify-content-flex-end pf-v6-u-align-items-flex-start pf-v6-u-p-0': !averageDurationError,
+          })}
+        >
           {averageDurationError ? (
             <Alert
               variant="danger"
               isInline
               title={t('Unable to load average duration')}
-              className="pf-v5-u-my-lg pf-v5-u-ml-lg"
+              className="pf-v6-u-ml-lg"
             />
           ) : (
-            <div className="pipeline-overview__number-of-plr-card__bar-chart-div">
+            <div className="pf-v6-u-flex-shrink-0">
               {!averageDurationLoading ? (
                 <Chart
                   containerComponent={
@@ -326,11 +333,12 @@ const PipelinesAverageDurationK8s: FC<PipelinesAverageDurationProps> = ({
                   domain={domainValue}
                   domainPadding={{ x: [30, 25] }}
                   height={145}
-                  width={400}
+                  width={width}
                   padding={{
                     top: 10,
                     bottom: 55,
                     left: 50,
+                    right: 50,
                   }}
                   themeColor={ChartThemeColor.blue}
                 >

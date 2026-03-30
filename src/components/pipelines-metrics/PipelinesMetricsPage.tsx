@@ -17,7 +17,6 @@ import {
   useQueryParams,
 } from '../pipelines-overview/utils';
 import { PipelineKind } from '../../types';
-import './PipelinesMetrics.scss';
 
 type PipelinesMetricsPageProps = {
   obj: PipelineKind;

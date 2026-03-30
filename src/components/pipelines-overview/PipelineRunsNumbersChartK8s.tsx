@@ -259,7 +259,7 @@ const PipelineRunsNumbersChartK8s: FC<PipelinesRunsNumbersChartProps> = ({
     <>
       <Card
         className={classNames({
-          'pf-v6-u-h-100 pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column': !pipelineRunsChartError,
+          'pf-v6-u-h-100 pipeline-overview__min-width-full pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column': !pipelineRunsChartError,
           'card-border': bordered,
         })}
       >

@@ -32,8 +32,7 @@ const TaskRunDetailsPage = () => {
   const params = useParams();
   const { name, ns: namespace } = params;
   const [data, k8sLoaded, trLoaded] = useTaskRun(namespace, name);
-  /* this needs decoupling */
-  const loaded = k8sLoaded && trLoaded;
+  const loaded = k8sLoaded || trLoaded;
   const trStatus = useMemo(
     () => loaded && data && taskRunStatus(data),
     [loaded, data],

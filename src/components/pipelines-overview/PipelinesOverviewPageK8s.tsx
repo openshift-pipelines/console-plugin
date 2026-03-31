@@ -60,7 +60,7 @@ const PipelinesOverviewPageK8s: FC = () => {
       <PageSection hasBodyWrapper={false} className="pf-v6-u-pl-md">
         <Title headingLevel="h2">{t('Overview')}</Title>
       </PageSection>
-      <div className="pf-v5-u-m-md">
+      <div className="pf-v6-u-m-md">
         <K8sDataLimitationAlert />
       </div>
       <Flex className="pf-v6-u-pl-md pf-v6-u-pr-md pf-v6-u-mb-md">

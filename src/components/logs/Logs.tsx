@@ -411,7 +411,7 @@ const Logs: FC<LogsProps> = ({
   }, [logData, activeStep, findTargetRowForActiveStep]);
 
   return (
-    <div className="pf-v5-u-h-100 pf-v5-u-w-100">
+    <div className="pf-v6-u-h-100 pf-v6-u-w-100">
       {error && (
         <Alert
           variant="danger"
@@ -422,8 +422,8 @@ const Logs: FC<LogsProps> = ({
       <LogViewer
         useAnsiClasses={true}
         header={
-          <Banner className="pf-v5-l-flex pf-v5-l-gap-md">
-            <span data-test-id="logs-taskName" className="pf-v5-u-font-size-md">
+          <Banner className="pf-v6-l-flex pf-v6-l-gap-md">
+            <span data-test-id="logs-taskName" className="pf-v6-u-font-size-md">
               {taskName}
             </span>
             {stillFetching ? (

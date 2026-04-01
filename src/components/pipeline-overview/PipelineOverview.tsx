@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Flex, FlexItem, List, ListItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -73,8 +73,8 @@ const PipelinesOverview: FC<PipelinesOverviewProps> = ({
           </Link>
         )}
       </SidebarSectionHeading>
-      <ul className="list-group">
-        <li className="list-group-item pipeline-overview">
+      <List isPlain>
+        <ListItem>
           <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
             <FlexItem>
               <ResourceLink
@@ -98,11 +98,11 @@ const PipelinesOverview: FC<PipelinesOverviewProps> = ({
               )}
             </FlexItem>
           </Flex>
-        </li>
+        </ListItem>
         {_.take(pipelineRuns, MAX_VISIBLE).map((pr) => (
           <PipelineRunItem key={pr.metadata.uid} pipelineRun={pr} />
         ))}
-      </ul>
+      </List>
       <TriggersOverview pipeline={pipeline} />
     </div>
   );

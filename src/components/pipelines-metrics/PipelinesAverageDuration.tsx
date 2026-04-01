@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -38,7 +38,6 @@ interface PipelinesAverageDurationProps {
   parentName?: string;
   kind?: string;
   namespace?: string;
-  width?: number;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
@@ -75,8 +74,7 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
   interval,
   parentName,
   namespace,
-  kind,
-  width = 530
+  kind
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
@@ -93,6 +91,12 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
     x: domainX || [startDate, endDate],
     y: domainY || undefined,
   };
+  const [chartWidth, setChartWidth] = useState(0);
+  const chartContainerRef = useCallback((node: HTMLDivElement | null) => {
+      if (node) {
+        setChartWidth(node.clientWidth);
+      }
+    }, []);
 
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
@@ -224,6 +228,7 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
       fontSize: 12,
     },
   };
+  let bottomPad: number;
   if (tickValues.length > 7) {
     xAxisStyle = {
       tickLabels: {
@@ -234,7 +239,13 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
         verticalAnchor: 'end',
       },
     };
+    bottomPad = 55;
+  } else {
+    bottomPad = 35;
   }
+  if (showLabel) bottomPad += 15;
+  // Calculating height using this formula with the help of width and bottom padding
+  const chartHeight = 10 + Math.max(50, Math.min(100, Math.round(chartWidth / 5))) + bottomPad;
 
   return (
     <>
@@ -261,7 +272,10 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
               className="pf-v6-u-mb-md pf-v6-u-ml-lg pf-v6-u-mt-lg"
             />
           ) : (
-            <div className="pf-v6-u-flex-shrink-0">
+            <div
+              ref={chartContainerRef}
+              className={`pf-v6-u-w-100 ${chartWidth > 0 ? 'pf-v6-u-h-100' : ''}`}
+            >
               {loaded ? (
                 <Chart
                   containerComponent={
@@ -273,11 +287,11 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
                   scale={{ x: 'time', y: 'linear' }}
                   domain={domainValue}
                   domainPadding={{ x: [30, 25] }}
-                  height={145}
-                  width={width}
+                  height={chartHeight}
+                  width={chartWidth}
                   padding={{
                     top: 10,
-                    bottom: 55,
+                    bottom: bottomPad,
                     left: 50,
                     right: 50,
                   }}
@@ -299,7 +313,7 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
                   </ChartGroup>
                 </Chart>
               ) : (
-                <div className="pipeline-overview__number-of-plr-card__loading pf-v6-u-h-100">
+                <div className="pf-v6-u-display-flex pf-v6-u-align-items-center pf-v6-u-justify-content-center pf-v6-u-h-100 pf-v6-u-p-md pf-v6-u-p-0-on-md">
                   <LoadingInline />
                 </div>
               )}

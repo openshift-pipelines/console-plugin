@@ -261,49 +261,51 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
               className="pf-v6-u-mb-md pf-v6-u-ml-lg pf-v6-u-mt-lg"
             />
           ) : (
-            <div className="pf-v6-u-flex-shrink-0">
+            <>
               {loaded ? (
-                <Chart
-                  containerComponent={
-                    <ChartVoronoiContainer
-                      labels={({ datum }) => `${datum.y}m`}
-                      constrainToVisibleArea
+                <div className="pf-v6-u-flex-shrink-0">
+                  <Chart
+                    containerComponent={
+                      <ChartVoronoiContainer
+                        labels={({ datum }) => `${datum.y}m`}
+                        constrainToVisibleArea
+                      />
+                    }
+                    scale={{ x: 'time', y: 'linear' }}
+                    domain={domainValue}
+                    domainPadding={{ x: [30, 25] }}
+                    height={145}
+                    width={width}
+                    padding={{
+                      top: 10,
+                      bottom: 55,
+                      left: 50,
+                      right: 50,
+                    }}
+                    themeColor={ChartThemeColor.blue}
+                  >
+                    <ChartAxis
+                      tickValues={tickValues}
+                      style={xAxisStyle}
+                      tickFormat={xTickFormat}
+                      label={showLabel ? dayLabel : ''}
                     />
-                  }
-                  scale={{ x: 'time', y: 'linear' }}
-                  domain={domainValue}
-                  domainPadding={{ x: [30, 25] }}
-                  height={145}
-                  width={width}
-                  padding={{
-                    top: 10,
-                    bottom: 55,
-                    left: 50,
-                    right: 50,
-                  }}
-                  themeColor={ChartThemeColor.blue}
-                >
-                  <ChartAxis
-                    tickValues={tickValues}
-                    style={xAxisStyle}
-                    tickFormat={xTickFormat}
-                    label={showLabel ? dayLabel : ''}
-                  />
-                  <ChartAxis
-                    dependentAxis
-                    style={yAxisStyle}
-                    tickFormat={(v) => `${v}m`}
-                  />
-                  <ChartGroup>
-                    <ChartBar data={chartData} barWidth={18} />
-                  </ChartGroup>
-                </Chart>
+                    <ChartAxis
+                      dependentAxis
+                      style={yAxisStyle}
+                      tickFormat={(v) => `${v}m`}
+                    />
+                    <ChartGroup>
+                      <ChartBar data={chartData} barWidth={18} />
+                    </ChartGroup>
+                  </Chart>
+                </div>
               ) : (
-                <div className="pipeline-overview__number-of-plr-card__loading pf-v6-u-h-100">
+                <div className="pf-v6-u-display-flex pf-v6-u-align-items-center pf-v6-u-justify-content-center pf-v6-u-w-100 pf-v6-u-h-100">
                   <LoadingInline />
                 </div>
               )}
-            </div>
+            </>
           )}
         </CardBody>
       </Card>

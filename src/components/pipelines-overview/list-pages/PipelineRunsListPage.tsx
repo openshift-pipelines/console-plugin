@@ -170,6 +170,7 @@ const PipelineRunsListPage: FC<PipelineRunsListPageProps> = ({
           />
         ) : (
           <>
+          {loaded && (
             <Grid hasGutter className="pipeline-overview__listpage__grid">
               <GridItem
                 span={9}
@@ -200,6 +201,7 @@ const PipelineRunsListPage: FC<PipelineRunsListPageProps> = ({
                 </ToggleGroup>
               </GridItem>
             </Grid>
+            )}
             <Grid hasGutter>
               <GridItem span={12}>
                 {pageFlag === 1 ? (

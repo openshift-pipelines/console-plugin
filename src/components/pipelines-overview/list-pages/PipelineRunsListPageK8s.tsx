@@ -271,6 +271,7 @@ const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
           />
         ) : (
           <>
+          {!loadingPipelineRunsMetricsCount && !loadingPipelineRunsMetricsSum && (
             <Grid hasGutter className="pipeline-overview__listpage__grid">
               <GridItem
                 span={9}
@@ -303,6 +304,7 @@ const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
             </ToggleGroup>
           </GridItem> */}
             </Grid>
+          )}
             <Grid hasGutter>
               <GridItem span={12}>
                 {pageFlag === 1 ? (

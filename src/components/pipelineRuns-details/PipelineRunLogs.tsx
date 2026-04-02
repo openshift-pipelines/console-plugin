@@ -292,7 +292,7 @@ export const PipelineRunLogsWithActiveTask: FC<
     plrStatus !== ComputedStatus.Running &&
     plrStatus !== ComputedStatus.Pending &&
     plrStatus !== ComputedStatus.Cancelling;
-  const [taskRuns, taskRunsLoaded, , , pendingAdmission, proxyUnavailable] =
+  const [taskRuns, k8sLoaded, trLoaded, , pendingAdmission, proxyUnavailable] =
     useTaskRuns(
       obj?.metadata?.namespace,
       obj?.metadata?.name,
@@ -303,6 +303,8 @@ export const PipelineRunLogsWithActiveTask: FC<
         pipelineRunManagedBy: obj?.spec?.managedBy,
       },
     );
+  /* this needs decoupling */
+  const taskRunsLoaded = k8sLoaded || trLoaded;
   const { isResourceManagedByKueue } = useMultiClusterProxyService({
     managedBy: obj?.spec?.managedBy,
   });

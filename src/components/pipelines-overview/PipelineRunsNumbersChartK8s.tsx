@@ -279,45 +279,47 @@ const PipelineRunsNumbersChartK8s: FC<PipelinesRunsNumbersChartProps> = ({
               className="pf-v6-u-ml-lg"
             />
           ) : (
-            <div
-              className="pf-v6-u-flex-shrink-0"
-            >
+            <>
               {loadingRunSuccessRatioData ? (
-                <LoadingInline />
+                <div className="pf-v6-u-display-flex pf-v6-u-align-items-center pf-v6-u-justify-content-center pf-v6-u-w-100 pf-v6-u-h-100">
+                  <LoadingInline />
+                </div>
               ) : (
-                <Chart
-                  containerComponent={
-                    <ChartVoronoiContainer
-                      labels={({ datum }) => `${datum.y}`}
-                      constrainToVisibleArea
+                <div className="pf-v6-u-flex-shrink-0">
+                  <Chart
+                    containerComponent={
+                      <ChartVoronoiContainer
+                        labels={({ datum }) => `${datum.y}`}
+                        constrainToVisibleArea
+                      />
+                    }
+                    scale={{ x: 'time', y: 'linear' }}
+                    domain={domainValue}
+                    domainPadding={{ x: [30, 25] }}
+                    height={145}
+                    width={width}
+                    padding={{
+                      top: 10,
+                      bottom: 55,
+                      left: 50,
+                      right: 50,
+                    }}
+                    themeColor={ChartThemeColor.blue}
+                  >
+                    <ChartAxis
+                      tickValues={tickValues}
+                      style={xAxisStyle}
+                      tickFormat={xTickFormat}
+                      label={showLabel ? dayLabel : ''}
                     />
-                  }
-                  scale={{ x: 'time', y: 'linear' }}
-                  domain={domainValue}
-                  domainPadding={{ x: [30, 25] }}
-                  height={145}
-                  width={width}
-                  padding={{
-                    top: 10,
-                    bottom: 55,
-                    left: 50,
-                    right: 50,
-                  }}
-                  themeColor={ChartThemeColor.blue}
-                >
-                  <ChartAxis
-                    tickValues={tickValues}
-                    style={xAxisStyle}
-                    tickFormat={xTickFormat}
-                    label={showLabel ? dayLabel : ''}
-                  />
-                  <ChartAxis dependentAxis style={yAxisStyle} />
-                  <ChartGroup>
-                    <ChartBar data={chartData} barWidth={18} />
-                  </ChartGroup>
-                </Chart>
+                    <ChartAxis dependentAxis style={yAxisStyle} />
+                    <ChartGroup>
+                      <ChartBar data={chartData} barWidth={18} />
+                    </ChartGroup>
+                  </Chart>
+                </div>
               )}
-            </div>
+            </>
           )}
         </CardBody>
       </Card>

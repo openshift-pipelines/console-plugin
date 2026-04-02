@@ -86,7 +86,7 @@ const PipelinesAverageDurationK8s: FC<PipelinesAverageDurationProps> = ({
   interval,
   parentName,
   namespace,
-  width = 530
+  width = 530,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const startTimespan = timespan - parsePrometheusDuration('1d');
@@ -299,16 +299,18 @@ const PipelinesAverageDurationK8s: FC<PipelinesAverageDurationProps> = ({
     <>
       <Card
         className={classNames({
-          'pf-v6-u-h-100 pipeline-overview__min-width-full pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column': !averageDurationError,
+          'pf-v6-u-h-100 pipeline-overview__min-width-full pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column':
+            !averageDurationError,
           'card-border': bordered,
         })}
       >
         <CardTitle className="pf-v6-u-pb-0">
           <span>{t('Average duration')}</span>
         </CardTitle>
-        <CardBody 
+        <CardBody
           className={classNames({
-            'pf-v6-u-flex-1 pipeline-overview__min-height-0 pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-justify-content-flex-end pf-v6-u-align-items-flex-start pf-v6-u-p-0': !averageDurationError,
+            'pf-v6-u-flex-1 pipeline-overview__min-height-0 pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-justify-content-flex-end pf-v6-u-align-items-flex-start pf-v6-u-p-0':
+              !averageDurationError,
           })}
         >
           {averageDurationError ? (

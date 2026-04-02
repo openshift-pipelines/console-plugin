@@ -48,7 +48,10 @@
     margin-left: auto !important;
   }
   &__icon {
-    background-color: var(--pf-t--global--background--color--secondary--default);
-    border-bottom: solid var(--pf-v5-global--BorderWidth--sm) var(--pf-v5-global--BorderColor--200);
+    background-color: var(
+      --pf-t--global--background--color--secondary--default
+    );
+    border-bottom: solid var(--pf-v6-global--BorderWidth--sm)
+      var(--pf-v6-global--BorderColor--200);
   }
 }

@@ -250,8 +250,6 @@ export const useRuns = <Kind extends K8sResourceKind>(
   const isList = !optionsMemo?.name;
   const limit = optionsMemo?.limit;
 
-  const isPipelineRun = groupVersionKind?.kind === PIPELINE_RUN_GVK.kind;
-
   // Hub cluster detection
   const { isResourceManagedByKueue } = useMultiClusterProxyService({
     managedBy: pipelineRunManagedBy,
@@ -375,9 +373,9 @@ export const useRuns = <Kind extends K8sResourceKind>(
   const trNamespace = isTektonResultEnabled && queryTr ? namespace : null;
 
   const [trResources, trLoaded, trError] = useTRRuns<Kind>(
-    isPipelineRun ? trNamespace : null,
+    trNamespace,
     groupVersionKind,
-    isPipelineRun ? trOptions : null,
+    trOptions,
     isTektonResultEnabled,
     optionsMemo?.skipFetch,
   );

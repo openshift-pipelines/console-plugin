@@ -48,7 +48,7 @@ const PipelineRunDetailsPage: FC<PipelineRunDetailsPageProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [pipelineRun, k8sLoaded, trLoaded] = usePipelineRun(namespace, name);
   /* this needs decoupling */
-  const pipelineRunLoaded = k8sLoaded && trLoaded;
+  const pipelineRunLoaded = k8sLoaded || trLoaded;
 
   const customActionMenu = useCallback((_kindObj, obj) => {
     const reference = getReferenceForModel(PipelineRunModel);

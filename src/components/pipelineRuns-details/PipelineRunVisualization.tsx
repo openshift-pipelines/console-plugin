@@ -35,7 +35,7 @@ const PipelineRunVisualization: FC<PipelineRunVisualizationProps> = ({
       },
     );
   /* this needs decoupling */
-  const taskRunsLoaded = k8sLoaded && trLoaded;
+  const taskRunsLoaded = k8sLoaded || trLoaded;
   const pipeline: PipelineKind = usePipelineFromPipelineRun(pipelineRun);
   if (!pipeline) {
     return (

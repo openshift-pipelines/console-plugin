@@ -1,13 +1,17 @@
 import type { ReactNode, FC } from 'react';
-import { ActionList, ActionListGroup, ActionListItem, Button } from '@patternfly/react-core';
+import {
+  ActionList,
+  ActionListGroup,
+  ActionListItem,
+  Button,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { Link, useParams, useNavigate } from 'react-router';
 import {
   MenuActions,
   MenuAction,
   SecondaryButtonAction,
 } from './multi-tab-list-page-types';
-import { useNavigate } from 'react-router-dom-v5-compat';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import {
   HorizontalNav,

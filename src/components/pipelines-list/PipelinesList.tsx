@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom-v5-compat';
+import { useParams, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   ListPageBody,

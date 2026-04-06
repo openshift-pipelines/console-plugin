@@ -11,7 +11,7 @@ import { PipelineRunKind, RepositoryKind } from '../../types';
 import useRepositoriesColumns from './useRepositoriesColumns';
 import RepositoriesRow from './RepositoriesRow';
 import { useGetTaskRuns } from '../hooks/useTektonResult';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { ListPageFilter } from '../list-pages/ListPageFilter';
 

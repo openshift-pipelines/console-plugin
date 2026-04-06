@@ -1,5 +1,5 @@
 import type { ReactNode, FC } from 'react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import cx from 'classnames';
 import { getReference } from '../pipelines-overview/utils';
 import {

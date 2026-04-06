@@ -10,7 +10,7 @@ import Status from '@openshift-console/dynamic-plugin-sdk/lib/app/components/sta
 import _ from 'lodash';
 import type { MouseEvent, FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation, useSearchParams } from 'react-router-dom-v5-compat';
+import { Link, useLocation, useSearchParams } from 'react-router';
 import { formatNamespaceRoute } from '../pipelines-overview/utils';
 
 const getDisplayName = (obj) =>

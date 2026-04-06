@@ -1,6 +1,6 @@
 import type { FunctionComponent, MouseEvent, ReactNode, Ref } from 'react';
 import { Decorator as PfDecorator } from '@patternfly/react-topology';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { CustomSVGDefsProvider } from './CustomSVGDefsProvider';
 
 import './Decorator.scss';

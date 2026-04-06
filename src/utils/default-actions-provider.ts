@@ -8,7 +8,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { getReferenceForModel } from '../components/pipelines-overview/utils';
 import {
   ClusterTriggerBindingModel,

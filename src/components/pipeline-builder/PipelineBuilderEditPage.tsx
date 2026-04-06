@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router';
 import { PipelineModel } from '../../models';
 import { PipelineKind } from '../../types';
 import PipelineBuilderPage from './PipelineBuilderPage';

@@ -10,7 +10,7 @@ import {
 import * as _ from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { useGetActiveUser } from '../components/hooks/hooks';
 import { useErrorModal } from '../components/modals/error-modal';
 import {

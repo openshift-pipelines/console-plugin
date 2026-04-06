@@ -18,7 +18,7 @@ import {
 } from '@patternfly/react-topology';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { NodeType } from './const';
 import { PipelineRunModel, TaskModel } from '../../models';
 import { getReferenceForModel } from '../pipelines-overview/utils';

@@ -28,8 +28,8 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-// Mock react-router-dom-v5-compat
-jest.mock('react-router-dom-v5-compat', () => ({
+// Mock react-router
+jest.mock('react-router', () => ({
   Link: ({ children, to }: { children: ReactNode; to: string }) => (
     <a href={to}>{children}</a>
   ),

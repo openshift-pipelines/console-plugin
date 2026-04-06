@@ -27,7 +27,7 @@ import {
 } from '../multi-tab-list/multi-tab-list-page-types';
 import { MultiTabListPage } from '../multi-tab-list';
 import AllProjectsPage from '../projects-list/AllProjectsPage';
-import { useLocation, useParams } from 'react-router-dom-v5-compat';
+import { useLocation, useParams } from 'react-router';
 import { ApprovalTasksList } from '../approval-tasks';
 import { useK8sGet } from '../hooks/use-k8sGet-hook';
 import { SecretKind } from '../../types';

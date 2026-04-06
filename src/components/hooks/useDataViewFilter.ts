@@ -4,7 +4,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router';
 import { FLAG_PIPELINE_TEKTON_RESULT_INSTALLED } from '../../consts';
 import type {
   CheckboxFilterConfig,

@@ -7,7 +7,7 @@ import {
   useDeleteModal,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { PipelineRunModel } from '../models';
 import { PipelineRunKind } from '../types';
 import { returnValidPipelineRunModel } from '../components/utils/pipeline-utils';

@@ -15,7 +15,7 @@ import {
 } from '../utils/pipeline-approval-utils';
 import { ApprovalStatus } from '../../types';
 import { useApprovalTasks, usePipelineRuns } from '../hooks/useTaskRuns';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import useApprovalsColumns from './useApprovalsColumns';
 import ApprovalRow from './ApprovalRow';
 import { ListPageFilter } from '../list-pages/ListPageFilter';

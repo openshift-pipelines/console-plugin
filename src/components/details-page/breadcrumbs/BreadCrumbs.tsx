@@ -1,6 +1,6 @@
 import type { ReactElement, PropsWithChildren, FC } from 'react';
 import { isValidElement, Fragment } from 'react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 
 type BreadCrumbsProps = {

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { PipelineRunKind } from '../../types';
 import { ResourcesEventStream } from '../pipelines-tasks/tasks-details-pages/events/events';
 import { usePipelineRunFilters } from '../pipelines-tasks/tasks-details-pages/events/event-utils';

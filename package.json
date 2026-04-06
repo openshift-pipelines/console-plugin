@@ -104,8 +104,6 @@
     "react-redux": "~9.2.0",
     "react-rnd": "^10.3.4",
     "react-router": "~7.13.1",
-    "react-router-dom": "5.3.x",
-    "react-router-dom-v5-compat": "^6.11.2",
     "react-transition-group": "2.3.x",
     "react-virtualized": "9.x",
     "resolve-url-loader": "5.0.0",

@@ -4,7 +4,7 @@ import { Nav, NavItem, NavList, Alert, Banner } from '@patternfly/react-core';
 import { LogViewer } from '@patternfly/react-log-viewer';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router-dom-v5-compat';
+import { Link, useLocation } from 'react-router';
 import {
   WatchK8sResource,
   useOverlay,

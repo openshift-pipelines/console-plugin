@@ -4,7 +4,7 @@ import {
   ContentVariants,
 } from '@patternfly/react-core';
 import { useMemo, useCallback } from 'react';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   getGroupVersionKindForModel,

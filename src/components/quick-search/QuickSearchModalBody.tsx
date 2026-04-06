@@ -1,7 +1,7 @@
 import type { ReactNode, SetStateAction, Dispatch, FC, FormEvent } from 'react';
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { debounce } from 'lodash-es';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { ResizeDirection } from 're-resizable';
 import { Rnd } from 'react-rnd';
 import { CatalogItem, useFlag } from '@openshift-console/dynamic-plugin-sdk';

@@ -1,4 +1,4 @@
-import { Link, LinkProps } from 'react-router-dom-v5-compat';
+import { Link, LinkProps } from 'react-router';
 
 /**
  * A helper which creates a `Link` component that **only**
@@ -6,7 +6,7 @@ import { Link, LinkProps } from 'react-router-dom-v5-compat';
  *
  * This is needed to bypass PatternFly `DropdownItem`
  * forcing the `to` prop to pass as `href`, which breaks
- * `react-router-dom` routing and causes a hard reload.
+ * `react-router` routing and causes a hard reload.
  *
  * @param href - The location to link to.
  * @param extraLinkProps - Any additional props to pass to the `Link` component.

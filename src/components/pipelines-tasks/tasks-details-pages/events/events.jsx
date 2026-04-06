@@ -3,7 +3,7 @@ import { useState, useRef, useMemo, useEffect } from 'react';
 import { PageSection } from '@patternfly/react-core';
 import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   isGroupVersionKind,

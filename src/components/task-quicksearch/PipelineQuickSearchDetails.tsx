@@ -17,7 +17,7 @@ import {
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import { getArtifactHubTaskDetails } from '../catalog/apis/artifactHub';
 import {

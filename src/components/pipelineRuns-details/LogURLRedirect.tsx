@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Navigate, useLocation, useParams } from 'react-router-dom-v5-compat';
+import { Navigate, useLocation, useParams } from 'react-router';
 
 const createLogURL = (pathname: string, taskName: string): string => {
   const basePath = pathname.replace(/\/$/, '');

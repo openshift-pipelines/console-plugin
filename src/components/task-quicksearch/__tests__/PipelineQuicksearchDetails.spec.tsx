@@ -30,7 +30,7 @@ jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
+jest.mock('react-router', () => ({
   useNavigate: jest.fn(() => jest.fn()),
 }));
 

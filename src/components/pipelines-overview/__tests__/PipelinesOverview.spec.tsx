@@ -6,10 +6,8 @@ import {
   useActiveNamespace,
   useFlag,
 } from '@openshift-console/dynamic-plugin-sdk';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import PipelinesOverviewPage from '../PipelinesOverviewPage';
 import { getResultsSummary } from '../../utils/summary-api';
 import * as utils from '../utils';
@@ -34,7 +32,7 @@ jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),
   useSelector: jest.fn(),
 }));
-jest.mock('react-router-dom-v5-compat', () => ({
+jest.mock('react-router', () => ({
   useLocation: jest.fn(),
 }));
 (VirtualizedTable as jest.Mock).mockImplementation((props) => {
@@ -50,8 +48,8 @@ const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const useActiveColumnsMock = useActiveColumns as jest.Mock;
 const getResultsSummaryMock = getResultsSummary as jest.Mock;
 const useFlagMock = useFlag as jest.Mock;
-const useDispatchMock = useDispatch as jest.Mock;
-const useSelectorMock = useSelector as jest.Mock;
+const useDispatchMock = useDispatch as unknown as jest.Mock;
+const useSelectorMock = useSelector as unknown as jest.Mock;
 const useLocationMock = useLocation as jest.Mock;
 
 describe('Pipeline Overview page', () => {

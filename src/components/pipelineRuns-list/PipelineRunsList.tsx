@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useEffect, useMemo, useRef } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom-v5-compat';
+import { useParams, useSearchParams } from 'react-router';
 import { ListPageBody } from '@openshift-console/dynamic-plugin-sdk';
 import usePipelineRunsColumns from './usePipelineRunsColumns';
 import { PipelineRunKind } from '../../types';

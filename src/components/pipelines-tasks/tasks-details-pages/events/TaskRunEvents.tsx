@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { PageSection } from '@patternfly/react-core';
 import { useTaskRunFilters } from './event-utils';
 import { ResourcesEventStream } from './events';

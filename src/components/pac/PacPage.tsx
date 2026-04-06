@@ -4,7 +4,7 @@ import {
   useParams,
   useLocation,
   useNavigate,
-} from 'react-router-dom-v5-compat';
+} from 'react-router';
 
 import { usePacData } from './hooks/usePacData';
 import PacForm from './PacForm';

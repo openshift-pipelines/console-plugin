@@ -14,7 +14,7 @@ import { useActiveNamespace } from '@openshift-console/dynamic-plugin-sdk';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { FlexForm, FormBody } from '../pipeline-builder/form-utils';
 import FormFooter from '../pipelines-details/multi-column-field/FormFooter';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 
 type RepositoryFormProps = FormikProps<FormikValues & RepositoryFormValues>;
 

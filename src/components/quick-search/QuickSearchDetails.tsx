@@ -5,7 +5,7 @@ import {
   Content,
   Title,
 } from '@patternfly/react-core';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
 import CatalogBadges from '../catalog/CatalogBadges';

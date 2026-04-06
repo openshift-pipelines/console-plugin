@@ -3,7 +3,7 @@ import { useRef, useMemo, memo } from 'react';
 import classnames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { Tooltip } from '@patternfly/react-core';
 import {
   observer,

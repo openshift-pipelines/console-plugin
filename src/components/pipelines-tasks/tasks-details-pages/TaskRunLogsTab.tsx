@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router';
 import { taskRunStatus } from '../../utils/pipeline-utils';
 import TaskRunLogs from './TaskRunLogs';
 import { TaskRunKind } from '../../../types';

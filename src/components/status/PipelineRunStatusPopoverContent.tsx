@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { PipelineRunModel } from '../../models';
 import { ComputedStatus, PipelineRunKind } from '../../types';
 import { useTaskRuns } from '../hooks/useTaskRuns';

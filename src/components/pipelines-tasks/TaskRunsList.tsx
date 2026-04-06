@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useSearchParams } from 'react-router-dom-v5-compat';
+import { useParams, useSearchParams } from 'react-router';
 import { SortByDirection } from '@patternfly/react-table';
 import {
   K8sResourceCommon,

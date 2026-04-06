@@ -15,7 +15,7 @@ import {
 } from '@patternfly/react-core';
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
 import { CatalogLinkData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
@@ -23,7 +23,7 @@ import { getIconProps } from '../catalog/catalog-utils';
 import { CatalogType } from '../catalog/types';
 
 import './QuickSearchList.scss';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router';
 
 interface QuickSearchListProps {
   listItems: CatalogItem[];

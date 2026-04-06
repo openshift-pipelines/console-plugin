@@ -19,7 +19,7 @@ import { validationSchema } from './validation-utils';
 import { DocumentTitle, k8sCreate, k8sUpdate } from '@openshift-console/dynamic-plugin-sdk';
 import { returnValidPipelineModel } from '../utils/pipeline-utils';
 import { getReferenceForModel } from '../pipelines-overview/utils';
-import { useNavigate, useParams } from 'react-router-dom-v5-compat';
+import { useNavigate, useParams } from 'react-router';
 
 import './PipelineBuilderPage.scss';
 

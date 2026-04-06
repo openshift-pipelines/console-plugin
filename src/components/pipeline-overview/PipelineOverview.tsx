@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import {
   isPipelineNotStarted,
   removePipelineNotStarted,

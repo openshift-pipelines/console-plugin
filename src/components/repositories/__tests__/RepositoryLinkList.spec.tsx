@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { render } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom-v5-compat';
+import { MemoryRouter } from 'react-router';
 import { PipeLineRunWithRepoMetadata } from '../../../test-data/pipeline-data';
 import { getLabelValue, sanitizeBranchName } from '../../utils/repository-utils';
 import RepositoryLinkList from '../../pipelineRuns-details/RepositoryLinkList';

@@ -4,9 +4,9 @@ import {
   ContentVariants,
   Tooltip,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router';
 import { ArchiveIcon } from '@patternfly/react-icons';
 import { ResourceStatus } from '@openshift-console/dynamic-plugin-sdk';
 import DetailsPage from '../../details-page/DetailsPage';

@@ -3,7 +3,7 @@ import { useRef, useMemo, memo } from 'react';
 import cx from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { Tooltip } from '@patternfly/react-core';
 import QuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/question-circle-icon';
 import { t_chart_color_black_500 as customTaskColor } from "@patternfly/react-tokens/dist/js/t_chart_color_black_500";

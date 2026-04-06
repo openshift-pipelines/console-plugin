@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { SVGDefsProvider } from '@patternfly/react-topology';
 import { useAccessReview } from '@openshift-console/dynamic-plugin-sdk';
 import { ConnectedPipelineRunDecorator } from '../PipelineRunDecorator';

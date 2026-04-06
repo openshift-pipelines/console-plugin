@@ -6,7 +6,7 @@ import {
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
-import { Link, useParams } from 'react-router-dom-v5-compat';
+import { Link, useParams } from 'react-router';
 import {
   getGroupVersionKindForModel,
   useK8sWatchResource,

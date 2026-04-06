@@ -10,7 +10,7 @@ import {
   ContentVariants,
   Tooltip,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { navFactory } from '../utils/horizontal-nav';
 import PipelineRunDetails from './PipelineRunDetails';

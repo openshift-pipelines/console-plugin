@@ -1,19 +1,21 @@
 import {
   ListPageBody,
-  VirtualizedTable,
   getGroupVersionKindForModel,
+  useFlag,
   useK8sWatchResource,
-  useListPageFilter,
 } from '@openshift-console/dynamic-plugin-sdk';
 import type { FC } from 'react';
 import { PipelineRunModel, RepositoryModel } from '../../models';
 import { PipelineRunKind, RepositoryKind } from '../../types';
 import useRepositoriesColumns from './useRepositoriesColumns';
-import RepositoriesRow from './RepositoriesRow';
-import { useGetTaskRuns } from '../hooks/useTektonResult';
+import { getRepositoriesListDataViewRows } from './RepositoriesRow';
 import { useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { ListPageFilter } from '../list-pages/ListPageFilter';
+import { ConsoleDataView } from '@openshift-console/dynamic-plugin-sdk-internal';
+import { useDataViewFilter } from '../hooks/useDataViewFilter';
+import { DataViewFilterToolbar } from '../common/DataViewFilterToolbar';
+import { useTaskRuns } from '../hooks/useTaskRuns';
+import { FLAG_PIPELINE_TEKTON_RESULT_INSTALLED } from '../../consts';
 
 type RepositoriesListProps = {
   namespace?: string;
@@ -43,35 +45,39 @@ const RepositoriesList: FC<RepositoriesListProps> = ({
     namespace,
     optional: true,
   });
-  const [taskRuns, taskRunsLoaded] = useGetTaskRuns(namespace);
-  const [staticData, filteredData, onFilterChange] =
-    useListPageFilter(repositories);
+  const [taskRuns, k8sLoaded, resultsLoaded] = useTaskRuns(namespace);
+  const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
+
+  const { filterValues, onFilterChange, onClearAll, filteredData } =
+    useDataViewFilter<RepositoryKind>({
+      data: repositories || [],
+    });
 
   return (
     <ListPageBody>
-      <ListPageFilter
-        data={staticData}
-        onFilterChange={onFilterChange}
-        loaded={repositoriesLoaded}
-        hideNameLabelFilters={hideTextFilter}
-      />
-      <VirtualizedTable
-        EmptyMsg={() => (
-          <div className="cp-text-align-center" id="no-resource-msg">
-            {t('No Repositories found')}
-          </div>
-        )}
+      {!hideTextFilter && (
+        <DataViewFilterToolbar
+          filterValues={filterValues}
+          onFilterChange={onFilterChange}
+          onClearAll={onClearAll}
+        />
+      )}
+      <ConsoleDataView<RepositoryKind>
+        label={t('Repositories')}
         columns={columns}
         data={filteredData}
         loaded={repositoriesLoaded && pipelineRunsLoaded}
         loadError={repositoriesLoadError}
-        Row={RepositoriesRow}
-        rowData={{
+        getDataViewRows={getRepositoriesListDataViewRows}
+        hideColumnManagement
+        hideNameLabelFilters
+        customRowData={{
           taskRuns,
           pipelineRuns,
-          taskRunsLoaded,
+          taskRunsLoaded: isTektonResultEnabled
+            ? k8sLoaded && resultsLoaded
+            : k8sLoaded,
         }}
-        unfilteredData={staticData}
       />
     </ListPageBody>
   );

@@ -7,7 +7,7 @@ import {
   useDeleteModal,
 } from '@openshift-console/dynamic-plugin-sdk';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { PipelineRunModel } from '../models';
 import { PipelineRunKind } from '../types';
 import { returnValidPipelineRunModel } from '../components/utils/pipeline-utils';
@@ -29,6 +29,7 @@ import { useGetActiveUser } from '../components/hooks/hooks';
 export const usePipelineRunActionsProvider = (resource: PipelineRunKind) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const navigate = useNavigate();
+  const location = useLocation();
   const currentUser = useGetActiveUser();
   const launchErrorModal = useErrorModal();
 
@@ -97,18 +98,21 @@ export const usePipelineRunActionsProvider = (resource: PipelineRunKind) => {
         disabledTooltip: t('Insufficient permissions to create PipelineRun'),
         cta: () => {
           if (namespace && hasPipelineRef) {
+            const isPipelineRunDetailsPage = location.pathname.includes(name);
             k8sCreate({
               model: returnValidPipelineRunModel(resource),
               data: getPipelineRunData(null, currentUser, resource),
             })
               .then((plr) => {
-                navigate(
-                  resourcePathFromModel(
-                    PipelineRunModel,
-                    plr.metadata.name,
-                    plr.metadata.namespace,
-                  ),
-                );
+                if (isPipelineRunDetailsPage) {
+                  navigate(
+                    resourcePathFromModel(
+                      PipelineRunModel,
+                      plr.metadata.name,
+                      plr.metadata.namespace,
+                    ),
+                  );
+                }
               })
               .catch((err) => {
                 launchErrorModal({ error: err.message });
@@ -200,6 +204,7 @@ export const usePipelineRunActionsProvider = (resource: PipelineRunKind) => {
     namespace,
     resource,
     currentUser,
+    location,
     hasPipelineRef,
     hidePLRStop,
     hidePLRCancel,

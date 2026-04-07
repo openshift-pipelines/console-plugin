@@ -6,6 +6,7 @@ import { PipelineRunModel } from '../../models';
 import PipelineRunVisualization from './PipelineRunVisualization';
 import PipelineRunCustomDetails from './PipelineRunCustomDetails';
 import { Grid, GridItem, PageSection, Title } from '@patternfly/react-core';
+import { Loading } from '../Loading';
 
 type PipelineRunDetailsProps = {
   obj: PipelineRunKind;
@@ -15,8 +16,12 @@ const PipelineRunDetails: FC<PipelineRunDetailsProps> = ({
   obj: pipelineRun,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  if (!pipelineRun) {
+    return <Loading />;
+  }
+
   return (
-    <PageSection hasBodyWrapper={false} isFilled >
+    <PageSection hasBodyWrapper={false} isFilled>
       <Title headingLevel="h2">{t('PipelineRun details')}</Title>
       <PipelineRunVisualization pipelineRun={pipelineRun} />
       <Grid hasGutter>

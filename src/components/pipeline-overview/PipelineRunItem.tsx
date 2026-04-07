@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, ListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { useTaskRuns } from '../hooks/useTaskRuns';
@@ -49,7 +49,7 @@ const PipelineRunItem: FC<PipelineRunItemProps> = ({ pipelineRun }) => {
     : creationTimestamp;
   const logDetails = getPLRLogSnippet(pipelineRun, taskRuns);
   return (
-    <li className="opp-pipeline-run-item list-group-item">
+    <ListItem className="opp-pipeline-run-item">
       <Grid hasGutter>
         <GridItem span={6}>
           <div>
@@ -88,7 +88,7 @@ const PipelineRunItem: FC<PipelineRunItemProps> = ({ pipelineRun }) => {
           </GridItem>
         )}
       </Grid>
-    </li>
+    </ListItem>
   );
 };
 

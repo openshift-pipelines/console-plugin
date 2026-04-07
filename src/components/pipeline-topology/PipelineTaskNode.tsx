@@ -1,5 +1,5 @@
 import type { FunctionComponent } from 'react';
-import { useRef, useMemo, memo } from 'react';
+import { useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import {
@@ -15,9 +15,9 @@ import {
   WhenDecorator,
   WithContextMenuProps,
   WithSelectionProps,
+  observer,
 } from '@patternfly/react-topology';
 import classNames from 'classnames';
-import { observer } from 'mobx-react';
 import { Link } from 'react-router';
 import { NodeType } from './const';
 import { PipelineRunModel, TaskModel } from '../../models';
@@ -223,4 +223,4 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
   );
 };
 
-export default memo(observer(PipelineTaskNode));
+export default observer(PipelineTaskNode);

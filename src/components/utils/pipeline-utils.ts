@@ -150,14 +150,17 @@ export const appendPipelineRunStatus = (
       if (
         pipelineRun.spec.status === SucceedConditionReason.PipelineRunCancelled
       ) {
-        return _.merge(task, { status: { reason: ComputedStatus.Cancelled } });
+        return { ...task, status: { reason: ComputedStatus.Cancelled } };
       }
       if (
         pipelineRun.spec.status === SucceedConditionReason.PipelineRunPending
       ) {
-        return _.merge(task, { status: { reason: ComputedStatus.Idle } });
+        return { ...task, status: { reason: ComputedStatus.Idle } };
       }
-      return _.merge(task, { status: { reason: ComputedStatus.Failed } });
+      if (pipelineRunStatus(pipelineRun) === ComputedStatus.Failed) {
+        return { ...task, status: { reason: ComputedStatus.Failed } };
+      }
+      return { ...task, status: { reason: ComputedStatus.Pending } };
     }
 
     const taskRun = _.find(
@@ -167,16 +170,10 @@ export const appendPipelineRunStatus = (
     );
     const taskStatus: TaskRunStatus = taskRun?.status;
 
-    const mTask = _.merge(task, {
-      status: pipelineRun?.status?.taskRuns
-        ? _.get(
-            _.find(pipelineRun.status.taskRuns, {
-              pipelineTaskName: task.name,
-            }),
-            'status',
-          )
-        : taskStatus,
-    });
+    const mTask = {
+      ...task,
+      status: taskStatus ? { ...taskStatus } : undefined,
+    };
     // append task duration
     if (mTask.status && mTask.status.completionTime && mTask.status.startTime) {
       const date =
@@ -187,9 +184,9 @@ export const appendPipelineRunStatus = (
     // append task status
     if (!mTask.status) {
       mTask.status = { reason: ComputedStatus.Pending };
-    } else if (mTask.status && mTask.status.conditions) {
+    } else if (mTask.status.conditions) {
       mTask.status.reason = pipelineRunStatus(mTask) || ComputedStatus.Pending;
-    } else if (mTask.status && !mTask.status.reason) {
+    } else if (!mTask.status.reason) {
       mTask.status.reason = ComputedStatus.Pending;
     }
     return mTask;

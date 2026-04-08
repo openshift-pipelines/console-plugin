@@ -15,9 +15,6 @@ export const useTRRuns = <Kind extends K8sResourceCommon>(
   isTektonResultEnabled?: boolean,
   skipFetch?: boolean,
 ): [Kind[], boolean, Error | undefined] => {
-  if (!isTektonResultEnabled) {
-    return [[] as Kind[], true, undefined];
-  }
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const fetchedRef = useRef(false);
   const [results, setResults] = useState<[Kind[], boolean, Error | undefined]>([
@@ -52,7 +49,7 @@ export const useTRRuns = <Kind extends K8sResourceCommon>(
         }
       }
     };
-    !skipFetch && fetchResults();
+    !skipFetch && isTektonResultEnabled && fetchResults();
     return () => {
       fetchedRef.current = false;
     };
@@ -62,7 +59,10 @@ export const useTRRuns = <Kind extends K8sResourceCommon>(
     isDevConsoleProxyAvailable,
     stableOptions,
     skipFetch,
+    isTektonResultEnabled,
   ]);
-
+  if (!isTektonResultEnabled) {
+    return [[], true, undefined];
+  }
   return results;
 };

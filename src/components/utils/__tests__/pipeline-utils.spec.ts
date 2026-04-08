@@ -320,7 +320,7 @@ describe('pipeline-utils ', () => {
     const testTaskRuns = Object.keys(
       pipelineRunWithoutStatus.status.taskRuns,
     ).map((trName) => ({
-      apiVersion: 'v1alpha1',
+      apiVersion: 'v1',
       kind: 'TaskRun',
       metadata: {
         labels: {
@@ -332,15 +332,12 @@ describe('pipeline-utils ', () => {
       spec: {},
       pipelineTaskName:
         pipelineRunWithoutStatus.status.taskRuns[trName].pipelineTaskName,
-      status: pipelineRunWithoutStatus.status.taskRuns[trName].status,
+      status: _.omit(pipelineRunWithoutStatus.status.taskRuns[trName].status, [
+        'conditions',
+        'startTime',
+        'completionTime',
+      ]),
     }));
-    _.forIn(pipelineRunWithoutStatus.status.taskRuns, (taskRun, name) => {
-      pipelineRunWithoutStatus.status.taskRuns[name] = _.omit(taskRun, [
-        'status.conditions',
-        'status.startTime',
-        'status.completionTime',
-      ]);
-    });
     const taskList = appendPipelineRunStatus(
       pipeline,
       pipelineRunWithoutStatus,

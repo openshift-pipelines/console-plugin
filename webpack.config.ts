@@ -161,7 +161,7 @@ const config: Configuration = {
             compilation.errors = compilation.errors.filter(
               (e) =>
                 !(
-                  e.message === 'Missing call to loadPluginEntry' &&
+                  e.message === 'Missing call to __load_plugin_entry__' &&
                   (e as import('webpack').WebpackError).file?.includes(
                     '.hot-update.',
                   )

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import * as _ from 'lodash';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -34,8 +34,6 @@ import {
 } from '../pipelines-metrics/utils';
 import { LoadingInline } from '../Loading';
 
-import './PipelinesOverview.scss';
-
 interface PipelinesRunsNumbersChartProps {
   namespace?: string;
   timespan?: number;
@@ -43,7 +41,6 @@ interface PipelinesRunsNumbersChartProps {
   domain?: DomainPropType;
   parentName?: string;
   bordered?: boolean;
-  width?: number;
 }
 type DomainType = { x?: DomainTuple; y?: DomainTuple };
 
@@ -115,7 +112,6 @@ const PipelineRunsNumbersChartK8s: FC<PipelinesRunsNumbersChartProps> = ({
   domain,
   parentName,
   bordered,
-  width = 530,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const startTimespan = timespan - parsePrometheusDuration('1d');
@@ -233,6 +229,13 @@ const PipelineRunsNumbersChartK8s: FC<PipelinesRunsNumbersChartProps> = ({
       fontSize: 12,
     },
   };
+  const [chartWidth, setChartWidth] = useState(0);
+  const chartContainerRef = useCallback((node: HTMLDivElement | null) => {
+    if (node) {
+      setChartWidth(node.clientWidth);
+    }
+  }, []);
+  let bottomPad: number;
   if (tickValues.length > 7) {
     xAxisStyle = {
       tickLabels: {
@@ -243,7 +246,13 @@ const PipelineRunsNumbersChartK8s: FC<PipelinesRunsNumbersChartProps> = ({
         verticalAnchor: 'end',
       },
     };
+    bottomPad = 55;
+  } else {
+    bottomPad = 35;
   }
+  if (showLabel) bottomPad += 15;
+  // Calculating height using this formula with the help of width and bottom padding
+  const chartHeight = 10 + Math.max(50, Math.min(100, Math.round(chartWidth / 5))) + bottomPad;
 
   useEffect(() => {
     const hasNonAbortError =
@@ -280,10 +289,13 @@ const PipelineRunsNumbersChartK8s: FC<PipelinesRunsNumbersChartProps> = ({
             />
           ) : (
             <div
-              className="pf-v6-u-flex-shrink-0"
+              ref={chartContainerRef}
+              className={`pf-v6-u-w-100 ${chartWidth > 0 ? 'pf-v6-u-h-100' : ''}`}
             >
               {loadingRunSuccessRatioData ? (
-                <LoadingInline />
+                <div className="pf-v6-u-display-flex pf-v6-u-align-items-center pf-v6-u-justify-content-center pf-v6-u-h-100 pf-v6-u-p-md pf-v6-u-p-0-on-md">
+                  <LoadingInline />
+                </div>
               ) : (
                 <Chart
                   containerComponent={
@@ -295,11 +307,11 @@ const PipelineRunsNumbersChartK8s: FC<PipelinesRunsNumbersChartProps> = ({
                   scale={{ x: 'time', y: 'linear' }}
                   domain={domainValue}
                   domainPadding={{ x: [30, 25] }}
-                  height={145}
-                  width={width}
+                  height={chartHeight}
+                  width={chartWidth}
                   padding={{
                     top: 10,
-                    bottom: 55,
+                    bottom: bottomPad,
                     left: 50,
                     right: 50,
                   }}

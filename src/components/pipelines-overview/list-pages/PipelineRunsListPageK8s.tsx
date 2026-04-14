@@ -271,20 +271,22 @@ const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
           />
         ) : (
           <>
-            <Grid hasGutter className="pipeline-overview__listpage__grid">
-              <GridItem
-                span={9}
-                className="pipeline-overview__listpage__griditem"
-              >
-                {/* Lastrun Status is not provided by API  */}
-                {/* <StatusDropdown /> */}
-                <SearchInputField
-                  searchText={searchText}
-                  pageFlag={pageFlag}
-                  handleNameChange={handleNameChange}
-                />
-              </GridItem>
-              {/*
+            {!loadingPipelineRunsMetricsCount &&
+              !loadingPipelineRunsMetricsSum && (
+                <Grid hasGutter className="pipeline-overview__listpage__grid">
+                  <GridItem
+                    span={9}
+                    className="pipeline-overview__listpage__griditem"
+                  >
+                    {/* Lastrun Status is not provided by API  */}
+                    {/* <StatusDropdown /> */}
+                    <SearchInputField
+                      searchText={searchText}
+                      pageFlag={pageFlag}
+                      handleNameChange={handleNameChange}
+                    />
+                  </GridItem>
+                  {/*
           Since Pipeline metrics for PAC is not available, commenting this
           <GridItem span={3}>
             <ToggleGroup className="pipeline-overview__listpage__button">
@@ -302,7 +304,8 @@ const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
               />
             </ToggleGroup>
           </GridItem> */}
-            </Grid>
+                </Grid>
+              )}
             <Grid hasGutter>
               <GridItem span={12}>
                 {pageFlag === 1 ? (

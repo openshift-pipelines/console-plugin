@@ -565,64 +565,78 @@ const PipelineRunsStatusCardK8s: FC<PipelinesRunsStatusCardProps> = ({
           ) : (
             <Grid className="pf-v6-u-align-items-center">
               <GridItem xl2={4} xl={12} lg={12} md={12} sm={12}>
-                {loadingRunSuccessRatioData ? (
-                  <LoadingInline />
-                ) : (
-                  <div>
-                    <ChartDonut
-                      constrainToVisibleArea={true}
-                      data={donutDataK8s}
-                      labels={({ datum }) => `${datum.x}: ${datum.y}%`}
-                      legendData={legendData}
-                      colorScale={colorScale}
-                      legendOrientation="vertical"
-                      legendPosition="right"
-                      height={200}
-                      padding={{
-                        bottom: 30,
-                        right: 140, // Adjusted to accommodate legend
-                        top: 20,
-                      }}
-                      legendComponent={
-                        <ChartLegend
-                          data={legendData}
-                          style={{
-                            labels: {
-                              fill: 'var(--pf-t--global--text--color--regular)',
+                <div className="pf-v6-u-display-flex pf-v6-u-align-items-center pipeline-overview__chart-area">
+                  {loadingRunSuccessRatioData ? (
+                    <div className="pf-v6-u-display-flex pf-v6-u-align-items-center pf-v6-u-justify-content-center pf-v6-u-w-100">
+                      <LoadingInline />
+                    </div>
+                  ) : (
+                    <div>
+                      <ChartDonut
+                        constrainToVisibleArea={true}
+                        data={donutDataK8s}
+                        labels={({ datum }) => `${datum.x}: ${datum.y}%`}
+                        legendData={legendData}
+                        colorScale={colorScale}
+                        legendOrientation="vertical"
+                        legendPosition="right"
+                        height={200}
+                        padding={{
+                          bottom: 30,
+                          right: 140, // Adjusted to accommodate legend
+                          top: 20,
+                        }}
+                        legendComponent={
+                          <ChartLegend
+                            data={legendData}
+                            style={{
+                              labels: {
+                                fill: 'var(--pf-t--global--text--color--regular)',
+                                fontSize: 14,
+                              },
+                            }}
+                          />
+                        }
+                        subTitle={t('Succeeded')}
+                        subTitleComponent={
+                          <ChartLabel
+                            style={{
+                              fill: 'var(--pf-t--global--text--color--subtle)',
                               fontSize: 14,
-                            },
-                          }}
-                        />
-                      }
-                      subTitle={t('Succeeded')}
-                      subTitleComponent={
-                        <ChartLabel
-                          style={{
-                            fill: 'var(--pf-t--global--text--color--subtle)',
-                            fontSize: 14,
-                          }}
-                        />
-                      }
-                      title={
-                        typeof donutDataObjK8s !== 'undefined'
-                          ? `${donutDataObjK8s?.succeeded}/${totalPipelineRuns}`
-                          : ''
-                      }
-                      titleComponent={
-                        <ChartLabel
-                          style={{
-                            fill: 'var(--pf-t--global--text--color--regular)',
-                            fontSize: 24,
-                          }}
-                        />
-                      }
-                      width={350}
-                    />
-                  </div>
-                )}
+                            }}
+                          />
+                        }
+                        title={
+                          typeof donutDataObjK8s !== 'undefined'
+                            ? `${donutDataObjK8s?.succeeded}/${totalPipelineRuns}`
+                            : ''
+                        }
+                        titleComponent={
+                          <ChartLabel
+                            style={{
+                              fill: 'var(--pf-t--global--text--color--regular)',
+                              fontSize: 24,
+                            }}
+                          />
+                        }
+                        width={350}
+                      />
+                    </div>
+                  )}
+                </div>
               </GridItem>
               <GridItem xl2={8} xl={12} lg={12} md={12} sm={12}>
-                <div className="pf-v6-u-display-flex pf-v6-u-align-items-flex-end pf-v6-u-h-100">
+                <div
+                  className={classNames(
+                    'pf-v6-u-display-flex pf-v6-u-h-100 pf-v6-u-w-100 pipeline-overview__chart-area',
+                    {
+                      'pf-v6-u-align-items-flex-end':
+                        !loadingTotalPipelineRunsData,
+                      'pf-v6-u-align-items-center pf-v6-u-justify-content-center':
+                        loadingTotalPipelineRunsData,
+                    },
+                  )}
+                >
                   {loadingTotalPipelineRunsData ? (
                     <LoadingInline />
                   ) : (

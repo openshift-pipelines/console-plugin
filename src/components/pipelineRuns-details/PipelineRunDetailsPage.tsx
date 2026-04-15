@@ -31,7 +31,7 @@ import {
 import PipelineRunParametersForm from './PipelineRunParametersForm';
 import { PipelineRunLogsWithActiveTask } from './PipelineRunLogs';
 import PipelineRunEvents from './PipelineRunEvents';
-import { usePipelineRun } from '../hooks/useTaskRuns';
+import { usePipelineRuns } from '../hooks/useTaskRuns';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { LazyActionMenu } from '@openshift-console/dynamic-plugin-sdk-internal';
 import { ActionMenuVariant } from '@openshift-console/dynamic-plugin-sdk-internal/lib/api/internal-types';
@@ -46,7 +46,11 @@ const PipelineRunDetailsPage: FC<PipelineRunDetailsPageProps> = ({
   namespace,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [pipelineRun, k8sLoaded, trLoaded] = usePipelineRun(namespace, name);
+  const [pipelineRuns, k8sLoaded, trLoaded] = usePipelineRuns(namespace, {
+    name,
+    limit: 1,
+  });
+  const pipelineRun = pipelineRuns?.[0];
   /* this needs decoupling */
   const pipelineRunLoaded = k8sLoaded || trLoaded;
 

@@ -23,7 +23,7 @@ const PipelineRunVisualization: FC<PipelineRunVisualizationProps> = ({
     plrStatus !== ComputedStatus.Running &&
     plrStatus !== ComputedStatus.Pending &&
     plrStatus !== ComputedStatus.Cancelling;
-  const [taskRuns, k8sLoaded, trLoaded, pendingAdmission, proxyUnavailable] =
+  const [taskRuns, k8sLoaded, trLoaded, , pendingAdmission, proxyUnavailable] =
     useTaskRuns(
       pipelineRun?.metadata?.namespace,
       pipelineRun?.metadata?.name,

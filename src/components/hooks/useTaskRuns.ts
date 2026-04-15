@@ -69,6 +69,8 @@ export type UseTaskRunsOptions = {
   pipelineRunFinished?: boolean;
   pipelineRunManagedBy?: string;
   skipFetch?: boolean;
+  name?: string /* used for fetching a single task run by metadata.name */;
+  limit?: number /* used for fetching a limited number of task runs */;
 };
 
 export const useTaskRuns = (
@@ -78,7 +80,7 @@ export const useTaskRuns = (
   pipelineRunUid?: string,
   options?: UseTaskRunsOptions,
 ): [TaskRunKind[], boolean, boolean, Error | undefined, boolean, boolean] => {
-  const { pipelineRunFinished, pipelineRunManagedBy, skipFetch } =
+  const { pipelineRunFinished, pipelineRunManagedBy, skipFetch, name, limit } =
     options || {};
   const selector: Selector = useMemo(() => {
     if (pipelineRunName && pipelineRunUid) {
@@ -106,9 +108,10 @@ export const useTaskRuns = (
     error,
     pendingAdmission,
     proxyUnavailable,
-  ] = useTaskRuns2(
+  ] = useRuns<TaskRunKind>(
+    TASK_RUN_GVK,
     namespace,
-    { selector, skipFetch },
+    { selector, skipFetch, name, limit },
     pipelineRunFinished,
     pipelineRunManagedBy,
   );
@@ -150,24 +153,6 @@ export const useTaskRuns = (
   );
 };
 
-export const useTaskRuns2 = (
-  namespace: string,
-  options?: {
-    selector?: Selector;
-    limit?: number;
-    skipFetch?: boolean;
-  },
-  pipelineRunFinished?: boolean,
-  pipelineRunManagedBy?: string,
-): [TaskRunKind[], boolean, boolean, Error | undefined, boolean, boolean] =>
-  useRuns<TaskRunKind>(
-    TASK_RUN_GVK,
-    namespace,
-    options,
-    pipelineRunFinished,
-    pipelineRunManagedBy,
-  );
-
 export const useApprovalTasks = (
   namespace: string,
   pipelineRunName?: string,
@@ -205,32 +190,14 @@ export const usePipelineRuns = (
   options?: {
     selector?: Selector;
     limit?: number;
+    name?: string;
   },
 ): [PipelineRunKind[], boolean, boolean, Error | undefined, boolean, boolean] =>
-  useRuns<PipelineRunKind>(PIPELINE_RUN_GVK, namespace, options);
-
-export const usePipelineRun = (
-  namespace: string,
-  pipelineRunName: string,
-): [PipelineRunKind, boolean, boolean, Error | undefined] => {
-  const result = usePipelineRuns(
-    namespace,
-    useMemo(
-      () => ({
-        name: pipelineRunName,
-        limit: 1,
-      }),
-      [pipelineRunName],
-    ),
-  ) as unknown as [PipelineRunKind[], boolean, boolean, Error | undefined];
-
-  return [
-    result[0]?.[0],
-    result[1],
-    result[2],
-    result[0]?.[0] ? undefined : result[3],
-  ];
-};
+  useRuns<PipelineRunKind>(PIPELINE_RUN_GVK, namespace, {
+    selector: options?.selector,
+    limit: options?.limit /* similar to one present in UseTaskRunsOptions */,
+    name: options?.name /* similar to one present in UseTaskRunsOptions */,
+  });
 
 export const useRuns = <Kind extends K8sResourceKind>(
   groupVersionKind: K8sGroupVersionKind,
@@ -380,84 +347,45 @@ export const useRuns = <Kind extends K8sResourceKind>(
     optionsMemo?.skipFetch,
   );
 
-  return useMemo(() => {
-    // dedupe PLR by name since UIDs differ between hub and spoke clusters; for other cases(TR) dedupe by UID
+  // dedupe PLR by name since UIDs differ between hub and spoke clusters; for other cases(TR) dedupe by UID
 
-    const rResources: Kind[] =
-      runs && trResources
-        ? !isTaskRunQuery
-          ? uniqBy([...runs, ...trResources], (r) => r.metadata.name)
-          : uniqBy([...runs, ...trResources], (r) => r.metadata.uid)
-        : runs || trResources;
+  const rResources: Kind[] =
+    runs && trResources
+      ? !isTaskRunQuery
+        ? uniqBy([...runs, ...trResources], (r) => r.metadata.name)
+        : uniqBy([...runs, ...trResources], (r) => r.metadata.uid)
+      : runs || trResources;
 
-    /* Refactoring the nesting as it is causing cognitive damage */
-    let resolvedError: Error | undefined = undefined;
+  /* Refactoring the nesting as it is causing cognitive damage */
+  let resolvedError: Error | undefined = undefined;
 
-    if (namespace) {
-      if (queryTr) {
-        if (isList) {
-          resolvedError = trError && effectiveError;
-        } else {
-          // when searching by name, return an error if we have no result
-          if (trError && trLoaded && !trResources?.length) {
-            resolvedError = effectiveError;
-          }
-        }
+  if (namespace) {
+    if (queryTr) {
+      if (isList) {
+        resolvedError = trError && effectiveError;
       } else {
-        resolvedError = effectiveError;
+        // when searching by name, return an error if we have no result
+        if (trError && trLoaded && !trResources?.length) {
+          resolvedError = effectiveError;
+        }
       }
-    } else if (effectiveError) {
+    } else {
       resolvedError = effectiveError;
     }
+  } else if (effectiveError) {
+    resolvedError = effectiveError;
+  }
 
-    const pendingAdmission = shouldUseMultiCluster ? mcPendingAdmission : false;
-    const proxyUnavailable = shouldUseMultiCluster ? mcProxyUnavailable : false;
+  const pendingAdmission = shouldUseMultiCluster ? mcPendingAdmission : false;
+  const proxyUnavailable = shouldUseMultiCluster ? mcProxyUnavailable : false;
 
-    const isTrLoaded = trLoaded || !!trError;
-    return [
-      rResources,
-      effectiveLoaded,
-      isTrLoaded,
-      resolvedError,
-      pendingAdmission,
-      proxyUnavailable,
-    ];
-  }, [
-    runs,
-    trResources,
-    loaded,
-    trLoaded,
-    isTektonResultEnabled,
-    namespace,
-    queryTr,
-    isList,
-    trError,
-    error,
-  ]);
-};
-
-export const useTaskRun = (
-  namespace: string,
-  taskRunName: string,
-): [TaskRunKind, boolean, boolean, string] => {
-  const result = useTaskRuns2(
-    namespace,
-    useMemo(
-      () => ({
-        name: taskRunName,
-        limit: 1,
-      }),
-      [taskRunName],
-    ),
-  ) as unknown as [TaskRunKind[], boolean, boolean, string];
-
-  return useMemo(
-    () => [
-      result[0]?.[0],
-      result[1],
-      result[2],
-      result[0]?.[0] ? undefined : result[3],
-    ],
-    [result],
-  );
+  const isTrLoaded = trLoaded || !!trError;
+  return [
+    rResources,
+    effectiveLoaded,
+    isTrLoaded,
+    resolvedError,
+    pendingAdmission,
+    proxyUnavailable,
+  ];
 };

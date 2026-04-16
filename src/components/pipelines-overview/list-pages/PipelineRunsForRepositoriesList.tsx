@@ -1,22 +1,20 @@
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EmptyState, EmptyStateVariant } from '@patternfly/react-core';
-import { sortable } from '@patternfly/react-table';
-import {
-  TableColumn,
-  VirtualizedTable,
-  useActiveColumns,
-} from '@openshift-console/dynamic-plugin-sdk';
-import PipelineRunsForRepositoriesRow from './PipelineRunsForRepositoriesRow';
+import { useActiveNamespace } from '@openshift-console/dynamic-plugin-sdk';
+import { ConsoleDataView } from '@openshift-console/dynamic-plugin-sdk-internal';
 import {
   SummaryProps,
   sortByNumbers,
   sortByProperty,
   sortByTimestamp,
   sortTimeStrings,
-  listPageTableColumnClasses as tableColumnClasses,
 } from '../utils';
+import {
+  getPipelineRunsForRepositoriesDataViewRows,
+  tableColumnInfo,
+} from './PipelineRunsForRepositoriesRow';
+import { ALL_NAMESPACES_KEY } from '../../../consts';
 
 type PipelineRunsForRepositoriesListProps = {
   summaryData: SummaryProps[];
@@ -28,52 +26,53 @@ const PipelineRunsForRepositoriesList: FC<
   PipelineRunsForRepositoriesListProps
 > = ({ summaryData, summaryDataFiltered, loaded }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const EmptyMsg = () => (
-    <EmptyState variant={EmptyStateVariant.lg} headingLevel="h4" titleText={t('No PipelineRuns found')}>
-    </EmptyState>
-  );
+  const [activeNamespace] = useActiveNamespace();
 
-  const plrColumns = useMemo<TableColumn<SummaryProps>[]>(
+  const columns = useMemo(
     () => [
       {
-        id: 'repoName',
+        id: tableColumnInfo[0].id,
         title: t('Repository'),
         sort: (summary, direction: 'asc' | 'desc') =>
           sortByProperty(summary, 'repoName', direction),
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
+        props: {
+          modifier: 'nowrap',
+          isStickyColumn: true,
+          hasRightBorder: true,
+          stickyMinWidth: '0',
+        },
       },
+      ...(activeNamespace === ALL_NAMESPACES_KEY
+        ? [
+            {
+              id: tableColumnInfo[1].id,
+              title: t('Project'),
+              sort: (summary, direction: 'asc' | 'desc') =>
+                sortByProperty(summary, 'namespace', direction),
+              props: { modifier: 'nowrap' },
+            },
+          ]
+        : []),
       {
-        id: 'namespace',
-        title: t('Project'),
-        sort: (summary, direction: 'asc' | 'desc') =>
-          sortByProperty(summary, 'namespace', direction),
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        id: 'total',
+        id: tableColumnInfo[2].id,
         title: t('Total Pipelineruns'),
         sort: 'total',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        props: { modifier: 'nowrap' },
       },
       {
-        id: 'totalDuration',
+        id: tableColumnInfo[3].id,
         title: t('Total duration'),
         sort: (summary, direction: 'asc' | 'desc') =>
           sortTimeStrings(summary, 'total_duration', direction),
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
+        props: { modifier: 'nowrap' },
       },
       {
-        id: 'avgDuration',
+        id: tableColumnInfo[4].id,
         title: t('Average duration'),
         sort: (summary, direction: 'asc' | 'desc') =>
           sortTimeStrings(summary, 'avg_duration', direction),
-        transforms: [sortable],
         props: {
-          className: tableColumnClasses[4],
+          modifier: 'nowrap',
           info: {
             tooltip: t(
               'An average of the time taken to run PipelineRuns. The trending shown is based on the time range selected. This metric does not show runs that are running or pending.',
@@ -83,13 +82,12 @@ const PipelineRunsForRepositoriesList: FC<
         },
       },
       {
-        id: 'successRate',
+        id: tableColumnInfo[5].id,
         title: t('Success rate'),
         sort: (summary, direction: 'asc' | 'desc') =>
           sortByNumbers(summary, 'succeeded', direction),
-        transforms: [sortable],
         props: {
-          className: tableColumnClasses[5],
+          modifier: 'nowrap',
           info: {
             tooltip: t(
               'Success rate measure the % of successfully completed pipeline runs in relation to the total number of pipeline runs',
@@ -99,40 +97,26 @@ const PipelineRunsForRepositoriesList: FC<
         },
       },
       {
-        id: 'lastRunTime',
+        id: tableColumnInfo[6].id,
         title: t('Last run time'),
         sort: (summary, direction: 'asc' | 'desc') =>
           sortByTimestamp(summary, 'last_runtime', direction),
-        transforms: [sortable],
-        props: { className: tableColumnClasses[6] },
+        props: { modifier: 'nowrap' },
       },
     ],
-    [t],
+    [t, activeNamespace],
   );
 
-  const [columns] = useActiveColumns({
-    columns: plrColumns,
-    showNamespaceOverride: false,
-    columnManagementID: '',
-  });
-
-  const isEmptyData =
-    (!summaryDataFiltered || summaryDataFiltered.length === 0) &&
-    (!summaryData || summaryData.length === 0);
-
-  if (isEmptyData) {
-    return <EmptyMsg />;
-  }
-
   return (
-    <VirtualizedTable
+    <ConsoleDataView<SummaryProps>
+      label={t('PipelineRuns')}
       columns={columns}
-      Row={PipelineRunsForRepositoriesRow}
       data={summaryDataFiltered || summaryData}
       loaded={loaded}
       loadError={false}
-      unfilteredData={summaryData}
-      EmptyMsg={EmptyMsg}
+      getDataViewRows={getPipelineRunsForRepositoriesDataViewRows}
+      hideColumnManagement
+      hideNameLabelFilters
     />
   );
 };

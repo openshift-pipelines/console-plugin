@@ -91,10 +91,20 @@ const PipelineRunsListPage: FC<PipelineRunsListPageProps> = ({
       90000,
     )
       .then((response) => {
+        const newSummaryData = (response?.summary || []) ?? [];
         setloaded(true);
         setPipelineRunsListError(undefined);
-        setSummaryData((response?.summary || []) ?? []);
-        setSummaryDataFiltered((response?.summary || []) ?? []);
+        setSummaryData(newSummaryData);
+        setSummaryDataFiltered(
+          searchText
+            ? newSummaryData.filter((summary) =>
+                summary.group_value
+                  .split('/')[1]
+                  .toLowerCase()
+                  .includes(searchText.toLowerCase()),
+              )
+            : newSummaryData,
+        );
       })
       .catch((e) => {
         if (e.name === 'AbortError') {
@@ -170,12 +180,8 @@ const PipelineRunsListPage: FC<PipelineRunsListPageProps> = ({
           />
         ) : (
           <>
-          {loaded && (
-            <Grid hasGutter className="pipeline-overview__listpage__grid">
-              <GridItem
-                span={9}
-                className="pipeline-overview__listpage__griditem"
-              >
+            <Grid hasGutter>
+              <GridItem span={3} rowSpan={1}>
                 {/* Lastrun Status is not provided by API  */}
                 {/* <StatusDropdown /> */}
                 <SearchInputField
@@ -184,7 +190,7 @@ const PipelineRunsListPage: FC<PipelineRunsListPageProps> = ({
                   handleNameChange={handleNameChange}
                 />
               </GridItem>
-              <GridItem span={3}>
+              <GridItem span={9} rowSpan={1}>
                 <ToggleGroup className="pf-v6-u-float-inline-end">
                   <ToggleGroupItem
                     text={t('Per Pipeline')}
@@ -200,10 +206,8 @@ const PipelineRunsListPage: FC<PipelineRunsListPageProps> = ({
                   />
                 </ToggleGroup>
               </GridItem>
-            </Grid>
-            )}
-            <Grid hasGutter>
-              <GridItem span={12}>
+
+              <GridItem rowSpan={1} span={12}>
                 {pageFlag === 1 ? (
                   <PipelineRunsForPipelinesList
                     summaryData={summaryData}

@@ -229,12 +229,6 @@ const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
     loadFormat: (v) => (v == 'perrepository' ? 2 : 1),
   });
 
-  // const handlePageChange = (pageNumber: number) => {
-  //   setloaded(false);
-  //   setSummaryData([]);
-  //   setSummaryDataFiltered([]);
-  //   setPageFlag(pageNumber);
-  // };
   const handleNameChange = (value: string) => {
     setSearchText(value);
   };
@@ -271,43 +265,18 @@ const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
           />
         ) : (
           <>
-            {!loadingPipelineRunsMetricsCount &&
-              !loadingPipelineRunsMetricsSum && (
-                <Grid hasGutter className="pipeline-overview__listpage__grid">
-                  <GridItem
-                    span={9}
-                    className="pipeline-overview__listpage__griditem"
-                  >
-                    {/* Lastrun Status is not provided by API  */}
-                    {/* <StatusDropdown /> */}
-                    <SearchInputField
-                      searchText={searchText}
-                      pageFlag={pageFlag}
-                      handleNameChange={handleNameChange}
-                    />
-                  </GridItem>
-                  {/*
-          Since Pipeline metrics for PAC is not available, commenting this
-          <GridItem span={3}>
-            <ToggleGroup className="pipeline-overview__listpage__button">
-              <ToggleGroupItem
-                text={t('Per Pipeline')}
-                buttonId="pipelineButton"
-                isSelected={pageFlag === 1}
-                onChange={() => handlePageChange(1)}
-              />
-              <ToggleGroupItem
-                text={t('Per Repository')}
-                buttonId="repositoryButton"
-                isSelected={pageFlag === 2}
-                onChange={() => handlePageChange(2)}
-              />
-            </ToggleGroup>
-          </GridItem> */}
-                </Grid>
-              )}
             <Grid hasGutter>
-              <GridItem span={12}>
+              <GridItem span={6} xl={3} rowSpan={1}>
+                {/* Lastrun Status is not provided by API  */}
+                {/* <StatusDropdown /> */}
+                <SearchInputField
+                  searchText={searchText}
+                  pageFlag={pageFlag}
+                  handleNameChange={handleNameChange}
+                />
+              </GridItem>
+
+              <GridItem span={12} rowSpan={1}>
                 {pageFlag === 1 ? (
                   <PipelineRunsForPipelinesListK8s
                     summaryData={summaryDataK8s}

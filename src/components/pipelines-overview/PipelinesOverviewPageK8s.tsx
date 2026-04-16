@@ -108,10 +108,7 @@ const PipelinesOverviewPageK8s: FC = () => {
               bordered={true}
             />
           </FlexItem>
-          <FlexItem
-            flex={{ default: 'flexNone', xl: 'flex_2' }}
-            className="pf-v6-u-w-100"
-          >
+          <FlexItem flex={{ default: 'flex_1', xl: 'flex_2' }}>
             <PipelineRunsNumbersChartK8s
               namespace={activeNamespace}
               timespan={timespan}

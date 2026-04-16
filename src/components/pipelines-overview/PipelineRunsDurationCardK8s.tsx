@@ -187,17 +187,17 @@ const PipelineRunsDurationCardK8s: FC<PipelinesRunsDurationProps> = ({
     <>
       <Card
         className={classNames(
-          'pf-v6-u-h-100 pipeline-overview__min-width-full pf-v6-u-font-size-lg',
+          'pf-v6-u-h-100 pipeline-overview__min-width-full',
           {
             'card-border': bordered,
           },
         )}
       >
-        <CardTitle className="pf-v6-u-font-size-xl">
+        <CardTitle>
           <span>{t('Duration')}</span>
         </CardTitle>
         <Divider />
-        <CardBody className="pf-v6-u-font-size-lg pipeline-overview__min-width-min-content">
+        <CardBody>
           {pipelineRunsDurationError ? (
             <Alert
               variant="danger"
@@ -207,16 +207,16 @@ const PipelineRunsDurationCardK8s: FC<PipelinesRunsDurationProps> = ({
             />
           ) : (
             <>
-              <Grid hasGutter className="pf-v6-u-mb-sm pf-v6-u-font-size-lg">
+              <Grid hasGutter className="pf-v6-u-mb-sm">
                 <GridItem span={9} className="pf-v6-u-mb-sm">
-                  <span className="pf-v6-u-font-size-lg">
+                  <span>
                     <MonitoringIcon className="pf-v6-u-mr-sm" />
                     {t('Average duration')}
                   </span>
                 </GridItem>
                 <GridItem
                   span={3}
-                  className="pf-v6-u-text-align-end pf-v6-u-font-size-lg pipeline-overview__chart-color-blue"
+                  className="pf-v6-u-text-align-end pipeline-overview__chart-color-blue"
                 >
                   {loadingPipelineRunsCount ? (
                     <Loading isInline={true} />
@@ -225,30 +225,30 @@ const PipelineRunsDurationCardK8s: FC<PipelinesRunsDurationProps> = ({
                   )}
                 </GridItem>
               </Grid>
-              <Grid hasGutter className="pf-v6-u-mb-sm pf-v6-u-font-size-lg">
+              <Grid hasGutter className="pf-v6-u-mb-sm">
                 <GridItem span={9} className="pf-v6-u-mb-sm">
-                  <span className="pf-v6-u-font-size-lg">
+                  <span>
                     <InfoCircleIcon className="pf-v6-u-mr-sm pipeline-overview__chart-color-blue" />
                     {t('Maximum')}
                   </span>
                 </GridItem>
                 <GridItem
                   span={3}
-                  className="pf-v6-u-text-align-end pf-v6-u-font-size-lg pipeline-overview__chart-color-blue"
+                  className="pf-v6-u-text-align-end pipeline-overview__chart-color-blue"
                 >
                   {loadingPipelineRunsCount ? <Loading isInline={true} /> : '-'}
                 </GridItem>
               </Grid>
-              <Grid hasGutter className="pf-v6-u-font-size-lg">
+              <Grid hasGutter>
                 <GridItem span={9}>
-                  <span className="pf-v6-u-font-size-lg">
+                  <span>
                     <HistoryIcon className="pf-v6-u-mr-sm" />
                     {t('Total duration')}
                   </span>
                 </GridItem>
                 <GridItem
                   span={3}
-                  className="pf-v6-u-text-align-end pf-v6-u-font-size-lg pipeline-overview__chart-color-blue"
+                  className="pf-v6-u-text-align-end pipeline-overview__chart-color-blue"
                 >
                   {loadingPipelineRunsDuration ? (
                     <Loading isInline={true} />

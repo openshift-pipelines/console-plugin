@@ -104,7 +104,7 @@ const PipelinesOverviewPage: FC = () => {
               bordered={true}
             />
           </FlexItem>
-          <FlexItem flex={{ default: 'flexNone', xl: 'flex_2' }} className="pf-v6-u-w-100">
+          <FlexItem flex={{ default: 'flex_1', xl: 'flex_2' }}>
             <PipelinesRunsNumbersChart
               namespace={activeNamespace}
               timespan={timespan}

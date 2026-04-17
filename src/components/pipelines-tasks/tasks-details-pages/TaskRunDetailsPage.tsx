@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import TaskRunDetails from './TaskRunDetails';
 import TaskRunLogsTab from './TaskRunLogsTab';
 import TaskRunEvents from './events/TaskRunEvents';
-import { useTaskRun } from '../../hooks/useTaskRuns';
+import { useTaskRuns } from '../../hooks/useTaskRuns';
 import { navFactory } from '../../utils/horizontal-nav';
 import ResourceYAMLEditorViewOnly from '../../yaml-editor/ResourceYAMLEditorViewOnly';
 import {
@@ -31,7 +31,15 @@ const TaskRunDetailsPage = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const params = useParams();
   const { name, ns: namespace } = params;
-  const [data, k8sLoaded, trLoaded] = useTaskRun(namespace, name);
+  /* Returning 1 taskrun */
+  const [taskRuns, k8sLoaded, trLoaded] = useTaskRuns(
+    namespace,
+    undefined, // pipelineRunName
+    undefined, // taskName — this is a label filter so can't be used for fetching 1 item without some refactoring
+    undefined, // pipelineRunUid
+    { name, limit: 1 },
+  );
+  const data = taskRuns?.[0];
   const loaded = k8sLoaded || trLoaded;
   const trStatus = useMemo(
     () => loaded && data && taskRunStatus(data),

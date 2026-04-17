@@ -4,11 +4,15 @@ import {
   K8sResourceKindReference,
   PrometheusResponse,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { adjustToStartOfWeek } from '../pipelines-metrics/utils';
+import {
+  getQueryArgument,
+  removeQueryArgument,
+  setQueryArgument,
+} from '../utils/router';
 
 export const alphanumericCompare = (a: string, b: string): number => {
   return a.localeCompare(b, undefined, {
@@ -277,73 +281,24 @@ export const getFilter = (date, parentName, kind): string => {
 };
 
 export const useQueryParams = (param) => {
-  const {
-    key,
-    setValue,
-    defaultValue,
-    options,
-    displayFormat,
-    loadFormat,
-    value,
-  } = param;
-  const [isLoaded, setIsLoaded] = useState(0);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const queryParams = {};
-  location.search
-    .substring(1)
-    ?.split('&')
-    .forEach((_) => {
-      const [key, value] = _.split('=');
-      if (key) queryParams[key] = value;
-    });
+  const { key, setValue, options, displayFormat, loadFormat, value } = param;
 
-  function setQueryParams(key?: string, value?: string) {
-    const path = location.pathname;
-
-    if (key && value) queryParams[key] = value;
-    navigate(
-      `${path}?${Object.keys(queryParams)
-        .map((k) => {
-          const v = queryParams[k];
-          if (k) return k + '=' + v;
-        })
-        .join('&')}`,
-    );
-  }
-
-  //Loads Url Params Data
   useEffect(() => {
-    if (queryParams[key]) {
-      const paramValue = queryParams[key];
-      if (!options || options[paramValue])
-        setValue(loadFormat ? loadFormat(paramValue) : paramValue);
-    }
-  }, []);
-  //If Url Params doesn't contain a key, initializes with defaultValue
-  useEffect(() => {
-    if (isLoaded >= 0) {
-      if (!queryParams[key]) {
-        const newValue = displayFormat
-          ? displayFormat(defaultValue)
-          : defaultValue;
-        if (newValue) {
-          setQueryParams(key, newValue);
-          setIsLoaded(isLoaded + 1);
-        }
-      } else {
-        setIsLoaded(-1);
+    const urlValue = getQueryArgument(key);
+    if (urlValue) {
+      if (!options || options[urlValue]) {
+        setValue(loadFormat ? loadFormat(urlValue) : urlValue);
       }
     }
-  }, [isLoaded]);
-  //Updating Url Params when values of filter changes
+    return () => removeQueryArgument(key);
+  }, []);
+
   useEffect(() => {
-    const newValue = displayFormat ? displayFormat(value) : value;
-    if (newValue) {
-      setQueryParams(key, newValue);
-    } else if (queryParams[key]) {
-      delete queryParams[key];
-      setQueryParams();
+    const formatted = displayFormat ? displayFormat(value) : value;
+    if (formatted) {
+      setQueryArgument(key, String(formatted));
+    } else {
+      removeQueryArgument(key);
     }
   }, [value]);
 };

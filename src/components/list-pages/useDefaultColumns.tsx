@@ -1,35 +1,40 @@
 import { useTranslation } from 'react-i18next';
-import { sortable } from '@patternfly/react-table';
 import {
   K8sResourceCommon,
   TableColumn,
 } from '@openshift-console/dynamic-plugin-sdk';
+
+export const defaultTableColumnInfo = [
+  { id: 'name' },
+  { id: 'namespace' },
+  { id: 'created' },
+  { id: 'action' },
+];
 
 export const useDefaultColumns = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
   const columns: TableColumn<K8sResourceCommon>[] = [
     {
-      id: 'name',
+      id: defaultTableColumnInfo[0].id,
       sort: 'metadata.name',
       title: t('Name'),
-      transforms: [sortable],
+      props: { width: 30, isStickyColumn: true },
     },
     {
-      id: 'namespace',
+      id: defaultTableColumnInfo[1].id,
       sort: 'metadata.namespace',
       title: t('Namespace'),
-      transforms: [sortable],
+      props: { width: 30 },
     },
     {
-      id: 'created',
+      id: defaultTableColumnInfo[2].id,
       sort: 'metadata.creationTimestamp',
       title: t('Created'),
-      transforms: [sortable],
+      props: { width: 30 },
     },
     {
-      id: '',
-      props: { className: 'dropdown-kebab-pf pf-v6-c-table__action' },
+      id: defaultTableColumnInfo[3].id,
       title: '',
     },
   ];

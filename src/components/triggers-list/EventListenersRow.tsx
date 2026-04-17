@@ -41,7 +41,7 @@ const EventListenersKebab: FC<EventListenersKebabProps> = ({ obj }) => {
   const dropdownItems = K8sCommonKebabMenu(obj, model);
 
   return (
-    (<Dropdown
+    <Dropdown
       onSelect={onSelect}
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
       toggle={(toggleRef: Ref<MenuToggleElement>) => (
@@ -62,7 +62,7 @@ const EventListenersKebab: FC<EventListenersKebabProps> = ({ obj }) => {
       popperProps={{ position: 'right' }}
     >
       <DropdownList>{dropdownItems}</DropdownList>
-    </Dropdown>)
+    </Dropdown>
   );
 };
 
@@ -103,3 +103,4 @@ const EventListenersRow: FC<RowProps<K8sResourceCommon>> = ({
 };
 
 export default EventListenersRow;
+//TODO:: Remove this file after completing ConsoleDataView migration

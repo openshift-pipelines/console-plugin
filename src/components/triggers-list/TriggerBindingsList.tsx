@@ -9,7 +9,7 @@ import {
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { useDefaultColumns } from '../list-pages/default-resources';
+import { useDefaultColumns } from '../list-pages/useDefaultColumns';
 import { TriggerBindingModel } from '../../models';
 import EventListenersRow from './EventListenersRow';
 import { ListPageFilter } from '../list-pages/ListPageFilter';

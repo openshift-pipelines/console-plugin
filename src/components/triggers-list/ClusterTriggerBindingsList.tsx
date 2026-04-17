@@ -8,7 +8,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDefaultColumns } from '../list-pages/default-resources';
+import { useDefaultColumns } from '../list-pages/useDefaultColumns';
 import { ClusterTriggerBindingModel } from '../../models';
 import EventListenersRow from './EventListenersRow';
 import { ListPageFilter } from '../list-pages/ListPageFilter';

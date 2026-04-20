@@ -62,7 +62,7 @@ export const ToastProvider: FC<{ children?: ReactNode }> = ({ children }) => {
     <ToastContext.Provider value={controller}>
       {children}
       {toasts.length ? (
-        <AlertGroup appendTo={() => document.body} isToast>
+        <AlertGroup appendTo={document.body} isToast>
           {toasts.map((toast) => (
             <Alert
               key={toast.id}

@@ -5,7 +5,7 @@ import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
 import PipelineResourceStatus from './PipelineResourceStatus';
 import StatusPopoverContent from './StatusPopoverContent';
-import { LoadingInline } from '../../Loading';
+import { Loading } from '../../Loading';
 import { getPLRLogSnippet } from '../../logs/pipelineRunLogSnippet';
 import { getReferenceForModel } from '../../pipelines-overview/utils';
 import { useMultiClusterProxyService } from '../../hooks/useMultiClusterProxyService';
@@ -25,7 +25,9 @@ const PipelineRunStatus: FC<PipelineRunStatusProps> = ({
   taskRunsLoaded,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const { isResourceManagedByKueue } = useMultiClusterProxyService({ managedBy: pipelineRun?.spec?.managedBy });
+  const { isResourceManagedByKueue } = useMultiClusterProxyService({
+    managedBy: pipelineRun?.spec?.managedBy,
+  });
   const logPath = `/k8s/ns/${
     pipelineRun?.metadata.namespace
   }/${getReferenceForModel(PipelineRunModel)}/${
@@ -43,7 +45,7 @@ const PipelineRunStatus: FC<PipelineRunStatusProps> = ({
         />
       </PipelineResourceStatus>
     ) : (
-      <LoadingInline />
+      <Loading isInline={true} />
     )
   ) : (
     <>{'-'}</>

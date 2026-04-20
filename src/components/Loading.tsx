@@ -15,10 +15,7 @@ export const Loading: FC<LoadingProps> = ({
   ariaLabel,
 }) => (
   <Bullseye data-test="loading-indicator" className={className}>
-    <Spinner size={size} isInline={isInline} aria-label={ariaLabel} />
+    <Spinner size={size ?? 'lg'} isInline={isInline} aria-label={ariaLabel} />
   </Bullseye>
 );
 Loading.displayName = 'Loading';
-
-export const LoadingInline: FC = () => <Loading isInline={true} />;
-LoadingInline.displayName = 'LoadingInline';

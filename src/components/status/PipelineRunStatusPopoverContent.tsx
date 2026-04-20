@@ -7,7 +7,7 @@ import { useTaskRuns } from '../hooks/useTaskRuns';
 import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 import LogSnippetBlock from '../logs/LogSnippetBlock';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
 import { resourcePathFromModel } from '../utils/utils';
 import './StatusPopoverContent.scss';
@@ -42,7 +42,7 @@ const PipelineRunStatusPopoverContent: FC<StatusPopoverContentProps> = ({
   if (!taskRunsLoaded) {
     return (
       <div style={{ minHeight: '300px' }}>
-        <LoadingInline />
+        <Loading isInline={true} />
       </div>
     );
   }

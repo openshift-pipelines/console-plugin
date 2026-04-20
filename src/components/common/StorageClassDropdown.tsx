@@ -1,6 +1,6 @@
 import type { ReactNode, MouseEvent, Ref } from 'react';
 import { Component } from 'react';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 import _ from 'lodash';
 import {
   FormGroup,
@@ -105,7 +105,7 @@ export class StorageClassDropdownInnerWithTranslation extends Component<
     items: {},
     name: this.props.name,
     selectedKey: this.props.selectedKey,
-    title: <LoadingInline />,
+    title: <Loading isInline={true} />,
     defaultClass: this.props.defaultClass,
     isOpen: false,
     filterValue: '',
@@ -149,7 +149,7 @@ export class StorageClassDropdownInnerWithTranslation extends Component<
     if (loadError) {
       this.setState({
         title: (
-          <div className="cos-error-title">
+          <div className="pf-v6-u-text-color-status-danger">
             {t('plugin__pipelines-console-plugin~Error loading {{desc}}', {
               desc: nextProps.desc,
             })}
@@ -281,7 +281,7 @@ export class StorageClassDropdownInnerWithTranslation extends Component<
 
     // Only show the dropdown if 'no storage class' is not the only option which depends on defaultClass
     const itemsAvailableToShow = defaultClass || _.size(this.state.items) > 1;
-    
+
     const toggle = (toggleRef: Ref<MenuToggleElement>) => (
       <MenuToggle
         ref={toggleRef}

@@ -22,7 +22,7 @@ import {
   parsePrometheusDuration,
 } from '../pipelines-overview/dateTime';
 import { ALL_NAMESPACES_KEY } from '../../consts';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 import {
   usePipelineMetricsForAllNamespacePoll,
   usePipelineMetricsForNamespaceForPipelinePoll,
@@ -97,10 +97,10 @@ const PipelinesAverageDurationK8s: FC<PipelinesAverageDurationProps> = ({
   };
   const [chartWidth, setChartWidth] = useState(0);
   const chartContainerRef = useCallback((node: HTMLDivElement | null) => {
-      if (node) {
-        setChartWidth(node.clientWidth);
-      }
-    }, []);
+    if (node) {
+      setChartWidth(node.clientWidth);
+    }
+  }, []);
 
   const [tickValues, type] = getXaxisValues(timespan);
   const [averageDurationError, setAverageDurationError] = useState<
@@ -305,7 +305,8 @@ const PipelinesAverageDurationK8s: FC<PipelinesAverageDurationProps> = ({
   }
   if (showLabel) bottomPad += 15;
   // Calculating height using this formula with the help of width and bottom padding
-  const chartHeight = 10 + Math.max(50, Math.min(100, Math.round(chartWidth / 5))) + bottomPad;
+  const chartHeight =
+    10 + Math.max(50, Math.min(100, Math.round(chartWidth / 5))) + bottomPad;
 
   return (
     <>
@@ -335,7 +336,9 @@ const PipelinesAverageDurationK8s: FC<PipelinesAverageDurationProps> = ({
           ) : (
             <div
               ref={chartContainerRef}
-              className={`pf-v6-u-w-100 ${chartWidth > 0 ? 'pf-v6-u-h-100' : ''}`}
+              className={`pf-v6-u-w-100 ${
+                chartWidth > 0 ? 'pf-v6-u-h-100' : ''
+              }`}
             >
               {!averageDurationLoading ? (
                 <Chart
@@ -375,7 +378,7 @@ const PipelinesAverageDurationK8s: FC<PipelinesAverageDurationProps> = ({
                 </Chart>
               ) : (
                 <div className="pf-v6-u-display-flex pf-v6-u-align-items-center pf-v6-u-justify-content-center pf-v6-u-h-100 pf-v6-u-p-md pf-v6-u-p-0-on-md">
-                  <LoadingInline />
+                  <Loading isInline={true} />
                 </div>
               )}
             </div>

@@ -21,7 +21,7 @@ import {
   SearchInput,
   Divider,
 } from '@patternfly/react-core';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 
 type DropdownItemProps = {
   name: string;
@@ -29,11 +29,7 @@ type DropdownItemProps = {
   resource: K8sResourceKind;
 };
 
-const DropdownItem: FC<DropdownItemProps> = ({
-  name,
-  namespace,
-  resource,
-}) => {
+const DropdownItem: FC<DropdownItemProps> = ({ name, namespace, resource }) => {
   return (
     <span className="co-resource-item">
       <span className="">
@@ -151,7 +147,7 @@ const ResourceDropdown: FC<ResourceDropdownProps> = (props) => {
     loaded ? (
       <span className="btn-dropdown__item--placeholder">{placeholder}</span>
     ) : (
-      <LoadingInline />
+      <Loading isInline={true} />
     ),
   );
   const [isOpen, setIsOpen] = useState(false);
@@ -263,13 +259,13 @@ const ResourceDropdown: FC<ResourceDropdownProps> = (props) => {
   // Handle data updates and initial load
   useEffect(() => {
     if (!loaded && !loadError) {
-      setTitle(<LoadingInline />);
+      setTitle(<Loading isInline={true} />);
       return;
     }
 
     if (loadError) {
       setTitle(
-        <span className="cos-error-title">
+        <span className="pf-v6-u-text-color-status-danger">
           {t(
             'plugin__pipelines-console-plugin~Error loading - {{placeholder}}',
             { placeholder },

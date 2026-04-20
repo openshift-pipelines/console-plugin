@@ -11,7 +11,7 @@ import { ContainerSpec, ContainerStatus, PodKind } from '../../types';
 import { PodModel } from '../../models';
 import { resourceURL } from '../utils/k8s-utils';
 import { containerToLogSourceStatus } from '../utils/pipeline-utils';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 import {
   getMultiClusterLogsUrl,
   getMultiClusterLogsStreamPath,
@@ -428,7 +428,7 @@ const Logs: FC<LogsProps> = ({
             </span>
             {stillFetching ? (
               <span data-test-id="loading-indicator">
-                <LoadingInline />
+                <Loading isInline={true} />
               </span>
             ) : null}
           </Banner>

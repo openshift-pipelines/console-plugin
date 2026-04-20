@@ -49,7 +49,7 @@ import {
   adjustToStartOfWeek,
 } from '../pipelines-metrics/utils';
 import { getTotalPipelineRuns, isMatchingFirstTickValue } from './utils';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 
 interface PipelinesRunsStatusCardProps {
   timespan?: number;
@@ -568,7 +568,7 @@ const PipelineRunsStatusCardK8s: FC<PipelinesRunsStatusCardProps> = ({
                 <div className="pf-v6-u-display-flex pf-v6-u-align-items-center pipeline-overview__chart-area">
                   {loadingRunSuccessRatioData ? (
                     <div className="pf-v6-u-display-flex pf-v6-u-align-items-center pf-v6-u-justify-content-center pf-v6-u-w-100">
-                      <LoadingInline />
+                      <Loading isInline={true} />
                     </div>
                   ) : (
                     <div>
@@ -638,7 +638,7 @@ const PipelineRunsStatusCardK8s: FC<PipelinesRunsStatusCardProps> = ({
                   )}
                 >
                   {loadingTotalPipelineRunsData ? (
-                    <LoadingInline />
+                    <Loading isInline={true} />
                   ) : (
                     <Chart
                       containerComponent={

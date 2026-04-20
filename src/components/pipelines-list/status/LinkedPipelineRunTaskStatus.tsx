@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { PipelineRunKind, TaskRunKind } from '../../../types';
 import { PipelineBars, PipelineBarsForTaskRunsStatus } from './PipelineBars';
-import { LoadingInline } from '../../Loading';
+import { Loading } from '../../Loading';
 import { PipelineRunModel } from '../../../models';
 import { getReferenceForModel } from '../../pipelines-overview/utils';
 import { TaskStatus } from '../../utils/pipeline-augment';
@@ -51,7 +51,7 @@ const LinkedPipelineRunTaskStatus: FC<LinkedPipelineRunTaskStatusProps> = ({
     ) : taskRunsLoaded && taskRuns?.length === 0 && !taskRunStatusObj ? (
       <>{'-'}</>
     ) : (
-      <LoadingInline />
+      <Loading isInline={true} />
     );
 
   if (pipelineRun.metadata?.name && pipelineRun.metadata?.namespace) {

@@ -22,7 +22,7 @@ import { getResultsSummary } from '../utils/summary-api';
 import { DataType, FLAGS } from '../../types';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { formatTime, getDropDownDate } from './dateTime';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 
 import './PipelinesOverview.scss';
 
@@ -113,9 +113,12 @@ const PipelinesRunsDurationCard: FC<PipelinesRunsDurationProps> = ({
   return (
     <>
       <Card
-        className={classNames('pf-v6-u-h-100 pipeline-overview__min-width-full pf-v6-u-font-size-lg', {
-          'card-border': bordered,
-        })}
+        className={classNames(
+          'pf-v6-u-h-100 pipeline-overview__min-width-full pf-v6-u-font-size-lg',
+          {
+            'card-border': bordered,
+          },
+        )}
       >
         <CardTitle>
           <span>{t('Duration')}</span>
@@ -149,7 +152,7 @@ const PipelinesRunsDurationCard: FC<PipelinesRunsDurationProps> = ({
                       '-'
                     )
                   ) : (
-                    <LoadingInline />
+                    <Loading isInline={true} />
                   )}
                 </GridItem>
               </Grid>
@@ -171,7 +174,7 @@ const PipelinesRunsDurationCard: FC<PipelinesRunsDurationProps> = ({
                       '-'
                     )
                   ) : (
-                    <LoadingInline />
+                    <Loading isInline={true} />
                   )}
                 </GridItem>
               </Grid>
@@ -193,7 +196,7 @@ const PipelinesRunsDurationCard: FC<PipelinesRunsDurationProps> = ({
                       '-'
                     )
                   ) : (
-                    <LoadingInline />
+                    <Loading isInline={true} />
                   )}
                 </GridItem>
               </Grid>

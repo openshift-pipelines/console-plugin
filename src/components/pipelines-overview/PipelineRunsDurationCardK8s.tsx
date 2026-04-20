@@ -32,7 +32,7 @@ import {
 } from '../pipelines-metrics/hooks';
 import { MetricsQueryPrefix, PipelineQuery } from '../pipelines-metrics/utils';
 import { getXaxisValues } from './dateTime';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 
 import './PipelinesOverview.scss';
 
@@ -53,8 +53,9 @@ const PipelineRunsDurationCardK8s: FC<PipelinesRunsDurationProps> = ({
   bordered,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const [pipelineRunsDurationError, setPipelineRunsDurationError] =
-    useState<string | null>(null);
+  const [pipelineRunsDurationError, setPipelineRunsDurationError] = useState<
+    string | null
+  >(null);
 
   const [
     totalPipelineRunsCountData,
@@ -185,9 +186,12 @@ const PipelineRunsDurationCardK8s: FC<PipelinesRunsDurationProps> = ({
   return (
     <>
       <Card
-        className={classNames('pf-v6-u-h-100 pipeline-overview__min-width-full pf-v6-u-font-size-lg', {
-          'card-border': bordered,
-        })}
+        className={classNames(
+          'pf-v6-u-h-100 pipeline-overview__min-width-full pf-v6-u-font-size-lg',
+          {
+            'card-border': bordered,
+          },
+        )}
       >
         <CardTitle className="pf-v6-u-font-size-xl">
           <span>{t('Duration')}</span>
@@ -203,10 +207,7 @@ const PipelineRunsDurationCardK8s: FC<PipelinesRunsDurationProps> = ({
             />
           ) : (
             <>
-              <Grid
-                hasGutter
-                className="pf-v6-u-mb-sm pf-v6-u-font-size-lg"
-              >
+              <Grid hasGutter className="pf-v6-u-mb-sm pf-v6-u-font-size-lg">
                 <GridItem span={9} className="pf-v6-u-mb-sm">
                   <span className="pf-v6-u-font-size-lg">
                     <MonitoringIcon className="pf-v6-u-mr-sm" />
@@ -218,21 +219,16 @@ const PipelineRunsDurationCardK8s: FC<PipelinesRunsDurationProps> = ({
                   className="pf-v6-u-text-align-end pf-v6-u-font-size-lg pipeline-overview__chart-color-blue"
                 >
                   {loadingPipelineRunsCount ? (
-                    <LoadingInline />
+                    <Loading isInline={true} />
                   ) : (
                     averageDuration
                   )}
                 </GridItem>
               </Grid>
-              <Grid
-                hasGutter
-                className="pf-v6-u-mb-sm pf-v6-u-font-size-lg"
-              >
+              <Grid hasGutter className="pf-v6-u-mb-sm pf-v6-u-font-size-lg">
                 <GridItem span={9} className="pf-v6-u-mb-sm">
                   <span className="pf-v6-u-font-size-lg">
-                    <InfoCircleIcon
-                      className="pf-v6-u-mr-sm pipeline-overview__chart-color-blue"
-                    />
+                    <InfoCircleIcon className="pf-v6-u-mr-sm pipeline-overview__chart-color-blue" />
                     {t('Maximum')}
                   </span>
                 </GridItem>
@@ -240,7 +236,7 @@ const PipelineRunsDurationCardK8s: FC<PipelinesRunsDurationProps> = ({
                   span={3}
                   className="pf-v6-u-text-align-end pf-v6-u-font-size-lg pipeline-overview__chart-color-blue"
                 >
-                  {loadingPipelineRunsCount ? <LoadingInline /> : '-'}
+                  {loadingPipelineRunsCount ? <Loading isInline={true} /> : '-'}
                 </GridItem>
               </Grid>
               <Grid hasGutter className="pf-v6-u-font-size-lg">
@@ -255,7 +251,7 @@ const PipelineRunsDurationCardK8s: FC<PipelinesRunsDurationProps> = ({
                   className="pf-v6-u-text-align-end pf-v6-u-font-size-lg pipeline-overview__chart-color-blue"
                 >
                   {loadingPipelineRunsDuration ? (
-                    <LoadingInline />
+                    <Loading isInline={true} />
                   ) : (
                     totalPipelineRunsDuration ?? '-'
                   )}

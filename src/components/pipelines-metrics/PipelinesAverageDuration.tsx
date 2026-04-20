@@ -15,7 +15,7 @@ import {
 } from '@patternfly/react-charts/victory';
 import { Card, CardBody, CardTitle, Alert } from '@patternfly/react-core';
 import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 import {
   formatDate,
   getDropDownDate,
@@ -74,7 +74,7 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
   interval,
   parentName,
   namespace,
-  kind
+  kind,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
@@ -93,10 +93,10 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
   };
   const [chartWidth, setChartWidth] = useState(0);
   const chartContainerRef = useCallback((node: HTMLDivElement | null) => {
-      if (node) {
-        setChartWidth(node.clientWidth);
-      }
-    }, []);
+    if (node) {
+      setChartWidth(node.clientWidth);
+    }
+  }, []);
 
   if (namespace == ALL_NAMESPACES_KEY) {
     namespace = '-';
@@ -245,25 +245,31 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
   }
   if (showLabel) bottomPad += 15;
   // Calculating height using this formula with the help of width and bottom padding
-  const chartHeight = 10 + Math.max(50, Math.min(100, Math.round(chartWidth / 5))) + bottomPad;
+  const chartHeight =
+    10 + Math.max(50, Math.min(100, Math.round(chartWidth / 5))) + bottomPad;
 
   return (
     <>
-     <Card
-        className={classNames('pipeline-overview__min-width-full pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column', {
-          'pipeline-overview__number-of-plr-card': !pipelineAverageDurationError,
-          'card-border': bordered,
-          'pf-v6-u-h-100': !pipelineAverageDurationError,
-        })}
+      <Card
+        className={classNames(
+          'pipeline-overview__min-width-full pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column',
+          {
+            'pipeline-overview__number-of-plr-card':
+              !pipelineAverageDurationError,
+            'card-border': bordered,
+            'pf-v6-u-h-100': !pipelineAverageDurationError,
+          },
+        )}
       >
         <CardTitle className="pipeline-overview__number-of-plr-card__title">
           <span>{t('Average duration')}</span>
         </CardTitle>
-         <CardBody
-            className={classNames({
-              'pf-v6-u-flex-1 pipeline-overview__min-height-0 pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-justify-content-flex-end pf-v6-u-align-items-flex-start pf-v6-u-p-0': !pipelineAverageDurationError,
-            })}
-          >
+        <CardBody
+          className={classNames({
+            'pf-v6-u-flex-1 pipeline-overview__min-height-0 pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-justify-content-flex-end pf-v6-u-align-items-flex-start pf-v6-u-p-0':
+              !pipelineAverageDurationError,
+          })}
+        >
           {pipelineAverageDurationError ? (
             <Alert
               variant="danger"
@@ -274,7 +280,9 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
           ) : (
             <div
               ref={chartContainerRef}
-              className={`pf-v6-u-w-100 ${chartWidth > 0 ? 'pf-v6-u-h-100' : ''}`}
+              className={`pf-v6-u-w-100 ${
+                chartWidth > 0 ? 'pf-v6-u-h-100' : ''
+              }`}
             >
               {loaded ? (
                 <Chart
@@ -314,7 +322,7 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
                 </Chart>
               ) : (
                 <div className="pf-v6-u-display-flex pf-v6-u-align-items-center pf-v6-u-justify-content-center pf-v6-u-h-100 pf-v6-u-p-md pf-v6-u-p-0-on-md">
-                  <LoadingInline />
+                  <Loading isInline={true} />
                 </div>
               )}
             </div>

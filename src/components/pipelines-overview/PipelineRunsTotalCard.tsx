@@ -19,7 +19,7 @@ import { PipelineModel, RepositoryModel } from '../../models';
 import { getResultsSummary } from '../utils/summary-api';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { getDropDownDate } from './dateTime';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 import { DataType, FLAGS } from '../../types';
 
 import './PipelinesOverview.scss';
@@ -183,7 +183,7 @@ const PipelinesRunsTotalCard: FC<PipelinesRunsDurationProps> = ({
                   span={3}
                   className="pf-v6-u-text-align-end pipeline-overview__chart-color-blue"
                 >
-                  {loaded ? plrRun : <LoadingInline />}
+                  {loaded ? plrRun : <Loading isInline={true} />}
                 </GridItem>
               </Grid>
               <Grid hasGutter className="pf-v6-u-mb-sm">
@@ -199,7 +199,7 @@ const PipelinesRunsTotalCard: FC<PipelinesRunsDurationProps> = ({
                   span={3}
                   className="pf-v6-u-text-align-end pipeline-overview__chart-color-blue"
                 >
-                  {loaded ? repoRun : <LoadingInline />}
+                  {loaded ? repoRun : <Loading isInline={true} />}
                 </GridItem>
               </Grid>
               <Grid hasGutter className="pf-v6-u-mb-sm">
@@ -213,7 +213,7 @@ const PipelinesRunsTotalCard: FC<PipelinesRunsDurationProps> = ({
                   span={3}
                   className="pf-v6-u-text-align-end pipeline-overview__chart-color-blue"
                 >
-                  {loaded ? totalRun : <LoadingInline />}
+                  {loaded ? totalRun : <Loading isInline={true} />}
                 </GridItem>
               </Grid>
             </>

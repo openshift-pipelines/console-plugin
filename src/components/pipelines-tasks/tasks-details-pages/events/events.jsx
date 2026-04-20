@@ -14,7 +14,7 @@ import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import { ResourceLink, Timestamp } from '@openshift-console/dynamic-plugin-sdk';
 import { WSFactory } from '@openshift-console/dynamic-plugin-sdk/lib/utils/k8s/ws-factory';
 import { apiGroupForReference } from '../../../utils/pipeline-utils';
-import { Box, Loading } from '../../../status/status-box';
+import { Box } from '../../../status/status-box';
 import { EventModel, NodeModel } from '../../../../models';
 import { FLAGS } from '../../../../types';
 import { TogglePlay } from './toggle-play';
@@ -22,6 +22,7 @@ import { EventStreamList } from './event-stream';
 import { watchURL } from '../../../utils/common-utils';
 import { resourcePathFromModel } from '../../../utils/utils';
 import { namespaceProptype } from './propTypes';
+import { Loading } from '../../../Loading';
 
 const maxMessages = 500;
 const flushInterval = 500;
@@ -214,7 +215,7 @@ export const ErrorLoadingEvents = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <Box>
-      <div className="cos-status-box__title cos-error-title">
+      <div className="cos-status-box__title pf-v6-u-text-color-status-danger">
         {t('Error loading events')}
       </div>
       <div className="cos-status-box__detail cp-text-align-center">
@@ -378,7 +379,7 @@ const EventStream = ({
       : t('Showing most recent {{value}} event', { value: count });
 
   return (
-    <PageSection hasBodyWrapper={false} isFilled >
+    <PageSection hasBodyWrapper={false} isFilled>
       <div className="co-sysevent-stream">
         <div className="co-sysevent-stream__status">
           <div className="co-sysevent-stream__timeline__btn-text">

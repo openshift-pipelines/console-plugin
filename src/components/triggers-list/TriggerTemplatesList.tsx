@@ -1,18 +1,18 @@
 import {
   getGroupVersionKindForModel,
-  K8sResourceCommon,
   ListPageBody,
   useK8sWatchResource,
-  useListPageFilter,
-  VirtualizedTable,
 } from '@openshift-console/dynamic-plugin-sdk';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
-import { useDefaultColumns } from '../list-pages/default-resources';
+import { useDefaultColumns } from '../list-pages/useDefaultColumns';
 import { TriggerTemplateModel } from '../../models';
-import EventListenersRow from './EventListenersRow';
-import { ListPageFilter } from '../list-pages/ListPageFilter';
+import { ConsoleDataView } from '@openshift-console/dynamic-plugin-sdk-internal';
+import { TriggerTemplateKind } from 'src/types';
+import { DataViewFilterToolbar } from '../common/DataViewFilterToolbar';
+import { useDataViewFilter } from '../hooks/useDataViewFilter';
+import { getDefaultListPageDataViewRows } from '../list-pages/DefaultListPageRow';
 
 type TriggerTemplatesListProps = {
   namespace?: string;
@@ -28,34 +28,34 @@ const TriggerTemplatesList: FC<TriggerTemplatesListProps> = ({
   namespace = namespace || ns;
   const columns = useDefaultColumns();
   const [triggerTemplates, triggerTemplatesLoaded, triggerTemplatesLoadError] =
-    useK8sWatchResource<K8sResourceCommon[]>({
+    useK8sWatchResource<TriggerTemplateKind[]>({
       groupVersionKind: getGroupVersionKindForModel(TriggerTemplateModel),
       isList: true,
       namespace,
     });
-  const [staticData, filteredData, onFilterChange] =
-    useListPageFilter(triggerTemplates);
+  const { filterValues, onFilterChange, onClearAll, filteredData } =
+    useDataViewFilter<TriggerTemplateKind>({
+      data: triggerTemplates || [],
+    });
   return (
     <ListPageBody>
-      <ListPageFilter
-        data={staticData}
-        onFilterChange={onFilterChange}
-        loaded={triggerTemplatesLoaded}
-        hideColumnManagement
-        hideNameLabelFilters={hideNameLabelFilters}
-      />
-      <VirtualizedTable
+      {!hideNameLabelFilters && (
+        <DataViewFilterToolbar
+          filterValues={filterValues}
+          onFilterChange={onFilterChange}
+          onClearAll={onClearAll}
+        />
+      )}
+      <ConsoleDataView<TriggerTemplateKind>
+        label={t('TriggerTemplate')}
         columns={columns}
         data={filteredData}
         loaded={triggerTemplatesLoaded}
         loadError={triggerTemplatesLoadError}
-        Row={EventListenersRow}
-        unfilteredData={staticData}
-        EmptyMsg={() => (
-          <div className="cp-text-align-center" id="no-resource-msg">
-            {t('Not found')}
-          </div>
-        )}
+        getDataViewRows={getDefaultListPageDataViewRows}
+        hideColumnManagement
+        hideNameLabelFilters
+        showNamespaceOverride
       />
     </ListPageBody>
   );

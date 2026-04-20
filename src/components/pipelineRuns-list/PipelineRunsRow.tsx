@@ -185,7 +185,7 @@ export const getPipelineRunsListDataViewRows: GetDataViewRows<
 
     return columns.map(({ id }) => {
       const cell = rowCells[id]?.cell;
-      const props = rowCells[id]?.props || undefined;
+      const props = rowCells[id]?.props;
       return {
         id,
         props,

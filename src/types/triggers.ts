@@ -18,6 +18,12 @@ export type TriggerBindingKind = K8sResourceCommon & {
   };
 };
 
+export type ClusterTriggerBindingKind = K8sResourceCommon & {
+  spec: {
+    params: TriggerBindingParam[];
+  };
+};
+
 export type TriggerTemplateKindParam = {
   name: string;
   description?: string;

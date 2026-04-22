@@ -54,8 +54,7 @@ type PipelineBuilderFormProps = FormikProps<PipelineBuilderFormikValues> & {
 const PipelineBuilderForm: FC<PipelineBuilderFormProps> = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const launchOverlay = useOverlay();
-  const [selectedTask, setSelectedTask] =
-    useState<SelectedBuilderTask>(null);
+  const [selectedTask, setSelectedTask] = useState<SelectedBuilderTask>(null);
   const selectedTaskRef = useRef<SelectedBuilderTask>(null);
   selectedTaskRef.current = selectedTask;
   const contentRef = useRef<HTMLDivElement>(null);
@@ -202,7 +201,11 @@ const PipelineBuilderForm: FC<PipelineBuilderFormProps> = (props) => {
             <DrawerPanelContent>
               <TaskSidebar
                 // Intentional remount when selection changes
-                key={selectedTask?.taskIndex}
+                key={
+                  selectedTask?.resource?.metadata?.name +
+                  selectedTask?.taskIndex +
+                  String(selectedTask?.isFinallyTask)
+                }
                 onClose={() => setSelectedTask(null)}
                 resourceList={formData.resources || []}
                 workspaceList={formData.workspaces || []}
@@ -241,7 +244,7 @@ const PipelineBuilderForm: FC<PipelineBuilderFormProps> = (props) => {
               className="opp-pipeline-builder-form"
               onSubmit={handleSubmit}
             >
-              <PageSection hasBodyWrapper={false} isFilled >
+              <PageSection hasBodyWrapper={false} isFilled>
                 <FormBody
                   flexLayout
                   disablePaneBody

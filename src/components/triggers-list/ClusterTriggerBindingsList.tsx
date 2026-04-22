@@ -1,17 +1,17 @@
 import {
   getGroupVersionKindForModel,
-  K8sResourceCommon,
   ListPageBody,
   useK8sWatchResource,
-  useListPageFilter,
-  VirtualizedTable,
 } from '@openshift-console/dynamic-plugin-sdk';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDefaultColumns } from '../list-pages/useDefaultColumns';
 import { ClusterTriggerBindingModel } from '../../models';
-import EventListenersRow from './EventListenersRow';
-import { ListPageFilter } from '../list-pages/ListPageFilter';
+import { ClusterTriggerBindingKind } from 'src/types';
+import { getDefaultListPageDataViewRows } from '../list-pages/DefaultListPageRow';
+import { useDataViewFilter } from '../hooks/useDataViewFilter';
+import { DataViewFilterToolbar } from '../common/DataViewFilterToolbar';
+import { ConsoleDataView } from '@openshift-console/dynamic-plugin-sdk-internal';
 
 type ClusterTriggerBindingsListProps = {
   hideNameLabelFilters?: boolean;
@@ -26,36 +26,35 @@ const ClusterTriggerBindingsList: FC<ClusterTriggerBindingsListProps> = ({
     clusterTriggerBindings,
     clusterTriggerBindingsLoaded,
     clusterTriggerBindingsLoadError,
-  ] = useK8sWatchResource<K8sResourceCommon[]>({
+  ] = useK8sWatchResource<ClusterTriggerBindingKind[]>({
     groupVersionKind: getGroupVersionKindForModel(ClusterTriggerBindingModel),
     isList: true,
     namespaced: false,
     optional: true,
   });
-  const [staticData, filteredData, onFilterChange] = useListPageFilter(
-    clusterTriggerBindings,
-  );
+  const { filterValues, onFilterChange, onClearAll, filteredData } =
+    useDataViewFilter<ClusterTriggerBindingKind>({
+      data: clusterTriggerBindings || [],
+    });
   return (
     <ListPageBody>
-      <ListPageFilter
-        data={staticData}
-        onFilterChange={onFilterChange}
-        loaded={clusterTriggerBindingsLoaded}
-        hideColumnManagement
-        hideNameLabelFilters={hideNameLabelFilters}
-      />
-      <VirtualizedTable
+      {!hideNameLabelFilters && (
+        <DataViewFilterToolbar
+          filterValues={filterValues}
+          onFilterChange={onFilterChange}
+          onClearAll={onClearAll}
+        />
+      )}
+      <ConsoleDataView<ClusterTriggerBindingKind>
+        label={t('TriggerBinding')}
         columns={columns}
         data={filteredData}
         loaded={clusterTriggerBindingsLoaded}
         loadError={clusterTriggerBindingsLoadError}
-        Row={EventListenersRow}
-        unfilteredData={staticData}
-        EmptyMsg={() => (
-          <div className="cp-text-align-center" id="no-resource-msg">
-            {t('Not found')}
-          </div>
-        )}
+        getDataViewRows={getDefaultListPageDataViewRows}
+        hideColumnManagement
+        hideNameLabelFilters
+        showNamespaceOverride
       />
     </ListPageBody>
   );

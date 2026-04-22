@@ -39,7 +39,7 @@ import {
 } from './dateTime';
 import { getFilter, useInterval } from './utils';
 import { getResultsSummary } from '../utils/summary-api';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { DataType, FLAGS, SummaryResponse } from '../../types';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
@@ -483,7 +483,7 @@ const PipelinesRunsStatusCard: FC<PipelinesRunsStatusCardProps> = ({
                     />
                   ) : (
                     <div className="pf-v6-u-display-flex pf-v6-u-align-items-center pf-v6-u-justify-content-center pf-v6-u-w-100">
-                      <LoadingInline />
+                      <Loading isInline={true} />
                     </div>
                   )}
                 </div>
@@ -494,8 +494,9 @@ const PipelinesRunsStatusCard: FC<PipelinesRunsStatusCardProps> = ({
                     'pf-v6-u-display-flex pf-v6-u-h-100 pf-v6-u-w-100 pipeline-overview__chart-area',
                     {
                       'pf-v6-u-align-items-flex-end': loaded,
-                      'pf-v6-u-align-items-center pf-v6-u-justify-content-center': !loaded,
-                    }
+                      'pf-v6-u-align-items-center pf-v6-u-justify-content-center':
+                        !loaded,
+                    },
                   )}
                 >
                   {loaded ? (
@@ -538,7 +539,7 @@ const PipelinesRunsStatusCard: FC<PipelinesRunsStatusCardProps> = ({
                       </ChartGroup>
                     </Chart>
                   ) : (
-                    <LoadingInline />
+                    <Loading isInline={true} />
                   )}
                 </div>
               </GridItem>

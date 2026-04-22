@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Alert, AlertGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { LoadingInline } from '../status/status-box';
+import { Loading } from '../Loading';
 
 const injectDisabled = (children, disabled) => {
   return Children.map(children, (c) => {
@@ -67,7 +67,7 @@ export const ButtonBar = ({
         {successMessage && <SuccessMessage message={successMessage} />}
         {errorMessage && <ErrorMessage message={errorMessage} />}
         {injectDisabled(children, inProgress)}
-        {inProgress && <LoadingInline />}
+        {inProgress && <Loading isInline={true} />}
         {infoMessage && <InfoMessage message={infoMessage} />}
       </AlertGroup>
     </div>

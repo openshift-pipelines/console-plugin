@@ -27,7 +27,7 @@ import { getResultsSummary } from '../utils/summary-api';
 import { DataType, FLAGS, SummaryResponse } from '../../types';
 import { ALL_NAMESPACES_KEY } from '../../consts';
 import { getFilter, useInterval } from './utils';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 
 interface PipelinesRunsNumbersChartProps {
   namespace?: string;
@@ -241,23 +241,28 @@ const PipelinesRunsNumbersChart: FC<PipelinesRunsNumbersChartProps> = ({
   }
   if (showLabel) bottomPad += 15;
   // Calculating height using this formula with the help of width and bottom padding
-  const chartHeight = 10 + Math.max(50, Math.min(100, Math.round(chartWidth / 5))) + bottomPad;
+  const chartHeight =
+    10 + Math.max(50, Math.min(100, Math.round(chartWidth / 5))) + bottomPad;
 
   return (
     <>
       <Card
-        className={classNames('pipeline-overview__min-width-full pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column', {
-          'pipeline-overview__number-of-plr-card': !pipelineRunsChartError,
-          'card-border': bordered,
-          'pf-v6-u-h-100': !pipelineRunsChartError,
-        })}
+        className={classNames(
+          'pipeline-overview__min-width-full pipeline-overview__overflow-hidden pf-v6-u-display-flex pf-v6-u-flex-direction-column',
+          {
+            'pipeline-overview__number-of-plr-card': !pipelineRunsChartError,
+            'card-border': bordered,
+            'pf-v6-u-h-100': !pipelineRunsChartError,
+          },
+        )}
       >
         <CardTitle className="pf-v6-u-pb-0">
           <span>{t('Number of PipelineRuns')}</span>
         </CardTitle>
         <CardBody
           className={classNames({
-            'pf-v6-u-flex-1 pipeline-overview__min-height-0 pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-justify-content-flex-end pf-v6-u-align-items-flex-start pf-v6-u-p-0': !pipelineRunsChartError,
+            'pf-v6-u-flex-1 pipeline-overview__min-height-0 pf-v6-u-display-flex pf-v6-u-flex-direction-column pf-v6-u-justify-content-flex-end pf-v6-u-align-items-flex-start pf-v6-u-p-0':
+              !pipelineRunsChartError,
           })}
         >
           {pipelineRunsChartError ? (
@@ -270,7 +275,9 @@ const PipelinesRunsNumbersChart: FC<PipelinesRunsNumbersChartProps> = ({
           ) : (
             <div
               ref={chartContainerRef}
-              className={`pf-v6-u-w-100 ${chartWidth > 0 ? 'pf-v6-u-h-100' : ''}`}
+              className={`pf-v6-u-w-100 ${
+                chartWidth > 0 ? 'pf-v6-u-h-100' : ''
+              }`}
             >
               {loaded ? (
                 <Chart
@@ -306,7 +313,7 @@ const PipelinesRunsNumbersChart: FC<PipelinesRunsNumbersChartProps> = ({
                 </Chart>
               ) : (
                 <div className="pf-v6-u-display-flex pf-v6-u-align-items-center pf-v6-u-justify-content-center pf-v6-u-h-100 pf-v6-u-p-md pf-v6-u-p-0-on-md">
-                  <LoadingInline />
+                  <Loading isInline={true} />
                 </div>
               )}
             </div>

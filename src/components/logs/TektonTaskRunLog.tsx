@@ -4,7 +4,7 @@ import { LogViewer } from '@patternfly/react-log-viewer';
 import { HttpError } from '@openshift-console/dynamic-plugin-sdk/lib/utils/error/http-error';
 import { TaskRunKind } from '../../types';
 import { TektonResourceLabel } from '../../consts';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 import { useTRTaskRunLog } from '../hooks/useTektonResult';
 import { Banner } from '@patternfly/react-core';
 import './TektonTaskRunLog.scss';
@@ -68,7 +68,7 @@ export const TektonTaskRunLog: FC<TektonTaskRunLogProps> = ({
               </span>
               {!trLoaded && !errorMessage ? (
                 <span data-test-id="loading-indicator">
-                  <LoadingInline />
+                  <Loading isInline={true} />
                 </span>
               ) : null}
             </Banner>

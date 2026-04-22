@@ -2,7 +2,7 @@ import type { ReactNode, FC } from 'react';
 import { useState, useEffect } from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 import { consoleFetchText } from '@openshift-console/dynamic-plugin-sdk';
 import { PodModel } from '../../models';
 import { resourceURL } from '../utils/k8s-utils';
@@ -87,7 +87,7 @@ const LogSnippetFromPod: FC<LogSnippetFromPodProps> = ({
   }
 
   if (!logSnippet) {
-    return <LoadingInline />;
+    return <Loading isInline={true} />;
   }
 
   return <>{children(logSnippet)}</>;

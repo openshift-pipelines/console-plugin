@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { usePipelineFromPipelineRun } from '../hooks/usePipelineFromPipelineRun';
 import { useTaskRuns } from '../hooks/useTaskRuns';
 import { ComputedStatus, PipelineKind, PipelineRunKind } from '../../types';
-import { LoadingInline } from '../Loading';
+import { LoadingBox } from '../status/status-box';
 import PipelineVisualization from '../pipelines-details/PipelineVisualization';
 import { pipelineRunFilterReducer } from '../utils/pipeline-filter-reducer';
 import './PipelineRunVisualization.scss';
@@ -37,10 +37,10 @@ const PipelineRunVisualization: FC<PipelineRunVisualizationProps> = ({
   /* this needs decoupling */
   const taskRunsLoaded = k8sLoaded || trLoaded;
   const pipeline: PipelineKind = usePipelineFromPipelineRun(pipelineRun);
-  if (!pipeline) {
+  if (!pipeline || !taskRunsLoaded) {
     return (
       <div className="pipeline-plr-loader">
-        <LoadingInline />
+        <LoadingBox />
       </div>
     );
   }

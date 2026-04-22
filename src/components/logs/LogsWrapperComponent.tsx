@@ -18,7 +18,7 @@ import { PodKind, TaskRunKind } from '../../types';
 import { MultiStreamLogs } from './MultiStreamLogs';
 import { TektonTaskRunLog } from './TektonTaskRunLog';
 import { useFullscreen } from './fullscreen';
-import { LoadingInline } from '../Loading';
+import { Loading } from '../Loading';
 import { TektonResourceLabel } from '../../consts';
 import { getMultiClusterPods } from '../utils/multi-cluster-api';
 import { usePoll } from '../pipelines-metrics/poll-hook';
@@ -175,7 +175,7 @@ const LogsWrapperComponent: FC<
               <span className="pf-v6-l-flex pf-m-row pf-m-gap-sm pf-m-align-items-center">
                 <DownloadIcon />
                 <span>{downloadAllLabel || t('Download all')}</span>
-                {downloadAllStatus && <LoadingInline />}
+                {downloadAllStatus && <Loading isInline={true} />}
               </span>
             </Button>
             <div>|</div>

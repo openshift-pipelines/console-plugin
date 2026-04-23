@@ -320,11 +320,13 @@ const PipelinesRunsStatusCard: FC<PipelinesRunsStatusCardProps> = ({
   let xAxisStyle: ChartAxisProps['style'] = {
     tickLabels: {
       fill: 'var(--pf-t--global--text--color--regular)',
+      fontSize: 12,
     },
   };
   const yAxisStyle: ChartAxisProps['style'] = {
     tickLabels: {
       fill: 'var(--pf-t--global--text--color--regular)',
+      fontSize: 12,
     },
   };
   if (tickValues?.length > 7) {

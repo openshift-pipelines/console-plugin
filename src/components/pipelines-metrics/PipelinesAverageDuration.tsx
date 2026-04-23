@@ -67,6 +67,14 @@ const getChartData = (
   return chartData;
 };
 
+const BOTTOM_PAD_DEFAULT = 35;
+const BOTTOM_PAD_ROTATED = 55;
+const BOTTOM_PAD_LABEL = 15;
+const CHART_BODY_TOP_OFFSET = 10;
+const CHART_BODY_MIN_HEIGHT = 50;
+const CHART_BODY_MAX_HEIGHT = 100;
+const CHART_ASPECT_RATIO = 5;
+
 const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
   timespan,
   domain,
@@ -239,14 +247,19 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
         verticalAnchor: 'end',
       },
     };
-    bottomPad = 55;
+    bottomPad = BOTTOM_PAD_ROTATED;
   } else {
-    bottomPad = 35;
+    bottomPad = BOTTOM_PAD_DEFAULT;
   }
-  if (showLabel) bottomPad += 15;
-  // Calculating height using this formula with the help of width and bottom padding
-  const chartHeight =
-    10 + Math.max(50, Math.min(100, Math.round(chartWidth / 5))) + bottomPad;
+  if (showLabel) bottomPad += BOTTOM_PAD_LABEL;
+  const chartBodyHeight = Math.max(
+    CHART_BODY_MIN_HEIGHT,
+    Math.min(
+      CHART_BODY_MAX_HEIGHT,
+      Math.round(chartWidth / CHART_ASPECT_RATIO),
+    ),
+  );
+  const chartHeight = CHART_BODY_TOP_OFFSET + chartBodyHeight + bottomPad;
 
   return (
     <>
@@ -275,7 +288,7 @@ const PipelinesAverageDuration: FC<PipelinesAverageDurationProps> = ({
               variant="danger"
               isInline
               title={t('Unable to load average duration')}
-              className="pf-v6-u-mb-md pf-v6-u-ml-lg pf-v6-u-mt-lg"
+              className="pf-v6-u-mb-md pf-v6-u-mt-lg"
             />
           ) : (
             <div

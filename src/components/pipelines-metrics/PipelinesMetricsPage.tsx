@@ -27,9 +27,7 @@ const PipelinesMetricsPage: FC<PipelinesMetricsPageProps> = ({ obj }) => {
     metadata: { namespace, name: parentName },
   } = obj;
   const [timespan, setTimespan] = useState(parsePrometheusDuration('1d'));
-  const [interval, setInterval] = useState(
-    parsePrometheusDuration('30s'),
-  );
+  const [interval, setInterval] = useState(parsePrometheusDuration('30s'));
 
   useQueryParams({
     key: 'refreshinterval',
@@ -62,7 +60,7 @@ const PipelinesMetricsPage: FC<PipelinesMetricsPageProps> = ({ obj }) => {
         </FlexItem>
       </Flex>
 
-      <div className="pf-v6-u-p-md" style={{backgroundColor: 'var(--pf-t--global--background--color--secondary--default)'}}>
+      <div className="pf-v6-u-p-md">
         <PipelineRunsStatusCard
           timespan={timespan}
           domain={{ y: [0, 100] }}
@@ -74,34 +72,49 @@ const PipelinesMetricsPage: FC<PipelinesMetricsPageProps> = ({ obj }) => {
         />
 
         <Grid hasGutter className="pf-v6-u-mt-md">
-          <GridItem span={12} md={6} lg={4} className="pf-v6-u-min-width pf-v6-u-w-100">
-              <PipelinesRunsNumbersChart
-                namespace={namespace}
-                parentName={parentName}
-                timespan={timespan}
-                interval={interval}
-                kind={obj.kind}
-                domain={{ y: [0, 500] }}
-              />
+          <GridItem
+            span={12}
+            md={6}
+            lg={4}
+            className="pf-v6-u-min-width pf-v6-u-w-100"
+          >
+            <PipelinesRunsNumbersChart
+              namespace={namespace}
+              parentName={parentName}
+              timespan={timespan}
+              interval={interval}
+              kind={obj.kind}
+              domain={{ y: [0, 500] }}
+            />
           </GridItem>
-          <GridItem span={12} md={6} lg={4} className="pf-v6-u-min-width pf-v6-u-w-100">
-              <PipelinesAverageDuration
-                timespan={timespan}
-                domain={{ y: [0, 5] }}
-                namespace={namespace}
-                parentName={parentName}
-                interval={interval}
-                kind={obj.kind}
-              />
+          <GridItem
+            span={12}
+            md={6}
+            lg={4}
+            className="pf-v6-u-min-width pf-v6-u-w-100"
+          >
+            <PipelinesAverageDuration
+              timespan={timespan}
+              domain={{ y: [0, 5] }}
+              namespace={namespace}
+              parentName={parentName}
+              interval={interval}
+              kind={obj.kind}
+            />
           </GridItem>
-          <GridItem span={12} md={12} lg={4} className="pf-v6-u-min-width pf-v6-u-w-100">
-              <PipelinesRunsDurationCard
-                namespace={namespace}
-                parentName={parentName}
-                timespan={timespan}
-                interval={interval}
-                kind={obj.kind}
-              />
+          <GridItem
+            span={12}
+            md={12}
+            lg={4}
+            className="pf-v6-u-min-width pf-v6-u-w-100"
+          >
+            <PipelinesRunsDurationCard
+              namespace={namespace}
+              parentName={parentName}
+              timespan={timespan}
+              interval={interval}
+              kind={obj.kind}
+            />
           </GridItem>
         </Grid>
       </div>

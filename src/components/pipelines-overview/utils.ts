@@ -43,16 +43,6 @@ export type mainDataType = {
   summary?: SummaryProps;
 };
 
-export const listPageTableColumnClasses = [
-  '', //name
-  '', //namespace
-  'pf-v6-m-hidden pf-v6-m-visible-on-md', //total plr
-  'pf-v6-m-hidden pf-v6-m-visible-on-md', //total duration
-  'pf-v6-m-hidden pf-v6-m-visible-on-xl', //avg duration
-  'pf-v6-m-hidden pf-v6-m-visible-on-xl', //success rate
-  'pf-v6-m-hidden pf-v6-m-visible-on-xl', //last run time
-];
-
 export const TimeRangeOptions = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return {

@@ -88,18 +88,15 @@ const PipelineRunsTotalCardK8s: FC<PipelinesRunsDurationProps> = ({
   return (
     <>
       <Card
-        className={classNames(
-          'pf-v6-u-h-100 pipeline-overview__min-width-full pf-v6-u-font-size-lg',
-          {
-            'card-border': bordered,
-          },
-        )}
+        className={classNames('pf-v6-u-h-100', {
+          'card-border': bordered,
+        })}
       >
-        <CardTitle className="pf-v6-u-font-size-xl">
+        <CardTitle>
           <span>{t('Total runs')}</span>
         </CardTitle>
         <Divider />
-        <CardBody className="pf-v6-u-font-size-lg pipeline-overview__min-width-min-content">
+        <CardBody>
           {pipelineRunsTotalError ? (
             <Alert
               variant="danger"
@@ -109,16 +106,10 @@ const PipelineRunsTotalCardK8s: FC<PipelinesRunsDurationProps> = ({
             />
           ) : (
             <>
-              <Grid
-                hasGutter
-                className="pipeline-overview__totals-card__grid pf-v6-u-font-size-lg"
-              >
+              <Grid hasGutter>
                 <GridItem span={9} className="pf-v6-u-mb-sm">
-                  <span className="pf-v6-u-font-size-lg">
-                    <Label
-                      variant="outline"
-                      className="pipeline-overview__totals-card__label pf-v6-u-mr-sm"
-                    >
+                  <span>
+                    <Label variant="outline" className="pf-v6-u-mr-sm">
                       {PipelineModel.abbr}
                     </Label>
                     {t('Runs in pipelines')}
@@ -126,7 +117,7 @@ const PipelineRunsTotalCardK8s: FC<PipelinesRunsDurationProps> = ({
                 </GridItem>
                 <GridItem
                   span={3}
-                  className="pf-v6-u-text-align-end pf-v6-u-font-size-lg pipeline-overview__chart-color-blue"
+                  className="pf-v6-u-text-align-end pipeline-overview__chart-color-blue"
                 >
                   {loadingTotalPipelineRunsData ? (
                     <Loading isInline={true} />
@@ -135,16 +126,10 @@ const PipelineRunsTotalCardK8s: FC<PipelinesRunsDurationProps> = ({
                   )}
                 </GridItem>
               </Grid>
-              <Grid
-                hasGutter
-                className="pipeline-overview__totals-card__grid pf-v6-u-mb-sm pf-v6-u-font-size-lg"
-              >
+              <Grid hasGutter className="pf-v6-u-mb-sm">
                 <GridItem span={9}>
-                  <span className="pf-v6-u-font-size-lg">
-                    <Label
-                      variant="outline"
-                      className="pipeline-overview__totals-card__repo-label pf-v6-u-mr-sm"
-                    >
+                  <span>
+                    <Label variant="outline" className="pf-v6-u-mr-sm">
                       {RepositoryModel.abbr}
                     </Label>
                     {t('Runs in repositories')}
@@ -152,7 +137,7 @@ const PipelineRunsTotalCardK8s: FC<PipelinesRunsDurationProps> = ({
                 </GridItem>
                 <GridItem
                   span={3}
-                  className="pf-v6-u-text-align-end pf-v6-u-font-size-lg pipeline-overview__chart-color-blue"
+                  className="pf-v6-u-text-align-end pipeline-overview__chart-color-blue"
                 >
                   {loadingTotalPipelineRunsData ? (
                     <Loading isInline={true} />
@@ -161,16 +146,16 @@ const PipelineRunsTotalCardK8s: FC<PipelinesRunsDurationProps> = ({
                   )}
                 </GridItem>
               </Grid>
-              <Grid hasGutter className="pf-v6-u-font-size-lg">
+              <Grid hasGutter className="pf-v6-u-mb-sm">
                 <GridItem span={9}>
-                  <span className="pf-v6-u-font-size-lg">
+                  <span>
                     <CheckIcon className="pipeline-overview__totals-card__icon pf-v6-u-ml-sm pf-v6-u-mr-sm" />
                     {t('Total runs')}
                   </span>
                 </GridItem>
                 <GridItem
                   span={3}
-                  className="pf-v6-u-text-align-end pf-v6-u-font-size-lg pipeline-overview__chart-color-blue"
+                  className="pf-v6-u-text-align-end pipeline-overview__chart-color-blue"
                 >
                   {loadingTotalPipelineRunsData ? (
                     <Loading isInline={true} />

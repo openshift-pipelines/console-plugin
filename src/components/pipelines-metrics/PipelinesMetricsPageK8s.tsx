@@ -23,16 +23,12 @@ type PipelinesMetricsPageProps = {
   obj: PipelineKind;
 };
 
-const PipelinesMetricsPageK8s: FC<PipelinesMetricsPageProps> = ({
-  obj,
-}) => {
+const PipelinesMetricsPageK8s: FC<PipelinesMetricsPageProps> = ({ obj }) => {
   const {
     metadata: { namespace, name: parentName },
   } = obj;
   const [timespan, setTimespan] = useState(parsePrometheusDuration('1d'));
-  const [interval, setInterval] = useState(
-    parsePrometheusDuration('30s'),
-  );
+  const [interval, setInterval] = useState(parsePrometheusDuration('30s'));
 
   useQueryParams({
     key: 'refreshinterval',
@@ -68,7 +64,7 @@ const PipelinesMetricsPageK8s: FC<PipelinesMetricsPageProps> = ({
         </FlexItem>
       </Flex>
 
-      <div className="pf-v6-u-p-md" style={{backgroundColor: 'var(--pf-t--global--background--color--secondary--default)'}}>
+      <div className="pf-v6-u-p-md">
         <PipelineRunsStatusCardK8s
           timespan={timespan}
           domain={{ y: [0, 100] }}
@@ -78,8 +74,13 @@ const PipelinesMetricsPageK8s: FC<PipelinesMetricsPageProps> = ({
           interval={interval}
         />
 
-        <Grid hasGutter className='pf-v6-u-mt-md'>
-          <GridItem span={12} md={6} lg={4} className='pf-v6-u-display-flex pf-v6-u-min-width pf-v6-u-w-100'>
+        <Grid hasGutter className="pf-v6-u-mt-md">
+          <GridItem
+            span={12}
+            md={6}
+            lg={4}
+            className="pf-v6-u-display-flex pf-v6-u-min-width pf-v6-u-w-100"
+          >
             <PipelineRunsNumbersChartK8s
               namespace={namespace}
               parentName={parentName}
@@ -88,7 +89,12 @@ const PipelinesMetricsPageK8s: FC<PipelinesMetricsPageProps> = ({
               domain={{ y: [0, 500] }}
             />
           </GridItem>
-          <GridItem span={12} md={6} lg={4} className='pf-v6-u-display-flex pf-v6-u-min-width pf-v6-u-w-100'>
+          <GridItem
+            span={12}
+            md={6}
+            lg={4}
+            className="pf-v6-u-display-flex pf-v6-u-min-width pf-v6-u-w-100"
+          >
             <PipelinesAverageDurationK8s
               timespan={timespan}
               domain={{ y: [0, 5] }}
@@ -97,7 +103,12 @@ const PipelinesMetricsPageK8s: FC<PipelinesMetricsPageProps> = ({
               interval={interval}
             />
           </GridItem>
-          <GridItem span={12} md={12} lg={4} className='pf-v6-u-display-flex pf-v6-u-min-width pf-v6-u-w-100'>
+          <GridItem
+            span={12}
+            md={12}
+            lg={4}
+            className="pf-v6-u-display-flex pf-v6-u-min-width pf-v6-u-w-100"
+          >
             <PipelineRunsDurationCardK8s
               namespace={namespace}
               parentName={parentName}

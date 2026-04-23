@@ -1,58 +1,83 @@
-import type { FC } from 'react';
 import { Link } from 'react-router';
 import {
+  getGroupVersionKindForModel,
   ResourceLink,
-  RowProps,
-  useActiveNamespace,
 } from '@openshift-console/dynamic-plugin-sdk';
-import {
-  SummaryProps,
-  getReferenceForModel,
-  listPageTableColumnClasses as tableColumnClasses,
-} from '../utils';
+import type { ReactNode } from 'react';
+import { GetDataViewRows } from '@openshift-console/dynamic-plugin-sdk-internal/lib/api/internal-types';
 import { formatTime, formatTimeLastRunTime } from '../dateTime';
-import { ALL_NAMESPACES_KEY } from '../../../consts';
-import { RepositoryModel } from '../../../models';
+import { SummaryProps, getReferenceForModel } from '../utils';
+import { NamespaceModel, RepositoryModel } from '../../../models';
+
+type RowCell = { cell: ReactNode; props?: Record<string, unknown> };
 
 const repositoryReference = getReferenceForModel(RepositoryModel);
 
-const PipelineRunsForRepositoriesRow: FC<RowProps<SummaryProps>> = ({
-  obj,
-}) => {
-  const [activeNamespace] = useActiveNamespace();
-  const [namespace, name] = obj.group_value.split('/');
+export const tableColumnInfo = [
+  { id: 'repoName' },
+  { id: 'namespace' },
+  { id: 'total' },
+  { id: 'totalDuration' },
+  { id: 'avgDuration' },
+  { id: 'successRate' },
+  { id: 'lastRunTime' },
+];
 
-  return (
-    <>
-      <td className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={repositoryReference}
-          name={name}
-          namespace={namespace}
-        />
-      </td>
-      {activeNamespace === ALL_NAMESPACES_KEY && (
-        <td className={tableColumnClasses[1]}>
-          <ResourceLink kind="Namespace" name={namespace} />
-        </td>
-      )}
-      <td className={tableColumnClasses[2]}>
-        <Link to={`/k8s/ns/${namespace}/${repositoryReference}/${name}/Runs`}>
-          {obj.total}
-        </Link>
-      </td>
-      <td className={tableColumnClasses[3]}>
-        {formatTime(obj.total_duration)}
-      </td>
-      <td className={tableColumnClasses[4]}>{formatTime(obj.avg_duration)}</td>
-      <td className={tableColumnClasses[5]}>{`${Math.round(
-        (100 * obj.succeeded) / obj.total,
-      )}%`}</td>
-      <td className={tableColumnClasses[6]}>{`${formatTimeLastRunTime(
-        obj.last_runtime,
-      )}`}</td>
-    </>
-  );
+export const getPipelineRunsForRepositoriesDataViewRows: GetDataViewRows<
+  SummaryProps,
+  undefined
+> = (data, columns) => {
+  return data.map(({ obj }) => {
+    const [namespace, name] = obj.group_value.split('/');
+
+    const rowCells: Record<string, RowCell> = {
+      [tableColumnInfo[0].id]: {
+        cell: (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(RepositoryModel)}
+            name={name}
+            namespace={namespace}
+          />
+        ),
+        props: {
+          isStickyColumn: true,
+          hasRightBorder: true,
+          stickyMinWidth: '0',
+        },
+      },
+      [tableColumnInfo[1].id]: {
+        cell: (
+          <ResourceLink
+            groupVersionKind={getGroupVersionKindForModel(NamespaceModel)}
+            name={namespace}
+          />
+        ),
+      },
+      [tableColumnInfo[2].id]: {
+        cell: (
+          <Link to={`/k8s/ns/${namespace}/${repositoryReference}/${name}/Runs`}>
+            {obj.total}
+          </Link>
+        ),
+      },
+      [tableColumnInfo[3].id]: {
+        cell: formatTime(obj.total_duration),
+      },
+      [tableColumnInfo[4].id]: {
+        cell: formatTime(obj.avg_duration),
+      },
+      [tableColumnInfo[5].id]: {
+        cell: `${Math.round((100 * obj.succeeded) / obj.total)}%`,
+      },
+      [tableColumnInfo[6].id]: {
+        cell: formatTimeLastRunTime(obj.last_runtime),
+      },
+    };
+
+    return columns.map(({ id }) => ({
+      id,
+      props: rowCells[id]?.props,
+      cell: rowCells[id]?.cell,
+    }));
+  });
 };
-
-export default PipelineRunsForRepositoriesRow;

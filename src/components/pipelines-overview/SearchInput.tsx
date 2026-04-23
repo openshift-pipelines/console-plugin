@@ -17,7 +17,6 @@ const SearchInputField: FC<SearchInputProps> = ({
   return (
     <SearchInput
       value={searchText}
-      className="pf-v6-u-ml-sm pf-v6-u-w-25"
       placeholder={
         pageFlag === 1
           ? t('Search by pipeline name')

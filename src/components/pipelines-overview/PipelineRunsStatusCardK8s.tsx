@@ -441,11 +441,13 @@ const PipelineRunsStatusCardK8s: FC<PipelinesRunsStatusCardProps> = ({
   let xAxisStyle: ChartAxisProps['style'] = {
     tickLabels: {
       fill: 'var(--pf-t--global--text--color--regular)',
+      fontSize: 12,
     },
   };
   const yAxisStyle: ChartAxisProps['style'] = {
     tickLabels: {
       fill: 'var(--pf-t--global--text--color--regular)',
+      fontSize: 12,
     },
   };
   if (tickValues?.length > 7) {
@@ -532,7 +534,7 @@ const PipelineRunsStatusCardK8s: FC<PipelinesRunsStatusCardProps> = ({
           'card-border': bordered,
         })}
       >
-        <CardTitle className="pipeline-overview__pipelinerun-status-card__title">
+        <CardTitle>
           <span>
             {t('PipelineRun status')}{' '}
             <Popover

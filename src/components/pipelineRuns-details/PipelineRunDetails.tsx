@@ -21,7 +21,11 @@ const PipelineRunDetails: FC<PipelineRunDetailsProps> = ({
   }
 
   return (
-    <PageSection hasBodyWrapper={false} isFilled>
+    <PageSection
+      key={pipelineRun?.metadata?.uid + pipelineRun?.metadata?.name}
+      hasBodyWrapper={false}
+      isFilled
+    >
       <Title headingLevel="h2">{t('PipelineRun details')}</Title>
       <PipelineRunVisualization pipelineRun={pipelineRun} />
       <Grid hasGutter>

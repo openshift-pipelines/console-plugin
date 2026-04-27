@@ -63,7 +63,7 @@ const PipelinesList: FC<PipelineListProps> = ({
     updatedCheckboxFilters,
   } = useDataViewFilter<PropPipelineData>({
     data: pipelinesData || [],
-    resourceType: 'Pipeline',
+    options: { resourceType: 'Pipeline' },
   });
 
   return (

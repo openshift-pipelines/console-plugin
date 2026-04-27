@@ -320,8 +320,10 @@ const TaskRunsList: FC<TaskRunsListPageProps> = ({
     updatedCheckboxFilters,
   } = useDataViewFilter<TaskRunKind>({
     data: taskRuns || [],
-    resourceType: 'TaskRun',
-    defaultDataSourceValues: ['cluster-data'],
+    options: {
+      resourceType: 'TaskRun',
+      defaultDataSourceValues: ['cluster-data'],
+    },
   });
 
   const loaded = useMemo(() => {

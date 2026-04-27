@@ -32,14 +32,18 @@ export type ResourceType =
   | 'TaskRun'
   | 'ApprovalTask';
 
-interface UseDataViewFilterOptions<T extends K8sResourceCommon> {
-  data: T[];
+export interface DataViewFilterOptions<T extends K8sResourceCommon> {
   getName?: (obj: T) => string;
   getLabels?: (obj: T) => Record<string, string> | undefined;
   resourceType?: ResourceType;
   defaultStatusValues?: string[];
   defaultDataSourceValues?: string[];
-  customData?: any;
+  customData?: K8sResourceCommon[] | undefined;
+}
+
+export interface UseDataViewFilterParams<T extends K8sResourceCommon> {
+  data: T[];
+  options?: DataViewFilterOptions<T>;
 }
 
 const matchesLabels = (
@@ -131,13 +135,16 @@ const defaultGetLabels = <T extends K8sResourceCommon>(
 
 export const useDataViewFilter = <T extends K8sResourceCommon>({
   data,
-  getName = defaultGetName,
-  getLabels = defaultGetLabels,
-  resourceType,
-  defaultStatusValues,
-  defaultDataSourceValues,
-  customData,
-}: UseDataViewFilterOptions<T>) => {
+  options,
+}: UseDataViewFilterParams<T>) => {
+  const {
+    getName = defaultGetName,
+    getLabels = defaultGetLabels,
+    resourceType,
+    defaultStatusValues,
+    defaultDataSourceValues,
+    customData,
+  } = options ?? {};
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
   const allStatusIds = useMemo(() => Object.values(ListFilterId), []);

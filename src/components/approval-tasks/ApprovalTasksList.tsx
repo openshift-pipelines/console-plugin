@@ -69,9 +69,11 @@ const ApprovalTasksList: FC<ApprovalTasksListProps> = ({
     updatedCheckboxFilters,
   } = useDataViewFilter<ApprovalTaskKind>({
     data: approvalTasks || [],
-    resourceType: 'ApprovalTask',
-    defaultStatusValues: ['pending'],
-    customData: pipelineRunsLoaded ? pipelineRuns : [],
+    options: {
+      resourceType: 'ApprovalTask',
+      defaultStatusValues: ['pending'],
+      customData: pipelineRunsLoaded ? pipelineRuns : [],
+    },
   });
 
   return (

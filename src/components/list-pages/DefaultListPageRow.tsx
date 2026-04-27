@@ -1,20 +1,9 @@
-import type { FC, Ref } from 'react';
-import { useState } from 'react';
 import {
   getGroupVersionKindForModel,
   K8sResourceCommon,
   ResourceLink,
   Timestamp,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { KEBAB_BUTTON_ID } from '../../consts';
-import {
-  Dropdown,
-  DropdownList,
-  MenuToggle,
-  MenuToggleElement,
-} from '@patternfly/react-core';
-import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
-import { K8sCommonKebabMenu } from '../utils/k8s-common-kebab-menu';
 import { getResourceModelFromBindingKind } from '../utils/pipeline-augment';
 import { GetDataViewRows } from '@openshift-console/dynamic-plugin-sdk/lib/api/internal-types';
 import { defaultTableColumnInfo as tableColumnInfo } from './useDefaultColumns';
@@ -23,51 +12,9 @@ import { t } from '../utils/common-utils';
 import {
   actionsCellProps,
   getNameCellProps,
+  LazyActionMenu,
 } from '@openshift-console/dynamic-plugin-sdk-internal';
-
-type DefaultKebabProps = {
-  obj: K8sResourceCommon;
-};
-
-const DefaultKebab: FC<DefaultKebabProps> = ({ obj }) => {
-  const model = getResourceModelFromBindingKind(obj?.kind);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const onToggle = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const onSelect = () => {
-    setIsOpen(false);
-  };
-
-  const dropdownItems = K8sCommonKebabMenu(obj, model);
-
-  return (
-    <Dropdown
-      onSelect={onSelect}
-      onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-      toggle={(toggleRef: Ref<MenuToggleElement>) => (
-        <MenuToggle
-          ref={toggleRef}
-          aria-label="kebab menu"
-          variant="plain"
-          onClick={onToggle}
-          isExpanded={isOpen}
-          id={KEBAB_BUTTON_ID}
-          data-test={KEBAB_BUTTON_ID}
-        >
-          <EllipsisVIcon />
-        </MenuToggle>
-      )}
-      isOpen={isOpen}
-      isPlain={false}
-      popperProps={{ position: 'right' }}
-    >
-      <DropdownList>{dropdownItems}</DropdownList>
-    </Dropdown>
-  );
-};
+import { getReferenceForModel } from '../pipelines-overview/utils';
 
 export const getDefaultListPageDataViewRows: GetDataViewRows<
   K8sResourceCommon
@@ -102,7 +49,9 @@ export const getDefaultListPageDataViewRows: GetDataViewRows<
         cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
       },
       [tableColumnInfo[3].id]: {
-        cell: <DefaultKebab obj={obj} />,
+        cell: (
+          <LazyActionMenu context={{ [getReferenceForModel(model)]: obj }} />
+        ),
         props: { ...actionsCellProps },
       },
     };

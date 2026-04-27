@@ -15,12 +15,12 @@ import {
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
+  LazyActionMenu,
 } from '@openshift-console/dynamic-plugin-sdk-internal';
 import { TaskModel } from '../../models';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { getTaskName } from '../utils/pipeline-augment';
 import { TaskKind } from '../../types';
-import { TaskKebab } from './TasksRow';
 import { DataViewFilterToolbar } from '../common/DataViewFilterToolbar';
 import { useDataViewFilter } from '../hooks/useDataViewFilter';
 
@@ -55,7 +55,11 @@ const getTaskDataViewRows = (
           cell: <Timestamp timestamp={obj.metadata.creationTimestamp} />,
         },
         actions: {
-          cell: <TaskKebab obj={obj} />,
+          cell: (
+            <LazyActionMenu
+              context={{ [getReferenceForModel(TaskModel)]: obj }}
+            />
+          ),
           props: actionsCellProps,
         },
       };

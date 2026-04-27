@@ -1648,6 +1648,17 @@
     "type": "console.action/resource-provider",
     "properties": {
       "model": {
+        "group": "tekton.dev",
+        "version": "v1",
+        "kind": "TaskRun"
+      },
+      "provider": { "$codeRef": "taskRunActionsProvider.useTaskRunActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
         "group": "triggers.tekton.dev",
         "version": "v1beta1",
         "kind": "ClusterTriggerBinding"

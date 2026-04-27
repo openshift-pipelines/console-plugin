@@ -4,13 +4,13 @@ import {
   getGroupVersionKindForModel,
   K8sResourceKind,
   ListPageBody,
-  ListPageFilter,
   useK8sWatchResource,
-  useListPageFilter,
-  VirtualizedTable,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { ConsoleDataView } from '@openshift-console/dynamic-plugin-sdk-internal';
 import { ProjectModel } from '../../models';
-import ProjectsRow from './ProjectsRow';
+import { getProjectsDataViewRows } from './ProjectsRow';
+import { DataViewFilterToolbar } from '../common/DataViewFilterToolbar';
+import { useDataViewFilter } from '../hooks/useDataViewFilter';
 
 const ProjectsList = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -22,30 +22,25 @@ const ProjectsList = () => {
     optional: true,
   });
   const columns = useProjectsColumns();
-  const [staticData, filteredData, onFilterChange] =
-    useListPageFilter(projects);
+  const { filterValues, onFilterChange, onClearAll, filteredData } =
+    useDataViewFilter<K8sResourceKind>({ data: projects || [] });
+
   return (
     <ListPageBody>
-      <ListPageFilter
-        data={staticData}
+      <DataViewFilterToolbar
+        filterValues={filterValues}
         onFilterChange={onFilterChange}
-        loaded={projectsLoaded}
+        onClearAll={onClearAll}
       />
-      <VirtualizedTable
-        EmptyMsg={() => (
-          <div
-            className="cp-text-align-center virtualized-table-empty-msg"
-            id="no-templates-msg"
-          >
-            {t('No Projects found')}
-          </div>
-        )}
+      <ConsoleDataView<K8sResourceKind>
+        label={t('Projects')}
         columns={columns}
         data={filteredData}
         loaded={projectsLoaded}
         loadError={projectsLoadError}
-        Row={ProjectsRow}
-        unfilteredData={staticData}
+        getDataViewRows={getProjectsDataViewRows}
+        hideColumnManagement
+        hideNameLabelFilters
       />
     </ListPageBody>
   );

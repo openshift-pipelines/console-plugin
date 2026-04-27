@@ -5,10 +5,12 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { Link } from 'react-router';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router';
 import { ArchiveIcon } from '@patternfly/react-icons';
 import { ResourceStatus } from '@openshift-console/dynamic-plugin-sdk';
+import { LazyActionMenu } from '@openshift-console/dynamic-plugin-sdk-internal';
+import { ActionMenuVariant } from '@openshift-console/dynamic-plugin-sdk-internal/lib/api/internal-types';
 import DetailsPage from '../../details-page/DetailsPage';
 import { getReferenceForModel } from '../../pipelines-overview/utils';
 import { TaskRunModel } from '../../../models';
@@ -45,6 +47,18 @@ const TaskRunDetailsPage = () => {
     () => loaded && data && taskRunStatus(data),
     [loaded, data],
   );
+  const customActionMenu = useCallback((_kindObj, obj) => {
+    const reference = getReferenceForModel(TaskRunModel);
+    const context = { [reference]: obj };
+    return (
+      <LazyActionMenu
+        context={context}
+        variant={ActionMenuVariant.DROPDOWN}
+        label={t('Actions')}
+      />
+    );
+  }, [t]);
+
   const resourceTitleFunc = useMemo(() => {
     return (
       <div className="taskrun-details-page">
@@ -79,6 +93,7 @@ const TaskRunDetailsPage = () => {
         TaskRunModel,
       )}/${name}/task-runs`}
       model={TaskRunModel}
+      customActionMenu={customActionMenu}
       breadcrumbs={[
         <BreadcrumbItem key="app-link" component="div">
           <Link

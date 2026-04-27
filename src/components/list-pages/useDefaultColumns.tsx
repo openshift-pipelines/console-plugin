@@ -3,6 +3,7 @@ import {
   K8sResourceCommon,
   TableColumn,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { actionsCellProps } from '@openshift-console/dynamic-plugin-sdk-internal';
 
 export const defaultTableColumnInfo = [
   { id: 'name' },
@@ -36,6 +37,7 @@ export const useDefaultColumns = () => {
     {
       id: defaultTableColumnInfo[3].id,
       title: '',
+      props: actionsCellProps,
     },
   ];
 

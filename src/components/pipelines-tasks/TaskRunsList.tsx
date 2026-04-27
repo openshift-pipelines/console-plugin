@@ -18,6 +18,7 @@ import {
   getNameCellProps,
   actionsCellProps,
   cellIsStickyProps,
+  LazyActionMenu,
 } from '@openshift-console/dynamic-plugin-sdk-internal';
 import { ArchiveIcon } from '@patternfly/react-icons';
 import { Tooltip } from '@patternfly/react-core';
@@ -43,7 +44,6 @@ import TaskRunStatus from './TaskRunStatus';
 import { ResourceLinkWithIcon } from '../utils/resource-link';
 import { getModelReferenceFromTaskKind } from '../utils/pipeline-augment';
 import { pipelineRunDuration } from '../utils/pipeline-utils';
-import { TaskRunKebab } from './TaskRunsRow';
 import { DataViewFilterToolbar } from '../common/DataViewFilterToolbar';
 import { useDataViewFilter } from '../hooks/useDataViewFilter';
 import { ComputedStatus, PipelineRunKind } from '../../types';
@@ -166,7 +166,11 @@ const getTaskRunDataViewRows =
           cell: pipelineRunDuration(obj),
         },
         actions: {
-          cell: <TaskRunKebab obj={obj} />,
+          cell: (
+            <LazyActionMenu
+              context={{ [getReferenceForModel(TaskRunModel)]: obj }}
+            />
+          ),
           props: actionsCellProps,
         },
       };

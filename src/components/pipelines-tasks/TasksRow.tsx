@@ -1,69 +1,17 @@
-import type { FC, Ref } from 'react';
-import { useState } from 'react';
+import type { FC } from 'react';
 import {
-  K8sResourceCommon,
+  getGroupVersionKindForModel,
   ResourceLink,
   RowProps,
   TableData,
   Timestamp,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { LazyActionMenu } from '@openshift-console/dynamic-plugin-sdk-internal';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { TaskModel } from '../../models';
 import { useTranslation } from 'react-i18next';
-import { KEBAB_BUTTON_ID } from '../../consts';
-import {
-  Dropdown,
-  DropdownList,
-  MenuToggle,
-  MenuToggleElement,
-} from '@patternfly/react-core';
-import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon';
-import { K8sCommonKebabMenu } from '../utils/k8s-common-kebab-menu';
 import { TaskKind } from '../../types';
 import { getTaskName } from '../utils/pipeline-augment';
-
-type TasksKebabProps = {
-  obj: K8sResourceCommon;
-};
-
-export const TaskKebab: FC<TasksKebabProps> = ({ obj }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const onToggle = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const onSelect = () => {
-    setIsOpen(false);
-  };
-
-  const dropdownItems = K8sCommonKebabMenu(obj, TaskModel);
-
-  return (
-    (<Dropdown
-      onSelect={onSelect}
-      onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-      toggle={(toggleRef: Ref<MenuToggleElement>) => (
-        <MenuToggle
-          ref={toggleRef}
-          aria-label="kebab menu"
-          variant="plain"
-          onClick={onToggle}
-          isExpanded={isOpen}
-          id={KEBAB_BUTTON_ID}
-          data-test={KEBAB_BUTTON_ID}
-        >
-          <EllipsisVIcon />
-        </MenuToggle>
-      )}
-      isOpen={isOpen}
-      isPlain={false}
-      popperProps={{ position: 'right' }}
-    >
-      <DropdownList>{dropdownItems}</DropdownList>
-    </Dropdown>)
-  );
-};
 
 const TaskRow: FC<RowProps<TaskKind>> = ({ activeColumnIDs, obj }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -72,7 +20,7 @@ const TaskRow: FC<RowProps<TaskKind>> = ({ activeColumnIDs, obj }) => {
     <>
       <TableData activeColumnIDs={activeColumnIDs} id="name">
         <ResourceLink
-          kind={getReferenceForModel(TaskModel)}
+          groupVersionKind={getGroupVersionKindForModel(TaskModel)}
           name={obj.metadata.name}
           displayName={getTaskName(obj)}
           namespace={obj.metadata.namespace}
@@ -93,7 +41,7 @@ const TaskRow: FC<RowProps<TaskKind>> = ({ activeColumnIDs, obj }) => {
         className="dropdown-kebab-pf pf-v6-c-table__action"
         id=""
       >
-        <TaskKebab obj={obj} />
+        <LazyActionMenu context={{ [getReferenceForModel(TaskModel)]: obj }} />
       </TableData>
     </>
   );

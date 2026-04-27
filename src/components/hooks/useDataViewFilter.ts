@@ -6,10 +6,16 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
 import { FLAG_PIPELINE_TEKTON_RESULT_INSTALLED } from '../../consts';
+import { ApprovalStatus } from '../../types';
+import {
+  pipelineApprovalFilter,
+  pipelineApprovalFilterReducer,
+} from '../approval-tasks/ApprovalTasksList';
 import type {
   CheckboxFilterConfig,
   FilterValues,
 } from '../common/DataViewFilterToolbar';
+import { getApprovalStatusInfo } from '../utils/pipeline-approval-utils';
 import {
   isPipelineRunLoadedFromTektonResults,
   pipelineFilterReducer,
@@ -20,15 +26,24 @@ import {
 } from '../utils/pipeline-filter-reducer';
 import { ListFilterId, ListFilterLabels } from '../utils/pipeline-utils';
 
-export type ResourceType = 'Pipeline' | 'PipelineRun' | 'TaskRun';
+export type ResourceType =
+  | 'Pipeline'
+  | 'PipelineRun'
+  | 'TaskRun'
+  | 'ApprovalTask';
 
-interface UseDataViewFilterOptions<T extends K8sResourceCommon> {
-  data: T[];
+export interface DataViewFilterOptions<T extends K8sResourceCommon> {
   getName?: (obj: T) => string;
   getLabels?: (obj: T) => Record<string, string> | undefined;
   resourceType?: ResourceType;
   defaultStatusValues?: string[];
   defaultDataSourceValues?: string[];
+  customData?: K8sResourceCommon[] | undefined;
+}
+
+export interface UseDataViewFilterParams<T extends K8sResourceCommon> {
+  data: T[];
+  options?: DataViewFilterOptions<T>;
 }
 
 const matchesLabels = (
@@ -47,12 +62,13 @@ const matchesLabels = (
 };
 
 interface ResourceFilterConfig {
-  statusOptions: ListFilterId[];
-  statusFilter: (phases: any, obj: any) => boolean;
-  statusReducer: (obj: any) => string;
+  statusOptions: ListFilterId[] | ApprovalStatus[];
+  statusFilter: (phases: any, obj: any, customData?: any) => boolean;
+  statusReducer: (obj: any, customData?: any) => string;
   hasDataSourceFilter: boolean;
   defaultStatusValues?: string[];
   defaultDataSourceValues?: string[];
+  getOptionLabel: (id: any) => string;
 }
 
 const RESOURCE_FILTER_CONFIG: Record<ResourceType, ResourceFilterConfig> = {
@@ -67,6 +83,7 @@ const RESOURCE_FILTER_CONFIG: Record<ResourceType, ResourceFilterConfig> = {
     statusFilter: pipelineStatusFilter,
     statusReducer: pipelineFilterReducer,
     hasDataSourceFilter: false,
+    getOptionLabel: (id) => ListFilterLabels[id],
   },
   PipelineRun: {
     statusOptions: [
@@ -80,6 +97,7 @@ const RESOURCE_FILTER_CONFIG: Record<ResourceType, ResourceFilterConfig> = {
     statusReducer: pipelineRunFilterReducer,
     hasDataSourceFilter: true,
     defaultDataSourceValues: ['cluster-data'],
+    getOptionLabel: (id) => ListFilterLabels[id],
   },
   TaskRun: {
     statusOptions: [
@@ -92,6 +110,19 @@ const RESOURCE_FILTER_CONFIG: Record<ResourceType, ResourceFilterConfig> = {
     statusReducer: pipelineRunFilterReducer,
     hasDataSourceFilter: true,
     defaultDataSourceValues: ['cluster-data'],
+    getOptionLabel: (id) => ListFilterLabels[id],
+  },
+  ApprovalTask: {
+    statusOptions: [
+      ApprovalStatus.Accepted,
+      ApprovalStatus.Rejected,
+      ApprovalStatus.RequestSent,
+      ApprovalStatus.TimedOut,
+    ],
+    statusFilter: pipelineApprovalFilter,
+    statusReducer: pipelineApprovalFilterReducer,
+    hasDataSourceFilter: false,
+    getOptionLabel: (id) => getApprovalStatusInfo(id).message,
   },
 };
 
@@ -104,12 +135,16 @@ const defaultGetLabels = <T extends K8sResourceCommon>(
 
 export const useDataViewFilter = <T extends K8sResourceCommon>({
   data,
-  getName = defaultGetName,
-  getLabels = defaultGetLabels,
-  resourceType,
-  defaultStatusValues,
-  defaultDataSourceValues,
-}: UseDataViewFilterOptions<T>) => {
+  options,
+}: UseDataViewFilterParams<T>) => {
+  const {
+    getName = defaultGetName,
+    getLabels = defaultGetLabels,
+    resourceType,
+    defaultStatusValues,
+    defaultDataSourceValues,
+    customData,
+  } = options ?? {};
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
   const allStatusIds = useMemo(() => Object.values(ListFilterId), []);
@@ -127,7 +162,7 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
         defaultValues: defaultStatusValues ?? config.defaultStatusValues,
         options: config.statusOptions.map((id) => ({
           value: id,
-          label: ListFilterLabels[id],
+          label: config.getOptionLabel(id),
           count: 0,
         })),
       },
@@ -164,6 +199,7 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
         return config.statusFilter(
           { selected: selectedValues, all: allStatusIds },
           obj,
+          customData,
         );
       }
       if (filterId === 'dataSource') {
@@ -171,12 +207,13 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
       }
       return true;
     },
-    [allStatusIds, config],
+    [allStatusIds, config, customData],
   );
 
   const getCheckboxFilterValue = useCallback(
     (obj: T, filterId: string): string | undefined => {
-      if (filterId === 'status' && config) return config.statusReducer(obj);
+      if (filterId === 'status' && config)
+        return config.statusReducer(obj, customData);
       if (filterId === 'dataSource') {
         return isPipelineRunLoadedFromTektonResults(obj)
           ? 'archived-data'
@@ -184,7 +221,7 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
       }
       return undefined;
     },
-    [config],
+    [config, customData],
   );
 
   const initialValues = useMemo(() => {

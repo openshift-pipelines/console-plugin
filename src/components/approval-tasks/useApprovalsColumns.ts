@@ -1,34 +1,39 @@
 import { TableColumn } from '@openshift-console/dynamic-plugin-sdk';
-import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ApprovalFields, ApprovalLabels } from '../../consts';
 import { ApprovalTaskKind } from '../../types';
-import { tableColumnClasses } from './approval-table';
+
+export const tableColumnInfo = [
+  { id: 'plrName' },
+  { id: 'taskRunName' },
+  { id: 'namespace' },
+  { id: 'status' },
+  { id: 'description' },
+  { id: 'startTime' },
+  { id: 'action' },
+];
 
 const useApprovalsColumns = (namespace): TableColumn<ApprovalTaskKind>[] => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return [
     {
-      id: 'plrName',
+      id: tableColumnInfo[0].id,
       title: t('PipelineRun name'),
-      transforms: [sortable],
       sort: `metadata.labels["${ApprovalLabels[ApprovalFields.PIPELINE_RUN]}"]`,
-      props: { className: tableColumnClasses.plrName },
+      props: { width: 20, modifier: 'nowrap', isStickyColumn: true },
     },
     {
-      id: 'taskRunName',
+      id: tableColumnInfo[1].id,
       title: t('TaskRun name'),
       sort: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.taskRunName },
+      props: { width: 15, modifier: 'nowrap' },
     },
     ...(!namespace
       ? [
           {
             title: t('Namespace'),
             sort: 'metadata.namespace',
-            transforms: [sortable],
-            props: { className: tableColumnClasses.namespace },
+            props: { width: 15, modifier: 'nowrap' },
             id: 'namespace',
           },
         ]
@@ -36,24 +41,28 @@ const useApprovalsColumns = (namespace): TableColumn<ApprovalTaskKind>[] => {
     {
       id: 'status',
       title: t('Current status'),
-      props: { className: tableColumnClasses.status },
+      props: {
+        width: 10,
+        modifier: 'nowrap',
+      },
     },
     {
       id: 'description',
       title: t('Description'),
-      props: { className: tableColumnClasses.description },
+      props: { width: 10 },
     },
     {
       id: 'startTime',
       title: t('Started'),
       sort: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses.startTime },
+      props: {
+        width: 15,
+        modifier: 'nowrap',
+      },
     },
     {
-      id: 'kebab-menu',
+      id: 'action',
       title: '',
-      props: { className: tableColumnClasses.actions },
     },
   ];
 };

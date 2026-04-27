@@ -59,10 +59,8 @@ const PipelineRunsList: FC<PipelineRunsListProps> = ({
     updatedCheckboxFilters,
   } = useDataViewFilter<PipelineRunKind>({
     data: pipelineRuns || [],
-    options: {
-      resourceType: 'PipelineRun',
-      defaultDataSourceValues: ['cluster-data'],
-    },
+    resourceType: 'PipelineRun',
+    defaultDataSourceValues: ['cluster-data'],
   });
 
   const loaded = useMemo(() => {

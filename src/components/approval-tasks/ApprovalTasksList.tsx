@@ -1,30 +1,31 @@
 import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import './ApprovalRow.scss';
-import { ListPageBody } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  ListPageBody,
+  RowFilter,
+  VirtualizedTable,
+  useListPageFilter,
+} from '@openshift-console/dynamic-plugin-sdk';
 import { ApprovalTaskKind } from '../../types';
 import {
   getApprovalStatus,
+  getApprovalStatusInfo,
   getPipelineRunOfApprovalTask,
 } from '../utils/pipeline-approval-utils';
 import { ApprovalStatus } from '../../types';
 import { useApprovalTasks, usePipelineRuns } from '../hooks/useTaskRuns';
 import { useParams } from 'react-router';
 import useApprovalsColumns from './useApprovalsColumns';
-import { getApprovalListPageDataViewRows } from './ApprovalRow';
-import { ConsoleDataView } from '@openshift-console/dynamic-plugin-sdk-internal';
-import { DataViewFilterToolbar } from '../common/DataViewFilterToolbar';
-import { useDataViewFilter } from '../hooks/useDataViewFilter';
-import { useTranslation } from 'react-i18next';
+import ApprovalRow from './ApprovalRow';
+import { ListPageFilter } from '../list-pages/ListPageFilter';
 
 type ApprovalTasksListProps = {
   namespace: string;
   hideTextFilter?: boolean;
 };
 
-export const pipelineApprovalFilterReducer = (
-  obj: ApprovalTaskKind,
-  pipelineRuns,
-) => {
+const pipelineApprovalFilterReducer = (obj: ApprovalTaskKind, pipelineRuns) => {
   const pipelineRun = getPipelineRunOfApprovalTask(pipelineRuns, obj);
   const status = getApprovalStatus(obj, pipelineRun);
   if (
@@ -34,18 +35,6 @@ export const pipelineApprovalFilterReducer = (
     return ApprovalStatus.RequestSent;
   }
   return status || ApprovalStatus.Unknown;
-};
-
-export const pipelineApprovalFilter = (
-  filterValue,
-  obj: ApprovalTaskKind,
-  pipelineRuns,
-) => {
-  const status = pipelineApprovalFilterReducer(obj, pipelineRuns);
-  return (
-    !filterValue.selected?.length ||
-    (status && filterValue.selected.includes(status))
-  );
 };
 
 const ApprovalTasksList: FC<ApprovalTasksListProps> = ({
@@ -61,44 +50,80 @@ const ApprovalTasksList: FC<ApprovalTasksListProps> = ({
     useApprovalTasks(namespace, pipelineRunName);
   const columns = useApprovalsColumns(namespace);
 
-  const {
-    filterValues,
-    onFilterChange,
-    onClearAll,
-    filteredData,
-    updatedCheckboxFilters,
-  } = useDataViewFilter<ApprovalTaskKind>({
-    data: approvalTasks || [],
-    options: {
-      resourceType: 'ApprovalTask',
-      defaultStatusValues: ['pending'],
-      customData: pipelineRunsLoaded ? pipelineRuns : [],
+  const filters: RowFilter<ApprovalTaskKind>[] = [
+    {
+      filterGroupName: t('Approval status'),
+      type: 'status',
+      items: [
+        {
+          id: ApprovalStatus.Accepted,
+          title: getApprovalStatusInfo(ApprovalStatus.Accepted).message,
+        },
+        {
+          id: ApprovalStatus.Rejected,
+          title: getApprovalStatusInfo(ApprovalStatus.Rejected).message,
+        },
+        {
+          id: ApprovalStatus.RequestSent,
+          title: getApprovalStatusInfo(ApprovalStatus.RequestSent).message,
+        },
+        {
+          id: ApprovalStatus.TimedOut,
+          title: getApprovalStatusInfo(ApprovalStatus.TimedOut).message,
+        },
+      ],
+      reducer: (obj: ApprovalTaskKind) =>
+        pipelineApprovalFilterReducer(obj, pipelineRuns),
+      filter: (filterValue, obj: ApprovalTaskKind) => {
+        const status = pipelineApprovalFilterReducer(obj, pipelineRuns);
+        return (
+          !filterValue.selected?.length ||
+          (status && filterValue.selected.includes(status))
+        );
+      },
+      ...(!pipelineRunName && {
+        defaultSelected: [ApprovalStatus.RequestSent],
+      }),
     },
-  });
+  ];
+
+  const [data, filteredData, onFilterChange] = useListPageFilter(
+    approvalTasks,
+    filters,
+  );
 
   return (
     <>
       <ListPageBody>
-        {!hideTextFilter && (
-          <DataViewFilterToolbar
-            filterValues={filterValues}
-            onFilterChange={onFilterChange}
-            onClearAll={onClearAll}
-            checkboxFilters={updatedCheckboxFilters}
-          />
-        )}
-        <ConsoleDataView<ApprovalTaskKind>
-          label={t('ApprovalTasks')}
+        <ListPageFilter
+          columnLayout={{
+            columns: columns?.map(({ id, title }) => ({ id, title })),
+            id: 'approvals-list',
+            type: 'ApprovalTask',
+            selectedColumns: new Set(['name']),
+          }}
+          rowFilters={filters}
+          onFilterChange={onFilterChange}
+          data={data}
+          loaded={approvalTasksLoaded}
+          hideColumnManagement
+          hideNameLabelFilters={hideTextFilter}
+        />
+        <VirtualizedTable<ApprovalTaskKind>
+          EmptyMsg={() => (
+            <div className="cp-text-align-center" id="no-resource-msg">
+              {t('No ApprovalTasks found')}
+            </div>
+          )}
           columns={columns}
           data={filteredData}
-          loaded={approvalTasksLoaded && pipelineRunsLoaded}
+          loaded={approvalTasksLoaded}
           loadError={approvalTasksLoadError}
-          getDataViewRows={getApprovalListPageDataViewRows}
-          customRowData={{
+          Row={ApprovalRow}
+          rowData={{
             pipelineRuns: pipelineRunsLoaded ? pipelineRuns : [],
           }}
-          hideColumnManagement
-          hideNameLabelFilters
+          unfilteredData={data}
         />
       </ListPageBody>
     </>

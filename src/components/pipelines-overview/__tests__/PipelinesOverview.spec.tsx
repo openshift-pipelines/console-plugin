@@ -13,11 +13,6 @@ import * as utils from '../utils';
 
 const setActiveNamespace = jest.fn();
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => ({
-  getGroupVersionKindForModel: jest.fn((model) => ({
-    group: model?.apiGroup,
-    version: model?.apiVersion,
-    kind: model?.kind,
-  })),
   useK8sWatchResource: jest.fn(),
   useActiveNamespace: jest.fn(),
   k8sGet: jest.fn(),

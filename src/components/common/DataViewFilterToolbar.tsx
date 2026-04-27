@@ -138,11 +138,11 @@ const CheckboxFilterInput: FC<{
                     isSelected={selected.includes(option.value)}
                   >
                     {option.label}
-                    <Badge isRead className="pf-v6-u-ml-sm">
+                    <span className="pf-v6-c-badge pf-v6-u-ml-sm">
                       {option.totalCount !== undefined
                         ? `${option.count}/${option.totalCount}`
                         : option.count}
-                    </Badge>
+                    </span>
                   </MenuItem>
                 ))}
               </MenuList>

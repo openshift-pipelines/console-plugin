@@ -1,9 +1,14 @@
+import type { FC } from 'react';
 import { Split, SplitItem, Tooltip } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   getGroupVersionKindForModel,
+  RowProps,
   ResourceLink,
+  TableData,
   Timestamp,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { tableColumnClasses } from './approval-table';
 import { ApprovalTaskKind } from '../../types';
 import {
   ApprovalTaskModel,
@@ -20,148 +25,126 @@ import { PipelineRunKind } from '../../types';
 import ApprovalTaskActionDropdown from './ApprovalTaskActionDropdown';
 
 import './ApprovalRow.scss';
-import { GetDataViewRows } from '@openshift-console/dynamic-plugin-sdk/lib/api/internal-types';
-import { tableColumnInfo } from './useApprovalsColumns';
-import {
-  actionsCellProps,
-  getNameCellProps,
-} from '@openshift-console/dynamic-plugin-sdk-internal';
-import { t } from '../utils/common-utils';
-import { DASH } from '../../consts';
 
-const ApprovalStatus = (statusDetailsProps) => {
+const ApprovalRow: FC<
+  RowProps<
+    ApprovalTaskKind,
+    {
+      pipelineRuns: PipelineRunKind[];
+    }
+  >
+> = ({ obj, activeColumnIDs, rowData: { pipelineRuns } }) => {
+  const { t } = useTranslation('plugin__pipelines-console-plugin');
   const {
-    approvalTaskStatus,
-    translatedApproversCount,
-    approvalsReceived,
-    numberOfApprovalsRequired,
-  } = statusDetailsProps;
+    metadata: { name, namespace, creationTimestamp },
+    spec: { description, numberOfApprovalsRequired },
+    status: { approvers, approvalsReceived },
+  } = obj;
+
+  const translatedApproversCount = t('{{assignees}} Assigned', {
+    assignees: approvers?.length || 0,
+  });
+  const pipelineRun = getPipelineRunOfApprovalTask(pipelineRuns, obj);
+
+  const approvalTaskStatus = getApprovalStatus(obj, pipelineRun);
+
   return (
-    <Split className="pipelines-approval-status-icon">
-      <SplitItem>
-        <svg
-          width={30}
-          height={30}
-          viewBox="-10 -2 30 30"
-          style={{
-            color: getApprovalStatusInfo(approvalTaskStatus).pftoken.value,
-          }}
-        >
-          <ApprovalStatusIcon status={approvalTaskStatus} />
-        </svg>
-      </SplitItem>
-      <SplitItem isFilled className="co-resource-item">
-        {getApprovalStatusInfo(approvalTaskStatus).message}{' '}
-        <Tooltip content={translatedApproversCount} position="right">
-          <span className="pipelines-approval-status-info">{`(${
-            approvalsReceived || 0
-          }/${numberOfApprovalsRequired || 0})`}</span>
-        </Tooltip>
-      </SplitItem>
-    </Split>
-  );
-};
-
-export const getApprovalListPageDataViewRows: GetDataViewRows<
-  ApprovalTaskKind,
-  {
-    pipelineRuns: PipelineRunKind[];
-  }
-> = (data, columns) => {
-  return data.map(({ obj, rowData: { pipelineRuns } }) => {
-    const {
-      metadata: { name, namespace, creationTimestamp },
-      spec: { description, numberOfApprovalsRequired },
-      status: { approvers, approvalsReceived },
-    } = obj;
-
-    const translatedApproversCount = t('{{assignees}} Assigned', {
-      assignees: approvers?.length || 0,
-    });
-    const pipelineRun = getPipelineRunOfApprovalTask(pipelineRuns, obj);
-
-    const approvalTaskStatus = getApprovalStatus(obj, pipelineRun);
-
-    const rowCells = {
-      [tableColumnInfo[0].id]: {
-        cell: (
-          <ResourceLink
-            groupVersionKind={getGroupVersionKindForModel(PipelineRunModel)}
-            name={pipelineRun?.metadata.name}
-            namespace={namespace}
-          />
-        ),
-        props: {
-          ...getNameCellProps(`approvaltasks-list`),
-          modifier: 'nowrap',
-        },
-      },
-      [tableColumnInfo[1].id]: {
-        cell: (
-          <ResourceLink
-            groupVersionKind={getGroupVersionKindForModel(ApprovalTaskModel)}
-            name={name}
-            namespace={namespace}
-          />
-        ),
-        props: { modifier: 'nowrap' },
-      },
-      [tableColumnInfo[2].id]: {
-        cell: (
-          <ResourceLink
-            groupVersionKind={getGroupVersionKindForModel(NamespaceModel)}
-            name={namespace}
-          />
-        ),
-        props: { modifier: 'nowrap' },
-      },
-      [tableColumnInfo[3].id]: {
-        cell: (
-          <ApprovalStatus
-            approvalTaskStatus={approvalTaskStatus}
-            translatedApproversCount={translatedApproversCount}
-            approvalsReceived={approvalsReceived}
-            numberOfApprovalsRequired={numberOfApprovalsRequired}
-          />
-        ),
-        props: { modifier: 'nowrap' },
-      },
-      [tableColumnInfo[4].id]: {
-        cell: !description ? (
-          DASH
+    <>
+      <TableData
+        className={tableColumnClasses.plrName}
+        id="plrName"
+        activeColumnIDs={activeColumnIDs}
+      >
+        <ResourceLink
+          groupVersionKind={getGroupVersionKindForModel(PipelineRunModel)}
+          name={pipelineRun?.metadata.name}
+          namespace={namespace}
+        />
+      </TableData>
+      <TableData
+        className={tableColumnClasses.taskRunName}
+        id="taskRunName"
+        activeColumnIDs={activeColumnIDs}
+      >
+        <ResourceLink
+          groupVersionKind={getGroupVersionKindForModel(ApprovalTaskModel)}
+          name={name}
+          namespace={namespace}
+        />
+      </TableData>
+      <TableData
+        className={tableColumnClasses.namespace}
+        id="namespace"
+        activeColumnIDs={activeColumnIDs}
+      >
+        <ResourceLink
+          groupVersionKind={getGroupVersionKindForModel(NamespaceModel)}
+          name={namespace}
+        />
+      </TableData>
+      <TableData
+        className={tableColumnClasses.status}
+        id="status"
+        activeColumnIDs={activeColumnIDs}
+      >
+        <Split className="pipelines-approval-status-icon">
+          <SplitItem>
+            <svg
+              width={30}
+              height={30}
+              viewBox="-10 -2 30 30"
+              style={{
+                color: getApprovalStatusInfo(approvalTaskStatus).pftoken.value,
+              }}
+            >
+              <ApprovalStatusIcon status={approvalTaskStatus} />
+            </svg>
+          </SplitItem>
+          <SplitItem isFilled className="co-resource-item">
+            {getApprovalStatusInfo(approvalTaskStatus).message}{' '}
+            <Tooltip content={translatedApproversCount} position="right">
+              <span className="pipelines-approval-status-info">{`(${
+                approvalsReceived || 0
+              }/${numberOfApprovalsRequired || 0})`}</span>
+            </Tooltip>
+          </SplitItem>
+        </Split>
+      </TableData>
+      <TableData
+        className={tableColumnClasses.description}
+        id="description"
+        activeColumnIDs={activeColumnIDs}
+      >
+        {!description ? (
+          '-'
         ) : description.length > 35 ? (
           <Tooltip content={description} position="top">
             <span>{description.slice(0, 35)}...</span>
           </Tooltip>
         ) : (
           description
-        ),
-      },
-      [tableColumnInfo[5].id]: {
-        cell:
-          (creationTimestamp && <Timestamp timestamp={creationTimestamp} />) ||
-          DASH,
-        props: { modifier: 'nowrap' },
-      },
-      [tableColumnInfo[6].id]: {
-        cell: (
-          <ApprovalTaskActionDropdown
-            approvalTask={obj}
-            pipelineRun={pipelineRun}
-          />
-        ),
-        props: { ...actionsCellProps, modifier: 'nowrap' },
-      },
-    };
-
-    return columns.map(({ id }) => {
-      const cell = rowCells[id]?.cell;
-      const props = rowCells[id]?.props;
-      return {
-        id,
-        props,
-        cell,
-      };
-    });
-  });
+        )}
+      </TableData>
+      <TableData
+        className={tableColumnClasses.startTime}
+        id="startTime"
+        activeColumnIDs={activeColumnIDs}
+      >
+        {(creationTimestamp && <Timestamp timestamp={creationTimestamp} />) ||
+          '-'}
+      </TableData>
+      <TableData
+        className={tableColumnClasses.actions}
+        id="kebab-menu"
+        activeColumnIDs={activeColumnIDs}
+      >
+        <ApprovalTaskActionDropdown
+          approvalTask={obj}
+          pipelineRun={pipelineRun}
+        />
+      </TableData>
+    </>
+  );
 };
+
+export default ApprovalRow;

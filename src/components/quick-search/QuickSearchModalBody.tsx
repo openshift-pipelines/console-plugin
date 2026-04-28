@@ -62,12 +62,8 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>(null);
   const [catalogTypes, setCatalogTypes] = useState<CatalogType[]>([]);
   const [isRndActive, setIsRndActive] = useState(false);
-  const [maxHeight, setMaxHeight] = useState(
-    DEFAULT_HEIGHT_WITH_NO_ITEMS,
-  );
-  const [minHeight, setMinHeight] = useState(
-    DEFAULT_HEIGHT_WITH_NO_ITEMS,
-  );
+  const [maxHeight, setMaxHeight] = useState(DEFAULT_HEIGHT_WITH_NO_ITEMS);
+  const [minHeight, setMinHeight] = useState(DEFAULT_HEIGHT_WITH_NO_ITEMS);
   const [minWidth, setMinWidth] = useState(MIN_WIDTH);
   const [searchTerm, setSearchTerm] = useState<string>(
     getQueryArgument('catalogSearch') || '',
@@ -81,8 +77,7 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
     width: number;
   }>();
   const [tektonTasks] = useTasksProvider({});
-  const [draggableBoundary, setDraggableBoundary] =
-    useState<string>(null);
+  const [draggableBoundary, setDraggableBoundary] = useState<string>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchError, setIsSearchError] = useState(false);
   const ref = useRef<HTMLDivElement>();
@@ -183,7 +178,8 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
           artifactHubResults,
           tektonTasks,
         );
-        const { filteredItems, viewAllLinks, catalogItemTypes } = catalogResults;
+        const { filteredItems, viewAllLinks, catalogItemTypes } =
+          catalogResults;
 
         const mergedItems = [
           ...filteredItems,
@@ -361,7 +357,7 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
     >
       <div
         ref={ref}
-        className="ocs-quick-search-modal-body"
+        className="pipelines-ocs-quick-search-modal-body"
         style={{
           height: getModalHeight(),
         }}

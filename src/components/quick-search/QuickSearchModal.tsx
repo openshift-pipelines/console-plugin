@@ -1,8 +1,5 @@
 import type { ReactNode, SetStateAction, Dispatch, FC } from 'react';
-import {
-	Modal,
-	ModalVariant
-} from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { DetailsRendererFunction } from './QuickSearchDetails';
 import QuickSearchModalBody from './QuickSearchModalBody';
@@ -47,7 +44,7 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
 
   return viewContainer ? (
     <Modal
-      className="ocs-quick-search-modal"
+      className="pipelines-ocs-quick-search-modal"
       variant={ModalVariant.medium}
       aria-label={t('Quick search')}
       isOpen={isOpen}

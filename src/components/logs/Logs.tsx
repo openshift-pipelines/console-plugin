@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Banner } from '@patternfly/react-core';
 import { LogViewer } from '@patternfly/react-log-viewer';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
@@ -10,12 +10,14 @@ import { ContainerSpec, ContainerStatus, PodKind } from '../../types';
 import { PodModel } from '../../models';
 import { resourceURL } from '../utils/k8s-utils';
 import { containerToLogSourceStatus } from '../utils/pipeline-utils';
-import './MultiStreamLogs.scss';
+import { LoadingInline } from '../Loading';
 
 type LogsProps = {
   resource: PodKind;
   containers: ContainerSpec[];
   setCurrentLogsGetter?: (getter: () => string) => void;
+  taskName?: string;
+  stillFetching?: boolean;
 };
 
 type LogData = {
@@ -50,7 +52,9 @@ const processLogData = (
 };
 
 const Logs: React.FC<LogsProps> = ({
+  stillFetching,
   resource,
+  taskName,
   containers,
   setCurrentLogsGetter,
 }) => {
@@ -212,7 +216,7 @@ const Logs: React.FC<LogsProps> = ({
   }, [logData]);
 
   return (
-    <div className="odc-logs-logviewer">
+    <div className="pf-v5-u-h-100 pf-v5-u-w-100">
       {error && (
         <Alert
           variant="danger"
@@ -221,9 +225,26 @@ const Logs: React.FC<LogsProps> = ({
         />
       )}
       <LogViewer
+        useAnsiClasses={true}
+        header={
+          <Banner className="pf-v5-l-flex pf-v5-l-gap-md">
+            <span data-test-id="logs-taskName" className="pf-v5-u-font-size-md">
+              {taskName}
+            </span>
+            {stillFetching ? (
+              <span data-test-id="loading-indicator">
+                <LoadingInline />
+              </span>
+            ) : null}
+          </Banner>
+        }
         hasLineNumbers={false}
         isTextWrapped={false}
-        data={formattedLogString}
+        data={
+          error
+            ? t('An error occurred while retrieving the requested logs.')
+            : formattedLogString
+        }
         theme="dark"
         scrollToRow={scrollToRow}
         height="100%"

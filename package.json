@@ -188,6 +188,8 @@
     "@types/d3-dispatch": "3.0.6",
     "@types/d3-selection": "3.0.10",
     "lodash": "4.17.23",
-    "lodash-es": "4.17.23"
+    "lodash-es": "4.17.23",
+    "immutable@^3.0.0": "3.8.3",
+    "immutable@^5.0.0": "5.1.5"
   }
 }

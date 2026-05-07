@@ -326,3 +326,8 @@ export const getDownloadAllLogsCallbackMultiCluster = (
 
   return () => fetchMcLogs();
 };
+
+export const resetAnsiStatePerLine = (logData: string): string => {
+  if (!logData) return logData;
+  return logData.replace(/\n/g, '\n\x1b[0m');
+};

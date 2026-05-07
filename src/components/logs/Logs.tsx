@@ -15,6 +15,7 @@ import {
   getMultiClusterLogsUrl,
   getMultiClusterLogsStreamPath,
 } from '../utils/multi-cluster-api';
+import { resetAnsiStatePerLine } from './logs-utils';
 
 type LogsProps = {
   resource: PodKind;
@@ -56,7 +57,7 @@ const processLogData = (
       }
     }
   });
-  return result;
+  return resetAnsiStatePerLine(result);
 };
 
 const Logs: React.FC<LogsProps> = ({

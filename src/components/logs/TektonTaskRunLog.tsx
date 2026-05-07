@@ -7,6 +7,7 @@ import { LoadingInline } from '../Loading';
 import { useTRTaskRunLog } from '../hooks/useTektonResult';
 import { Banner } from '@patternfly/react-core';
 import './TektonTaskRunLog.scss';
+import { resetAnsiStatePerLine } from './logs-utils';
 
 type TektonTaskRunLogProps = {
   taskRun?: TaskRunKind;
@@ -39,7 +40,7 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
     if (!trResults) return '';
     const formattedTaskName = `${taskName.toUpperCase()}`;
 
-    return `${formattedTaskName}\n${trResults}\n\n`;
+    return resetAnsiStatePerLine(`${formattedTaskName}\n${trResults}\n\n`);
   }, [trResults, taskName]);
   const lastRowIndex = trResults ? formattedResults.split('\n').length : 0;
 

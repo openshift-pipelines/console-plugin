@@ -15,10 +15,7 @@ import {
   getPipelineRunData,
   resourcePathFromModel,
 } from '../components/utils/utils';
-import {
-  shouldHidePipelineRunCancel,
-  shouldHidePipelineRunStop,
-} from '../components/utils/pipeline-augment';
+import { shouldHidePipelineRunStopOrCancel } from '../components/utils/pipeline-augment';
 import {
   isResourceLoadedFromTR,
   tektonResultsFlag,
@@ -35,8 +32,7 @@ export const usePipelineRunActionsProvider = (resource: PipelineRunKind) => {
 
   const { name, namespace } = resource.metadata;
 
-  const hidePLRStop = shouldHidePipelineRunStop(resource, []);
-  const hidePLRCancel = shouldHidePipelineRunCancel(resource, []);
+  const hidePLRStopOrCancel = shouldHidePipelineRunStopOrCancel(resource);
   const isDeleteDisabled = isResourceLoadedFromTR(resource);
 
   const hasPipelineRef = !!(
@@ -129,12 +125,12 @@ export const usePipelineRunActionsProvider = (resource: PipelineRunKind) => {
       {
         id: 'stop-pipelinerun',
         label: t('Stop'),
-        disabled: hidePLRStop || !canUpdatePipelineRun,
+        disabled: hidePLRStopOrCancel || !canUpdatePipelineRun,
         tooltip:
-          !hidePLRStop && canUpdatePipelineRun
+          !hidePLRStopOrCancel && canUpdatePipelineRun
             ? t('Let the running tasks complete, then execute finally tasks')
             : undefined,
-        disabledTooltip: hidePLRStop
+        disabledTooltip: hidePLRStopOrCancel
           ? t('PipelineRun cannot be stopped in its current state')
           : t('Insufficient permissions to update PipelineRun'),
         cta: () => {
@@ -158,14 +154,14 @@ export const usePipelineRunActionsProvider = (resource: PipelineRunKind) => {
       {
         id: 'cancel-pipelinerun',
         label: t('Cancel'),
-        disabled: hidePLRCancel || !canUpdatePipelineRun,
+        disabled: hidePLRStopOrCancel || !canUpdatePipelineRun,
         tooltip:
-          !hidePLRCancel && canUpdatePipelineRun
+          !hidePLRStopOrCancel && canUpdatePipelineRun
             ? t(
                 'Interrupt any executing non finally tasks, then execute finally tasks',
               )
             : undefined,
-        disabledTooltip: hidePLRCancel
+        disabledTooltip: hidePLRStopOrCancel
           ? t('PipelineRun cannot be cancelled in its current state')
           : t('Insufficient permissions to update PipelineRun'),
         cta: () => {
@@ -206,8 +202,7 @@ export const usePipelineRunActionsProvider = (resource: PipelineRunKind) => {
     currentUser,
     location,
     hasPipelineRef,
-    hidePLRStop,
-    hidePLRCancel,
+    hidePLRStopOrCancel,
     isDeleteDisabled,
     navigate,
     launchErrorModal,

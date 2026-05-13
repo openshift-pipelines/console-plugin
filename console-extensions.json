@@ -179,7 +179,7 @@
       "abbr": "PLR"
     }
   },
-    {
+  {
     "type": "console.model-metadata",
     "properties": {
       "model": {
@@ -208,19 +208,19 @@
     }
   },
   {
-      "type": "console.model-metadata",
-      "properties": {
-        "model": {
-          "group": "tekton.dev",
-          "version": "v1beta1",
-          "kind": "TaskRun"
-        },
-        "color": "#38812f",
-        "label": "%plugin__pipelines-console-plugin~TaskRun%",
-        "labelPlural": "%plugin__pipelines-console-plugin~TaskRuns%",
-        "abbr": "TR"
-      }
-    },
+    "type": "console.model-metadata",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "TaskRun"
+      },
+      "color": "#38812f",
+      "label": "%plugin__pipelines-console-plugin~TaskRun%",
+      "labelPlural": "%plugin__pipelines-console-plugin~TaskRuns%",
+      "abbr": "TR"
+    }
+  },
   {
     "type": "console.model-metadata",
     "properties": {
@@ -246,8 +246,7 @@
       "color": "#38812f",
       "label": "%plugin__pipelines-console-plugin~TriggerBinding%",
       "labelPlural": "%plugin__pipelines-console-plugin~TriggerBindings%",
-      "abbr": "TB",
-      "badge": "tech"
+      "abbr": "TB"
     }
   },
   {
@@ -261,8 +260,7 @@
       "color": "#38812f",
       "label": "%plugin__pipelines-console-plugin~ClusterTriggerBinding%",
       "labelPlural": "%plugin__pipelines-console-plugin~ClusterTriggerBindings%",
-      "abbr": "CTB",
-      "badge": "tech"
+      "abbr": "CTB"
     }
   },
   {
@@ -276,8 +274,7 @@
       "color": "#38812f",
       "label": "%plugin__pipelines-console-plugin~TriggerTemplate%",
       "labelPlural": "%plugin__pipelines-console-plugin~TriggerTemplates%",
-      "abbr": "TT",
-      "badge": "tech"
+      "abbr": "TT"
     }
   },
   {
@@ -291,8 +288,7 @@
       "color": "#38812f",
       "label": "%plugin__pipelines-console-plugin~EventListener%",
       "labelPlural": "%plugin__pipelines-console-plugin~EventListeners%",
-      "abbr": "EL",
-      "badge": "tech"
+      "abbr": "EL"
     }
   },
   {
@@ -306,8 +302,7 @@
       "color": "#38812f",
       "label": "%plugin__pipelines-console-plugin~Repository%",
       "labelPlural": "%plugin__pipelines-console-plugin~Repositories%",
-      "abbr": "R",
-      "badge": "dev"
+      "abbr": "R"
     }
   },
   {
@@ -337,7 +332,7 @@
       "labelPlural": "%plugin__pipelines-console-plugin~TektonHubs%",
       "abbr": "TH"
     }
-  }, 
+  },
   {
     "type": "console.context-provider",
     "properties": {
@@ -1619,7 +1614,9 @@
         "version": "v1",
         "kind": "Task"
       },
-      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+      "provider": {
+        "$codeRef": "defaultActionsProvider.useDefaultActionsProvider"
+      }
     }
   },
   {
@@ -1630,7 +1627,9 @@
         "version": "v1",
         "kind": "Pipeline"
       },
-      "provider": { "$codeRef": "pipelineActionsProvider.usePipelineActionsProvider" }
+      "provider": {
+        "$codeRef": "pipelineActionsProvider.usePipelineActionsProvider"
+      }
     }
   },
   {
@@ -1641,7 +1640,9 @@
         "version": "v1",
         "kind": "PipelineRun"
       },
-      "provider": { "$codeRef": "pipelineRunActionsProvider.usePipelineRunActionsProvider" }
+      "provider": {
+        "$codeRef": "pipelineRunActionsProvider.usePipelineRunActionsProvider"
+      }
     }
   },
   {
@@ -1652,7 +1653,9 @@
         "version": "v1",
         "kind": "TaskRun"
       },
-      "provider": { "$codeRef": "taskRunActionsProvider.useTaskRunActionsProvider" }
+      "provider": {
+        "$codeRef": "taskRunActionsProvider.useTaskRunActionsProvider"
+      }
     }
   },
   {
@@ -1663,7 +1666,9 @@
         "version": "v1beta1",
         "kind": "ClusterTriggerBinding"
       },
-      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+      "provider": {
+        "$codeRef": "defaultActionsProvider.useDefaultActionsProvider"
+      }
     }
   },
   {
@@ -1674,7 +1679,9 @@
         "version": "v1beta1",
         "kind": "EventListener"
       },
-      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+      "provider": {
+        "$codeRef": "defaultActionsProvider.useDefaultActionsProvider"
+      }
     }
   },
   {
@@ -1685,7 +1692,9 @@
         "version": "v1beta1",
         "kind": "TriggerTemplate"
       },
-      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+      "provider": {
+        "$codeRef": "defaultActionsProvider.useDefaultActionsProvider"
+      }
     }
   },
   {
@@ -1696,7 +1705,9 @@
         "version": "v1beta1",
         "kind": "TriggerBinding"
       },
-      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+      "provider": {
+        "$codeRef": "defaultActionsProvider.useDefaultActionsProvider"
+      }
     }
   },
   {
@@ -1707,7 +1718,9 @@
         "version": "v1alpha1",
         "kind": "Repository"
       },
-      "provider": { "$codeRef": "defaultActionsProvider.useDefaultActionsProvider" }
+      "provider": {
+        "$codeRef": "defaultActionsProvider.useDefaultActionsProvider"
+      }
     }
   }
 ]

@@ -1,0 +1,26 @@
+name: Validate AGENTS.md
+
+on:
+  push:
+    paths: ['AGENTS.md']
+  pull_request:
+    paths: ['AGENTS.md']
+
+jobs:
+  check-line-count:
+    name: AGENTS.md must be ≤ 60 lines
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify AGENTS.md exists
+        run: test -f AGENTS.md || { echo "AGENTS.md not found"; exit 1; }
+
+      - name: Check line count
+        run: |
+          LINES=$(wc -l < AGENTS.md)
+          echo "AGENTS.md has $LINES lines"
+          if [ "$LINES" -gt 60 ]; then
+            echo "::error::AGENTS.md exceeds 60 lines ($LINES lines)"
+            exit 1
+          fi

@@ -25,7 +25,8 @@
     "memsource-upload": "./i18n-scripts/memsource-upload.sh",
     "memsource-download": "./i18n-scripts/memsource-download.sh",
     "i18n-to-po": "node ./i18n-scripts/i18n-to-po.js",
-    "po-to-i18n": "node ./i18n-scripts/po-to-i18n.js"
+    "po-to-i18n": "node ./i18n-scripts/po-to-i18n.js",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
@@ -79,6 +80,7 @@
     "formik": "^2.1.5",
     "fuzzysearch": "1.0.x",
     "gitlab": "10.0.1",
+    "husky": "^9.1.7",
     "i18next-parser": "^9.3.0",
     "jest": "^30.2.0",
     "jest-canvas-mock": "^2.5.2",
@@ -87,6 +89,7 @@
     "jest-junit": "^16.0.0",
     "jest-resolve": "^30.2.0",
     "js-base64": "^2.5.1",
+    "lint-staged": "^17.0.4",
     "monaco-editor": "^0.28.1",
     "openapi-typescript": "^7.13.0",
     "parse-bitbucket-url": "^0.3.0",
@@ -183,5 +186,9 @@
     "webpack": "^5.100.0",
     "@types/d3-dispatch": "3.0.6",
     "@types/d3-selection": "3.0.10"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": "eslint --fix",
+    "*.css": "stylelint --fix --allow-empty-input"
   }
 }

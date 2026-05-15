@@ -160,7 +160,8 @@
       "defaultActionsProvider": "./utils/default-actions-provider.ts",
       "pipelineActionsProvider": "./utils/pipeline-actions-provider.ts",
       "pipelineRunActionsProvider": "./utils/pipelineRun-actions-provider.tsx",
-      "taskRunActionsProvider": "./utils/taskRun-actions-provider.tsx"
+      "taskRunActionsProvider": "./utils/taskRun-actions-provider.tsx",
+      "approvalTaskActionsProvider": "./utils/approvalTask-actions-provider.tsx"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.15"

@@ -97,6 +97,9 @@ export const getApprovalStatus = (
   if (approvalState === ApproverStatusResponse.Timedout) {
     return ApprovalStatus.TimedOut;
   }
+  if (approvalState === ApproverStatusResponse.Pending) {
+    return ApprovalStatus.RequestSent;
+  }
 
   return ApprovalStatus.Unknown;
 };

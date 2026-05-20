@@ -749,6 +749,7 @@
     },
     "flags": {
       "required": [
+        "OPENSHIFT_PIPELINE_APPROVAL_TASK",
         "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_APPROVALS_TAB"
       ]
     }
@@ -769,6 +770,7 @@
     },
     "flags": {
       "required": [
+        "OPENSHIFT_PIPELINE_APPROVAL_TASK",
         "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINERUN_DETAIL_APPROVALS_TAB"
       ]
     }

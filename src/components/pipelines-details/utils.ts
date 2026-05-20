@@ -28,11 +28,14 @@ export const getPipelineTaskLinks = (
           const nameParam = task.taskRef.params?.find(
             (param) => param.name === 'name',
           )?.value;
+          const namespaceParam = task.taskRef.params?.find(
+            (param) => param.name === 'namespace',
+          )?.value;
           return {
             resourceKind: getSafeTaskResourceKind(task.taskRef.kind),
             name: nameParam,
             qualifier: task.name,
-            namespace: PIPELINE_NAMESPACE,
+            namespace: namespaceParam ?? PIPELINE_NAMESPACE,
             resourceApiVersion: version,
           };
         }

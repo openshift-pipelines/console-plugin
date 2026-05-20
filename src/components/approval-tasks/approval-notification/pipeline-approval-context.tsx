@@ -188,5 +188,6 @@ export const usePipelineApprovalToast = () => {
     addToast,
     devconsolePath,
     adminconsolePath,
+    updateUserInfo,
   ]);
 };

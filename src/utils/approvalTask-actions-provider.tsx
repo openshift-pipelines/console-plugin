@@ -56,7 +56,7 @@ export const useApprovalTaskActionsProvider = (
       }
     };
     checkAuthorization();
-  }, [currentUser, approvers]);
+  }, [currentUser, approvers, updateUserInfo]);
 
   const loaded = !loadingCanPatchApprovalTask && isAuthorized !== null;
 

@@ -33,7 +33,7 @@ const TaskRunLogs: FC<PropsWithChildren<Props>> = ({
     name: taskRun.status.podName,
   };
   return (
-    <div className="odc-task-run-log">
+    <div className="pf-v6-u-flex-1 pf-v6-u-p-xl pf-v6-u-pr-0">
       <LogsWrapperComponent
         taskRun={taskRun}
         resource={podResources}

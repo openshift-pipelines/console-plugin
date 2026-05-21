@@ -31,6 +31,7 @@ import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
 import { ColoredStatusIcon } from '../pipeline-topology/StatusIcons';
 import { resourcePathFromModel } from '../utils/utils';
 import './PipelineRunLogs.scss';
+import { Loading } from '../Loading';
 
 interface PipelineRunLogsProps {
   obj: PipelineRunKind;
@@ -193,50 +194,52 @@ const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
           className="odc-pipeline-run-logs__tasklist"
           data-test-id="logs-tasklist"
         >
-          {taskCount > 0 ? (
+          {!waitingForPods && (
             <Nav onSelect={onNavSelect}>
               <NavList className="odc-pipeline-run-logs__nav">
-                {taskRunNames.map((taskRunName) => {
-                  const taskRun = tRuns.find(
-                    (tRun) => tRun.metadata.name === taskRunName,
-                  );
-                  return (
-                    <NavItem
-                      key={taskRunName}
-                      itemId={taskRunName}
-                      isActive={activeItem === taskRunName}
-                      className="odc-pipeline-run-logs__navitem"
-                    >
-                      <Link
-                        to={`${logsPath}?taskName=${
-                          taskRun?.metadata?.labels?.[
-                            TektonResourceLabel.pipelineTask
-                          ] || '-'
-                        }`}
+                {taskRunNames?.length > 0 ? (
+                  taskRunNames.map((taskRunName) => {
+                    const taskRun = tRuns.find(
+                      (tRun) => tRun.metadata.name === taskRunName,
+                    );
+                    return (
+                      <NavItem
+                        key={taskRunName}
+                        itemId={taskRunName}
+                        isActive={activeItem === taskRunName}
+                        className="odc-pipeline-run-logs__navitem"
                       >
-                        <ColoredStatusIcon status={taskRunStatus(taskRun)} />
-                        <span
-                          className="odc-pipeline-run-logs__namespan"
-                          ref={
-                            activeItem === taskRunName
-                              ? selectedItemRef
-                              : undefined
-                          }
+                        <Link
+                          to={`${logsPath}?taskName=${
+                            taskRun?.metadata?.labels?.[
+                              TektonResourceLabel.pipelineTask
+                            ] || '-'
+                          }`}
                         >
-                          {taskRun?.metadata?.labels?.[
-                            TektonResourceLabel.pipelineTask
-                          ] || '-'}
-                        </span>
-                      </Link>
-                    </NavItem>
-                  );
-                })}
+                          <ColoredStatusIcon status={taskRunStatus(taskRun)} />
+                          <span
+                            className="odc-pipeline-run-logs__namespan"
+                            ref={
+                              activeItem === taskRunName
+                                ? selectedItemRef
+                                : undefined
+                            }
+                          >
+                            {taskRun?.metadata?.labels?.[
+                              TektonResourceLabel.pipelineTask
+                            ] || '-'}
+                          </span>
+                        </Link>
+                      </NavItem>
+                    );
+                  })
+                ) : (
+                  <div className="odc-pipeline-run-logs__nav pf-v6-u-text-align-center">
+                    {t('No task runs found')}
+                  </div>
+                )}
               </NavList>
             </Nav>
-          ) : (
-            <div className="odc-pipeline-run-logs__nav pf-v6-u-text-align-center">
-              {t('No task runs found')}
-            </div>
           )}
         </div>
         {activeItem && resources ? (
@@ -251,7 +254,7 @@ const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
             pipelineRunName={obj.metadata?.name}
             pipelineRunFinished={pipelineRunFinished}
           />
-        ) : (
+        ) : pipelineRunFinished && taskCount == 0 ? (
           <div
             className="pf-v6-u-w-100 pf-v6-u-pr-xl"
             data-test-id="task-logs-error"
@@ -273,7 +276,7 @@ const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
               }
             />
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
@@ -303,8 +306,7 @@ export const PipelineRunLogsWithActiveTask: FC<
         pipelineRunManagedBy: obj?.spec?.managedBy,
       },
     );
-  /* this needs decoupling */
-  const taskRunsLoaded = k8sLoaded || trLoaded;
+  const taskRunsLoaded = (k8sLoaded && taskRuns.length > 0) || trLoaded;
   const { isResourceManagedByKueue } = useMultiClusterProxyService({
     managedBy: obj?.spec?.managedBy,
   });
@@ -327,7 +329,7 @@ export const PipelineRunLogsWithActiveTask: FC<
           title={t('PipelineRun is waiting to be admitted to a worker cluster')}
         />
       )}
-      {taskRunsLoaded && (
+      {taskRunsLoaded ? (
         <PipelineRunLogs
           obj={obj}
           activeTask={activeTask}
@@ -335,6 +337,8 @@ export const PipelineRunLogsWithActiveTask: FC<
           taskRuns={taskRuns}
           isResourceManagedByKueue={isResourceManagedByKueue}
         />
+      ) : (
+        <Loading />
       )}
     </>
   );

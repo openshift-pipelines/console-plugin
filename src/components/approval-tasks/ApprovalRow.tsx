@@ -17,17 +17,17 @@ import {
 } from '../utils/pipeline-approval-utils';
 import { ApprovalStatusIcon } from '../pipeline-topology/StatusIcons';
 import { PipelineRunKind } from '../../types';
-import ApprovalTaskActionDropdown from './ApprovalTaskActionDropdown';
-
 import './ApprovalRow.scss';
 import { GetDataViewRows } from '@openshift-console/dynamic-plugin-sdk/lib/api/internal-types';
 import { tableColumnInfo } from './useApprovalsColumns';
 import {
   actionsCellProps,
   getNameCellProps,
+  LazyActionMenu,
 } from '@openshift-console/dynamic-plugin-sdk-internal';
 import { t } from '../utils/common-utils';
 import { DASH } from '../../consts';
+import { getReferenceForModel } from '../pipelines-overview/utils';
 
 const ApprovalStatus = (statusDetailsProps) => {
   const {
@@ -145,9 +145,8 @@ export const getApprovalListPageDataViewRows: GetDataViewRows<
       },
       [tableColumnInfo[6].id]: {
         cell: (
-          <ApprovalTaskActionDropdown
-            approvalTask={obj}
-            pipelineRun={pipelineRun}
+          <LazyActionMenu
+            context={{ [getReferenceForModel(ApprovalTaskModel)]: obj }}
           />
         ),
         props: { ...actionsCellProps, modifier: 'nowrap' },

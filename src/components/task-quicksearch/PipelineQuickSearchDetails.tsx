@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   Button,
   ButtonVariant,
@@ -26,15 +26,9 @@ import {
   isArtifactHubTask,
   isOneVersionInstalled,
   isTaskVersionInstalled,
-  isTektonHubTaskWithoutVersions,
 } from './pipeline-quicksearch-utils';
 import PipelineQuickSearchTaskAlert from './PipelineQuickSearchTaskAlert';
 import PipelineQuickSearchVersionDropdown from './PipelineQuickSearchVersionDropdown';
-import {
-  getHubUIPath,
-  getTektonHubTaskVersions,
-} from '../catalog/apis/tektonHub';
-import { ExternalLink } from '../utils/link';
 import { handleCta } from '../quick-search';
 import { QuickSearchDetailsRendererProps } from '../quick-search/QuickSearchDetails';
 import { FLAGS } from '../../types';
@@ -91,34 +85,6 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
   useEffect(() => {
     resetVersions();
     const mounted = true;
-    if (
-      isTektonHubTaskWithoutVersions(selectedItem) &&
-      !isArtifactHubTask(selectedItem)
-    ) {
-      const debouncedLoadVersions = debounce(async () => {
-        if (mounted) {
-          try {
-            const itemVersions = await getTektonHubTaskVersions(
-              selectedItem?.data?.id,
-              selectedItem?.attributes?.apiURL,
-            );
-
-            selectedItem.attributes.versions = itemVersions;
-
-            if (mounted) {
-              setVersions([...itemVersions]);
-              setHasInstalledVersion(isOneVersionInstalled(selectedItem));
-            }
-          } catch (err) {
-            if (mounted) {
-              resetVersions();
-            }
-            console.log('failed to fetch versions:', err); // eslint-disable-line no-console
-          }
-        }
-      }, 10);
-      debouncedLoadVersions();
-    }
 
     if (isArtifactHubTask(selectedItem)) {
       const debouncedLoadDetails = debounce(async () => {
@@ -160,18 +126,6 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
       );
     }
   }, [selectedItem]);
-  const loadedVersion = useMemo(
-    () =>
-      versions?.find(
-        (version) => version.version?.toString() === selectedVersion,
-      ),
-    [selectedVersion, versions],
-  );
-
-  const hubLink = getHubUIPath(
-    loadedVersion?.hubURLPath,
-    selectedItem.attributes.uiURL,
-  );
   return (
     <div className="opp-quick-search-details">
       <Level hasGutter>
@@ -189,7 +143,6 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
           <Split hasGutter>
             <SplitItem>
               <Button
-                isDisabled={isTektonHubTaskWithoutVersions(selectedItem)}
                 data-test="task-cta"
                 variant={ButtonVariant.primary}
                 className="opp-quick-search-details__form-button"
@@ -242,14 +195,6 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
         data-test="task-description"
       >
         {selectedItem.description}
-        {hubLink && (
-          <ExternalLink
-            additionalClassName="opp-quick-search-details__hublink"
-            dataTestID="task-hub-link"
-            href={hubLink}
-            text={t('Read more')}
-          />
-        )}
       </Content>
       <Stack className="opp-quick-search-details__badges-section" hasGutter>
         {selectedItem?.attributes?.categories?.length > 0 && (

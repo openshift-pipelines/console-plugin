@@ -1,10 +1,8 @@
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
 import { TaskKind } from '../../../types';
-import { TektonHubTask } from '../../catalog/apis/tektonHub';
 
 export enum CatalogItemTypes {
   ECOSYSTEM_TASK = 'clusterResolverTask',
-  TEKTONHUB_TASK = 'TektonHubTask',
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -12,17 +10,8 @@ export enum sampleVersions {
   VERSION_01 = '0.1',
   VERSION_02 = '0.2',
 }
-export enum PlatformTypes {
-  LINUX_AMD64 = 'linux/amd64',
-  LINUX_PPC64LE = 'linux/ppc64le',
-  LINUX_S390X = 'linux/s390x',
-  LINUX_ARM64 = 'linux/arm64',
-}
 
-type SampleTasks = { [key in CatalogItemTypes]?: TaskKind | TektonHubTask };
-type TektonHubPlatformTasks = {
-  [key in PlatformTypes]?: TaskKind | TektonHubTask;
-};
+type SampleTasks = { [key in CatalogItemTypes]?: TaskKind };
 
 export const sampleTasks: SampleTasks = {
   [CatalogItemTypes.ECOSYSTEM_TASK]: {
@@ -97,76 +86,6 @@ export const sampleTasks: SampleTasks = {
       ],
     },
   },
-  [CatalogItemTypes.TEKTONHUB_TASK]: {
-    id: 1,
-    name: 'ansible-runner',
-    catalog: {
-      id: 1,
-      name: 'tekton',
-      type: 'community',
-    },
-    categories: [
-      {
-        id: 11,
-        name: 'CLI',
-      },
-    ],
-    kind: 'Task',
-    latestVersion: {
-      id: 1,
-      version: '0.1',
-      displayName: 'Ansible Runner',
-      description: 'Task to run Ansible playbooks using Ansible Runner',
-      minPipelinesVersion: '0.12.1',
-      hubURLPath: 'tekton/task/curl/0.1',
-      rawURL:
-        'https://raw.githubusercontent.com/tektoncd/catalog/main/task/ansible-runner/0.1/ansible-runner.yaml',
-      webURL:
-        'https://github.com/tektoncd/catalog/tree/main/task/ansible-runner/0.1/ansible-runner.yaml',
-      updatedAt: '2021-07-26T12:15:08Z',
-      platforms: [
-        {
-          id: 1,
-          name: 'linux/amd64',
-        },
-      ],
-    },
-    tags: [
-      {
-        id: 78,
-        name: 'cli',
-      },
-    ],
-    platforms: [
-      {
-        id: 1,
-        name: 'linux/amd64',
-      },
-    ],
-    rating: 4.2,
-  },
-};
-
-export const tekonHubPlatformTasks: TektonHubPlatformTasks = {
-  [PlatformTypes.LINUX_AMD64]: {
-    ...sampleTasks[CatalogItemTypes.TEKTONHUB_TASK],
-    platforms: [{ id: 1, name: PlatformTypes.LINUX_AMD64 }],
-  },
-  [PlatformTypes.LINUX_PPC64LE]: {
-    ...sampleTasks[CatalogItemTypes.TEKTONHUB_TASK],
-    platforms: [
-      { id: 1, name: PlatformTypes.LINUX_AMD64 },
-      { id: 2, name: PlatformTypes.LINUX_PPC64LE },
-    ],
-  },
-  [PlatformTypes.LINUX_S390X]: {
-    ...sampleTasks[CatalogItemTypes.TEKTONHUB_TASK],
-    platforms: [{ id: 3, name: PlatformTypes.LINUX_S390X }],
-  },
-  [PlatformTypes.LINUX_ARM64]: {
-    ...sampleTasks[CatalogItemTypes.TEKTONHUB_TASK],
-    platforms: [{ id: 4, name: PlatformTypes.LINUX_ARM64 }],
-  },
 };
 
 export const sampleTaskCatalogItem: CatalogItem = {
@@ -195,12 +114,12 @@ export const sampleTaskCatalogItem: CatalogItem = {
   data: sampleTasks[CatalogItemTypes.ECOSYSTEM_TASK],
 };
 
-export const sampleTektonHubCatalogItem: CatalogItem = {
+export const sampleCommunityCatalogItem: CatalogItem = {
   uid: '1',
   type: 'Community',
   name: 'ansible-runner',
   description: 'Task to run Ansible playbooks using Ansible Runner',
-  provider: 'TektonHub',
+  provider: 'ArtifactHub',
   tags: ['cli'],
   icon: {
     class: 'build',
@@ -209,32 +128,10 @@ export const sampleTektonHubCatalogItem: CatalogItem = {
     installed: '',
     versions: [
       {
-        id: 1,
         version: '0.1',
-        rawURL:
-          'https://raw.githubusercontent.com/tektoncd/catalog/main/task/ansible-runner/0.1/ansible-runner.yaml',
-        webURL:
-          'https://github.com/tektoncd/catalog/tree/main/task/ansible-runner/0.1/ansible-runner.yaml',
-        platforms: [
-          {
-            id: 1,
-            name: 'linux/amd64',
-          },
-        ],
       },
       {
-        id: 2,
         version: '0.2',
-        rawURL:
-          'https://raw.githubusercontent.com/tektoncd/catalog/main/task/ansible-runner/0.2/ansible-runner.yaml',
-        webURL:
-          'https://github.com/tektoncd/catalog/tree/main/task/ansible-runner/0.2/ansible-runner.yaml',
-        platforms: [
-          {
-            id: 1,
-            name: 'linux/amd64',
-          },
-        ],
       },
     ],
     categories: ['CLI'],
@@ -242,44 +139,9 @@ export const sampleTektonHubCatalogItem: CatalogItem = {
   cta: {
     label: 'Add',
   },
-  data: sampleTasks[CatalogItemTypes.TEKTONHUB_TASK],
-};
-
-export const sampleTektonHubCatalogItemWithHubURL: CatalogItem = {
-  uid: '1',
-  type: 'Community',
-  name: 'ansible-runner',
-
-  attributes: {
-    installed: '',
-    versions: [
-      { version: '0.1', hubURLPath: 'foo/bar/test' },
-      { version: '0.2', hubURLPath: 'foo/bar/test2' },
-      { version: '0.3', hubURLPath: 'foo/bar/test3' },
-    ],
-  },
   data: {
-    id: 1,
-    name: 'ansible-runner',
-    kind: 'Task',
-    latestVersion: {
-      id: 1,
-      version: '0.1',
-      displayName: 'Ansible Runner',
-      description: 'Task to run Ansible playbooks using Ansible Runner',
-      minPipelinesVersion: '0.12.1',
-      rawURL:
-        'https://raw.githubusercontent.com/tektoncd/catalog/main/task/ansible-runner/0.1/ansible-runner.yaml',
-      webURL:
-        'https://github.com/tektoncd/catalog/tree/main/task/ansible-runner/0.1/ansible-runner.yaml',
-      updatedAt: '2021-07-26T12:15:08Z',
-      platforms: [
-        {
-          id: 1,
-          name: 'linux/amd64',
-        },
-      ],
-    },
+    source: 'ArtifactHub',
+    task: { name: 'ansible-runner', version: '0.1' },
   },
 };
 
@@ -389,5 +251,5 @@ export const sampleTaskWithMultipleVersions = {
 
 export const sampleCatalogItems: CatalogItem[] = [
   sampleTaskCatalogItem,
-  sampleTektonHubCatalogItem,
+  sampleCommunityCatalogItem,
 ];

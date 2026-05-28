@@ -13,13 +13,11 @@ import {
   UpdateTasksCallback,
 } from '../pipeline-builder/types';
 import {
-  createTask,
   findInstalledTask,
   getSelectedVersionUrl,
   isArtifactHubTask,
   isTaskSearchable,
   TaskProviders,
-  updateTask,
 } from './pipeline-quicksearch-utils';
 import { safeName } from '../pipeline-builder/utils';
 import PipelineQuickSearchDetails from './PipelineQuickSearchDetails';
@@ -115,8 +113,7 @@ const Contents: FC<
     const installedTask = findInstalledTask(catalogService.items, item);
 
     if (
-      (item.provider === TaskProviders.artifactHub ||
-        item.provider === TaskProviders.tektonHub) &&
+      item.provider === TaskProviders.artifactHub &&
       item.type !== TaskProviders.redhat
     ) {
       item.attributes.installed = '';
@@ -129,36 +126,7 @@ const Contents: FC<
     item.cta.callback = ({ selectedVersion }) => {
       return new Promise((resolve) => {
         if (!isArtifactHubTask(item)) {
-          if (item.provider === TaskProviders.tektonHub) {
-            const selectedVersionUrl = getSelectedVersionUrl(
-              item,
-              selectedVersion,
-            );
-            if (installedTask) {
-              if (selectedVersion === item.attributes.installed) {
-                resolve(savedCallback.current(installedTask.data));
-              } else {
-                resolve(
-                  savedCallback.current({ metadata: { name: item.data.name } }),
-                );
-                updateTask(
-                  selectedVersionUrl,
-                  installedTask,
-                  namespace,
-                  item.data.name,
-                ).catch(() => setFailedTasks([...failedTasks, item.data.name]));
-              }
-            } else {
-              handleTaskCreationWithNameConflict(
-                item.data.name,
-                (taskNameToUse) =>
-                  createTask(selectedVersionUrl, namespace, taskNameToUse),
-                resolve,
-              );
-            }
-          } else {
-            resolve(savedCallback.current(item.data));
-          }
+          resolve(savedCallback.current(item.data));
         }
 
         if (

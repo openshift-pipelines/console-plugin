@@ -380,7 +380,7 @@ metadata:
     pipelinesascode.tekton.dev/task: "git-clone"
 
     # You can add more tasks in here to reuse, browse the one you like from here
-    # https://hub.tekton.dev/
+    # https://artifacthub.io/packages/search?kind=7
     # example:
     # pipelinesascode.tekton.dev/task-2: "[maven, buildah]"
 

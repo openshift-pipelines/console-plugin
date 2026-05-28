@@ -6,7 +6,6 @@ import {
   updateArtifactHubTask,
   useGetArtifactHubTasks,
 } from '../apis/artifactHub';
-import { TektonHubTask } from '../apis/tektonHub';
 import {
   CatalogItem,
   ExtensionHook,
@@ -134,9 +133,7 @@ const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
     canCreateTask && canUpdateTask && artifactHubIntegration,
     isDevConsoleProxyAvailable,
   );
-  const normalizedArtifactHubTasks = useMemo<
-    CatalogItem<TektonHubTask>[]
-  >(
+  const normalizedArtifactHubTasks = useMemo<CatalogItem[]>(
     () => normalizeArtifactHubTasks(artifactHubTasks, tektonTasks),
     [artifactHubTasks, tektonTasks],
   );

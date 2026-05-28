@@ -10,7 +10,6 @@ import * as _ from 'lodash';
 import { TektonConfigModel } from '../../models';
 import { useK8sGet } from '../hooks/use-k8sGet-hook';
 import * as catalogImg from '../imgs/catalog-icon.svg';
-import { TEKTON_HUB_INTEGRATION_KEY, TektonHubTask } from './apis/tektonHub';
 
 enum CatalogVisibilityState {
   Enabled = 'Enabled',
@@ -152,14 +151,6 @@ export const getIconProps = (item: CatalogItem) => {
   return { iconImg: catalogImg, iconClass: null };
 };
 
-export const getClusterPlatform = (): string =>
-  `${(window as any).SERVER_FLAGS.GOOS}/${(window as any).SERVER_FLAGS.GOARCH}`;
-
-export const filterBySupportedPlatforms = (task: TektonHubTask): boolean => {
-  const supportedPlatforms = task?.platforms.map((p) => p.name) ?? [];
-  return supportedPlatforms.includes(getClusterPlatform());
-};
-
 export const useTektonHubIntegration = () => {
   const [config, configLoaded, configLoadErr] = useK8sGet<K8sResourceKind>(
     TektonConfigModel,
@@ -168,10 +159,9 @@ export const useTektonHubIntegration = () => {
   if (!configLoaded) {
     return false;
   }
-  // return false only if TEKTON_HUB_INTEGRATION_KEY value is set to 'false'
   if (config && configLoaded && !configLoadErr) {
     const devconsoleIntegrationEnabled = config.spec?.hub?.params?.find(
-      (p) => p.name === TEKTON_HUB_INTEGRATION_KEY,
+      (p) => p.name === 'enable-devconsole-integration',
     );
     return devconsoleIntegrationEnabled?.value?.toLowerCase() !== 'false';
   }

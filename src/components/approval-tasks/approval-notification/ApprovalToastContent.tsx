@@ -5,53 +5,44 @@ import { ExternalLink } from '../../utils/link';
 import './ApprovalToastContent.scss';
 
 interface ApprovalToastContentProps {
-  type: string;
+  type: 'current' | 'other' | 'admin';
   uniquePipelineRuns: number;
-  devconsolePath?: string;
-  adminconsolePath?: string;
+  path: string;
+  namespaceName?: string;
 }
 
 const ApprovalToastContent: FC<ApprovalToastContentProps> = ({
   type,
   uniquePipelineRuns,
-  devconsolePath,
-  adminconsolePath,
+  path,
+  namespaceName,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  if (type === 'current') {
-    return (
-      <>
-        {t('Your approval has been requested on {{plrs}} pipeline', {
-          plrs: uniquePipelineRuns,
-        })}
-        {t('run{{plural}}.', {
-          plural: uniquePipelineRuns > 1 ? 's' : '',
-        })}
-        <p className="pipelines-approval-toast__link">
-          <ExternalLink href={devconsolePath} text={t('Go to Approvals tab')} />
-        </p>
-      </>
-    );
-  }
-  if (type === 'other') {
-    return (
-      <>
-        {t('Your approval has been requested on {{plrs}} pipeline', {
-          plrs: uniquePipelineRuns,
-        })}
-        {t('run{{plural}} in other namespaces.', {
-          plural: uniquePipelineRuns > 1 ? 's' : '',
-        })}
-        <p className="pipelines-approval-toast__link">
-          <ExternalLink
-            href={adminconsolePath}
-            text={t('Go to Admin Approvals tab')}
-          />
-        </p>
-      </>
-    );
-  }
-  return null;
+  const linkText =
+    type === 'admin'
+      ? t('Go to Admin Approvals tab')
+      : t('Go to Approvals tab');
+  const plural = uniquePipelineRuns > 1 ? 's' : '';
+  const suffixMap = {
+    other: t('run{{plural}} in namespace {{namespaceName}}.', {
+      plural,
+      namespaceName,
+    }),
+    admin: t('run{{plural}} in other namespaces.', { plural }),
+    current: t('run{{plural}}.', { plural }),
+  };
+
+  return (
+    <>
+      {t('Your approval has been requested on {{plrs}} pipeline', {
+        plrs: uniquePipelineRuns,
+      })}
+      {suffixMap[type]}
+      <p className="pipelines-approval-toast__link">
+        <ExternalLink href={path} text={linkText} />
+      </p>
+    </>
+  );
 };
 
 export default ApprovalToastContent;

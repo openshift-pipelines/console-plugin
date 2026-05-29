@@ -452,6 +452,7 @@
   "Right click": "Right click",
   "Route": "Route",
   "Routes": "Routes",
+  "run{{plural}} in namespace {{namespaceName}}.": "run{{plural}} in namespace {{namespaceName}}.",
   "run{{plural}} in other namespaces.": "run{{plural}} in other namespaces.",
   "run{{plural}}.": "run{{plural}}.",
   "Running": "Running",

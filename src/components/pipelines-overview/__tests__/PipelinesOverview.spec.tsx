@@ -38,6 +38,7 @@ jest.mock('react-redux', () => ({
 }));
 jest.mock('react-router', () => ({
   useLocation: jest.fn(),
+  useSearchParams: jest.fn(() => [new URLSearchParams(), jest.fn()]),
 }));
 
 jest.spyOn(utils, 'useQueryParams').mockReturnValue(null);

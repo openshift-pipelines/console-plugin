@@ -2,14 +2,10 @@ approvers:
   - anwesha-palit-redhat
   - arvindk-softwaredev
   - vdemeester
-  - vikram-raj
-  - lokanandaprabhu
 options: {}
 reviewers:
   - vdemeester
-  - vikram-raj
   - pratap0007
-  - lokanandaprabhu
   - anwesha-palit-redhat
   - arvindk-softwaredev
 component: OpenShift Pipelines Console Plugin

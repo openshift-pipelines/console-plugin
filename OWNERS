@@ -1,17 +1,14 @@
 approvers:
-- christoph-jerolimov
 - vdemeester
-- vikram-raj
 - pratap0007
-- Lucifergene
-- lokanandaprabhu
+- anwesha-palit-redhat
+- arvindk-softwaredev
 options: {}
 reviewers:
 - christoph-jerolimov
 - vdemeester
 - vikram-raj
 - pratap0007
-- Lucifergene
-- lokanandaprabhu
-- saumeya
+- anwesha-palit-redhat
+- arvindk-softwaredev
 component: OpenShift Pipelines Console Plugin

@@ -11,6 +11,7 @@ on:
     branches:
       - main
       - master
+      - release-v*
   workflow_dispatch:
 
 jobs:

@@ -197,11 +197,13 @@ const LogsWrapperComponent: FC<
           </Button>
         )}
       </div>
-      <div className="pf-v6-u-flex-1">
-        {!effectiveError ? (
+
+      {!effectiveError ? (
+        <div className="pf-v6-u-flex-1">
           <MultiStreamLogs
             {...props}
             taskName={taskName}
+            loaded={effectiveLoaded}
             resource={resourceRef.current}
             setCurrentLogsGetter={setLogGetter}
             activeStep={activeStep}
@@ -209,13 +211,13 @@ const LogsWrapperComponent: FC<
             pipelineRunName={pipelineRunName}
             pipelineRunFinished={pipelineRunFinished}
           />
-        ) : (
-          <TektonTaskRunLog
-            taskRun={taskRun}
-            setCurrentLogsGetter={setLogGetter}
-          />
-        )}
-      </div>
+        </div>
+      ) : (
+        <TektonTaskRunLog
+          taskRun={taskRun}
+          setCurrentLogsGetter={setLogGetter}
+        />
+      )}
     </div>
   );
 };

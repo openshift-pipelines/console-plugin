@@ -55,7 +55,7 @@ export const TektonTaskRunLog: FC<TektonTaskRunLogProps> = ({
     <>
       <div
         data-test-id="tr-logs-task-container"
-        className="odc-tekton-taskrun-log pf-v6-u-h-100 pf-v6-u-w-100"
+        className="pf-v6-u-h-100 pf-v6-u-w-100"
       >
         <LogViewer
           useAnsiClasses={true}

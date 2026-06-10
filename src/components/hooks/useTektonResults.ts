@@ -14,6 +14,7 @@ export const useTRRuns = <Kind extends K8sResourceCommon>(
   options?: TektonResultsOptions,
   isTektonResultEnabled?: boolean,
   skipFetch?: boolean,
+  refetchKey?: number,
 ): [Kind[], boolean, Error | undefined] => {
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const fetchedRef = useRef(false);
@@ -60,6 +61,7 @@ export const useTRRuns = <Kind extends K8sResourceCommon>(
     stableOptions,
     skipFetch,
     isTektonResultEnabled,
+    refetchKey, // the only purpose is to refetch data from TR after deletion / pruning
   ]);
   if (!isTektonResultEnabled) {
     return [[], true, undefined];

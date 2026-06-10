@@ -6,8 +6,8 @@ import {
   useFlag,
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { differenceBy, uniqBy } from 'lodash-es';
-import { useMemo, useRef } from 'react';
+import { uniqBy } from 'lodash-es';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ApprovalFields,
   ApprovalLabels,
@@ -211,11 +211,11 @@ export const useRuns = <Kind extends K8sResourceKind>(
   pipelineRunFinished?: boolean,
   pipelineRunManagedBy?: string,
 ): [Kind[], boolean, boolean, Error | undefined, boolean, boolean] => {
-  const etcdRunsRef = useRef<Kind[]>([]);
   const optionsMemo = useDeepCompareMemoize(options);
   const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
   const isList = !optionsMemo?.name;
   const limit = optionsMemo?.limit;
+  const prevEtcdLengthRef = useRef(0);
 
   // Hub cluster detection
   const { isResourceManagedByKueue } = useMultiClusterProxyService({
@@ -248,8 +248,7 @@ export const useRuns = <Kind extends K8sResourceKind>(
     if (optionsMemo?.skipFetch) {
       return null;
     }
-    // reset cached runs as the options have changed
-    etcdRunsRef.current = [];
+    prevEtcdLengthRef.current = 0; // we need to reset the previous length when options change to prevent unnecessary refetches - unfortunately this is an antipattern and should be avoided when possible
     return shouldUseMultiCluster
       ? null
       : {
@@ -289,40 +288,30 @@ export const useRuns = <Kind extends K8sResourceKind>(
   const effectiveLoaded = shouldUseMultiCluster ? mcLoaded : loaded;
   const effectiveError = shouldUseMultiCluster ? mcError : error;
 
-  const runs = useMemo(() => {
-    if (!etcdRuns) {
-      return etcdRuns;
-    }
-    let value = etcdRunsRef.current
-      ? [
-          ...etcdRuns,
-          // identify the runs that were removed
-          ...differenceBy(
-            etcdRunsRef.current,
-            etcdRuns,
-            (plr) => plr.metadata.name,
-          ),
-        ]
-      : [...etcdRuns];
-    value.sort((a, b) =>
-      b.metadata.creationTimestamp.localeCompare(a.metadata.creationTimestamp),
-    );
-    if (limit && limit < value?.length) {
-      value = value.slice(0, limit);
-    }
-    return value;
-  }, [etcdRuns, limit]);
+  // Detect deletions/pruning: if etcd returned fewer runs than before, re-fetch TR
+  const [trRefetchKey, setTrRefetchKey] = useState(0);
 
-  // cache the last set to identify removed runs
-  etcdRunsRef.current = runs;
+  useEffect(() => {
+    const prevLength = prevEtcdLengthRef.current;
+    prevEtcdLengthRef.current = etcdRuns?.length ?? 0;
+    if (
+      effectiveLoaded &&
+      !effectiveError &&
+      prevLength > 0 &&
+      etcdRuns.length < prevLength
+    ) {
+      setTrRefetchKey((k) => k + 1);
+    }
+  }, [etcdRuns?.length, effectiveLoaded, effectiveError]);
 
-  // Query tekton results if there's no limit or we received less items from etcd than the current limit
+  // Lists: always query TR. Details (limit + name): query TR only when etcd
+  // returned fewer items than limit (resource pruned/deleted) or etcd errored.
   const queryTr =
     isTektonResultEnabled &&
     (!limit ||
       (namespace &&
-        ((runs && effectiveLoaded && optionsMemo.limit > runs?.length) ||
-          effectiveError)));
+        effectiveLoaded &&
+        (limit > (etcdRuns?.length ?? 0) || !!effectiveError)));
 
   const trOptions: typeof optionsMemo = useMemo(() => {
     if (optionsMemo?.name) {
@@ -345,24 +334,29 @@ export const useRuns = <Kind extends K8sResourceKind>(
     trOptions,
     isTektonResultEnabled,
     optionsMemo?.skipFetch,
+    trRefetchKey,
   );
 
   // dedupe PLR by name since UIDs differ between hub and spoke clusters; for other cases(TR) dedupe by UID
+  const rResources: Kind[] = useMemo(() => {
+    const merged =
+      etcdRuns && trResources
+        ? !isTaskRunQuery
+          ? uniqBy([...etcdRuns, ...trResources], (r) => r.metadata.name)
+          : uniqBy([...etcdRuns, ...trResources], (r) => r.metadata.uid)
+        : etcdRuns || trResources;
+    return merged?.sort((a, b) =>
+      b.metadata.creationTimestamp.localeCompare(a.metadata.creationTimestamp),
+    ); // added the sort here, technically this was not necessary but did not want to risk breaking anything
+  }, [etcdRuns, trResources, isTaskRunQuery]);
 
-  const rResources: Kind[] =
-    runs && trResources
-      ? !isTaskRunQuery
-        ? uniqBy([...runs, ...trResources], (r) => r.metadata.name)
-        : uniqBy([...runs, ...trResources], (r) => r.metadata.uid)
-      : runs || trResources;
-
-  /* Refactoring the nesting as it is causing cognitive damage */
+  /* Refactored error */
   let resolvedError: Error | undefined = undefined;
 
   if (namespace) {
     if (queryTr) {
       if (isList) {
-        resolvedError = trError && effectiveError;
+        resolvedError = trError && effectiveError; // if TR is disabled and we use || instead of && then we won't be able to show the data from etcd if we propagate it as an error
       } else {
         // when searching by name, return an error if we have no result
         if (trError && trLoaded && !trResources?.length) {

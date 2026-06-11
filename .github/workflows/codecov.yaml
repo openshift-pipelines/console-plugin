@@ -1,4 +1,4 @@
-name: Unit Tests
+name: Code Coverage
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   unit_tests:
-    name: Run unit tests
+    name: Run unit tests to track code coverage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code

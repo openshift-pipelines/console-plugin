@@ -41,6 +41,7 @@ const ApprovalTaskActionDropdown: React.FC<ApprovalTaskActionDropdownProps> = ({
   } = approvalTask;
   const [isOpen, setIsOpen] = React.useState(false);
   const [isAuthorized, setIsAuthorized] = React.useState<boolean | null>(null);
+
   const onToggle = () => {
     setIsOpen(!isOpen);
   };

@@ -1,6 +1,27 @@
 codecov:
   branch: master
 
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 5
+        flags:
+          - unit-tests
+        paths:
+          - "src"
+        if_ci_failed: error
+        informational: false
+    patch:
+      default:
+        target: auto
+        threshold: 0%
+        flags:
+          - unit-tests
+        paths:
+          - "src"
+
 flags:
   unit-tests:
     carryforward: true

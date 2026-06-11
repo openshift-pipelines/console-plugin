@@ -1,0 +1,12 @@
+codecov:
+  branch: master
+
+flags:
+  unit-tests:
+    carryforward: true
+
+ignore:
+  - 'src/test-data/**'
+  - 'src/types/**'
+  - '__mocks__/**'
+  - 'integration-tests/**'

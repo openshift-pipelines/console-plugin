@@ -191,12 +191,15 @@ export const usePipelineRuns = (
     selector?: Selector;
     limit?: number;
     name?: string;
+    skipFetch?: boolean;
   },
 ): [PipelineRunKind[], boolean, boolean, Error | undefined, boolean, boolean] =>
   useRuns<PipelineRunKind>(PIPELINE_RUN_GVK, namespace, {
     selector: options?.selector,
     limit: options?.limit /* similar to one present in UseTaskRunsOptions */,
     name: options?.name /* similar to one present in UseTaskRunsOptions */,
+    skipFetch:
+      options?.skipFetch /* similar to one present in UseTaskRunsOptions */,
   });
 
 export const useRuns = <Kind extends K8sResourceKind>(
@@ -298,7 +301,7 @@ export const useRuns = <Kind extends K8sResourceKind>(
       effectiveLoaded &&
       !effectiveError &&
       prevLength > 0 &&
-      etcdRuns.length < prevLength
+      etcdRuns?.length < prevLength
     ) {
       setTrRefetchKey((k) => k + 1);
     }
@@ -371,6 +374,7 @@ export const useRuns = <Kind extends K8sResourceKind>(
   }
 
   const pendingAdmission = shouldUseMultiCluster ? mcPendingAdmission : false;
+
   const proxyUnavailable = shouldUseMultiCluster ? mcProxyUnavailable : false;
 
   const isTrLoaded = trLoaded || !!trError;

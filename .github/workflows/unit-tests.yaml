@@ -37,9 +37,15 @@ jobs:
         run: yarn test --ci --maxWorkers=2
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: unit-tests
-          files: coverage/lcov.info
-          fail_ci_if_error: false
+        if: always()
+        run: |
+          curl -Os https://cli.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov upload-process \
+            --token "$CODECOV_TOKEN" \
+            --file coverage/lcov.info \
+            --flag unit-tests \
+            --slug openshift-pipelines/console-plugin \
+            || echo "Codecov upload failed (non-fatal)"
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

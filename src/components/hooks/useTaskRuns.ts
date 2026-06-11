@@ -377,6 +377,7 @@ export const useRuns = <Kind extends K8sResourceKind>(
   }
 
   const pendingAdmission = shouldUseMultiCluster ? mcPendingAdmission : false;
+
   const proxyUnavailable = shouldUseMultiCluster ? mcProxyUnavailable : false;
 
   const isTrLoaded = trLoaded || !!trError;

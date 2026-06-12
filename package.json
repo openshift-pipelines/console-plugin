@@ -187,6 +187,7 @@
   "resolutions": {
     "webpack": "5.94.0",
     "@types/d3-dispatch": "3.0.6",
-    "@types/d3-selection": "3.0.10"
+    "@types/d3-selection": "3.0.10",
+    "shell-quote": "1.8.4"
   }
 }

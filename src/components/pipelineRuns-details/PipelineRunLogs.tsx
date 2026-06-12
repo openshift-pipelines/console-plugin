@@ -317,6 +317,7 @@ export const PipelineRunLogsWithActiveTask: FC<
         <Alert
           isInline
           variant="warning"
+          className="pf-v6-u-mt-md"
           title={t(
             'The multi-cluster connection is unavailable. Logs and status may be delayed until connection is restored.',
           )}
@@ -326,6 +327,7 @@ export const PipelineRunLogsWithActiveTask: FC<
         <Alert
           isInline
           variant="info"
+          className="pf-v6-u-mt-md"
           title={t('PipelineRun is waiting to be admitted to a worker cluster')}
         />
       )}

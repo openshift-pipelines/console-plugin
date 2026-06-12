@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { Alert, Banner } from '@patternfly/react-core';
+import { Alert, Banner, Flex, FlexItem } from '@patternfly/react-core';
 import { LogViewer } from '@patternfly/react-log-viewer';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
@@ -412,40 +412,51 @@ const Logs: FC<LogsProps> = ({
   }, [logData, activeStep, findTargetRowForActiveStep]);
 
   return (
-    <div className="pf-v6-u-h-100 pf-v6-u-w-100">
+    <Flex
+      className={'pf-v6-u-h-100 pf-v6-u-w-100'}
+      direction={{ default: 'column' }}
+    >
       {error && (
-        <Alert
-          variant="danger"
-          isInline
-          title={t('An error occurred while retrieving the requested logs.')}
-        />
+        <FlexItem>
+          <Alert
+            variant="danger"
+            isInline
+            className="pf-v6-u-my-md"
+            title={t('An error occurred while retrieving the requested logs.')}
+          />
+        </FlexItem>
       )}
-      <LogViewer
-        useAnsiClasses={true}
-        header={
-          <Banner className="pf-v6-l-flex pf-v6-l-gap-md">
-            <span data-test-id="logs-taskName" className="pf-v6-u-font-size-md">
-              {taskName}
-            </span>
-            {stillFetching ? (
-              <span data-test-id="loading-indicator">
-                <Loading isInline={true} />
+      <FlexItem flex={{ default: 'flex_4' }} className={'pf-v6-u-min-height'}>
+        <LogViewer
+          useAnsiClasses={true}
+          header={
+            <Banner className="pf-v6-l-flex pf-v6-l-gap-md">
+              <span
+                data-test-id="logs-taskName"
+                className="pf-v6-u-font-size-md"
+              >
+                {taskName}
               </span>
-            ) : null}
-          </Banner>
-        }
-        hasLineNumbers={false}
-        isTextWrapped={false}
-        data={
-          error
-            ? t('An error occurred while retrieving the requested logs.')
-            : formattedLogString
-        }
-        theme="dark"
-        scrollToRow={scrollToRow}
-        height="100%"
-      />
-    </div>
+              {stillFetching ? (
+                <span data-test-id="loading-indicator">
+                  <Loading isInline={true} />
+                </span>
+              ) : null}
+            </Banner>
+          }
+          hasLineNumbers={false}
+          isTextWrapped={false}
+          data={
+            error
+              ? t('An error occurred while retrieving the requested logs.')
+              : formattedLogString
+          }
+          theme="dark"
+          scrollToRow={scrollToRow}
+          height="100%"
+        />
+      </FlexItem>
+    </Flex>
   );
 };
 

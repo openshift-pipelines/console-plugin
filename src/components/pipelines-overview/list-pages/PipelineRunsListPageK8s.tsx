@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import classNames from 'classnames';
+import { useSearchParams } from 'react-router';
 import { Alert, Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
 import {
   PrometheusResponse,
@@ -128,6 +129,7 @@ const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
   const [searchText, setSearchText] = useState('');
   const [tickValues, type] = getXaxisValues(timespan);
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const [, setSearchParams] = useSearchParams();
 
   const [projects, projectsLoaded] = useK8sWatchResource<Project[]>({
     isList: true,
@@ -231,6 +233,12 @@ const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
 
   const handleNameChange = (value: string) => {
     setSearchText(value);
+    setSearchParams((prev) => {
+      /*Reset Pagination for ConsoleDataView when Filtering by name*/
+      const next = new URLSearchParams(prev);
+      next.set('page', '1');
+      return next;
+    });
   };
 
   useEffect(() => {

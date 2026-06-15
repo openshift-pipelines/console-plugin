@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router';
 import {
   Alert,
   Card,
@@ -36,6 +37,7 @@ const PipelineRunsListPage: FC<PipelineRunsListPageProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
+  const [, setSearchParams] = useSearchParams();
 
   const [pageFlag, setPageFlag] = useState(1);
   const [loaded, setloaded] = useState(false);
@@ -163,6 +165,12 @@ const PipelineRunsListPage: FC<PipelineRunsListPageProps> = ({
         .includes(value.toLowerCase()),
     );
     setSummaryDataFiltered(filteredData);
+    setSearchParams((prev) => {
+      /*Reset Pagination for ConsoleDataView when Filtering by name*/
+      const next = new URLSearchParams(prev);
+      next.set('page', '1');
+      return next;
+    });
   };
   return (
     <Card

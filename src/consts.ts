@@ -200,3 +200,6 @@ export const PIPELINE_RUN_MANAGED_BY_KUEUE_LABEL = 'kueue.x-k8s.io/multikueue';
 export const PIPELINE_RUN_KUEUE_ORIGIN_LABEL =
   'kueue.x-k8s.io/multikueue-origin';
 export const KUEUE_LABEL_PREFIX = 'kueue.x-k8s.io';
+export const DASH = '-';
+export const ADMIN_PERSPECTIVE_BASE_PATH = '/pipelines';
+export const DEV_PERSPECTIVE_BASE_PATH = '/dev-pipelines';

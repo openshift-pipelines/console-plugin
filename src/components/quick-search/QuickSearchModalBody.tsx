@@ -310,8 +310,11 @@ const QuickSearchModalBody: FC<QuickSearchModalBodyProps> = ({
     };
 
     const onOutsideClick = (e: MouseEvent) => {
-      const modalBody = ref.current.parentElement;
-      if (!modalBody?.contains(e.target as Node) && !isRndActive) {
+      const target = e.target as HTMLElement;
+      const modalBody = ref.current?.parentElement;
+      /*Fix to avoid modal close on select of version dropdown*/
+      if (target.closest?.('#quick-search-version-dropdown')) return;
+      if (!modalBody?.contains(target) && !isRndActive) {
         closeModal();
       }
     };

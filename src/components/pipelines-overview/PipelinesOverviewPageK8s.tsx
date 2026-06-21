@@ -50,9 +50,8 @@ const PipelinesOverviewPageK8s: React.FC = () => {
     activeNamespace,
   );
 
-  if (!canListNS && activeNamespace === ALL_NAMESPACES_KEY) {
-    return <AllProjectsPage pageTitle={t('Overview')} />;
-  }
+  // Remove restriction - allow all users to see "All" namespaces view
+  // The data will be scoped to namespaces they have access to based on their permissions
 
   return (
     <>

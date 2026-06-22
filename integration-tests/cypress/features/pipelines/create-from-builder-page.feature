@@ -118,33 +118,6 @@ Feature: Create the pipeline from builder page
              Then user can see the task in series gets removed
 
 
-        @regression @broken-test
-        Scenario Outline: Create a pipeline with TektonHub task not present in cluster from pipeline builder page: P-02-TC09
-            Given user is at Pipeline Builder page
-             When user enters pipeline name as "<pipeline_name>"
-              And user clicks Add task button under Tasks section
-              And user searches and select "<task_name>" in the list of items based on the "TektonHub" provider in quick search bar
-              And user clicks on Install and add button
-              And user clicks Create button on Pipeline Builder page
-             Then user will be redirected to Pipeline Details page with header name "<pipeline_name>"
-
-        Examples:
-                  | pipeline_name | task_name |
-                  | ptask-1       | kn        |
-
-
-        @regression @broken-test
-        Scenario: Upgrade tasks that are already installed on the cluster in pipeline builder page: P-02-TC10
-            Given user is at Pipeline Builder page
-             When user enters pipeline name as "pipeline-client"
-              And user installs and removes "openshift-client" of "TektonHub" provider
-              And user clicks Add task button under Tasks section
-              And user searches "openshift-client" in quick search bar
-              And user changes version to "0.1"
-              And user clicks on Update and Add button
-              And user clicks Create button on Pipeline Builder page
-             Then user will be redirected to Pipeline Details page with header name "pipeline-client"
-
 
         @regression @manual
         Scenario: Create the pipeline from yaml editor: P-02-TC11
@@ -314,31 +287,6 @@ Feature: Create the pipeline from builder page
               And user clicks on Logs tab in PipelineRun details page
              Then user will be able to see the output in sum and multiply task
 
-
-        @regression @manual
-        Scenario: Disable Tektonhub integration in the pipeline builder : P-02-TC22
-            Given user is at Search page
-              And user searches 'TektonConfig' in Resources dropdown
-              And user selects config with apiVersion operator.openshift.io/v1 option from Resources dropdown
-              And user clicks on "config" Name in TektonConfigs
-              And user switches to YAML tab
-              And user adds value of "spec.hub.params.value" as "false"
-              And user clicks on Save button
-              And user clicks on Pipeline tab in navigation menu
-              And user clicks Create Pipeline button
-              And user clicks Add task button under Tasks section
-              And user types 'git'
-             Then user will see Task only
-
-
-        @regression @manual
-        Scenario: Pipeline builder to support local Tekton Hub instances : P-02-TC23
-            Given user has setup tektonhub instance
-        # Refer to document https://docs.google.com/document/d/1HImc2DdtFKMWgk5dTm8Ib-I3wgnVXxdHxzX8Cn0jrZA/edit?usp=sharing for setting up tektonhub insance
-              And user is at Pipeline Builder page
-             When user clicks on Add task button under Tasks section
-              And user searches a tasks that is available in the local tektonhub instance
-             Then user will see the intended community task
 
         # Marked following test broken due to issue https://issues.redhat.com/browse/OCPBUGS-59536
         @regression @broken-test

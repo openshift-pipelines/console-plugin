@@ -19,9 +19,9 @@ export const handleCta = async (
   if (callback) {
     closeModal();
     await callback({
-      ...callbackProps,
       selectedVersion: item.data?.version ?? item.data?.task?.version,
       selectedItem: item,
+      ...callbackProps,
     });
     removeQueryArgument('catalogSearch');
   } else history.push(href);

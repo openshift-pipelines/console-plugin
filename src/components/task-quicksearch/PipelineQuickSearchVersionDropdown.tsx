@@ -9,14 +9,18 @@ import {
 import { CheckCircleIcon } from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
 import { global_palette_green_500 as greenColor } from '@patternfly/react-tokens';
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
-import { TektonHubTaskVersion } from '../catalog/apis/tektonHub';
 import { isSelectedVersionInstalled } from './pipeline-quicksearch-utils';
 import { useTranslation } from 'react-i18next';
+
+type TaskVersion = {
+  version: string | number;
+  [key: string]: unknown;
+};
 
 interface PipelineQuickSearchVersionDropdownProps {
   selectedVersion: string;
   item: CatalogItem;
-  versions: TektonHubTaskVersion[];
+  versions: TaskVersion[];
   onChange: (key: string) => void;
 }
 

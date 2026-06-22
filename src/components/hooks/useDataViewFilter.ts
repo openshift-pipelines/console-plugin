@@ -232,7 +232,7 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
     return values;
   }, [checkboxFilters]);
 
-  const [filterValues, setFilterValues] = useState<FilterValues>(initialValues);
+  const [filterState, setFilterState] = useState<FilterValues>(initialValues);
   const [, setSearchParams] = useSearchParams();
 
   const resetPage = useCallback(() => {
@@ -245,27 +245,47 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
 
   const onFilterChange = useCallback(
     (key: string, value: string | string[]) => {
-      setFilterValues((prev) => ({ ...prev, [key]: value }));
+      setFilterState((prev) => ({ ...prev, [key]: value }));
       resetPage();
     },
     [resetPage],
   );
 
   const onClearAll = useCallback(() => {
-    setFilterValues(resetFilterState);
+    setFilterState(resetFilterState);
     resetPage();
   }, [resetPage]);
+
+  const labelSuggestions = useMemo(() => {
+    if (!data) return [];
+    const labelsSet = new Set<string>();
+    const getLabelsFn = getLabels ?? defaultGetLabels;
+    data.forEach((obj) => {
+      const labels = getLabelsFn(obj);
+      if (labels) {
+        Object.entries(labels).forEach(([key, value]) => {
+          labelsSet.add(`${key}=${value}`);
+        });
+      }
+    });
+    return Array.from(labelsSet).sort();
+  }, [data, getLabels]);
+
+  const filterValues = useMemo<FilterValues>(
+    () => ({ ...filterState, labelSuggestions }),
+    [filterState, labelSuggestions],
+  );
 
   const passesNameAndLabelFilters = useCallback(
     (obj: T): boolean => {
       const name = getName(obj);
       if (
-        filterValues.name &&
-        !name?.toLowerCase().includes(filterValues.name.toLowerCase())
+        filterState.name &&
+        !name?.toLowerCase().includes(filterState.name.toLowerCase())
       ) {
         return false;
       }
-      const labelFilters = filterValues.labels || [];
+      const labelFilters = filterState.labels || [];
       if (labelFilters.length > 0 && getLabels) {
         if (!matchesLabels(getLabels(obj), labelFilters)) {
           return false;
@@ -273,7 +293,7 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
       }
       return true;
     },
-    [filterValues.name, filterValues.labels, getName, getLabels],
+    [filterState.name, filterState.labels, getName, getLabels],
   );
 
   const passesCheckboxFilter = useCallback(
@@ -281,7 +301,7 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
       if (!resourceType) return true;
       for (const filter of checkboxFilters) {
         if (filter.id === excludeFilterId) continue;
-        const selected = (filterValues[filter.id] as string[]) || [];
+        const selected = (filterState[filter.id] as string[]) || [];
         if (
           selected.length > 0 &&
           !matchesCheckboxFilter(obj, filter.id, selected)
@@ -291,7 +311,7 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
       }
       return true;
     },
-    [resourceType, checkboxFilters, filterValues, matchesCheckboxFilter],
+    [resourceType, checkboxFilters, filterState, matchesCheckboxFilter],
   );
 
   const filteredData = useMemo(() => {

@@ -1,0 +1,17 @@
+.pipelines-console-plugin-position-relative {
+  position: relative;
+}
+
+.cp-label-suggestion-box {
+  background-color: var(--pf-t--global--background--color--floating--default);
+  box-shadow: var(--pf-t--global--box-shadow--md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--gap--group--vertical);
+  padding: var(--pf-t--global--spacer--sm);
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  width: 100%;
+  z-index: var(--pf-t--global--z-index--sm);
+}

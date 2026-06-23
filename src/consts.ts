@@ -203,3 +203,4 @@ export const KUEUE_LABEL_PREFIX = 'kueue.x-k8s.io';
 export const DASH = '-';
 export const ADMIN_PERSPECTIVE_BASE_PATH = '/pipelines';
 export const DEV_PERSPECTIVE_BASE_PATH = '/dev-pipelines';
+export const HUB_INTEGRATION_KEY = 'enable-devconsole-integration';

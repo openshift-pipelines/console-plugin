@@ -1,10 +1,9 @@
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
 import { TaskKind } from '../../../types';
-import { TektonHubTask } from '../../catalog/apis/tektonHub';
 
 export enum CatalogItemTypes {
   ECOSYSTEM_TASK = 'clusterResolverTask',
-  TEKTONHUB_TASK = 'TektonHubTask',
+  ARTIFACTHUB_TASK = 'ArtifactHubTask',
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -19,9 +18,11 @@ export enum PlatformTypes {
   LINUX_ARM64 = 'linux/arm64',
 }
 
-type SampleTasks = { [key in CatalogItemTypes]?: TaskKind | TektonHubTask };
-type TektonHubPlatformTasks = {
-  [key in PlatformTypes]?: TaskKind | TektonHubTask;
+type SampleTasks = {
+  [key in CatalogItemTypes]?: TaskKind | Record<string, any>;
+};
+type ArtifactHubPlatformTasks = {
+  [key in PlatformTypes]?: TaskKind | Record<string, any>;
 };
 
 export const sampleTasks: SampleTasks = {
@@ -97,7 +98,7 @@ export const sampleTasks: SampleTasks = {
       ],
     },
   },
-  [CatalogItemTypes.TEKTONHUB_TASK]: {
+  [CatalogItemTypes.ARTIFACTHUB_TASK]: {
     id: 1,
     name: 'ansible-runner',
     catalog: {
@@ -147,24 +148,24 @@ export const sampleTasks: SampleTasks = {
   },
 };
 
-export const tekonHubPlatformTasks: TektonHubPlatformTasks = {
+export const artifactHubPlatformTasks: ArtifactHubPlatformTasks = {
   [PlatformTypes.LINUX_AMD64]: {
-    ...sampleTasks[CatalogItemTypes.TEKTONHUB_TASK],
+    ...sampleTasks[CatalogItemTypes.ARTIFACTHUB_TASK],
     platforms: [{ id: 1, name: PlatformTypes.LINUX_AMD64 }],
   },
   [PlatformTypes.LINUX_PPC64LE]: {
-    ...sampleTasks[CatalogItemTypes.TEKTONHUB_TASK],
+    ...sampleTasks[CatalogItemTypes.ARTIFACTHUB_TASK],
     platforms: [
       { id: 1, name: PlatformTypes.LINUX_AMD64 },
       { id: 2, name: PlatformTypes.LINUX_PPC64LE },
     ],
   },
   [PlatformTypes.LINUX_S390X]: {
-    ...sampleTasks[CatalogItemTypes.TEKTONHUB_TASK],
+    ...sampleTasks[CatalogItemTypes.ARTIFACTHUB_TASK],
     platforms: [{ id: 3, name: PlatformTypes.LINUX_S390X }],
   },
   [PlatformTypes.LINUX_ARM64]: {
-    ...sampleTasks[CatalogItemTypes.TEKTONHUB_TASK],
+    ...sampleTasks[CatalogItemTypes.ARTIFACTHUB_TASK],
     platforms: [{ id: 4, name: PlatformTypes.LINUX_ARM64 }],
   },
 };
@@ -195,12 +196,12 @@ export const sampleTaskCatalogItem: CatalogItem = {
   data: sampleTasks[CatalogItemTypes.ECOSYSTEM_TASK],
 };
 
-export const sampleTektonHubCatalogItem: CatalogItem = {
+export const sampleArtifactHubCatalogItem: CatalogItem = {
   uid: '1',
   type: 'Community',
   name: 'ansible-runner',
   description: 'Task to run Ansible playbooks using Ansible Runner',
-  provider: 'TektonHub',
+  provider: 'ArtifactHub',
   tags: ['cli'],
   icon: {
     class: 'build',
@@ -242,10 +243,10 @@ export const sampleTektonHubCatalogItem: CatalogItem = {
   cta: {
     label: 'Add',
   },
-  data: sampleTasks[CatalogItemTypes.TEKTONHUB_TASK],
+  data: sampleTasks[CatalogItemTypes.ARTIFACTHUB_TASK],
 };
 
-export const sampleTektonHubCatalogItemWithHubURL: CatalogItem = {
+export const sampleArtifactHubCatalogItemWithHubURL: CatalogItem = {
   uid: '1',
   type: 'Community',
   name: 'ansible-runner',
@@ -389,5 +390,5 @@ export const sampleTaskWithMultipleVersions = {
 
 export const sampleCatalogItems: CatalogItem[] = [
   sampleTaskCatalogItem,
-  sampleTektonHubCatalogItem,
+  sampleArtifactHubCatalogItem,
 ];

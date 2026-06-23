@@ -1,21 +1,11 @@
-import {
-  CatalogItem,
-  consoleFetch,
-  k8sCreate,
-  k8sUpdate,
-} from '@openshift-console/dynamic-plugin-sdk';
-import { load } from 'js-yaml';
-import * as _ from 'lodash';
+import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
 import { TaskModel } from '../../models';
-import { TaskKind } from '../../types';
 import { t } from '../utils/common-utils';
-import { returnValidTaskModel } from '../utils/pipeline-utils';
-import { ARTIFACTHUB, CTALabel, TEKTONHUB } from './const';
+import { ARTIFACTHUB, CTALabel } from './const';
 
 export enum TaskProviders {
   redhat = 'Red Hat',
   community = 'Community',
-  tektonHub = 'TektonHub',
   artifactHub = 'ArtifactHub',
 }
 
@@ -48,13 +38,6 @@ export const isOneVersionInstalled = (item: CatalogItem): boolean => {
     item.attributes?.versions?.some(
       (v) => v.version?.toString() === item.attributes?.installed?.toString(),
     )
-  );
-};
-
-export const isTektonHubTaskWithoutVersions = (item: CatalogItem): boolean => {
-  return (
-    item.provider === TaskProviders.tektonHub &&
-    item?.attributes?.versions?.length === 0
   );
 };
 
@@ -104,7 +87,7 @@ export const isInstalledNamespaceTask = (item: CatalogItem) => {
   return (
     item.data.kind === TaskModel.kind &&
     item.data.metadata?.annotations?.[TektonTaskAnnotation.installedFrom] ===
-      TEKTONHUB
+      ARTIFACTHUB
   );
 };
 
@@ -116,9 +99,6 @@ export const isTaskSearchable = (items: CatalogItem[], item: CatalogItem) => {
   const hasExternalTasks = items.some(isExternalTask);
   return !hasExternalTasks || !isInstalledNamespaceTask(item);
 };
-export const getInstalledFromAnnotation = () => {
-  return { [TektonTaskAnnotation.installedFrom]: TEKTONHUB };
-};
 
 export const getSelectedVersionUrl = (
   item: CatalogItem,
@@ -127,9 +107,11 @@ export const getSelectedVersionUrl = (
   if (!item?.attributes?.versions) {
     return null;
   }
-  return isArtifactHubTask(item)
-    ? item.attributes.selectedVersionContentUrl
-    : item.attributes.versions.find((v) => v.version === version)?.rawURL;
+  if (item.attributes.selectedVersionForContentUrl !== version) {
+    return null;
+  }
+
+  return item.attributes.selectedVersionContentUrl ?? null;
 };
 
 export const findInstalledTask = (
@@ -141,62 +123,7 @@ export const findInstalledTask = (
       i.uid !== item.uid &&
       i.name === item.name &&
       i.data.kind === TaskModel.kind &&
-      (i.data.metadata?.annotations?.[TektonTaskAnnotation.installedFrom] ===
-        TEKTONHUB ||
-        i.data.metadata?.annotations?.[TektonTaskAnnotation.installedFrom] ===
-          ARTIFACTHUB),
+      i.data.metadata?.annotations?.[TektonTaskAnnotation.installedFrom] ===
+        ARTIFACTHUB,
   );
-};
-
-export const updateTask = async (
-  url: string,
-  taskData: CatalogItem,
-  namespace: string,
-  name: string,
-) => {
-  return consoleFetch(url)
-    .then(async (res) => {
-      const yaml = await res.text();
-      const task = load(yaml) as TaskKind;
-      task.metadata.namespace = namespace;
-      task.metadata.annotations = {
-        ...task.metadata.annotations,
-        ...getInstalledFromAnnotation(),
-      };
-      task.metadata = _.merge({}, taskData.data.metadata, task.metadata);
-      const taskModel = returnValidTaskModel(task);
-      return k8sUpdate({ model: taskModel, data: task, ns: namespace, name });
-    })
-    .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.warn('Error:', err);
-      throw err;
-    });
-};
-
-export const createTask = (
-  url: string,
-  namespace: string,
-  customName?: string,
-) => {
-  return consoleFetch(url)
-    .then(async (res) => {
-      const yaml = await res.text();
-      const task = load(yaml) as TaskKind;
-      task.metadata.namespace = namespace;
-      if (customName) {
-        task.metadata.name = customName;
-      }
-      task.metadata.annotations = {
-        ...task.metadata.annotations,
-        [TektonTaskAnnotation.installedFrom]: TEKTONHUB,
-      };
-      const taskModel = returnValidTaskModel(task);
-      return k8sCreate({ model: taskModel, data: task });
-    })
-    .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.warn('Error:', err);
-      throw err;
-    });
 };

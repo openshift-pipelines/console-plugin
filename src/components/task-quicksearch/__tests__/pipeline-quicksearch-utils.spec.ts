@@ -1,9 +1,8 @@
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
 import { omit } from 'lodash';
-import { CTALabel } from '../const';
+import { ARTIFACTHUB, CTALabel } from '../const';
 import {
   findInstalledTask,
-  getInstalledFromAnnotation,
   getSelectedVersionUrl,
   getTaskCtaType,
   isExternalTask,
@@ -13,12 +12,17 @@ import {
   isSelectedVersionUpgradable,
   isTaskSearchable,
   isTaskVersionInstalled,
+  TektonTaskAnnotation,
 } from '../pipeline-quicksearch-utils';
 import {
+  sampleArtifactHubCatalogItem,
   sampleCatalogItems,
   sampleTaskCatalogItem,
-  sampleTektonHubCatalogItem,
 } from './catalog-item-data';
+
+const getInstalledFromAnnotation = () => ({
+  [TektonTaskAnnotation.installedFrom]: ARTIFACTHUB,
+});
 
 describe('pipeline-quicksearch-utils', () => {
   const sampleCatalogInstalledTask: CatalogItem = {
@@ -39,7 +43,7 @@ describe('pipeline-quicksearch-utils', () => {
     it('should return false when the attributes is not present in catalogItem', () => {
       expect(
         isSelectedVersionInstalled(
-          omit(sampleTektonHubCatalogItem, 'attributes') as CatalogItem,
+          omit(sampleArtifactHubCatalogItem, 'attributes') as CatalogItem,
           '0.1',
         ),
       ).toBe(false);
@@ -47,15 +51,15 @@ describe('pipeline-quicksearch-utils', () => {
 
     it('should return false when the selected version is not installed', () => {
       expect(
-        isSelectedVersionInstalled(sampleTektonHubCatalogItem, '0.1'),
+        isSelectedVersionInstalled(sampleArtifactHubCatalogItem, '0.1'),
       ).toBe(false);
     });
 
     it('should return true when the selected version is installed', () => {
       const catalogItem: CatalogItem = {
-        ...sampleTektonHubCatalogItem,
+        ...sampleArtifactHubCatalogItem,
         attributes: {
-          ...sampleTektonHubCatalogItem.attributes,
+          ...sampleArtifactHubCatalogItem.attributes,
           installed: '0.1',
         },
       };
@@ -67,18 +71,18 @@ describe('pipeline-quicksearch-utils', () => {
     it('should return false when the attributes is not present in catalogItem', () => {
       expect(
         isTaskVersionInstalled(
-          omit(sampleTektonHubCatalogItem, 'attributes') as CatalogItem,
+          omit(sampleArtifactHubCatalogItem, 'attributes') as CatalogItem,
         ),
       ).toBe(false);
     });
     it('should return false when the installed attribute is not present in catalogItem', () => {
-      expect(isTaskVersionInstalled(sampleTektonHubCatalogItem)).toBe(false);
+      expect(isTaskVersionInstalled(sampleArtifactHubCatalogItem)).toBe(false);
     });
     it('should return true when the installed attribute is set in catalogItem', () => {
       const catalogItem: CatalogItem = {
-        ...sampleTektonHubCatalogItem,
+        ...sampleArtifactHubCatalogItem,
         attributes: {
-          ...sampleTektonHubCatalogItem.attributes,
+          ...sampleArtifactHubCatalogItem.attributes,
           installed: '0.1',
         },
       };
@@ -90,20 +94,20 @@ describe('pipeline-quicksearch-utils', () => {
     it('should return false when the attributes is not present in catalogItem', () => {
       expect(
         isOneVersionInstalled(
-          omit(sampleTektonHubCatalogItem, 'attributes') as CatalogItem,
+          omit(sampleArtifactHubCatalogItem, 'attributes') as CatalogItem,
         ),
       ).toBe(false);
     });
 
     it('should return false when the none of the version is installed in the cluster', () => {
-      expect(isOneVersionInstalled(sampleTektonHubCatalogItem)).toBe(false);
+      expect(isOneVersionInstalled(sampleArtifactHubCatalogItem)).toBe(false);
     });
 
     it('should return true when the one version is installed in the cluster', () => {
       const catalogItem: CatalogItem = {
-        ...sampleTektonHubCatalogItem,
+        ...sampleArtifactHubCatalogItem,
         attributes: {
-          ...sampleTektonHubCatalogItem.attributes,
+          ...sampleArtifactHubCatalogItem.attributes,
           installed: '0.1',
         },
       };
@@ -115,7 +119,7 @@ describe('pipeline-quicksearch-utils', () => {
     it('should return false when the attributes is not present in catalogItem', () => {
       expect(
         isSelectedVersionUpgradable(
-          omit(sampleTektonHubCatalogItem, 'attributes') as CatalogItem,
+          omit(sampleArtifactHubCatalogItem, 'attributes') as CatalogItem,
           '0.1',
         ),
       ).toBe(false);
@@ -123,15 +127,15 @@ describe('pipeline-quicksearch-utils', () => {
 
     it('should return false when the passed version is not upgradable', () => {
       expect(
-        isSelectedVersionUpgradable(sampleTektonHubCatalogItem, '0.1'),
+        isSelectedVersionUpgradable(sampleArtifactHubCatalogItem, '0.1'),
       ).toBe(false);
     });
 
     it('should return false when the selected version is already installed in the cluster', () => {
       const catalogItem: CatalogItem = {
-        ...sampleTektonHubCatalogItem,
+        ...sampleArtifactHubCatalogItem,
         attributes: {
-          ...sampleTektonHubCatalogItem.attributes,
+          ...sampleArtifactHubCatalogItem.attributes,
           installed: '0.1',
         },
       };
@@ -140,9 +144,9 @@ describe('pipeline-quicksearch-utils', () => {
 
     it('should return true when the selected version is upgradable in catalogItem', () => {
       const catalogItem: CatalogItem = {
-        ...sampleTektonHubCatalogItem,
+        ...sampleArtifactHubCatalogItem,
         attributes: {
-          ...sampleTektonHubCatalogItem.attributes,
+          ...sampleArtifactHubCatalogItem.attributes,
           installed: '0.1',
         },
       };
@@ -152,16 +156,16 @@ describe('pipeline-quicksearch-utils', () => {
 
   describe('getTaskCtaType', () => {
     it('should return the Install button type for the uninstalled task', () => {
-      expect(getTaskCtaType(sampleTektonHubCatalogItem, '0.1')).toBe(
+      expect(getTaskCtaType(sampleArtifactHubCatalogItem, '0.1')).toBe(
         CTALabel.Install,
       );
     });
 
     it('should return the Add button type for the installed version', () => {
       const catalogItem: CatalogItem = {
-        ...sampleTektonHubCatalogItem,
+        ...sampleArtifactHubCatalogItem,
         attributes: {
-          ...sampleTektonHubCatalogItem.attributes,
+          ...sampleArtifactHubCatalogItem.attributes,
           installed: '0.1',
         },
       };
@@ -170,9 +174,9 @@ describe('pipeline-quicksearch-utils', () => {
 
     it('should return the Upgrade button type if selected version is upgradable', () => {
       const catalogItem: CatalogItem = {
-        ...sampleTektonHubCatalogItem,
+        ...sampleArtifactHubCatalogItem,
         attributes: {
-          ...sampleTektonHubCatalogItem.attributes,
+          ...sampleArtifactHubCatalogItem.attributes,
           installed: '0.1',
         },
       };
@@ -192,8 +196,10 @@ describe('pipeline-quicksearch-utils', () => {
       ).toBe(false);
     });
 
-    it('should return false if the tekton hub task is passed', () => {
-      expect(isInstalledNamespaceTask(sampleTektonHubCatalogItem)).toBe(false);
+    it('should return false if the artifact hub task is passed', () => {
+      expect(isInstalledNamespaceTask(sampleArtifactHubCatalogItem)).toBe(
+        false,
+      );
     });
 
     it('should return false if the namespace task is not installed through pipeline builder', () => {
@@ -206,8 +212,8 @@ describe('pipeline-quicksearch-utils', () => {
   });
 
   describe('isExternalTask', () => {
-    it('should return true for the tekton hub task', () => {
-      expect(isExternalTask(sampleTektonHubCatalogItem)).toBe(true);
+    it('should return true for the artifact hub task', () => {
+      expect(isExternalTask(sampleArtifactHubCatalogItem)).toBe(true);
     });
 
     it('should return false if namespaceTask is passed', () => {
@@ -216,9 +222,9 @@ describe('pipeline-quicksearch-utils', () => {
   });
 
   describe('isTaskSearchable', () => {
-    it('should return true for all the tekton hub tasks are searchable', () => {
+    it('should return true for all the artifact hub tasks are searchable', () => {
       expect(
-        isTaskSearchable(sampleCatalogItems, sampleTektonHubCatalogItem),
+        isTaskSearchable(sampleCatalogItems, sampleArtifactHubCatalogItem),
       ).toBe(true);
     });
 
@@ -239,20 +245,31 @@ describe('pipeline-quicksearch-utils', () => {
     it('should return null if the attirbutes is not present in the catalogItem', () => {
       expect(
         getSelectedVersionUrl(
-          omit(sampleTektonHubCatalogItem, 'attributes') as CatalogItem,
+          omit(sampleArtifactHubCatalogItem, 'attributes') as CatalogItem,
           '0.1',
         ),
       ).toBeNull();
     });
 
-    it('should return the download url when the item and version id is passed', () => {
-      expect(getSelectedVersionUrl(sampleTektonHubCatalogItem, '0.1')).toBe(
+    it('should return the selectedVersionContentUrl when it is set', () => {
+      const catalogItem: CatalogItem = {
+        ...sampleArtifactHubCatalogItem,
+        attributes: {
+          ...sampleArtifactHubCatalogItem.attributes,
+          selectedVersionForContentUrl: '0.1',
+          selectedVersionContentUrl:
+            'https://raw.githubusercontent.com/tektoncd/catalog/main/task/ansible-runner/0.1/ansible-runner.yaml',
+        },
+      };
+      expect(getSelectedVersionUrl(catalogItem, '0.1')).toBe(
         'https://raw.githubusercontent.com/tektoncd/catalog/main/task/ansible-runner/0.1/ansible-runner.yaml',
       );
+    });
 
-      expect(getSelectedVersionUrl(sampleTektonHubCatalogItem, '0.2')).toBe(
-        'https://raw.githubusercontent.com/tektoncd/catalog/main/task/ansible-runner/0.2/ansible-runner.yaml',
-      );
+    it('should return null when selectedVersionContentUrl is not set', () => {
+      expect(
+        getSelectedVersionUrl(sampleArtifactHubCatalogItem, '0.1'),
+      ).toBeNull();
     });
   });
 
@@ -271,7 +288,7 @@ describe('pipeline-quicksearch-utils', () => {
 
     it('should return undefined the catalogItem is not installed through pipeline builder', () => {
       expect(
-        findInstalledTask(sampleCatalogItems, sampleTektonHubCatalogItem),
+        findInstalledTask(sampleCatalogItems, sampleArtifactHubCatalogItem),
       ).toBeUndefined();
     });
 
@@ -279,7 +296,7 @@ describe('pipeline-quicksearch-utils', () => {
       const installedCatalogTask: CatalogItem = {
         ...sampleTaskCatalogItem,
         uid: '23',
-        name: sampleTektonHubCatalogItem.data.name,
+        name: sampleArtifactHubCatalogItem.data.name,
         data: {
           ...sampleTaskCatalogItem.data,
           kind: 'Task',
@@ -294,12 +311,12 @@ describe('pipeline-quicksearch-utils', () => {
       };
 
       const newCatalogItems = [
-        sampleTektonHubCatalogItem,
+        sampleArtifactHubCatalogItem,
         sampleTaskCatalogItem,
         installedCatalogTask,
       ];
       expect(
-        findInstalledTask(newCatalogItems, sampleTektonHubCatalogItem),
+        findInstalledTask(newCatalogItems, sampleArtifactHubCatalogItem),
       ).toBe(installedCatalogTask);
     });
   });

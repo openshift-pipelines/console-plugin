@@ -31,13 +31,16 @@ export const useGetPipelineRuns = (
     };
   }
 
-  const pipelineRunOptions = useMemo(
-    () => ({
-      ...(selector && { selector }),
-      ...(options?.filter && { filter: options.filter }),
-    }),
-    [selector, options?.filter],
-  );
+  const pipelineRunOptions = useMemo(() => {
+    const opts: Record<string, unknown> = {};
+    if (selector) {
+      opts.selector = selector;
+    }
+    if (options?.filter) {
+      opts.filter = options.filter;
+    }
+    return opts;
+  }, [selector, options?.filter]);
 
   return usePipelineRuns(ns, pipelineRunOptions);
 };

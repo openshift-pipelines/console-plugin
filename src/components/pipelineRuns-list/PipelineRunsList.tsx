@@ -101,10 +101,7 @@ const PipelineRunsList: FC<PipelineRunsListProps> = ({
     ? TimeRangeOptions()
     : TimeRangeOptionsK8s();
 
-  const filterValues = useMemo(
-    () => ({ ...baseFilterValues, timeRange: [currentKey] }),
-    [baseFilterValues, currentKey],
-  );
+  const filterValues = { ...baseFilterValues, timeRange: [currentKey] };
 
   const checkboxFilters = useMemo(
     () => [

@@ -209,7 +209,7 @@ export const useRuns = <Kind extends K8sResourceKind>(
     limit?: number;
     name?: string;
     skipFetch?: boolean;
-    filter?: string;
+    filter?: string; // CEL expression sent to Tekton Results to retrieve PRs within the date range
   },
   pipelineRunFinished?: boolean,
   pipelineRunManagedBy?: string,

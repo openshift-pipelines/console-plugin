@@ -66,13 +66,16 @@ const TaskRunKebab: React.FC<TaskRunKebabProps> = ({ obj }) => {
       ? useDeleteModal(obj, undefined, message)
       : useDeleteModal(obj);
   const { name, namespace } = obj.metadata;
-  const canDeleteTaskRun = useAccessReview({
-    group: TaskRunModel.apiGroup,
-    resource: TaskRunModel.plural,
-    verb: 'delete',
-    name,
-    namespace,
-  });
+  const canDeleteTaskRun =
+    useAccessReview({
+      group: TaskRunModel.apiGroup,
+      resource: TaskRunModel.plural,
+      verb: 'delete',
+      name,
+      namespace,
+    }) && !obj?.metadata?.annotations?.deletionTimestamp
+      ? [true]
+      : [false];
 
   const onToggle = () => {
     setIsOpen(!isOpen);
@@ -119,6 +122,7 @@ const TaskRunKebab: React.FC<TaskRunKebabProps> = ({ obj }) => {
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
         <MenuToggle
+          isDisabled={!canDeleteTaskRun[0]}
           ref={toggleRef}
           aria-label="kebab menu"
           variant="plain"
@@ -144,7 +148,9 @@ const TaskRunsRow: React.FC<RowProps<TaskRunKind>> = ({
   obj,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const {isResourceManagedByKueue} = useMultiClusterProxyService({ labels: obj?.metadata?.labels });
+  const { isResourceManagedByKueue } = useMultiClusterProxyService({
+    labels: obj?.metadata?.labels,
+  });
   return (
     <>
       <TableData activeColumnIDs={activeColumnIDs} id="name">

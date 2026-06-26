@@ -57,6 +57,8 @@ export type TektonWorkspace = {
   mountPath?: string;
   readOnly?: boolean;
   optional?: boolean;
+  type?: string;
+  claimName?: string;
 };
 
 export type TektonResultsRun = {
@@ -157,5 +159,5 @@ export type TektonConfig = K8sResourceCommon & {
 
 export interface Scheduler {
   'multi-cluster-disabled': boolean;
-  'multi-cluster-role': string
+  'multi-cluster-role': string;
 }

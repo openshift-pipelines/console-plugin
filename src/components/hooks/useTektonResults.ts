@@ -25,6 +25,7 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
   namespace: string,
   options?: TektonResultsOptions,
   cacheKey?: string,
+  refreshKey?: string,
 ): [Kind[], boolean, unknown, GetNextPage] => {
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const [nextPageToken, setNextPageToken] = React.useState<string>(null);
@@ -100,7 +101,7 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
     return () => {
       disposed = true;
     };
-  }, [namespace, options, nextPageToken, localCacheKey, getRuns]);
+  }, [namespace, options, nextPageToken, localCacheKey, getRuns, refreshKey]);
   return result;
 };
 
@@ -108,15 +109,23 @@ export const useTRPipelineRuns = (
   namespace: string,
   options?: TektonResultsOptions,
   cacheKey?: string,
+  refreshKey?: string,
 ): [PipelineRunKind[], boolean, unknown, GetNextPage] =>
-  useTRRuns<PipelineRunKind>(getPipelineRuns, namespace, options, cacheKey);
+  useTRRuns<PipelineRunKind>(
+    getPipelineRuns,
+    namespace,
+    options,
+    cacheKey,
+    refreshKey,
+  );
 
 export const useTRTaskRuns = (
   namespace: string,
   options?: TektonResultsOptions,
   cacheKey?: string,
+  refreshKey?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] =>
-  useTRRuns<TaskRunKind>(getTaskRuns, namespace, options, cacheKey);
+  useTRRuns<TaskRunKind>(getTaskRuns, namespace, options, cacheKey, refreshKey);
 
 // export const useTRTaskRunLog = (
 //   namespace: string,

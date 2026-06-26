@@ -4,9 +4,9 @@ import {
   Selector,
   getGroupVersionKindForModel,
   useFlag,
-  useK8sWatchResource
+  useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { differenceBy, uniqBy } from 'lodash-es';
+import { uniqBy } from 'lodash-es';
 import * as React from 'react';
 import {
   ApprovalFields,
@@ -77,8 +77,13 @@ export const useTaskRuns = (
   pipelineRunName?: string,
   options?: UseTaskRunsOptions,
 ): [TaskRunKind[], boolean, unknown, GetNextPage, boolean, boolean] => {
-  const { taskName, cacheKey, pipelineRunUid, pipelineRunFinished, pipelineRunManagedBy } =
-    options || {};
+  const {
+    taskName,
+    cacheKey,
+    pipelineRunUid,
+    pipelineRunFinished,
+    pipelineRunManagedBy,
+  } = options || {};
   const selector: Selector = React.useMemo(() => {
     if (pipelineRunName && pipelineRunUid) {
       return {
@@ -252,6 +257,7 @@ export const useRuns = <Kind extends K8sResourceKind>(
   pipelineRunManagedBy?: string,
 ): [Kind[], boolean, unknown, GetNextPage, boolean, boolean] => {
   const etcdRunsRef = React.useRef<Kind[]>([]);
+  const [trRefreshKey, setTrRefreshKey] = React.useState<string>('');
   const optionsMemo = useDeepCompareMemoize(options);
   const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
   const isList = !optionsMemo?.name;
@@ -262,7 +268,9 @@ export const useRuns = <Kind extends K8sResourceKind>(
     getGroupVersionKindForModel(PipelineRunModel)?.kind;
 
   // Hub cluster detection
-  const { isResourceManagedByKueue } = useMultiClusterProxyService({ managedBy: pipelineRunManagedBy });
+  const { isResourceManagedByKueue } = useMultiClusterProxyService({
+    managedBy: pipelineRunManagedBy,
+  });
   const isTaskRunQuery =
     groupVersionKind?.kind === getGroupVersionKindForModel(TaskRunModel)?.kind;
 
@@ -271,7 +279,8 @@ export const useRuns = <Kind extends K8sResourceKind>(
     optionsMemo?.selector?.matchLabels?.[TektonResourceLabel.pipelinerun];
 
   // Use multi-cluster hook for hub clusters fetching TaskRuns
-  const shouldUseMultiCluster = isResourceManagedByKueue && isTaskRunQuery && !!pipelineRunName;
+  const shouldUseMultiCluster =
+    isResourceManagedByKueue && isTaskRunQuery && !!pipelineRunName;
   const [
     mcTaskRuns,
     mcLoaded,
@@ -288,7 +297,6 @@ export const useRuns = <Kind extends K8sResourceKind>(
   // do not include the limit when querying etcd because result order is not sorted
   const watchOptions = React.useMemo(() => {
     // reset cached runs as the options have changed
-    etcdRunsRef.current = [];
     return shouldUseMultiCluster
       ? null
       : {
@@ -329,20 +337,10 @@ export const useRuns = <Kind extends K8sResourceKind>(
   const effectiveError = shouldUseMultiCluster ? mcError : error;
 
   const runs = React.useMemo(() => {
-    if (!etcdRuns) {
+    if (!etcdRuns || etcdRuns.length === 0) {
       return etcdRuns;
     }
-    let value = etcdRunsRef.current
-      ? [
-          ...etcdRuns,
-          // identify the runs that were removed
-          ...differenceBy(
-            etcdRunsRef.current,
-            etcdRuns,
-            (plr) => plr.metadata.name,
-          ),
-        ]
-      : [...etcdRuns];
+    let value = [...etcdRuns];
     value.sort((a, b) =>
       b.metadata.creationTimestamp.localeCompare(a.metadata.creationTimestamp),
     );
@@ -352,8 +350,12 @@ export const useRuns = <Kind extends K8sResourceKind>(
     return value;
   }, [etcdRuns, limit]);
 
-  // cache the last set to identify removed runs
-  etcdRunsRef.current = runs;
+  React.useEffect(() => {
+    if (etcdRuns.length < etcdRunsRef.current.length) {
+      setTrRefreshKey((k) => k + 1 + Date.now());
+    }
+    etcdRunsRef.current = etcdRuns;
+  }, [etcdRuns]);
 
   // Query tekton results if there's no limit or we received less items from etcd than the current limit
   const queryTr =
@@ -384,12 +386,14 @@ export const useRuns = <Kind extends K8sResourceKind>(
       isPipelineRun ? trNamespace : null,
       isPipelineRun ? trOptions : undefined,
       isPipelineRun ? cacheKey : undefined,
+      isPipelineRun ? trRefreshKey : undefined,
     );
 
   const [trTRResources, trTRLoaded, trTRError, trTRGetNextPage] = useTRTaskRuns(
     !isPipelineRun ? trNamespace : null,
     !isPipelineRun ? trOptions : undefined,
     !isPipelineRun ? cacheKey : undefined,
+    !isPipelineRun ? trRefreshKey : undefined,
   );
 
   const trResources = (isPipelineRun

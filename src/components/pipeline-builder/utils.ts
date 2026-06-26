@@ -6,7 +6,11 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { FormikErrors } from 'formik';
 import * as _ from 'lodash';
-import { PIPELINE_NAMESPACE } from '../../consts';
+import {
+  DEFAULT_WORKSPACE_ANNOTATION,
+  PIPELINE_NAMESPACE,
+  VolumeTypes,
+} from '../../consts';
 import { PipelineModel, TaskModel } from '../../models';
 import {
   PipelineKind,
@@ -16,6 +20,7 @@ import {
   TektonParam,
   TektonResource,
   TektonResourceGroup,
+  TektonWorkspace,
 } from '../../types';
 import { sanitizePipelineParams } from '../pipelines-details/utils';
 import { t } from '../utils/common-utils';
@@ -442,6 +447,25 @@ export const convertBuilderFormToPipeline = (
         ? existingPipeline?.metadata?.name
         : name,
       namespace,
+      annotations: {
+        ...existingPipeline?.metadata?.annotations,
+        [DEFAULT_WORKSPACE_ANNOTATION]: JSON.stringify(
+          workspaces.length > 0
+            ? workspaces.reduce(
+                (acc: Record<string, object>, workspace: TektonWorkspace) => {
+                  if (workspace.type && workspace.claimName) {
+                    acc[workspace.name] = {
+                      type: workspace.type,
+                      name: workspace.claimName,
+                    };
+                  }
+                  return acc;
+                },
+                {},
+              )
+            : {},
+        ),
+      },
     },
     spec: {
       ...existingPipeline?.spec,
@@ -451,7 +475,9 @@ export const convertBuilderFormToPipeline = (
       ),
       workspaces:
         workspaces.length > 0
-          ? workspaces
+          ? workspaces.map((workspace) =>
+              _.omit(workspace, 'type', 'claimName'),
+            )
           : existingPipeline?.spec?.workspaces ?? [],
       tasks:
         tasks.length > 0
@@ -474,7 +500,7 @@ export const convertPipelineToBuilderForm = (
   if (!pipeline) return null;
 
   const {
-    metadata: { name },
+    metadata: { name, annotations = {} },
     spec: {
       params = [],
       workspaces = [],
@@ -483,12 +509,31 @@ export const convertPipelineToBuilderForm = (
     },
   } = pipeline;
 
+  let defaultWorkspaceMap: Record<string, { type?: string; name?: string }> =
+    {};
+  try {
+    const raw = annotations[DEFAULT_WORKSPACE_ANNOTATION];
+    if (raw) {
+      defaultWorkspaceMap = JSON.parse(raw);
+    }
+  } catch {
+    console.warn(
+      `Invalid default workspace annotation - ${DEFAULT_WORKSPACE_ANNOTATION}`,
+    );
+  }
+
   return {
     name,
     params,
     workspaces: workspaces.map((workspace) => ({
       ...workspace,
       optional: !!workspace.optional, // Formik fails to understand "undefined boolean" checkbox values
+      type:
+        defaultWorkspaceMap[workspace.name]?.type ??
+        workspace.type ??
+        VolumeTypes.PVC,
+      claimName:
+        defaultWorkspaceMap[workspace.name]?.name ?? workspace.claimName,
     })),
     tasks,
     listTasks: [],

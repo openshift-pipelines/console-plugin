@@ -585,6 +585,7 @@
   "TriggerTemplate": "TriggerTemplate",
   "TriggerTemplates": "TriggerTemplates",
   "Try it": "Try it",
+  "Type": "Type",
   "Unable to access log for {{taskName}} task": "Unable to access log for {{taskName}} task",
   "Unable to detect Event listener URL": "Unable to detect Event listener URL",
   "Unable to find repository": "Unable to find repository",

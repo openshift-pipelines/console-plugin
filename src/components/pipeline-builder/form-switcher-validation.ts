@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { ValidationError } from 'yup';
+import { DEFAULT_WORKSPACE_ANNOTATION, VolumeTypes } from '../../consts';
 import { PipelineKind } from '../../types';
 import { initialPipelineFormData } from './const';
 import { pipelineBuilderYAMLSchema } from './switch-to-form-validation-utils';
@@ -30,9 +31,39 @@ export const getFormData = (
     'finallyListTasks',
     'loadingTasks',
   ]);
+
+  let defaultWorkspaceMap: Record<string, { type?: string; name?: string }> =
+    {};
+  try {
+    const raw =
+      yamlPipeline.metadata?.annotations?.[DEFAULT_WORKSPACE_ANNOTATION];
+    if (raw) {
+      defaultWorkspaceMap = JSON.parse(raw);
+    }
+  } catch (e) {
+    console.warn(
+      `Invalid default workspace annotation - ${DEFAULT_WORKSPACE_ANNOTATION}`,
+      e,
+    );
+  }
+
+  const workspaces = (pipelineSpecProperties.workspaces ?? []).map(
+    (workspace) => ({
+      ...workspace,
+      optional: !!workspace.optional,
+      type:
+        defaultWorkspaceMap[workspace.name]?.type ??
+        workspace.type ??
+        VolumeTypes.PVC,
+      claimName:
+        defaultWorkspaceMap[workspace.name]?.name ?? workspace.claimName,
+    }),
+  );
+
   return {
     ...pipelineSpecProperties, // support & keep unknown values as well as whatever they may have changed that we use
     name: yamlPipeline.metadata?.name,
+    workspaces,
     finallyTasks,
     listTasks: sanitizedListTasks,
     finallyListTasks,

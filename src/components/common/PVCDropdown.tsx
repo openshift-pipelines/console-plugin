@@ -23,9 +23,10 @@ import './PVCDropdown.scss';
 
 interface PVCDropdownProps {
   name: string;
+  isFullWidth?: boolean;
 }
 
-const PVCDropdown: FC<PVCDropdownProps> = ({ name }) => {
+const PVCDropdown: FC<PVCDropdownProps> = ({ name, isFullWidth }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [field, { touched, error }] = useField(name);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
@@ -62,7 +63,7 @@ const PVCDropdown: FC<PVCDropdownProps> = ({ name }) => {
           selectedKey={field.value}
           placeholder={t('Select a PVC')}
           autocompleteFilter={autocompleteFilter}
-          dropDownClassName={cx({ 'dropdown--full-width': true })}
+          dropDownClassName={cx({ 'pf-v6-u-w-100': isFullWidth })}
           onChange={(value: string) => {
             setFieldValue(name, value);
             setFieldTouched(name, true);

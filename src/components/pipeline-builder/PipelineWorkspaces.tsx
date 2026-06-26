@@ -1,7 +1,13 @@
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import OptionalableWorkspace from './OptionalableWorkspace';
 import MultiColumnField from '../pipelines-details/multi-column-field/MultiColumnField';
+import InputField from '../pipelines-details/multi-column-field/InputField';
+import { TextInputTypes } from '@patternfly/react-core';
+import DropdownField from '../common/DropdownField';
+import PVCDropdownForm from '../common/PVCDropdown';
+import CheckboxField from './CheckboxField';
+import { VolumeTypes } from '../../consts';
+import './PipelineWorkspaces.scss';
 
 type PipelineWorkspacesParam = {
   addLabel?: string;
@@ -17,19 +23,40 @@ const PipelineWorkspaces: FC<PipelineWorkspacesParam> = (props) => {
     isReadOnly = false,
   } = props;
   const emptyMessage = t('No workspaces are associated with this pipeline.');
+
+  const volumeTypeOptions: { [VolumeTypes.PVC]: string } = {
+    [VolumeTypes.PVC]: t('PersistentVolumeClaim'),
+  };
   return (
-    <div className="co-m-pane__form">
+    <div className="co-m-pane__form pipeline-workspaces">
       <MultiColumnField
         data-test="pipeline-workspaces"
         name={fieldName}
         addLabel={addLabel}
-        headers={[{ name: t('Name'), required: true }]}
-        emptyValues={{ name: '', optional: false }}
+        headers={[
+          { name: t('Name'), required: true },
+          { name: t('Type'), required: false },
+        ]}
+        emptyValues={{ name: '', type: VolumeTypes.PVC, optional: false }}
         emptyMessage={emptyMessage}
         isReadOnly={isReadOnly}
-        complexFields={[true]}
+        spans={[3, 4, 4]}
       >
-        <OptionalableWorkspace />
+        <InputField
+          data-test="name"
+          name="name"
+          type={TextInputTypes.text}
+          placeholder={t('Name')}
+          isReadOnly={isReadOnly}
+          aria-label={t('Name')}
+        />
+        <DropdownField name="type" items={volumeTypeOptions} disabled />
+        <PVCDropdownForm name="claimName" isFullWidth />
+        <CheckboxField
+          name="optional"
+          label={t('Optional workspace')}
+          className="pf-v6-u-mt-sm"
+        />
       </MultiColumnField>
     </div>
   );

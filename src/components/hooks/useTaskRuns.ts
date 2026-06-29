@@ -66,7 +66,6 @@ export const useTaskRunsK8s = (
 
 export type UseTaskRunsOptions = {
   taskName?: string;
-  cacheKey?: string;
   pipelineRunUid?: string;
   pipelineRunFinished?: boolean;
   pipelineRunManagedBy?: string;
@@ -79,7 +78,6 @@ export const useTaskRuns = (
 ): [TaskRunKind[], boolean, unknown, GetNextPage, boolean, boolean] => {
   const {
     taskName,
-    cacheKey,
     pipelineRunUid,
     pipelineRunFinished,
     pipelineRunManagedBy,
@@ -115,7 +113,6 @@ export const useTaskRuns = (
     selector && {
       selector,
     },
-    cacheKey,
     pipelineRunFinished,
     pipelineRunManagedBy,
   );
@@ -163,7 +160,6 @@ export const useTaskRuns2 = (
     selector?: Selector;
     limit?: number;
   },
-  cacheKey?: string,
   pipelineRunFinished?: boolean,
   pipelineRunManagedBy?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage, boolean, boolean] =>
@@ -171,7 +167,6 @@ export const useTaskRuns2 = (
     getGroupVersionKindForModel(TaskRunModel),
     namespace,
     options,
-    cacheKey,
     pipelineRunFinished,
     pipelineRunManagedBy,
   );
@@ -214,13 +209,11 @@ export const usePipelineRuns = (
     selector?: Selector;
     limit?: number;
   },
-  cacheKey?: string,
 ): [PipelineRunKind[], boolean, unknown, GetNextPage, boolean, boolean] =>
   useRuns<PipelineRunKind>(
     getGroupVersionKindForModel(PipelineRunModel),
     namespace,
     options,
-    cacheKey,
   );
 
 export const usePipelineRun = (
@@ -252,7 +245,6 @@ export const useRuns = <Kind extends K8sResourceKind>(
     limit?: number;
     name?: string;
   },
-  cacheKey?: string,
   pipelineRunFinished?: boolean,
   pipelineRunManagedBy?: string,
 ): [Kind[], boolean, unknown, GetNextPage, boolean, boolean] => {
@@ -385,14 +377,12 @@ export const useRuns = <Kind extends K8sResourceKind>(
     useTRPipelineRuns(
       isPipelineRun ? trNamespace : null,
       isPipelineRun ? trOptions : undefined,
-      isPipelineRun ? cacheKey : undefined,
       isPipelineRun ? trRefreshKey : undefined,
     );
 
   const [trTRResources, trTRLoaded, trTRError, trTRGetNextPage] = useTRTaskRuns(
     !isPipelineRun ? trNamespace : null,
     !isPipelineRun ? trOptions : undefined,
-    !isPipelineRun ? cacheKey : undefined,
     !isPipelineRun ? trRefreshKey : undefined,
   );
 

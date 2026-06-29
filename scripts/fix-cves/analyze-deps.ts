@@ -30,11 +30,15 @@ interface AnalysisResult {
     | 'triage-needed';
   reason: string;
   yarnWhyRaw: string;
+  npmLsRaw: string;
+  /** Per-major-version resolution map, e.g. {"pkg@^2.0.0": "2.5.6", "pkg@^4.0.0": "4.0.6"} */
+  resolutionEntries: Record<string, string>;
 }
 
 interface CLIArgs {
   package: string;
   fixedVersion: string;
+  fixedVersions: string[];
 }
 
 // ---------------------------------------------------------------------------
@@ -65,15 +69,15 @@ function runCmd(cmd: string, args: string[]): string {
 function parseArgs(): CLIArgs {
   const args = process.argv.slice(2);
   let pkg = '';
-  let fixedVersion = '';
+  let fixedVersionRaw = '';
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--package' && args[i + 1]) pkg = args[++i];
     else if (args[i] === '--fixed-version' && args[i + 1])
-      fixedVersion = args[++i];
+      fixedVersionRaw = args[++i];
   }
-  if (!pkg || !fixedVersion) {
+  if (!pkg || !fixedVersionRaw) {
     console.error(
-      'Usage: analyze-deps.ts --package <name> --fixed-version <ver>',
+      'Usage: analyze-deps.ts --package <name> --fixed-version <ver>[,<ver>,...]',
     );
     process.exit(1);
   }
@@ -81,11 +85,14 @@ function parseArgs(): CLIArgs {
     console.error(`Invalid package name: ${pkg}`);
     process.exit(1);
   }
-  if (!semver.valid(fixedVersion)) {
-    console.error(`Invalid semver version: ${fixedVersion}`);
-    process.exit(1);
+  const fixedVersions = fixedVersionRaw.split(',').map((v) => v.trim());
+  for (const v of fixedVersions) {
+    if (!semver.valid(v)) {
+      console.error(`Invalid semver version: ${v}`);
+      process.exit(1);
+    }
   }
-  return { package: pkg, fixedVersion };
+  return { package: pkg, fixedVersion: fixedVersions[0], fixedVersions };
 }
 
 /**
@@ -148,11 +155,7 @@ function getAllInstalledVersions(pkg: string): string[] {
   return [...versions];
 }
 
-function findVersions(
-  node: any,
-  pkg: string,
-  versions: Set<string>,
-): void {
+function findVersions(node: any, pkg: string, versions: Set<string>): void {
   if (!node || typeof node !== 'object') return;
   if (node.dependencies) {
     for (const [name, dep] of Object.entries<any>(node.dependencies)) {
@@ -257,6 +260,61 @@ function isVersionSatisfied(installed: string, required: string): boolean {
   }
 }
 
+/**
+ * Find the fix version that matches the same major as the installed version.
+ * If no exact major match, falls forward to the nearest higher fix version
+ * (e.g., installed 3.x with fixes [2.5.6, 4.0.6] → returns 4.0.6).
+ */
+function getFixForVersion(
+  installed: string,
+  fixedVersions: string[],
+): string | undefined {
+  const major = semver.major(installed);
+  const exactMatch = fixedVersions.find((fv) => semver.major(fv) === major);
+  if (exactMatch) return exactMatch;
+  const higher = fixedVersions
+    .filter((fv) => semver.major(fv) > major)
+    .sort((a, b) => semver.compare(a, b));
+  return higher[0];
+}
+
+/**
+ * Check if an installed version is satisfied by any of the fixed versions
+ * (matched by major). Returns true if the installed version >= the fix for its major.
+ */
+function isVersionSatisfiedMulti(
+  installed: string,
+  fixedVersions: string[],
+): boolean {
+  const fix = getFixForVersion(installed, fixedVersions);
+  if (!fix) return false;
+  return isVersionSatisfied(installed, fix);
+}
+
+/**
+ * Build per-major-version resolution entries for all vulnerable installed versions.
+ * e.g. {"pkg@^2.0.0": "2.5.6", "pkg@^4.0.0": "4.0.6"}
+ */
+function buildResolutionEntries(
+  pkg: string,
+  installedVersions: string[],
+  fixedVersions: string[],
+): Record<string, string> {
+  const entries: Record<string, string> = {};
+  const seenMajors = new Set<number>();
+  for (const v of installedVersions) {
+    const major = semver.major(v);
+    if (seenMajors.has(major)) continue;
+    seenMajors.add(major);
+    const fix = getFixForVersion(v, fixedVersions);
+    if (fix && !isVersionSatisfied(v, fix)) {
+      const key = fixedVersions.length > 1 ? `${pkg}@^${major}.0.0` : pkg;
+      entries[key] = fix;
+    }
+  }
+  return entries;
+}
+
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
@@ -264,6 +322,7 @@ function isVersionSatisfied(installed: string, required: string): boolean {
 function main(): void {
   const args = parseArgs();
   const { raw: yarnWhyRaw, chains } = getYarnWhy(args.package);
+  const npmLsRaw = runCmd('npm', ['ls', '--all', args.package]).trimEnd();
   const currentVersion = getCurrentVersion(args.package);
 
   // Full-tree check: verify ALL installed copies satisfy the fix, not just the
@@ -274,7 +333,9 @@ function main(): void {
   }
   const allSatisfied =
     installedVersions.length > 0 &&
-    installedVersions.every((v) => isVersionSatisfied(v, args.fixedVersion));
+    installedVersions.every((v) =>
+      isVersionSatisfiedMulti(v, args.fixedVersions),
+    );
   if (allSatisfied) {
     const sharedWithSDK = isTransitiveSDKDep(chains);
     const result: AnalysisResult = {
@@ -289,8 +350,10 @@ function main(): void {
       fixedVersionAvailable: true,
       availableVersions: [],
       strategy: 'already-remediated',
-      reason: `All ${installedVersions.length} installed copy/copies satisfy >= ${args.fixedVersion}`,
+      reason: `All ${installedVersions.length} installed copy/copies satisfy fix versions`,
       yarnWhyRaw,
+      npmLsRaw,
+      resolutionEntries: {},
     };
     console.log(JSON.stringify(result, null, 2));
     return;
@@ -298,7 +361,9 @@ function main(): void {
 
   const sharedWithSDK = isTransitiveSDKDep(chains);
   const versions = getAvailableVersions(args.package);
-  const fixedAvailable = versions.includes(args.fixedVersion);
+  const allFixedAvailable = args.fixedVersions.every((fv) =>
+    versions.includes(fv),
+  );
   const direct = isDirectDep(args.package);
   const directParents = direct ? [] : getDirectParents(args.package);
   const parentSuggestions = direct
@@ -308,9 +373,10 @@ function main(): void {
   let strategy: AnalysisResult['strategy'];
   let reason: string;
 
-  if (!fixedAvailable) {
+  if (!allFixedAvailable) {
+    const missing = args.fixedVersions.filter((fv) => !versions.includes(fv));
     strategy = 'triage-needed';
-    reason = `Fixed version ${args.fixedVersion} not published on npm`;
+    reason = `Fixed version(s) not published on npm: ${missing.join(', ')}`;
   } else if (direct) {
     strategy = 'direct-upgrade';
     reason = sharedWithSDK
@@ -331,6 +397,12 @@ function main(): void {
       'Transitive dependency; no parent upgrade resolves it — use resolutions as last resort';
   }
 
+  const resolutionEntries = buildResolutionEntries(
+    args.package,
+    installedVersions,
+    args.fixedVersions,
+  );
+
   const result: AnalysisResult = {
     package: args.package,
     currentVersion,
@@ -340,11 +412,13 @@ function main(): void {
     directParents,
     parentUpgradeAvailable: parentSuggestions.length > 0,
     parentUpgradeSuggestions: parentSuggestions,
-    fixedVersionAvailable: fixedAvailable,
+    fixedVersionAvailable: allFixedAvailable,
     availableVersions: versions.slice(-20),
     strategy,
     reason,
     yarnWhyRaw,
+    npmLsRaw,
+    resolutionEntries,
   };
 
   console.log(JSON.stringify(result, null, 2));

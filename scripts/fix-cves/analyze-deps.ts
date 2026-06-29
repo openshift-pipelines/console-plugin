@@ -30,6 +30,7 @@ interface AnalysisResult {
     | 'triage-needed';
   reason: string;
   yarnWhyRaw: string;
+  npmLsRaw: string;
 }
 
 interface CLIArgs {
@@ -148,11 +149,7 @@ function getAllInstalledVersions(pkg: string): string[] {
   return [...versions];
 }
 
-function findVersions(
-  node: any,
-  pkg: string,
-  versions: Set<string>,
-): void {
+function findVersions(node: any, pkg: string, versions: Set<string>): void {
   if (!node || typeof node !== 'object') return;
   if (node.dependencies) {
     for (const [name, dep] of Object.entries<any>(node.dependencies)) {
@@ -264,6 +261,7 @@ function isVersionSatisfied(installed: string, required: string): boolean {
 function main(): void {
   const args = parseArgs();
   const { raw: yarnWhyRaw, chains } = getYarnWhy(args.package);
+  const npmLsRaw = runCmd('npm', ['ls', '--all', args.package]).trimEnd();
   const currentVersion = getCurrentVersion(args.package);
 
   // Full-tree check: verify ALL installed copies satisfy the fix, not just the
@@ -291,6 +289,7 @@ function main(): void {
       strategy: 'already-remediated',
       reason: `All ${installedVersions.length} installed copy/copies satisfy >= ${args.fixedVersion}`,
       yarnWhyRaw,
+      npmLsRaw,
     };
     console.log(JSON.stringify(result, null, 2));
     return;
@@ -345,6 +344,7 @@ function main(): void {
     strategy,
     reason,
     yarnWhyRaw,
+    npmLsRaw,
   };
 
   console.log(JSON.stringify(result, null, 2));

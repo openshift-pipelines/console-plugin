@@ -66,16 +66,18 @@ const TaskRunKebab: React.FC<TaskRunKebabProps> = ({ obj }) => {
       ? useDeleteModal(obj, undefined, message)
       : useDeleteModal(obj);
   const { name, namespace } = obj.metadata;
+  const [hasAccessToDelete] = useAccessReview({
+    group: TaskRunModel.apiGroup,
+    resource: TaskRunModel.plural,
+    verb: 'delete',
+    name,
+    namespace,
+  });
+
   const canDeleteTaskRun =
-    useAccessReview({
-      group: TaskRunModel.apiGroup,
-      resource: TaskRunModel.plural,
-      verb: 'delete',
-      name,
-      namespace,
-    }) && !obj?.metadata?.annotations?.deletionTimestamp
-      ? [true]
-      : [false];
+    hasAccessToDelete && !obj?.metadata?.annotations?.deletionTimestamp
+      ? true
+      : false;
 
   const onToggle = () => {
     setIsOpen(!isOpen);
@@ -92,7 +94,7 @@ const TaskRunKebab: React.FC<TaskRunKebabProps> = ({ obj }) => {
         component="button"
         onClick={launchDeleteModal}
         isDisabled={
-          !canDeleteTaskRun[0] ||
+          !canDeleteTaskRun ||
           obj?.metadata?.annotations?.[DELETED_RESOURCE_IN_K8S_ANNOTATION] ===
             'true'
         }
@@ -122,7 +124,7 @@ const TaskRunKebab: React.FC<TaskRunKebabProps> = ({ obj }) => {
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
         <MenuToggle
-          isDisabled={!canDeleteTaskRun[0]}
+          isDisabled={!canDeleteTaskRun}
           ref={toggleRef}
           aria-label="kebab menu"
           variant="plain"

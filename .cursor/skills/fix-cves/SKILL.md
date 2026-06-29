@@ -162,11 +162,11 @@ Before switching branches, verify the working tree is clean with `git status --p
 ```bash
 git checkout <branch>
 git pull upstream <branch>
-rm -rf node_modules yarn.lock
+rm -rf node_modules dist
 yarn install
 ```
 
-**Critical**: Always remove both `node_modules` and `yarn.lock` and reinstall to regenerate the dependency graph from scratch and avoid stale resolutions.
+**Critical**: Keep `yarn.lock` during initial install — it ensures analysis runs against the exact versions deployed on this branch. Only remove `yarn.lock` after applying resolutions (see `resolution` strategy below).
 
 ### 2b. Analyze each CVE
 
@@ -243,7 +243,7 @@ $ npm ls --all <pkg>
 <npm ls output>
 ```
 
-The evidence comes from the analyze-deps script output (`yarnWhyRaw` field).
+The evidence comes from the analyze-deps script output (`yarnWhyRaw` and `npmLsRaw` fields).
 
 **If using paste mode (Mode A)**, print the comment to the user so they can manually post it on the Jira ticket.
 
@@ -293,7 +293,12 @@ The package is transitive and no parent upgrade resolves it. Add or update the
 ```
 
 Merge with existing resolutions (currently: `webpack`, `@types/d3-dispatch`,
-`@types/d3-selection`). Then run `yarn install`.
+`@types/d3-selection`). Then regenerate the lockfile:
+
+```bash
+rm -rf node_modules yarn.lock
+yarn install
+```
 
 **Resolutions are a last resort.** Only use when neither direct-upgrade nor
 parent-upgrade is possible.
@@ -331,6 +336,8 @@ Please advise on next steps:
 - Accept a resolution override
 - Use an alternative remediation approach
 ```
+
+The evidence comes from the analyze-deps script output (`yarnWhyRaw` and `npmLsRaw` fields).
 
 **If using paste mode (Mode A)**, print the triage comment to the user so they can manually post it on the Jira ticket or forward it to the reporter.
 

@@ -64,7 +64,7 @@ const PipelineRunsList: FC<PipelineRunsListProps> = ({
     setTimespan,
     isTektonResultEnabled,
     preferenceLoaded,
-  } = useDateRangeFilter();
+  } = useDateRangeFilter('pipelineRun');
 
   const [pipelineRuns, k8sLoaded, trLoaded, pipelineRunsLoadError] =
     useGetPipelineRuns(namespace, {
@@ -124,9 +124,7 @@ const PipelineRunsList: FC<PipelineRunsListProps> = ({
   const onFilterChange = useCallback(
     (key: string, value: string | string[]) => {
       if (key === 'timeRange') {
-        setTimespan(
-          parsePrometheusDuration((value as string[])[0] || '1d'),
-        );
+        setTimespan(parsePrometheusDuration((value as string[])[0] || '1d'));
         return;
       }
       baseOnFilterChange(key, value);

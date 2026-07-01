@@ -3,7 +3,10 @@ import {
   useFlag,
   useUserPreference,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { FLAG_PIPELINE_TEKTON_RESULT_INSTALLED } from '../../consts';
+import {
+  FLAG_PIPELINE_TEKTON_RESULT_INSTALLED,
+  USER_PREFERENCE_PREFIX,
+} from '../../consts';
 import { parsePrometheusDuration } from '../pipelines-overview/dateTime';
 
 export type DateRangeFilterResult = {
@@ -15,12 +18,14 @@ export type DateRangeFilterResult = {
   preferenceLoaded: boolean;
 };
 
-const SETTINGS_KEY = 'plugin__pipelines-console-plugin.dateRangeFilter';
+type PageType = 'pipelineRun' | 'taskRun';
 
-export const useDateRangeFilter = (): DateRangeFilterResult => {
+export const useDateRangeFilter = (
+  pageType: PageType,
+): DateRangeFilterResult => {
   const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
   const [timespan, setTimespan, preferenceLoaded] = useUserPreference<number>(
-    SETTINGS_KEY,
+    `${USER_PREFERENCE_PREFIX}.dateRangeFilter.${pageType}`,
     parsePrometheusDuration('1d'),
     true,
   );

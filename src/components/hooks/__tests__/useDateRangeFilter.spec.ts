@@ -26,20 +26,20 @@ describe('useDateRangeFilter', () => {
   });
 
   it('should return timespan from user preference', () => {
-    const { result } = testHook(() => useDateRangeFilter());
+    const { result } = testHook(() => useDateRangeFilter('pipelineRun'));
     expect(result.current.timespan).toBe(ONE_DAY_MS);
   });
 
   it('should compute startDate as Date.now() - timespan', () => {
     const now = Date.now();
-    const { result } = testHook(() => useDateRangeFilter());
+    const { result } = testHook(() => useDateRangeFilter('pipelineRun'));
     const diff = now - result.current.timespan;
     expect(result.current.startDate).toBeGreaterThanOrEqual(diff - 100);
     expect(result.current.startDate).toBeLessThanOrEqual(diff + 100);
   });
 
   it('should generate a valid CEL expression', () => {
-    const { result } = testHook(() => useDateRangeFilter());
+    const { result } = testHook(() => useDateRangeFilter('pipelineRun'));
     expect(result.current.dateFilterCEL).toMatch(
       /^data\.status\.startTime > timestamp\(".*"\)$/,
     );
@@ -47,20 +47,30 @@ describe('useDateRangeFilter', () => {
 
   it('should default to 1 day when useUserPreference returns undefined', () => {
     useUserPreferenceMock.mockReturnValue([undefined, setTimespanMock]);
-    const { result } = testHook(() => useDateRangeFilter());
+    const { result } = testHook(() => useDateRangeFilter('pipelineRun'));
     expect(result.current.timespan).toBe(ONE_DAY_MS);
     expect(result.current.dateFilterCEL).not.toBe('');
   });
 
   it('should expose setTimespan from the preference hook', () => {
-    const { result } = testHook(() => useDateRangeFilter());
+    const { result } = testHook(() => useDateRangeFilter('pipelineRun'));
     result.current.setTimespan(ONE_WEEK_MS);
     expect(setTimespanMock).toHaveBeenCalledWith(ONE_WEEK_MS);
   });
 
   it('should reflect the isTektonResultEnabled flag', () => {
     useFlagMock.mockReturnValue(false);
-    const { result } = testHook(() => useDateRangeFilter());
+    const { result } = testHook(() => useDateRangeFilter('pipelineRun'));
     expect(result.current.isTektonResultEnabled).toBe(false);
+  });
+
+  it('should use a different preference key for taskRun', () => {
+    const { result } = testHook(() => useDateRangeFilter('taskRun'));
+    expect(result.current.timespan).toBe(ONE_DAY_MS);
+    expect(useUserPreferenceMock).toHaveBeenCalledWith(
+      'plugin__pipelines-console-plugin.dateRangeFilter.taskRun',
+      ONE_DAY_MS,
+      true,
+    );
   });
 });

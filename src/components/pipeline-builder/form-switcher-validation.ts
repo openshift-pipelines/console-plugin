@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
 import { ValidationError } from 'yup';
-import { VolumeTypes } from '../../consts';
 import { PipelineKind } from '../../types';
 import { initialPipelineFormData } from './const';
 import { pipelineBuilderYAMLSchema } from './switch-to-form-validation-utils';
 import { PipelineBuilderFormValues, PipelineBuilderTaskBase } from './types';
 import {
   convertBuilderFormToPipeline,
+  extractWorkspaceDefaults,
   parseDefaultWorkspaceAnnotation,
 } from './utils';
 import { runAfterMatches } from './validation-utils';
@@ -42,14 +42,7 @@ export const getFormData = (
     (workspace) => ({
       ...workspace,
       optional: !!workspace.optional,
-      type:
-        /* Explicitly taking out first element from workspace as the current UI only support one default value*/
-        defaultWorkspaceMap[workspace.name]?.[0]?.type ??
-        workspace.type ??
-        VolumeTypes.PVC,
-      claimName:
-        /* Explicitly taking out first element from workspace as the current UI only support one default value*/
-        defaultWorkspaceMap[workspace.name]?.[0]?.name ?? workspace.claimName,
+      ...extractWorkspaceDefaults(defaultWorkspaceMap, workspace),
     }),
   );
 

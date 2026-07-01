@@ -520,7 +520,7 @@ export const convertPipelineToBuilderForm = (
     },
   } = pipeline;
 
-  let defaultWorkspaceMap: Record<string, { type?: string; name?: string }> =
+  const defaultWorkspaceMap: Record<string, { type?: string; name?: string }> =
     parseDefaultWorkspaceAnnotation(annotations);
 
   return {
@@ -529,14 +529,7 @@ export const convertPipelineToBuilderForm = (
     workspaces: workspaces.map((workspace) => ({
       ...workspace,
       optional: !!workspace.optional, // Formik fails to understand "undefined boolean" checkbox values
-      type:
-        defaultWorkspaceMap[workspace.name]?.[0]
-          ?.type /* Explicitly taking out first element from workspace as the current UI only support one default value*/ ??
-        workspace.type ??
-        VolumeTypes.PVC,
-      claimName:
-        defaultWorkspaceMap[workspace.name]?.[0]?.name ??
-        workspace.claimName /* Explicitly taking out first element from workspace as the current UI only support one default value*/,
+      ...extractWorkspaceDefaults(defaultWorkspaceMap, workspace),
     })),
     tasks,
     listTasks: [],
@@ -617,8 +610,8 @@ export const parseDefaultWorkspaceAnnotation = (
   let defaultWorkspaceMap: Record<string, { type?: string; name?: string }> =
     {};
   try {
-    const raw = annotations[DEFAULT_WORKSPACE_ANNOTATION];
-    if (raw) {
+    if (annotations && annotations[DEFAULT_WORKSPACE_ANNOTATION]) {
+      const raw = annotations[DEFAULT_WORKSPACE_ANNOTATION];
       defaultWorkspaceMap = JSON.parse(raw);
     }
   } catch (e) {
@@ -628,4 +621,20 @@ export const parseDefaultWorkspaceAnnotation = (
     );
   }
   return defaultWorkspaceMap;
+};
+
+export const extractWorkspaceDefaults = (
+  defaultWorkspaceMap: Record<string, { type?: string; name?: string }>,
+  workspace: TektonWorkspace,
+): Record<string, string> => {
+  return {
+    type:
+      defaultWorkspaceMap[workspace.name]?.[0]
+        ?.type /* Explicitly taking out first element from workspace as the current UI only support one default value*/ ??
+      workspace.type ??
+      VolumeTypes.PVC,
+    claimName:
+      defaultWorkspaceMap[workspace.name]?.[0]?.name ??
+      workspace.claimName /* Explicitly taking out first element from workspace as the current UI only support one default value*/,
+  };
 };

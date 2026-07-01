@@ -7,7 +7,6 @@ import DropdownField from '../common/DropdownField';
 import PVCDropdownForm from '../common/PVCDropdown';
 import CheckboxField from './CheckboxField';
 import { VolumeTypes } from '../../consts';
-import './PipelineWorkspaces.scss';
 
 type PipelineWorkspacesParam = {
   addLabel?: string;
@@ -36,11 +35,12 @@ const PipelineWorkspaces: FC<PipelineWorkspacesParam> = (props) => {
         headers={[
           { name: t('Name'), required: true },
           { name: t('Type'), required: false },
+          { name: t('Default value'), required: false },
         ]}
         emptyValues={{ name: '', type: VolumeTypes.PVC, optional: false }}
         emptyMessage={emptyMessage}
         isReadOnly={isReadOnly}
-        spans={[3, 4, 4]}
+        spans={[4, 4, 4, 4]}
       >
         <InputField
           data-test="name"

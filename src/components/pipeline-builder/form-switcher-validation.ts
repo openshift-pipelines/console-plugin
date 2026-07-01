@@ -1,11 +1,14 @@
 import * as _ from 'lodash';
 import { ValidationError } from 'yup';
-import { DEFAULT_WORKSPACE_ANNOTATION, VolumeTypes } from '../../consts';
+import { VolumeTypes } from '../../consts';
 import { PipelineKind } from '../../types';
 import { initialPipelineFormData } from './const';
 import { pipelineBuilderYAMLSchema } from './switch-to-form-validation-utils';
 import { PipelineBuilderFormValues, PipelineBuilderTaskBase } from './types';
-import { convertBuilderFormToPipeline } from './utils';
+import {
+  convertBuilderFormToPipeline,
+  parseDefaultWorkspaceAnnotation,
+} from './utils';
 import { runAfterMatches } from './validation-utils';
 import { safeJSToYAML } from './yaml';
 
@@ -33,30 +36,20 @@ export const getFormData = (
   ]);
 
   let defaultWorkspaceMap: Record<string, { type?: string; name?: string }> =
-    {};
-  try {
-    const raw =
-      yamlPipeline.metadata?.annotations?.[DEFAULT_WORKSPACE_ANNOTATION];
-    if (raw) {
-      defaultWorkspaceMap = JSON.parse(raw);
-    }
-  } catch (e) {
-    console.warn(
-      `Invalid default workspace annotation - ${DEFAULT_WORKSPACE_ANNOTATION}`,
-      e,
-    );
-  }
+    parseDefaultWorkspaceAnnotation(yamlPipeline.metadata?.annotations);
 
   const workspaces = (pipelineSpecProperties.workspaces ?? []).map(
     (workspace) => ({
       ...workspace,
       optional: !!workspace.optional,
       type:
-        defaultWorkspaceMap[workspace.name]?.type ??
+        /* Explicitly taking out first element from workspace as the current UI only support one default value*/
+        defaultWorkspaceMap[workspace.name]?.[0]?.type ??
         workspace.type ??
         VolumeTypes.PVC,
       claimName:
-        defaultWorkspaceMap[workspace.name]?.name ?? workspace.claimName,
+        /* Explicitly taking out first element from workspace as the current UI only support one default value*/
+        defaultWorkspaceMap[workspace.name]?.[0]?.name ?? workspace.claimName,
     }),
   );
 

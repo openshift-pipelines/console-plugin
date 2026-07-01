@@ -437,6 +437,30 @@ export const convertBuilderFormToPipeline = (
   const listIds = listTasks.map((listTask) => listTask.name);
   // Strip remaining builder-only properties
   const unhandledSpec = _.omit(others, 'finallyListTasks', 'loadingTasks');
+  let defaultWorkSpaceAnnotation = {};
+  if (workspaces.length > 0) {
+    defaultWorkSpaceAnnotation = workspaces.reduce(
+      (acc: Record<string, Array<object>>, workspace: TektonWorkspace) => {
+        if (workspace.type && workspace.claimName) {
+          let defaultClaim = {
+            type: workspace.type,
+            name: workspace.claimName,
+          };
+          if (acc[workspace.name]) {
+            acc[workspace.name].push(defaultClaim);
+          } else {
+            acc[workspace.name] = [defaultClaim];
+          }
+        }
+        return acc;
+      },
+      {},
+    );
+  } else {
+    defaultWorkSpaceAnnotation = parseDefaultWorkspaceAnnotation(
+      existingPipeline?.metadata?.annotations,
+    );
+  }
   const pipelineYAML = {
     ...existingPipeline,
     apiVersion: getAPIVersionForModel(PipelineModel),
@@ -450,20 +474,7 @@ export const convertBuilderFormToPipeline = (
       annotations: {
         ...existingPipeline?.metadata?.annotations,
         [DEFAULT_WORKSPACE_ANNOTATION]: JSON.stringify(
-          workspaces.length > 0
-            ? workspaces.reduce(
-                (acc: Record<string, object>, workspace: TektonWorkspace) => {
-                  if (workspace.type && workspace.claimName) {
-                    acc[workspace.name] = {
-                      type: workspace.type,
-                      name: workspace.claimName,
-                    };
-                  }
-                  return acc;
-                },
-                {},
-              )
-            : {},
+          defaultWorkSpaceAnnotation,
         ),
       },
     },
@@ -510,18 +521,7 @@ export const convertPipelineToBuilderForm = (
   } = pipeline;
 
   let defaultWorkspaceMap: Record<string, { type?: string; name?: string }> =
-    {};
-  try {
-    const raw = annotations[DEFAULT_WORKSPACE_ANNOTATION];
-    if (raw) {
-      defaultWorkspaceMap = JSON.parse(raw);
-    }
-  } catch (e) {
-    console.warn(
-      `Invalid default workspace annotation - ${DEFAULT_WORKSPACE_ANNOTATION}`,
-      e,
-    );
-  }
+    parseDefaultWorkspaceAnnotation(annotations);
 
   return {
     name,
@@ -530,11 +530,13 @@ export const convertPipelineToBuilderForm = (
       ...workspace,
       optional: !!workspace.optional, // Formik fails to understand "undefined boolean" checkbox values
       type:
-        defaultWorkspaceMap[workspace.name]?.type ??
+        defaultWorkspaceMap[workspace.name]?.[0]
+          ?.type /* Explicitly taking out first element from workspace as the current UI only support one default value*/ ??
         workspace.type ??
         VolumeTypes.PVC,
       claimName:
-        defaultWorkspaceMap[workspace.name]?.name ?? workspace.claimName,
+        defaultWorkspaceMap[workspace.name]?.[0]?.name ??
+        workspace.claimName /* Explicitly taking out first element from workspace as the current UI only support one default value*/,
     })),
     tasks,
     listTasks: [],
@@ -607,4 +609,23 @@ export const getResourceSidebarSamples = (
   const samples = allSamples.filter((sample: Sample) => !sample.snippet);
 
   return { snippets, samples };
+};
+
+export const parseDefaultWorkspaceAnnotation = (
+  annotations: Record<string, string>,
+): Record<string, { type?: string; name?: string }> => {
+  let defaultWorkspaceMap: Record<string, { type?: string; name?: string }> =
+    {};
+  try {
+    const raw = annotations[DEFAULT_WORKSPACE_ANNOTATION];
+    if (raw) {
+      defaultWorkspaceMap = JSON.parse(raw);
+    }
+  } catch (e) {
+    console.warn(
+      `Invalid default workspace annotation - ${DEFAULT_WORKSPACE_ANNOTATION}`,
+      e,
+    );
+  }
+  return defaultWorkspaceMap;
 };

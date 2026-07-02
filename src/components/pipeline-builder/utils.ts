@@ -442,7 +442,7 @@ export const convertBuilderFormToPipeline = (
     defaultWorkSpaceAnnotation = workspaces.reduce(
       (acc: Record<string, Array<object>>, workspace: TektonWorkspace) => {
         if (workspace.type && workspace.claimName) {
-          let defaultClaim = {
+          const defaultClaim = {
             type: workspace.type,
             name: workspace.claimName,
           };
@@ -520,8 +520,10 @@ export const convertPipelineToBuilderForm = (
     },
   } = pipeline;
 
-  const defaultWorkspaceMap: Record<string, { type?: string; name?: string }> =
-    parseDefaultWorkspaceAnnotation(annotations);
+  const defaultWorkspaceMap: Record<
+    string,
+    { type?: string; name?: string }[]
+  > = parseDefaultWorkspaceAnnotation(annotations);
 
   return {
     name,
@@ -606,8 +608,8 @@ export const getResourceSidebarSamples = (
 
 export const parseDefaultWorkspaceAnnotation = (
   annotations: Record<string, string>,
-): Record<string, { type?: string; name?: string }> => {
-  let defaultWorkspaceMap: Record<string, { type?: string; name?: string }> =
+): Record<string, { type?: string; name?: string }[]> => {
+  let defaultWorkspaceMap: Record<string, { type?: string; name?: string }[]> =
     {};
   try {
     if (annotations && annotations[DEFAULT_WORKSPACE_ANNOTATION]) {
@@ -624,7 +626,7 @@ export const parseDefaultWorkspaceAnnotation = (
 };
 
 export const extractWorkspaceDefaults = (
-  defaultWorkspaceMap: Record<string, { type?: string; name?: string }>,
+  defaultWorkspaceMap: Record<string, { type?: string; name?: string }[]>,
   workspace: TektonWorkspace,
 ): Record<string, string> => {
   return {

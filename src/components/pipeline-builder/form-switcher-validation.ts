@@ -35,8 +35,10 @@ export const getFormData = (
     'loadingTasks',
   ]);
 
-  let defaultWorkspaceMap: Record<string, { type?: string; name?: string }> =
-    parseDefaultWorkspaceAnnotation(yamlPipeline.metadata?.annotations);
+  const defaultWorkspaceMap: Record<
+    string,
+    { type?: string; name?: string }[]
+  > = parseDefaultWorkspaceAnnotation(yamlPipeline.metadata?.annotations);
 
   const workspaces = (pipelineSpecProperties.workspaces ?? []).map(
     (workspace) => ({

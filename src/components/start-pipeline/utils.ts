@@ -40,6 +40,7 @@ import {
   VolumeClaimTemplateType,
 } from '../../types';
 import { ModalErrorContent } from '../modals/error-modal';
+import { parseDefaultWorkspaceAnnotation } from '../pipeline-builder/utils';
 import { getPipelineRunData } from '../utils/utils';
 import { getPipelineRunWorkspaces } from './../utils/pipeline-utils';
 import { CREATE_PIPELINE_RESOURCE } from './validation-utils';
@@ -163,7 +164,12 @@ const supportWorkspaceDefaults =
       type: VolumeTypes.EmptyDirectory,
       data: { emptyDir: {} },
     };
-
+    if (workspace.optional) {
+      workspaceSetting = {
+        type: VolumeTypes.NoWorkspace,
+        data: {},
+      };
+    }
     if (preselectPVC) {
       workspaceSetting = {
         type: VolumeTypes.PVC,
@@ -172,12 +178,6 @@ const supportWorkspaceDefaults =
             claimName: preselectPVC,
           },
         },
-      };
-    }
-    if (workspace.optional) {
-      workspaceSetting = {
-        type: VolumeTypes.NoWorkspace,
-        data: {},
       };
     }
 
@@ -192,19 +192,37 @@ export const convertPipelineToModalData = (
   preselectPVC = '',
 ): CommonPipelineModalFormikValues => {
   const {
-    metadata: { namespace },
-    spec: { params },
+    metadata: { namespace, annotations },
+    spec: { params, workspaces },
   } = pipeline;
+  const PVCannotationData = parseDefaultWorkspaceAnnotation(annotations);
 
+  const computedWorkspaces: PipelineModalFormWorkspace[] = (
+    workspaces || []
+  ).map((workspace) => {
+    const workspaceName = workspace.name;
+    if (
+      PVCannotationData[workspaceName] &&
+      PVCannotationData[workspaceName].length > 0
+    ) {
+      const resourceArr = PVCannotationData[workspaceName];
+      const defaultPVC = resourceArr.find(
+        (resource: { type: string; name: string }) =>
+          resource.type === VolumeTypes.PVC,
+      ).name;
+      if (defaultPVC) {
+        return supportWorkspaceDefaults(defaultPVC)(workspace);
+      }
+    }
+    return supportWorkspaceDefaults(preselectPVC)(workspace);
+  });
   return {
     namespace,
     parameters: (params || []).map((param) => ({
       ...param,
       value: param.default, // setup the default if it exists
     })),
-    workspaces: (pipeline.spec.workspaces || []).map(
-      supportWorkspaceDefaults(preselectPVC),
-    ),
+    workspaces: computedWorkspaces,
   };
 };
 
@@ -373,7 +391,10 @@ export const exposeRoute = async (
   try {
     if (!serviceGeneratedName) {
       if (iteration < 3) {
-        setTimeout(() => exposeRoute(elName, ns, launchOverlay, iteration + 1), 500);
+        setTimeout(
+          () => exposeRoute(elName, ns, launchOverlay, iteration + 1),
+          500,
+        );
       } else {
         // Unable to deterministically create the route; create a default one
         await k8sCreate({
@@ -401,9 +422,9 @@ export const exposeRoute = async (
     );
     await k8sCreate({ model: RouteModel, data: route, ns });
   } catch (e) {
-      launchOverlay(ModalErrorContent, {
-        title: 'Error Exposing Route',
-        error: e.message || 'Unknown error exposing the Webhook route',
-      });
+    launchOverlay(ModalErrorContent, {
+      title: 'Error Exposing Route',
+      error: e.message || 'Unknown error exposing the Webhook route',
+    });
   }
 };

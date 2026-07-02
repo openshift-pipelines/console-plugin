@@ -204,3 +204,6 @@ export const DASH = '-';
 export const ADMIN_PERSPECTIVE_BASE_PATH = '/pipelines';
 export const DEV_PERSPECTIVE_BASE_PATH = '/dev-pipelines';
 export const HUB_INTEGRATION_KEY = 'enable-devconsole-integration';
+
+/** Prefix for all useUserPreference keys stored in the user-settings ConfigMap. */
+export const USER_PREFERENCE_PREFIX = 'plugin__pipelines-console-plugin';

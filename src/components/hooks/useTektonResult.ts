@@ -1,5 +1,5 @@
 import { Selector, useFlag } from '@openshift-console/dynamic-plugin-sdk';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { RepositoryFields, RepositoryLabels } from '../../consts';
 import { FLAGS, PipelineRunKind } from '../../types';
 import { getTaskRunLog } from '../utils/tekton-results';
@@ -9,7 +9,7 @@ export type GetNextPage = () => void | undefined;
 
 export const useGetPipelineRuns = (
   ns: string,
-  options?: { name: string; kind: string },
+  options?: { name: string; kind: string; filter?: string },
 ): [
   PipelineRunKind[],
   boolean,
@@ -31,12 +31,18 @@ export const useGetPipelineRuns = (
     };
   }
 
-  return usePipelineRuns(
-    ns,
-    selector && {
-      selector,
-    },
-  );
+  const pipelineRunOptions = useMemo(() => {
+    const opts: Record<string, unknown> = {};
+    if (selector) {
+      opts.selector = selector;
+    }
+    if (options?.filter) {
+      opts.filter = options.filter;
+    }
+    return opts;
+  }, [selector, options?.filter]);
+
+  return usePipelineRuns(ns, pipelineRunOptions);
 };
 
 export const useTRTaskRunLog = (

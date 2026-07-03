@@ -68,7 +68,6 @@ const PipelineRunsList: FC<PipelineRunsListProps> = ({
     data: pipelineRuns || [],
     options: {
       resourceType: 'PipelineRun',
-      defaultDataSourceValues: ['cluster-data'],
     },
   });
 

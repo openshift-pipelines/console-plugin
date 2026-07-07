@@ -58,7 +58,8 @@ const PipelineBuilderForm: FC<PipelineBuilderFormProps> = (props) => {
   const selectedTaskRef = useRef<SelectedBuilderTask>(null);
   selectedTaskRef.current = selectedTask;
   const contentRef = useRef<HTMLDivElement>(null);
-
+  const [hideOptionalTaskParam, setHideOptionalTaskParam] =
+    useState<boolean>(false);
   const {
     existingPipeline,
     status,
@@ -229,6 +230,7 @@ const PipelineBuilderForm: FC<PipelineBuilderFormProps> = (props) => {
                   });
                 }}
                 selectedData={selectedTask}
+                hideOptionalTaskParam={hideOptionalTaskParam}
               />
             </DrawerPanelContent>
           ) : null
@@ -278,6 +280,8 @@ const PipelineBuilderForm: FC<PipelineBuilderFormProps> = (props) => {
                     lastViewUserSettingKey={
                       LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY
                     }
+                    hideOptionalTaskParam={hideOptionalTaskParam}
+                    setHideOptionalTaskParam={setHideOptionalTaskParam}
                   />
                 </FormBody>
               </PageSection>

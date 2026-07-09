@@ -35,6 +35,7 @@ export interface CheckboxFilterConfig {
   placeholder?: string;
   options: FilterOption[];
   defaultValues?: string[];
+  singleSelect?: boolean;
 }
 
 export interface FilterValues {
@@ -77,6 +78,11 @@ const CheckboxFilterInput: FC<{
 
   const onMenuSelect = (_event: unknown, itemId: string | number) => {
     const id = String(itemId);
+    if (config.singleSelect) {
+      onSelect([id]);
+      setIsOpen(false);
+      return;
+    }
     const newSelected = selected.includes(id)
       ? selected.filter((s) => s !== id)
       : [...selected, id];
@@ -121,7 +127,7 @@ const CheckboxFilterInput: FC<{
               ) : undefined
             }
           >
-            {config.placeholder || config.title}
+            {config.placeholder}
           </MenuToggle>
         }
         triggerRef={toggleRef}
@@ -138,15 +144,17 @@ const CheckboxFilterInput: FC<{
                   <MenuItem
                     key={option.value}
                     itemId={option.value}
-                    hasCheckbox
+                    hasCheckbox={!config.singleSelect}
                     isSelected={selected.includes(option.value)}
                   >
                     {option.label}
-                    <Badge isRead className="pf-v6-u-ml-sm">
-                      {option.totalCount !== undefined
-                        ? `${option.count}/${option.totalCount}`
-                        : option.count}
-                    </Badge>
+                    {!config.singleSelect && (
+                      <Badge isRead className="pf-v6-u-ml-sm">
+                        {option.totalCount !== undefined
+                          ? `${option.count}/${option.totalCount}`
+                          : option.count}
+                      </Badge>
+                    )}
                   </MenuItem>
                 ))}
               </MenuList>

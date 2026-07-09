@@ -32,21 +32,13 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
     namespace: string,
     options?: TektonResultsOptions,
     nextPageToken?: string,
-    cacheKey?: string,
     isDevConsoleProxyAvailable?: boolean,
-  ) => Promise<[Kind[], RecordsList, boolean?]>,
+  ) => Promise<[Kind[], RecordsList]>,
   namespace: string,
   options?: TektonResultsOptions,
-  cacheKey?: string,
 ): [Kind[], boolean, unknown, GetNextPage] => {
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const [nextPageToken, setNextPageToken] = React.useState<string>(null);
-  const [localCacheKey, setLocalCacheKey] = React.useState(cacheKey);
-
-  if (cacheKey !== localCacheKey) {
-    // force update local cache key
-    setLocalCacheKey(cacheKey);
-  }
 
   const [result, setResult] = React.useState<
     [Kind[], boolean, unknown, GetNextPage]
@@ -55,7 +47,7 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
   // reset token if namespace or options change
   React.useEffect(() => {
     setNextPageToken(null);
-  }, [namespace, options, cacheKey]);
+  }, [namespace, options]);
 
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
@@ -66,37 +58,32 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
           namespace,
           options,
           nextPageToken,
-          localCacheKey,
           isDevConsoleProxyAvailable,
         );
         if (!disposed) {
           const token = tkPipelineRuns[1].nextPageToken;
-          const callInflight = !!tkPipelineRuns?.[2];
-          const loaded = !callInflight;
-          if (!callInflight) {
-            setResult((cur) => [
-              nextPageToken
-                ? [...cur[0], ...tkPipelineRuns[0]]
-                : tkPipelineRuns[0],
-              loaded,
-              undefined,
-              token
-                ? (() => {
-                    // ensure we can only call this once
-                    let executed = false;
-                    return () => {
-                      if (!disposed && !executed) {
-                        executed = true;
-                        // trigger the update
-                        setNextPageToken(token);
-                        return true;
-                      }
-                      return false;
-                    };
-                  })()
-                : undefined,
-            ]);
-          }
+          setResult((cur) => [
+            nextPageToken
+              ? [...cur[0], ...tkPipelineRuns[0]]
+              : tkPipelineRuns[0],
+            true,
+            undefined,
+            token
+              ? (() => {
+                  // ensure we can only call this once
+                  let executed = false;
+                  return () => {
+                    if (!disposed && !executed) {
+                      executed = true;
+                      // trigger the update
+                      setNextPageToken(token);
+                      return true;
+                    }
+                    return false;
+                  };
+                })()
+              : undefined,
+          ]);
         }
       } catch (e) {
         if (!disposed) {
@@ -111,23 +98,21 @@ const useTRRuns = <Kind extends K8sResourceCommon>(
     return () => {
       disposed = true;
     };
-  }, [namespace, options, nextPageToken, localCacheKey, getRuns]);
+  }, [namespace, options, nextPageToken, getRuns]);
   return result;
 };
 
 export const useTRPipelineRuns = (
   namespace: string,
   options?: TektonResultsOptions,
-  cacheKey?: string,
 ): [PipelineRunKind[], boolean, unknown, GetNextPage] =>
-  useTRRuns<PipelineRunKind>(getPipelineRuns, namespace, options, cacheKey);
+  useTRRuns<PipelineRunKind>(getPipelineRuns, namespace, options);
 
 export const useTRTaskRuns = (
   namespace: string,
   options?: TektonResultsOptions,
-  cacheKey?: string,
 ): [TaskRunKind[], boolean, unknown, GetNextPage] =>
-  useTRRuns<TaskRunKind>(getTaskRuns, namespace, options, cacheKey);
+  useTRRuns<TaskRunKind>(getTaskRuns, namespace, options);
 
 export const useGetPipelineRuns = (
   ns: string,

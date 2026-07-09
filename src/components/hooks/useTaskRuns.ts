@@ -21,7 +21,7 @@ import {
 } from '../../models';
 import { ApprovalTaskKind, PipelineRunKind, TaskRunKind } from '../../types';
 import { useDeepCompareMemoize } from '../utils/common-utils';
-import { EQ } from '../utils/tekton-results';
+import { AND, EQ } from '../utils/tekton-results';
 import { useMultiClusterProxyService } from './useMultiClusterProxyService';
 import { useMultiClusterTaskRuns } from './useMultiClusterTaskRuns';
 import { useTRRuns } from './useTektonResults';
@@ -191,12 +191,14 @@ export const usePipelineRuns = (
     selector?: Selector;
     limit?: number;
     name?: string;
+    filter?: string;
   },
 ): [PipelineRunKind[], boolean, boolean, Error | undefined, boolean, boolean] =>
   useRuns<PipelineRunKind>(PIPELINE_RUN_GVK, namespace, {
     selector: options?.selector,
     limit: options?.limit /* similar to one present in UseTaskRunsOptions */,
     name: options?.name /* similar to one present in UseTaskRunsOptions */,
+    filter: options?.filter,
   });
 
 export const useRuns = <Kind extends K8sResourceKind>(
@@ -207,6 +209,7 @@ export const useRuns = <Kind extends K8sResourceKind>(
     limit?: number;
     name?: string;
     skipFetch?: boolean;
+    filter?: string; // CEL expression sent to Tekton Results to retrieve PRs within the date range
   },
   pipelineRunFinished?: boolean,
   pipelineRunManagedBy?: string,
@@ -315,10 +318,10 @@ export const useRuns = <Kind extends K8sResourceKind>(
 
   const trOptions: typeof optionsMemo = useMemo(() => {
     if (optionsMemo?.name) {
-      const { name, ...rest } = optionsMemo;
+      const { name, filter, ...rest } = optionsMemo;
       return {
         ...rest,
-        filter: EQ('data.metadata.name', name),
+        filter: AND(EQ('data.metadata.name', name), filter),
       };
     }
     return optionsMemo;

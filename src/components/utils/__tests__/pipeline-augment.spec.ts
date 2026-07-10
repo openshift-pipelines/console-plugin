@@ -55,6 +55,25 @@ describe('PipelineAugment test correct data is augmented', () => {
       testData[3].pipelineruns[0].metadata.name,
     );
   });
+
+  it('expect a PipelineRun to only be matched to the Pipeline in the same namespace', () => {
+    const newData = augmentRunsToData(
+      testData[4].pipelines,
+      testData[4].pipelineruns,
+    );
+    const pipelineWithRun = newData.find(
+      (p) => p.metadata.namespace === 'ns-a',
+    );
+    const pipelineWithoutRun = newData.find(
+      (p) => p.metadata.namespace === 'ns-b',
+    );
+
+    expect(pipelineWithRun.latestRun).toBeTruthy();
+    expect(pipelineWithRun.latestRun.metadata.name).toBe(
+      testData[4].pipelineruns[0].metadata.name,
+    );
+    expect(pipelineWithoutRun.latestRun).toBeFalsy();
+  });
 });
 
 describe('PipelineAugment test getRunStatusColor handles all ComputedStatus values', () => {

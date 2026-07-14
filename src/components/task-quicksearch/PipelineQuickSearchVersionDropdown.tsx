@@ -63,7 +63,9 @@ const PipelineQuickSearchVersionDropdown: FC<
       id="quick-search-version-dropdown"
       className="opp-quick-search-details__version-dropdown"
       isOpen={isOpen}
-      onSelect={(_, value: string) => {
+      onSelect={(e: React.MouseEvent, value: string) => {
+        /*Fix to avoid modal close on select of version dropdown*/
+        e.stopPropagation();
         if (value) {
           onChange(value);
         }

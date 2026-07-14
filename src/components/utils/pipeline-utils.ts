@@ -759,3 +759,37 @@ export const getPipelinesAndPipelineRunsForResource = (
     pipelineRuns: getPipelineRunsForPipeline(resourcePipeline, props),
   };
 };
+
+/* returns an array of child pipeline runs for a given pipeline run */
+export const getChildPipelineRunReferences = (pipelineRun: PipelineRunKind) =>
+  (pipelineRun?.status?.childReferences ?? []).filter(
+    (ref) => ref.kind === 'PipelineRun',
+  );
+
+/* returns an array of child pipelines for a given pipeline run */
+export const getChildPipelinesFromPipelineRun = (
+  pipelineRun: PipelineRunKind,
+): PipelineKind[] => {
+  const childPipelineNames = pipelineRun.status?.pipelineSpec?.tasks
+    ?.map((child) => (child.pipelineRef ? child.name : null))
+    .filter(Boolean);
+  return childPipelineNames.map((name) => ({
+    apiVersion: `${PipelineModel.apiGroup}/${PipelineModel.apiVersion}`,
+    kind: PipelineModel.kind,
+    metadata: {
+      name,
+      namespace: pipelineRun.metadata.namespace,
+    },
+  }));
+};
+
+export const isPipelineInPipelineTask = (task: PipelineTask): boolean =>
+  !!task?.pipelineRef;
+
+export const isPipelineInPipelineRun = (
+  pipelineRun: PipelineRunKind,
+): boolean =>
+  pipelineRun?.status?.childReferences.some(
+    (child) => child.kind === 'PipelineRun',
+  ) ||
+  pipelineRun?.status?.pipelineSpec?.tasks?.some((item) => item.pipelineRef);

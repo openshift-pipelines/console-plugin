@@ -26,6 +26,7 @@ import {
   LatestPipelineRunStatus,
   appendPipelineRunStatus,
   containerToLogSourceStatus,
+  getChildPipelineRunReferences,
   getImageUrl,
   getLatestPipelineRunStatus,
   getMatchedPVCs,
@@ -36,6 +37,7 @@ import {
   getSbomTaskRun,
   getSecretAnnotations,
   hasExternalLink,
+  isPipelineInPipelineTask,
   pipelineRunDuration,
   updateServiceAccount,
 } from '../pipeline-utils';
@@ -590,5 +592,52 @@ describe('pipeline-utils ', () => {
       PipelineNotStarted: 0,
       Pending: 0,
     });
+  });
+});
+
+describe('pipelines in pipelines helpers', () => {
+  it('should filter child pipeline run references', () => {
+    const pipelineRun = {
+      status: {
+        childReferences: [
+          {
+            kind: 'TaskRun',
+            name: 'parent-task',
+            apiVersion: 'tekton.dev/v1',
+            pipelineTaskName: 'task',
+          },
+          {
+            kind: 'PipelineRun',
+            name: 'parent-child-plr',
+            apiVersion: 'tekton.dev/v1',
+            pipelineTaskName: 'child-pipeline',
+          },
+        ],
+      },
+    };
+
+    expect(getChildPipelineRunReferences(pipelineRun as any)).toEqual([
+      {
+        kind: 'PipelineRun',
+        name: 'parent-child-plr',
+        apiVersion: 'tekton.dev/v1',
+        pipelineTaskName: 'child-pipeline',
+      },
+    ]);
+  });
+
+  it('should detect pipeline in pipeline tasks', () => {
+    expect(
+      isPipelineInPipelineTask({
+        name: 'child',
+        pipelineRef: { name: 'child-pipeline' },
+      }),
+    ).toBe(true);
+    expect(
+      isPipelineInPipelineTask({
+        name: 'task',
+        taskRef: { name: 'build' },
+      }),
+    ).toBe(false);
   });
 });

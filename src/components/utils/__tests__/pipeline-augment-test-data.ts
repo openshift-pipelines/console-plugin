@@ -24,6 +24,7 @@ export const testData: PipelineAugmentData[] = [
         kind: 'PipelineRun',
         metadata: {
           name: 'apple-1-run1',
+          namespace: 'myproject',
           creationTimestamp: '21-05-2019',
           labels: { 'tekton.dev/pipeline': 'apple1' },
         },
@@ -40,13 +41,13 @@ export const testData: PipelineAugmentData[] = [
       {
         metadata: {
           name: 'apple1',
-          namespace: 'myproject',
+          namespace: 'tekton-pipelines',
         },
       },
       {
         metadata: {
           name: 'apple2',
-          namespace: 'myproject',
+          namespace: 'tekton-pipelines',
         },
       },
     ],
@@ -84,8 +85,42 @@ export const testData: PipelineAugmentData[] = [
         kind: 'PipelineRun',
         metadata: {
           name: 'apple-2-run1',
+          namespace: 'tekton-pipelines',
           creationTimestamp: '31-04-2019',
           labels: { 'tekton.dev/pipeline': 'apple2' },
+        },
+        spec: {},
+        status: {
+          pipelineSpec: { tasks: [] },
+          conditions: [{ type: 'Succeeded', status: 'True' }],
+        },
+      },
+    ],
+  },
+  {
+    pipelines: [
+      {
+        metadata: {
+          name: 'simple-pipeline',
+          namespace: 'ns-a',
+        },
+      },
+      {
+        metadata: {
+          name: 'simple-pipeline',
+          namespace: 'ns-b',
+        },
+      },
+    ],
+    pipelineruns: [
+      {
+        apiVersion: 'tekton.dev/v1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'simple-pipeline-run-1',
+          namespace: 'ns-a',
+          creationTimestamp: '2026-07-10T01:23:45Z',
+          labels: { 'tekton.dev/pipeline': 'simple-pipeline' },
         },
         spec: {},
         status: {

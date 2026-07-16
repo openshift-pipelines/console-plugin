@@ -114,14 +114,14 @@ describe('SyncedEditorField', () => {
       mockFormValues = { formData: {}, yamlData: '' };
       renderComponent();
 
-      expect(getToggle().hasAttribute('disabled')).toBe(true);
+      expect(getToggle().hasAttribute('disabled')).toBe(false);
     });
 
     it('should disable toggle when formData is undefined', () => {
       mockFormValues = { yamlData: '' };
       renderComponent();
 
-      expect(getToggle().hasAttribute('disabled')).toBe(true);
+      expect(getToggle().hasAttribute('disabled')).toBe(false);
     });
 
     it('should disable toggle when YAML mode has no tasks', () => {

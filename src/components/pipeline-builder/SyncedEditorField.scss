@@ -24,4 +24,10 @@
   &__yaml-warning {
     margin: var(--pf-t--global--spacer--xl) var(--pf-t--global--spacer--xl) 0;
   }
+
+  &__optional-task-param-toggle {
+    .pf-v6-c-switch__input:not(:checked):not(:disabled) ~ .pf-v6-c-switch__label {
+      color: var(--pf-v6-c-switch__input--checked__label--Color);
+    }
+  }
 }

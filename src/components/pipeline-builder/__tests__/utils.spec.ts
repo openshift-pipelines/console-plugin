@@ -16,6 +16,7 @@ import {
 } from '../types';
 import {
   convertResourceToTask,
+  filterOptionalTaskParams,
   findTask,
   findTaskFromFormikData,
   getBuilderTasksErrorGroup,
@@ -521,6 +522,42 @@ describe('runAfter Manipulation Utils', () => {
       });
       expect(result.runAfter).toHaveLength(2);
     });
+  });
+});
+
+describe('filterOptionalTaskParams', () => {
+  const taskResources = {
+    namespacedTasks: [externalTaskWithVarietyParams],
+    clusterResolverTasks: [],
+    tasksLoaded: true,
+  };
+
+  const formData: PipelineBuilderFormValues = {
+    ...initialPipelineFormData,
+    tasks: [
+      {
+        name: 'task-a',
+        taskRef: { name: externalTaskWithVarietyParams.metadata.name },
+        params: [
+          { name: 'param-with-description', value: 'required-value' },
+          { name: 'param-with-default', value: 'default-value' },
+          { name: 'param-with-both', value: 'some-default' },
+        ],
+      },
+    ],
+  };
+
+  it('should return formData unchanged when hideOptional is false', () => {
+    expect(filterOptionalTaskParams(formData, taskResources, false)).toEqual(
+      formData,
+    );
+  });
+
+  it('should remove optional task params when hideOptional is true', () => {
+    const result = filterOptionalTaskParams(formData, taskResources, true);
+    expect(result.tasks[0].params).toEqual([
+      { name: 'param-with-description', value: 'required-value' },
+    ]);
   });
 });
 

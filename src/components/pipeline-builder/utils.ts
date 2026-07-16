@@ -23,6 +23,7 @@ import {
   TektonWorkspace,
 } from '../../types';
 import { sanitizePipelineParams } from '../pipelines-details/utils';
+import { paramIsRequired } from '../start-pipeline/validation-utils';
 import { t } from '../utils/common-utils';
 import { getRandomChars } from '../utils/utils';
 import {
@@ -329,6 +330,36 @@ export const getTaskParameters = (taskResource: TaskKind): TektonParam[] => {
   );
 };
 
+export const filterOptionalTaskParams = (
+  formData: PipelineBuilderFormValues,
+  taskResources: PipelineBuilderTaskResources,
+  hideOptionalTaskParams: boolean,
+): PipelineBuilderFormValues => {
+  if (!hideOptionalTaskParams) {
+    return formData;
+  }
+  const filterTask = (task: PipelineTask): PipelineTask => {
+    const taskResource = findTask(taskResources, task);
+    if (!taskResource || !taskResource.spec?.params?.length) {
+      return task;
+    }
+    const taskParamNamesFromTaskResource = taskResource.spec.params
+      .filter(paramIsRequired)
+      .map((param) => param.name);
+
+    const paramsForTask = task.params.filter((param) =>
+      taskParamNamesFromTaskResource.includes(param.name),
+    );
+
+    return { ...task, params: paramsForTask };
+  };
+
+  return {
+    ...formData,
+    tasks: formData.tasks.map(filterTask),
+    finallyTasks: formData.finallyTasks.map(filterTask),
+  };
+};
 export const convertResourceToTask = (
   usedNames: string[],
   resource: TaskKind,

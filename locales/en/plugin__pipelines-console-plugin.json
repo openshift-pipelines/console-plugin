@@ -347,6 +347,7 @@
   "Only update this task's version if you'd like to replace all of its references in the namespace.": "Only update this task's version if you'd like to replace all of its references in the namespace.",
   "Operator": "Operator",
   "optional": "optional",
+  "Optional task parameters are hidden in this pipeline. The YAML is read-only. Disable the toggle to make changes.": "Optional task parameters are hidden in this pipeline. The YAML is read-only. Disable the toggle to make changes.",
   "Optional username for Git authentication.": "Optional username for Git authentication.",
   "Optional workspace": "Optional workspace",
   "Organization permissions:": "Organization permissions:",

@@ -65,7 +65,6 @@ const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
 
   const formData = _.get(values, formContext.name);
   const yamlData: string = _.get(values, yamlContext.name);
-
   const [yamlWarning, setYAMLWarning] = useState<boolean>(false);
   const [sanitizeToCallback, setSanitizeToCallback] =
     useState<FormErrorCallback>(undefined);
@@ -144,21 +143,29 @@ const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
     }
     setStatus({ submitError: '' });
   };
-
+  /* Reset the toggle when no tasks are present and disable it */
   const isOptionalTaskParamToggleDisabled = useMemo(() => {
     if (editorType === EditorType.Form) {
-      return !formData?.tasks?.length;
+      if (formData?.tasks?.length === 0) {
+        setHideOptionalTaskParam(false);
+        return true;
+      }
+      return false;
     }
     if (editorType === EditorType.YAML) {
       try {
         const content = safeYAMLToJS(yamlData);
-        return !content?.spec?.tasks?.length;
+        if (!content?.spec?.tasks?.length) {
+          setHideOptionalTaskParam(false);
+          return true;
+        }
+        return false;
       } catch (e) {
         console.warn('Failed to sync yamlData', e);
         return true;
       }
     }
-  }, [editorType, yamlData, formData?.tasks?.length]);
+  }, [editorType, yamlData, formData?.tasks?.length, setHideOptionalTaskParam]);
 
   useEffect(() => {
     setDisabledFormAlert(formContext.isDisabled);
@@ -233,6 +240,7 @@ const SyncedEditorField: FC<SyncedEditorFieldProps> = ({
         />
         <div onClick={(e) => e.stopPropagation()}>
           <Switch
+            className="ocs-synced-editor-field__optional-task-param-toggle"
             id="optional-param-toggle"
             label={t('Show required task params only')}
             isChecked={hideOptionalTaskParam}

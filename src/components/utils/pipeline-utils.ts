@@ -793,3 +793,8 @@ export const isPipelineInPipelineRun = (
     (child) => child.kind === 'PipelineRun',
   ) ||
   pipelineRun?.status?.pipelineSpec?.tasks?.some((item) => item.pipelineRef);
+
+export const isChildPipelineRun = (pipelineRun: K8sResourceKind): boolean =>
+  pipelineRun?.metadata?.ownerReferences?.some(
+    (ref) => ref.kind === 'PipelineRun',
+  ) ?? false;

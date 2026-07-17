@@ -49,6 +49,7 @@ import { useDataViewFilter } from '../hooks/useDataViewFilter';
 import { ComputedStatus, PipelineRunKind } from '../../types';
 import { pipelineRunFilterReducer } from '../utils/pipeline-filter-reducer';
 import './TasksNavigationPage.scss';
+import { useDateRangeFilter } from '../hooks/useDateRangeFilter';
 
 const taskRunModelRef = getReferenceForModel(TaskRunModel);
 
@@ -301,6 +302,8 @@ const TaskRunsList: FC<TaskRunsListPageProps> = ({
     selectedColumns: new Set(activeColumns.map((col) => col.id)),
   };
 
+  const { dateFilterCEL } = useDateRangeFilter('TaskRun');
+
   const [taskRuns, k8sLoaded, trLoaded, loadError] = useTaskRuns(
     ns,
     parentName,
@@ -309,6 +312,7 @@ const TaskRunsList: FC<TaskRunsListPageProps> = ({
     {
       pipelineRunFinished,
       pipelineRunManagedBy: pipelineRun?.spec?.managedBy,
+      dateRangeFilter: dateFilterCEL,
     },
   );
 

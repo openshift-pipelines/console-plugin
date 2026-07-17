@@ -71,6 +71,7 @@ export type UseTaskRunsOptions = {
   skipFetch?: boolean;
   name?: string /* used for fetching a single task run by metadata.name */;
   limit?: number /* used for fetching a limited number of task runs */;
+  dateRangeFilter?: string;
 };
 
 export const useTaskRuns = (
@@ -80,8 +81,14 @@ export const useTaskRuns = (
   pipelineRunUid?: string,
   options?: UseTaskRunsOptions,
 ): [TaskRunKind[], boolean, boolean, Error | undefined, boolean, boolean] => {
-  const { pipelineRunFinished, pipelineRunManagedBy, skipFetch, name, limit } =
-    options || {};
+  const {
+    pipelineRunFinished,
+    pipelineRunManagedBy,
+    skipFetch,
+    name,
+    limit,
+    dateRangeFilter,
+  } = options || {};
   const selector: Selector = useMemo(() => {
     if (pipelineRunName && pipelineRunUid) {
       return {
@@ -111,7 +118,7 @@ export const useTaskRuns = (
   ] = useRuns<TaskRunKind>(
     TASK_RUN_GVK,
     namespace,
-    { selector, skipFetch, name, limit },
+    { selector, skipFetch, name, limit, filter: dateRangeFilter },
     pipelineRunFinished,
     pipelineRunManagedBy,
   );

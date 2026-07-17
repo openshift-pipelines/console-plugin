@@ -402,6 +402,7 @@
   "Please <2>try again</2>.": "Please <2>try again</2>.",
   "Please follow the instructions below to attach the webhook manually.": "Please follow the instructions below to attach the webhook manually.",
   "Please provide a reason for not approving": "Please provide a reason for not approving",
+  "Please select the navigation item to view the PipelineRun logs": "Please select the navigation item to view the PipelineRun logs",
   "Pod": "Pod",
   "Pod selector": "Pod selector",
   "Pods": "Pods",

@@ -122,7 +122,7 @@ const RESOURCE_FILTER_CONFIG: Record<ResourceType, ResourceFilterConfig> = {
     statusFilter: pipelineRunStatusFilter,
     statusReducer: pipelineRunFilterReducer,
     hasDataSourceFilter: true,
-    hasDateRangeFilter: false,
+    hasDateRangeFilter: true,
     defaultDataSourceValues: ['cluster-data'],
     getOptionLabel: (id) => ListFilterLabels[id],
   },

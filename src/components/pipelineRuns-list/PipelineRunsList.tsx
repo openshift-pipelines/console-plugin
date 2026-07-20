@@ -14,6 +14,7 @@ import { DataViewFilterToolbar } from '../common/DataViewFilterToolbar';
 import { useDateRangeFilter } from '../hooks/useDateRangeFilter';
 
 import './PipelineRunsList.scss';
+import { isChildPipelineRun } from '../utils/pipeline-utils';
 
 type PipelineRunsListProps = {
   namespace?: string;
@@ -65,7 +66,7 @@ const PipelineRunsList: FC<PipelineRunsListProps> = ({
     filteredData,
     updatedCheckboxFilters,
   } = useDataViewFilter<PipelineRunKind>({
-    data: pipelineRuns || [],
+    data: (pipelineRuns || []).filter((r) => !isChildPipelineRun(r)),
     options: {
       resourceType: 'PipelineRun',
     },

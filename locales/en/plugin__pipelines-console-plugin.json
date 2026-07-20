@@ -310,6 +310,7 @@
   "No {{resourceName}} results available due to failure": "No {{resourceName}} results available due to failure",
   "No {{resourceType}} resource": "No {{resourceType}} resource",
   "No approvers": "No approvers",
+  "No child pipeline runs found": "No child pipeline runs found",
   "No default StorageClass": "No default StorageClass",
   "No display name": "No display name",
   "No events": "No events",

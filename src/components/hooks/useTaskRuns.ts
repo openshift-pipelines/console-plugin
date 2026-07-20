@@ -199,6 +199,7 @@ export const usePipelineRuns = (
     limit?: number;
     name?: string;
     filter?: string;
+    skipFetch?: boolean;
   },
 ): [PipelineRunKind[], boolean, boolean, Error | undefined, boolean, boolean] =>
   useRuns<PipelineRunKind>(PIPELINE_RUN_GVK, namespace, {
@@ -206,6 +207,8 @@ export const usePipelineRuns = (
     limit: options?.limit /* similar to one present in UseTaskRunsOptions */,
     name: options?.name /* similar to one present in UseTaskRunsOptions */,
     filter: options?.filter,
+    skipFetch:
+      options?.skipFetch /* similar to one present in UseTaskRunsOptions */,
   });
 
 export const useRuns = <Kind extends K8sResourceKind>(
@@ -308,7 +311,7 @@ export const useRuns = <Kind extends K8sResourceKind>(
       effectiveLoaded &&
       !effectiveError &&
       prevLength > 0 &&
-      etcdRuns.length < prevLength
+      etcdRuns?.length < prevLength
     ) {
       setTrRefetchKey((k) => k + 1);
     }

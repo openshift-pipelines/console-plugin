@@ -150,6 +150,7 @@ export type PipelineRunStatus = {
   pipelineSpec: PipelineSpec;
   skippedTasks?: {
     name: string;
+    reason?: string;
   }[];
   pipelineResults?: TektonResultsRun[]; // in tekton v1 pipelineResults is renamed to results
   results?: TektonResultsRun[];

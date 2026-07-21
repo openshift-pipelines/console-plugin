@@ -81,9 +81,9 @@ const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
   obj,
   activeTask,
   activeStep,
-  taskRuns: tRuns,
+  taskRuns: tRuns = [],
   isResourceManagedByKueue,
-  childPipelineRuns,
+  childPipelineRuns = [],
 }) => {
   const { t } = useTranslation();
   const [activeItem, setActiveItem] = useState<string>(null);
@@ -130,22 +130,23 @@ const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
     setActiveItem(item.itemId);
     setNavUntouched(false);
   }, []);
-
-  const runNames = pipelineTasks.map((item) => item.name);
+  const taskRunNames = pipelineTasks
+    .filter((item) => !item?.pipelineRef)
+    .map((item) => item.name);
   const logDetails = getPLRLogSnippet(obj, tRuns) as ErrorDetailsWithStaticLog;
   const pipelineStatus = pipelineRunStatus(obj);
-  const taskCount = sortedRuns.length;
+  const taskCount = sortedRuns ? sortedRuns.filter(isTaskRun).length : 0;
   const downloadAllCallback =
     taskCount > 1
       ? isResourceManagedByKueue
         ? getDownloadAllLogsCallbackMultiCluster(
-            runNames,
+            taskRunNames,
             tRuns,
             obj?.metadata?.namespace,
             obj?.metadata?.name,
           )
         : getDownloadAllLogsCallback(
-            runNames,
+            taskRunNames,
             tRuns,
             obj?.metadata?.namespace,
             obj?.metadata?.name,
@@ -171,7 +172,8 @@ const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
   const activePipelineRun = isPipelineRun(activeRun) ? activeRun : undefined;
 
   const podName = activeTaskRun?.status?.podName;
-  const pipelineRunFinished = pipelineStatus !== ComputedStatus.Running;
+  const pipelineRunFinished =
+    pipelineStatus !== ComputedStatus.Running || !!obj?.status?.completionTime;
   const resources: WatchK8sResource = taskCount > 0 &&
     podName && {
       name: podName,

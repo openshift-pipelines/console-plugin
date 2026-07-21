@@ -102,7 +102,8 @@ const LogsWrapperComponent: FC<
 
   const [isFullscreen, fullscreenRef, fullscreenToggle] =
     useFullscreen<HTMLDivElement>();
-  const [downloadAllStatus, setDownloadAllStatus] = useState(false);
+  const downloadAllStatus = !pipelineRunFinished;
+  const [downloadAllInProgress, setDownloadAllInProgress] = useState(false);
   const currentLogGetterRef = useRef<() => string>();
 
   const taskName =
@@ -137,13 +138,13 @@ const LogsWrapperComponent: FC<
   );
 
   const startDownloadAll = () => {
-    setDownloadAllStatus(true);
+    setDownloadAllInProgress(true);
     onDownloadAll()
       .then(() => {
-        setDownloadAllStatus(false);
+        setDownloadAllInProgress(false);
       })
       .catch((err: Error) => {
-        setDownloadAllStatus(false);
+        setDownloadAllInProgress(false);
         // eslint-disable-next-line no-console
         console.warn(err.message || 'Error downloading logs.');
       });
@@ -159,7 +160,12 @@ const LogsWrapperComponent: FC<
           isFullscreen ? 'pf-v6-u-background-color-100 pf-v6-u-p-sm' : ''
         }`}
       >
-        <Button variant="link" onClick={downloadLogs} isInline>
+        <Button
+          isDisabled={!taskRun?.status?.completionTime}
+          variant="link"
+          onClick={downloadLogs}
+          isInline
+        >
           <DownloadIcon className="pf-v6-u-mr-xs" />
           {t('Download')}
         </Button>
@@ -175,7 +181,7 @@ const LogsWrapperComponent: FC<
               <span className="pf-v6-l-flex pf-m-row pf-m-gap-sm pf-m-align-items-center">
                 <DownloadIcon />
                 <span>{downloadAllLabel || t('Download all')}</span>
-                {downloadAllStatus && <Loading isInline={true} />}
+                {downloadAllInProgress && <Loading isInline={true} />}
               </span>
             </Button>
             <div>|</div>

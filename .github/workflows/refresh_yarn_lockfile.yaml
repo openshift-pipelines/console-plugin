@@ -23,27 +23,33 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: yarn
+      
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Verify Yarn version
+        run: yarn --version
 
       - name: Remove yarn.lock
         run: rm -f yarn.lock
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
-          branch: automation/refresh-npm-lockfile
+          branch: automation/refresh-yarn-lockfile
           delete-branch: true
-          commit-message: "chore: regenerate npm lockfile"
-          title: "chore: regenerate npm lockfile"
+          commit-message: "chore: regenerate yarn lockfile"
+          title: "chore: regenerate yarn lockfile"
           body: |
             This PR was created automatically.
 
             Changes:
             - Removed yarn.lock
-            - Re-ran npm install
+            - Re-ran yarn install
             - Updated package-lock.json
           labels: |
             dependencies

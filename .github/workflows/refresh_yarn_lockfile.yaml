@@ -34,23 +34,39 @@ jobs:
       - name: Remove yarn.lock
         run: rm -f yarn.lock
 
-      - name: Install dependencies
+      - name: Install dependencies to regenerate yarn.lock file
         run: yarn install
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
-        with:
-          branch: automation/refresh-yarn-lockfile
-          delete-branch: true
-          commit-message: "chore: regenerate yarn lockfile"
-          title: "chore: regenerate yarn lockfile"
-          body: |
-            This PR was created automatically.
+      - name: Create branch and commit changes
+        run: |
+          BRANCH="automation/refresh-yarn-lockfile-$(date +%Y%m%d)"
 
-            Changes:
-            - Removed yarn.lock
-            - Re-ran yarn install
-            - Updated package-lock.json
-          labels: |
-            dependencies
-            automated
+          git checkout -b "$BRANCH"
+
+          git config user.name openshift-pipelines-bot
+          git config user.email pipelines-extcomm@redhat.com
+
+          git add yarn.lock
+          git commit -m "chore: regenerate yarn.lock"
+
+          git push origin "$BRANCH"
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base "${{ github.event.repository.default_branch }}" \
+            --head "automation/refresh-yarn-lockfile" \
+            --title "chore: regenerate yarn.lock" \
+            --body "$(cat <<'EOF'
+          This PR was created automatically.
+
+          Changes:
+          - Removed yarn.lock
+          - Re-ran yarn install
+          - Regenerated yarn.lock
+          EOF
+          )" \
+            --label "dependencies" \
+            --label "automated"

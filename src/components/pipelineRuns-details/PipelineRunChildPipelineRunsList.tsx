@@ -33,6 +33,7 @@ const PipelineRunChildPipelineRunsList: FC<
   const childPipelineRunRefs = useChildPipelineRunReferences(pipelineRun);
   const [childPipelineRuns, allLoaded] = useChildPipelineRuns(
     namespace,
+    pipelineRun?.metadata?.name,
     childPipelineRunRefs,
     { depth: 1 },
   );

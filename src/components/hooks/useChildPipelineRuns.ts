@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ChildReferences, ComputedStatus, PipelineRunKind } from '../../types';
+import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
 import { getChildPipelineRunReferences } from '../utils/pipeline-utils';
 import { usePipelineRuns } from './useTaskRuns';
-import { pipelineRunStatus } from '../utils/pipeline-filter-reducer';
 
 const TERMINAL = new Set([
   ComputedStatus.Succeeded,
@@ -12,14 +12,17 @@ const TERMINAL = new Set([
 
 export const useChildPipelineRunReferences = (
   parentPipelineRun: PipelineRunKind,
-): ChildReferences[] =>
-  useMemo(
+): ChildReferences[] => {
+  const childReferences = parentPipelineRun?.status?.childReferences;
+  return useMemo(
     () => getChildPipelineRunReferences(parentPipelineRun),
-    [parentPipelineRun?.status?.childReferences],
+    [childReferences],
   );
+};
 
 export const useChildPipelineRuns = (
   ns: string,
+  parentPipelineRunName: string,
   childRefs: ChildReferences[] = [],
   { depth }: { depth: 'inf' | number } = { depth: 1 },
 ): [PipelineRunKind[], boolean] => {
@@ -39,10 +42,18 @@ export const useChildPipelineRuns = (
     ns,
     watchName ? { name: watchName, limit: 1 } : { skipFetch: true },
   );
-  /* if childRefs have changed then reset state params accordingly */
+  /* if parentPipelineRunName have changed then reset state params accordingly */
   useEffect(() => {
     setResolved([]);
     setQueue(childRefs.map((r) => r.name));
+  }, [parentPipelineRunName]);
+
+  /* append new childRef as the parent pipelinerun is in flight */
+  useEffect(() => {
+    setQueue((prev) => {
+      const names = childRefs.map((r) => r.name);
+      return [...new Set([...prev, ...names])];
+    });
   }, [childRefs]);
 
   useEffect(() => {

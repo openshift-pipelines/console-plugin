@@ -21,6 +21,10 @@ import { getReferenceForModel } from '../pipelines-overview/utils';
 import { GetDataViewRows } from '@openshift-console/dynamic-plugin-sdk-internal/lib/api/internal-types';
 import { tableColumnInfo } from './usePipelinesColumns';
 import { DASH } from '../../consts';
+import { Tooltip } from '@patternfly/react-core';
+import { AutomationIcon as PipelineInPipelineIcon } from '@patternfly/react-icons';
+import { t } from '../utils/common-utils';
+import { isPipelineInPipeline } from '../utils/pipeline-utils';
 
 type PipelineStatusProps = {
   obj: PipelineWithLatest;
@@ -48,6 +52,15 @@ export const getPipelineListDataViewRows: GetDataViewRows<
             groupVersionKind={getGroupVersionKindForModel(PipelineModel)}
             name={obj.metadata.name}
             namespace={obj.metadata.namespace}
+            nameSuffix={
+              <>
+                {isPipelineInPipeline(obj) ? (
+                  <Tooltip content={t('Pipeline in Pipeline')}>
+                    <PipelineInPipelineIcon className="opp-pipeline-run-list__results-indicator" />
+                  </Tooltip>
+                ) : null}
+              </>
+            }
           />
         ),
         props: { ...getNameCellProps('pipelines-list'), modifier: 'nowrap' },

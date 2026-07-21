@@ -21,7 +21,11 @@ import {
   RESOURCE_LOADED_FROM_RESULTS_ANNOTATION,
   PIPELINE_RUN_MANAGED_BY_KUEUE_LABEL,
 } from '../../consts';
-import { ArchiveIcon, MulticlusterIcon } from '@patternfly/react-icons';
+import {
+  ArchiveIcon,
+  MulticlusterIcon,
+  AutomationIcon as PipelineInPipelineIcon,
+} from '@patternfly/react-icons';
 import SignedBadgeIcon from '../../images/SignedBadge';
 import Status from '../status/Status';
 import {
@@ -35,6 +39,7 @@ import { usePipelineRuns } from '../hooks/useTaskRuns';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { LazyActionMenu } from '@openshift-console/dynamic-plugin-sdk-internal';
 import { ActionMenuVariant } from '@openshift-console/dynamic-plugin-sdk-internal/lib/api/internal-types';
+import { isPipelineInPipelineRun } from '../utils/pipeline-utils';
 
 type PipelineRunDetailsPageProps = {
   name: string;
@@ -92,6 +97,11 @@ const PipelineRunDetailsPage: FC<PipelineRunDetailsPageProps> = ({
           PIPELINE_RUN_MANAGED_BY_KUEUE_LABEL && (
           <Tooltip content={t('Multicluster Pipeline Run')}>
             <MulticlusterIcon className="pipelinerun-details-page__results-indicator" />
+          </Tooltip>
+        )}
+        {isPipelineInPipelineRun(pipelineRun) && (
+          <Tooltip content={t('Pipeline in Pipeline Run')}>
+            <PipelineInPipelineIcon className="opp-pipeline-run-list__results-indicator" />
           </Tooltip>
         )}
         <ResourceStatus>

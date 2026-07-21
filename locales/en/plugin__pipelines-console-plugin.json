@@ -381,6 +381,8 @@
   "Pipeline builder": "Pipeline builder",
   "Pipeline could not be started automatically": "Pipeline could not be started automatically",
   "Pipeline details": "Pipeline details",
+  "Pipeline in Pipeline": "Pipeline in Pipeline",
+  "Pipeline in Pipeline Run": "Pipeline in Pipeline Run",
   "Pipeline not started": "Pipeline not started",
   "Pipeline not started. Start pipeline.": "Pipeline not started. Start pipeline.",
   "Pipeline status is {{status}}. View logs.": "Pipeline status is {{status}}. View logs.",

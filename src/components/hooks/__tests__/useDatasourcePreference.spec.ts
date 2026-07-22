@@ -47,12 +47,12 @@ describe('useDatasourcePreference', () => {
     expect(setPreferenceMock).toHaveBeenCalledWith(['archived-data']);
   });
 
-  it('should reset preference to default', () => {
+  it('should clear preference to empty array', () => {
     const { result } = testHook(() =>
       useDatasourcePreference('pipelineRun', true),
     );
-    result.current.resetPreference();
-    expect(setPreferenceMock).toHaveBeenCalledWith(DEFAULT_DATASOURCE_VALUES);
+    result.current.clearPreference();
+    expect(setPreferenceMock).toHaveBeenCalledWith([]);
   });
 
   it('should use the correct preference key for pipelineRun', () => {

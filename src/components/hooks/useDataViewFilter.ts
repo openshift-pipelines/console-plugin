@@ -172,7 +172,7 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
   const {
     preference: datasourcePreference,
     setPreference: setDatasourcePreference,
-    resetPreference: resetDatasourcePreference,
+    clearPreference: clearDatasourcePreference,
   } = useDatasourcePreference(resourceType, shouldPersistDataSource);
   const allStatusIds = useMemo(() => Object.values(ListFilterId), []);
 
@@ -329,10 +329,10 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
       setTimespanDateFilter(NO_DATE_RANGE_FILTER);
     }
     if (config?.hasDataSourceFilter) {
-      resetDatasourcePreference();
+      clearDatasourcePreference();
     }
     resetPage();
-  }, [resetPage, setTimespanDateFilter, resetDatasourcePreference, config]);
+  }, [resetPage, setTimespanDateFilter, clearDatasourcePreference, config]);
 
   const labelSuggestions = useMemo(() => {
     if (!data) return [];

@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { USER_PREFERENCE_PREFIX } from '../../consts';
 
 export const DEFAULT_DATASOURCE_VALUES = ['cluster-data'];
+const NO_DATASOURCE_FILTER = [];
 
 // When persist is false, no ConfigMap entry is auto-created; sync is enabled when resourceType is defined.
 export const useDatasourcePreference = (
@@ -15,14 +16,14 @@ export const useDatasourcePreference = (
     !!resourceType,
   );
 
-  const resetPreference = useCallback(() => {
-    setPreference(DEFAULT_DATASOURCE_VALUES);
+  const clearPreference = useCallback(() => {
+    setPreference(NO_DATASOURCE_FILTER);
   }, [setPreference]);
 
   return {
-    preference: preference ?? DEFAULT_DATASOURCE_VALUES,
+    preference: preference ?? (loaded ? DEFAULT_DATASOURCE_VALUES : NO_DATASOURCE_FILTER),
     setPreference,
-    resetPreference,
+    clearPreference,
     loaded,
   };
 };

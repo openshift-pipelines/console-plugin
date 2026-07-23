@@ -8,4 +8,6 @@ reviewers:
   - pratap0007
   - anwesha-palit-redhat
   - arvindk-softwaredev
+  - ankrsinha
+  - adityavshinde
 component: OpenShift Pipelines Console Plugin

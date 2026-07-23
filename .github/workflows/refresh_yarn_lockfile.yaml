@@ -23,12 +23,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: yarn
       
       - name: Enable Corepack
-        run: npm install -g corepack; \
-             corepack enable ;\
-             corepack prepare yarn@4.6.0 --activate;  \
+        run: |
+             corepack enable
+             corepack install --global yarn@4.6.0
 
       - name: Verify Yarn version
         run: yarn --version

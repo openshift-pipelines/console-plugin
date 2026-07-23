@@ -26,7 +26,9 @@ jobs:
           cache: yarn
       
       - name: Enable Corepack
-        run: corepack enable
+        run: npm install -g corepack; \
+             corepack enable ;\
+             corepack prepare yarn@4.6.0 --activate;  \
 
       - name: Verify Yarn version
         run: yarn --version

@@ -1,0 +1,85 @@
+name: Refresh yarn lockfile
+
+on:
+  schedule:
+    # Every Monday at 03:00 UTC
+    - cron: "0 3 * * 1"
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      
+      - name: Enable Corepack
+        run: |
+             corepack enable
+             corepack install --global yarn@4.6.0
+
+      - name: Verify Yarn version
+        run: yarn --version
+
+      - name: Remove yarn.lock
+        run: rm -f yarn.lock
+
+      - name: Install dependencies to regenerate yarn.lock file
+        run: yarn install --no-immutable
+
+      - name: Create branch and commit changes
+        run: |
+          SOURCE_BRANCH="${{ github.ref_name }}"
+          BRANCH="automation/refresh-yarn-lockfile-${SOURCE_BRANCH}"
+
+          git fetch origin "$BRANCH" || true
+
+          git checkout -B "$BRANCH"
+
+          git config user.name openshift-pipelines-bot
+          git config user.email pipelines-extcomm@redhat.com
+
+          git add yarn.lock
+
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          
+          git commit -m "chore: regenerate yarn.lock"
+
+          git push --force-with-lease origin "$BRANCH"
+
+          echo "BRANCH=$BRANCH" >> "$GITHUB_ENV"
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |          
+          if gh pr view "$BRANCH" >/dev/null 2>&1; then
+            echo "PR already exists"
+          else
+            gh pr create \
+              --base "${{ github.ref_name }}" \
+              --head "$BRANCH" \
+              --title "chore: regenerate yarn.lock - ${{ github.ref_name }}" \
+              --body "This PR was created automatically from Refresh yarn lockfile Github Action.
+
+          Changes:
+          - Removed yarn.lock
+          - Re-ran yarn install
+          - Regenerated yarn.lock" \
+                  --label "dependencies" \
+                  --label "automated"
+          fi

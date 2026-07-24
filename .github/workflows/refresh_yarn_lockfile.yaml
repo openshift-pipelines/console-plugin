@@ -40,7 +40,10 @@ jobs:
 
       - name: Create branch and commit changes
         run: |
-          BRANCH="automation/refresh-yarn-lockfile"
+          SOURCE_BRANCH="${{ github.ref_name }}"
+          BRANCH="automation/refresh-yarn-lockfile-${SOURCE_BRANCH}"
+
+          git fetch origin "$BRANCH" || true
 
           git checkout -B "$BRANCH"
 
@@ -58,20 +61,20 @@ jobs:
 
           git push --force-with-lease origin "$BRANCH"
 
+          echo "BRANCH=$BRANCH" >> "$GITHUB_ENV"
+
       - name: Create Pull Request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          BRANCH="automation/refresh-yarn-lockfile"
-          
+        run: |          
           if gh pr view "$BRANCH" >/dev/null 2>&1; then
             echo "PR already exists"
           else
             gh pr create \
-              --base "${{ github.event.repository.default_branch }}" \
-              --head "automation/refresh-yarn-lockfile" \
+              --base "${{ github.ref_name }}" \
+              --head "$BRANCH" \
               --title "chore: regenerate yarn.lock" \
-              --body "This PR was created automatically.
+              --body "This PR was created automatically from Refresh yarn lockfile Github Action.
 
           Changes:
           - Removed yarn.lock

@@ -42,7 +42,7 @@ jobs:
         run: |
           BRANCH="automation/refresh-yarn-lockfile"
 
-          git checkout -b "$BRANCH"
+          git checkout -B "$BRANCH"
 
           git config user.name openshift-pipelines-bot
           git config user.email pipelines-extcomm@redhat.com
@@ -71,15 +71,12 @@ jobs:
               --base "${{ github.event.repository.default_branch }}" \
               --head "automation/refresh-yarn-lockfile" \
               --title "chore: regenerate yarn.lock" \
-              --body "$(cat <<'EOF'
-            This PR was created automatically.
+              --body "This PR was created automatically.
 
-            Changes:
-            - Removed yarn.lock
-            - Re-ran yarn install
-            - Regenerated yarn.lock
-            EOF
-            )" \
-              --label "dependencies" \
-              --label "automated"
-            fi
+          Changes:
+          - Removed yarn.lock
+          - Re-ran yarn install
+          - Regenerated yarn.lock" \
+                  --label "dependencies" \
+                  --label "automated"
+          fi

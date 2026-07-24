@@ -304,9 +304,10 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
   const onFilterChange = useCallback(
     (key: string, value: string | string[]) => {
       if (key === 'timeRange') {
+        const selected = Array.isArray(value) ? value[0] : value;
         setTimespanDateFilter(
-          value
-            ? parseDurationForDateRangeFiltering(value as string)
+          selected
+            ? parseDurationForDateRangeFiltering(selected)
             : NO_DATE_RANGE_FILTER,
         );
         resetPage();

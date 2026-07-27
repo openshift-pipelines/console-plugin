@@ -270,6 +270,17 @@ export const DataViewFilterToolbar: FC<DataViewFilterToolbarProps> = ({
 
   const [labelInput, setLabelInput] = useState('');
 
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (!hideNameFilter && filterValues.name) count++;
+    if (!hideLabelFilter && filterValues.labels?.length) count++;
+    checkboxFilters.forEach((f) => {
+      const val = filterValues[f.id];
+      if (Array.isArray(val) && val.length > 0) count++;
+    });
+    return count;
+  }, [filterValues, checkboxFilters, hideNameFilter, hideLabelFilter]);
+
   const filterCategories = useMemo<FilterCategory[]>(() => {
     const categories: FilterCategory[] = [];
     if (!hideNameFilter) {
@@ -392,6 +403,9 @@ export const DataViewFilterToolbar: FC<DataViewFilterToolbarProps> = ({
   return (
     <Toolbar
       clearAllFilters={onClearAll}
+      numberOfFiltersText={() =>
+        `${activeFilterCount} ${activeFilterCount === 1 ? t('filter applied') : t('filters applied')}`
+      }
       customLabelGroupContent={
         <ToolbarItem>
           <Button variant="link" onClick={onClearAll} isInline>

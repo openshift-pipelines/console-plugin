@@ -2,32 +2,63 @@ name: Refresh yarn lockfile
 
 on:
   schedule:
-    # Every Monday at 03:00 UTC
-    - cron: "0 3 * * 1"
+    # Every Tuesday at 10:00 UTC (8:30AM IST)
+    - cron: "30 10 * * 2"
 
   workflow_dispatch:
-
+    inputs:
+      branch:
+        description: Branch to refresh
+        required: true
+        type: string
+        default: master
+          
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+
+    outputs:
+      branches: ${{ steps.set-matrix.outputs.branches }}
+
+    steps:
+      - name: Prepare branch matrix
+        id: set-matrix
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo 'branches=["${{ inputs.branch }}"]' >> "$GITHUB_OUTPUT"
+          else
+            echo 'branches=["master","main","release-v1.15.x","release-v1.20.x","release-v1.21.x","release-v1.22.x","release-v1.23.x","release-v1.24.x"]' >> "$GITHUB_OUTPUT"
+          fi
+
   refresh:
+    needs: prepare
+
+    strategy:
+      matrix:
+        branch: ${{ fromJSON(needs.prepare.outputs.branches) }}
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout target branch
         uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      
+
       - name: Enable Corepack
         run: |
-             corepack enable
-             corepack install --global yarn@4.6.0
+          corepack enable
+          corepack install --global yarn@4.6.0
 
       - name: Verify Yarn version
         run: yarn --version
@@ -35,28 +66,29 @@ jobs:
       - name: Remove yarn.lock
         run: rm -f yarn.lock
 
-      - name: Install dependencies to regenerate yarn.lock file
+      - name: Install dependencies to regenerate yarn.lock
         run: yarn install --no-immutable
 
       - name: Create branch and commit changes
+        shell: bash
         run: |
-          SOURCE_BRANCH="${{ github.ref_name }}"
+          SOURCE_BRANCH="${{ matrix.branch }}"
           BRANCH="automation/refresh-yarn-lockfile-${SOURCE_BRANCH}"
 
           git fetch origin "$BRANCH" || true
 
           git checkout -B "$BRANCH"
 
-          git config user.name openshift-pipelines-bot
-          git config user.email pipelines-extcomm@redhat.com
+          git config user.name "openshift-pipelines-bot"
+          git config user.email "pipelines-extcomm@redhat.com"
 
           git add yarn.lock
 
           if git diff --cached --quiet; then
-            echo "No changes."
+            echo "No changes for ${SOURCE_BRANCH}"
             exit 0
           fi
-          
+
           git commit -m "chore: regenerate yarn.lock"
 
           git push --force-with-lease origin "$BRANCH"
@@ -65,13 +97,14 @@ jobs:
 
       - name: Create Pull Request
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |          
-          if gh pr view "$BRANCH" >/dev/null 2>&1; then
-            echo "PR already exists"
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if gh pr view "$BRANCH" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            echo "PR already exists for ${BRANCH}"
           else
             gh pr create \
-              --base "${{ github.ref_name }}" \
+              --base "${{ matrix.branch }}" \
               --head "$BRANCH" \
               --title "chore: regenerate yarn.lock" \
               --body "This PR was created automatically from Refresh yarn lockfile Github Action.

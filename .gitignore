@@ -22,3 +22,5 @@ integration-tests/cypress-a11y-report.json
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
+.agentready/
+cve-artifacts/

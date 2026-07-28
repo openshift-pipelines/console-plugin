@@ -10,3 +10,10 @@ yarn-error.log
 .DS_Store
 *.pem
 integration-tests/cypress-a11y-report.json
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+.agentready/
+cve-artifacts/

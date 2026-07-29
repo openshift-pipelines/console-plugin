@@ -312,8 +312,12 @@ export const getTaskName = (task: TaskKind): string => {
 };
 
 export const getResourceModelFromTaskKind = (kind: string): K8sKind => {
-  if (kind === TaskModel.kind || kind === undefined) {
-    return TaskModel;
+  if (kind) {
+    if (kind == PipelineModel.kind) {
+      return PipelineModel;
+    } else if (kind === TaskModel.kind) {
+      return TaskModel;
+    }
   }
   return null;
 };

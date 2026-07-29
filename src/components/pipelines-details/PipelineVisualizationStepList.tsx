@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { StepStatus } from './pipeline-step-utils';
 import { StatusIcon } from './StatusIcon';
 import { getRunStatusColor } from '../utils/pipeline-augment';
-import { ComputedStatus } from '../../types';
+import { ComputedStatus, PipelineTask } from '../../types';
 import './PipelineVisualizationStepList.scss';
 
 export interface PipelineVisualizationStepListProps {
   isSpecOverview: boolean;
   taskName: string;
-  steps: StepStatus[];
+  steps: StepStatus[] | PipelineTask[];
   isFinallyTask?: boolean;
   hideHeader?: boolean;
 }
@@ -62,38 +62,39 @@ export const PipelineVisualizationStepList: FC<
           {t('Finally task')}
         </div>
       )}
-      {steps.map(({ duration, name, status }) => {
-        return (
-          <div
-            className={classNames(
-              'odc-pipeline-visualization-step-list__step',
-              {
-                'odc-pipeline-visualization-step-list__step--task-run':
-                  !isSpecOverview,
-              },
-            )}
-            key={name}
-          >
-            {!isSpecOverview ? (
-              <div className="odc-pipeline-visualization-step-list__icon">
-                <TooltipColoredStatusIcon status={status} />
+      {!!steps?.length &&
+        steps.map(({ duration, name, status }) => {
+          return (
+            <div
+              className={classNames(
+                'odc-pipeline-visualization-step-list__step',
+                {
+                  'odc-pipeline-visualization-step-list__step--task-run':
+                    !isSpecOverview,
+                },
+              )}
+              key={name}
+            >
+              {!isSpecOverview ? (
+                <div className="odc-pipeline-visualization-step-list__icon">
+                  <TooltipColoredStatusIcon status={status} />
+                </div>
+              ) : (
+                <span className="odc-pipeline-visualization-step-list__bullet">
+                  &bull;
+                </span>
+              )}
+              <div className="odc-pipeline-visualization-step-list__name">
+                {name}
               </div>
-            ) : (
-              <span className="odc-pipeline-visualization-step-list__bullet">
-                &bull;
-              </span>
-            )}
-            <div className="odc-pipeline-visualization-step-list__name">
-              {name}
+              {!isSpecOverview && (
+                <div className="odc-pipeline-visualization-step-list__duration">
+                  {duration}
+                </div>
+              )}
             </div>
-            {!isSpecOverview && (
-              <div className="odc-pipeline-visualization-step-list__duration">
-                {duration}
-              </div>
-            )}
-          </div>
-        );
-      })}
+          );
+        })}
     </div>
   );
 };

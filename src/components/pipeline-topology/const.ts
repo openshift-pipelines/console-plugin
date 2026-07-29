@@ -27,6 +27,7 @@ export const GRAPH_MIN_WIDTH = 300;
 export const GRAPH_MAX_HEIGHT_PERCENT = 45;
 
 export enum NodeType {
+  PIPELINE_NODE = 'pipeline-task', // for pipeline in pipelines
   TASK_NODE = 'task',
   CUSTOM_TASK_NODE = 'custom-task',
   APPROVAL_TASK_NODE = 'approval-task',

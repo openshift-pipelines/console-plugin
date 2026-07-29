@@ -12,9 +12,7 @@ import { getPipelineTaskLinks } from './utils';
 import TriggerTemplateResourceLink from './TriggerTemplateResourceLink';
 import { usePipelineTriggerTemplateNames } from '../utils/triggers';
 
-const PipelineDetails: FC<PipelineDetailsTabProps> = ({
-  obj: pipeline,
-}) => {
+const PipelineDetails: FC<PipelineDetailsTabProps> = ({ obj: pipeline }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const templateNames =
     usePipelineTriggerTemplateNames(
@@ -22,11 +20,12 @@ const PipelineDetails: FC<PipelineDetailsTabProps> = ({
       pipeline?.metadata?.namespace,
     ) || [];
 
-  const { taskLinks, finallyTaskLinks } = getPipelineTaskLinks(pipeline);
+  const { pipelineLinks, taskLinks, finallyTaskLinks } =
+    getPipelineTaskLinks(pipeline);
 
   return (
     <>
-      <PageSection hasBodyWrapper={false} isFilled >
+      <PageSection hasBodyWrapper={false} isFilled>
         <Title headingLevel="h2">{t('Pipeline details')}</Title>
         <PipelineVisualization pipeline={pipeline} />
         <Grid hasGutter>
@@ -39,6 +38,13 @@ const PipelineDetails: FC<PipelineDetailsTabProps> = ({
               model={TriggerTemplateModel}
               links={templateNames}
             />
+            {!!pipelineLinks?.length && (
+              <DynamicResourceLinkList
+                namespace={pipeline.metadata.namespace}
+                links={pipelineLinks}
+                title={t('Pipelines')}
+              />
+            )}
             <DynamicResourceLinkList
               namespace={pipeline.metadata.namespace}
               links={taskLinks}

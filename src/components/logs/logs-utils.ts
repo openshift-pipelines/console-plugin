@@ -4,7 +4,11 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { LaunchOverlay } from '@openshift-console/dynamic-plugin-sdk/lib/app/modal-support/OverlayProvider';
 import { saveAs } from 'file-saver';
-import { LOG_SOURCE_TERMINATED, LOG_SOURCE_WAITING } from '../../consts';
+import {
+  LOG_SOURCE_TERMINATED,
+  LOG_SOURCE_WAITING,
+  TektonResourceLabel,
+} from '../../consts';
 import { PodModel } from '../../models';
 import {
   ContainerSpec,
@@ -105,7 +109,11 @@ export const getDownloadAllLogsCallback = (
     const stepsList: ContainerStatus[][] = await Promise.all(
       sortedTaskRunNames.map((currTask) => {
         const { status } =
-          taskRuns.find((t) => t.metadata.name === currTask) ?? {};
+          taskRuns.find(
+            (t) =>
+              t?.metadata?.labels?.[TektonResourceLabel.pipelineTask] ===
+              currTask,
+          ) ?? {};
         return getOrderedStepsFromPod(
           status?.podName,
           namespace,
@@ -114,7 +122,10 @@ export const getDownloadAllLogsCallback = (
       }),
     );
     return sortedTaskRunNames.reduce((acc, currTask, i) => {
-      const taskRun = taskRuns.find((t) => t.metadata.name === currTask);
+      const taskRun = taskRuns.find(
+        (t) =>
+          t?.metadata?.labels?.[TektonResourceLabel.pipelineTask] === currTask,
+      );
       const pipelineTaskName =
         taskRun?.spec.taskRef?.name ?? taskRun?.metadata.name;
       const { status } = taskRun;
@@ -225,7 +236,10 @@ export const getDownloadAllLogsCallbackMultiCluster = (
     }
 
     for (const currTask of sortedTaskRunNames) {
-      const taskRun = taskRuns.find((t) => t.metadata.name === currTask);
+      const taskRun = taskRuns.find(
+        (t) =>
+          t?.metadata?.labels?.[TektonResourceLabel.pipelineTask] === currTask,
+      );
       if (!taskRun) continue;
 
       const pipelineTaskName =

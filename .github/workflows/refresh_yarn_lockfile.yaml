@@ -2,8 +2,8 @@ name: Refresh yarn lockfile
 
 on:
   schedule:
-    # Every Tuesday at 10:00 UTC (8:30AM IST)
-    - cron: "30 10 * * 2"
+    # Every Sunday at 03:00 UTC (8:30AM IST)
+    - cron: "0 3 * * 0"
 
   workflow_dispatch:
     inputs:
@@ -39,6 +39,7 @@ jobs:
     needs: prepare
 
     strategy:
+      fail-fast: false
       matrix:
         branch: ${{ fromJSON(needs.prepare.outputs.branches) }}
 
@@ -100,13 +101,22 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          if gh pr view "$BRANCH" --repo "${{ github.repository }}" >/dev/null 2>&1; then
-            echo "PR already exists for ${BRANCH}"
-          else
+          OPEN_PRS=$(gh pr list \
+            --repo "${{ github.repository }}" \
+            --head "$BRANCH" \
+            --state open \
+            --json number \
+            --jq 'length')
+
+          if [[ "$OPEN_PRS" -gt 0 ]]; then
+            echo "An open PR already exists for ${BRANCH}"
+            exit 0
+          fi
+
             gh pr create \
               --base "${{ matrix.branch }}" \
               --head "$BRANCH" \
-              --title "chore: regenerate yarn.lock" \
+              --title "chore: regenerate yarn.lock - ${{ matrix.branch }}" \
               --body "This PR was created automatically from Refresh yarn lockfile Github Action.
 
           Changes:
@@ -115,4 +125,3 @@ jobs:
           - Regenerated yarn.lock" \
                   --label "dependencies" \
                   --label "automated"
-          fi

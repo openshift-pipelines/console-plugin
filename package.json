@@ -186,7 +186,8 @@
   "resolutions": {
     "webpack": "^5.100.0",
     "@types/d3-dispatch": "3.0.6",
-    "@types/d3-selection": "3.0.10"
+    "@types/d3-selection": "3.0.10",
+    "js-yaml@4.2.0": "4.3.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": "eslint --fix",

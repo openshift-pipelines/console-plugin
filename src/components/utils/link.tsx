@@ -3,7 +3,7 @@ import type { FC, ReactNode } from 'react';
 
 import { useState } from 'react';
 import cx from 'classnames';
-import Linkify from 'react-linkify';
+import Linkify from 'linkify-react';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
 import { Tooltip } from '@patternfly/react-core';
@@ -158,10 +158,10 @@ export const ExternalLinkWithCopy: FC<ExternalLinkWithCopyProps> = ({
 };
 
 // Open links in a new window and set noopener/noreferrer.
-export const LinkifyExternal: FC<{ children: ReactNode }> = ({
-  children,
-}) => (
-  <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>
+export const LinkifyExternal: FC<{ children: ReactNode }> = ({ children }) => (
+  <Linkify
+    options={{ attributes: { target: '_blank', rel: 'noopener noreferrer' } }}
+  >
     {children}
   </Linkify>
 );

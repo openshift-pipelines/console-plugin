@@ -783,13 +783,16 @@ export const getChildPipelinesFromPipelineRun = (
   }));
 };
 
+export const isPipelineInPipeline = (pipeline: PipelineKind): boolean =>
+  pipeline?.spec?.tasks?.some(isPipelineInPipelineTask) ?? false;
+
 export const isPipelineInPipelineTask = (task: PipelineTask): boolean =>
   !!task?.pipelineRef;
 
 export const isPipelineInPipelineRun = (
   pipelineRun: PipelineRunKind,
 ): boolean =>
-  pipelineRun?.status?.childReferences.some(
+  pipelineRun?.status?.childReferences?.some(
     (child) => child.kind === 'PipelineRun',
   ) ||
   pipelineRun?.status?.pipelineSpec?.tasks?.some((item) => item.pipelineRef);

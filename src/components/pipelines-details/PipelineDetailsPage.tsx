@@ -2,6 +2,7 @@ import {
   BreadcrumbItem,
   Content,
   ContentVariants,
+  Tooltip,
 } from '@patternfly/react-core';
 import { useMemo, useCallback } from 'react';
 import { Link, useParams } from 'react-router';
@@ -22,6 +23,8 @@ import { PipelineKind } from '../../types';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import PipelineParamatersTab from './PipelineParamatersTab';
 import { ErrorPage404 } from '../common/error';
+import { isPipelineInPipeline } from '../utils/pipeline-utils';
+import { AutomationIcon as PipelineInPipelineIcon } from '@patternfly/react-icons';
 
 const PipelineDetailsPage = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
@@ -35,7 +38,14 @@ const PipelineDetailsPage = () => {
 
   const resourceTitleFunc = useMemo(() => {
     return (
-      <div className="Pipeline-details-page">{pipeline?.metadata?.name} </div>
+      <div className="Pipeline-details-page pf-v6-l-flex pf-v6-u-align-items-center">
+        {pipeline?.metadata?.name}
+        {isPipelineInPipeline(pipeline) ? (
+          <Tooltip content={t('Pipeline in Pipeline')}>
+            <PipelineInPipelineIcon className="opp-pipeline-run-list__results-indicator" />
+          </Tooltip>
+        ) : null}
+      </div>
     );
   }, [pipeline]);
 

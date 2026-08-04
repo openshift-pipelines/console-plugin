@@ -5,7 +5,11 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import type { FC } from 'react';
 import { memo } from 'react';
-import { ArchiveIcon, MulticlusterIcon } from '@patternfly/react-icons';
+import {
+  ArchiveIcon,
+  AutomationIcon as PipelineInPipelineIcon,
+  MulticlusterIcon,
+} from '@patternfly/react-icons';
 import { PipelineRunKind } from '../../types';
 import { ResourceLinkWithIcon } from '../utils/resource-link';
 import { NamespaceModel, PipelineRunModel } from '../../models';
@@ -30,7 +34,10 @@ import LinkedPipelineRunTaskStatus from '../pipelines-list/status/LinkedPipeline
 import { ExternalLink } from '../utils/link';
 import { t, truncateMiddle } from '../utils/common-utils';
 import { sanitizeBranchName } from '../utils/repository-utils';
-import { pipelineRunDuration } from '../utils/pipeline-utils';
+import {
+  isPipelineInPipelineRun,
+  pipelineRunDuration,
+} from '../utils/pipeline-utils';
 import PipelineRunStatusContent from '../status/PipelineRunStatusContent';
 import {
   actionsCellProps,
@@ -100,6 +107,11 @@ export const getPipelineRunsListDataViewRows: GetDataViewRows<
                 {obj.spec?.managedBy === PIPELINE_RUN_MANAGED_BY_KUEUE_LABEL ? (
                   <Tooltip content={t('Multicluster Pipeline Run')}>
                     <MulticlusterIcon className="opp-pipeline-run-list__results-indicator" />
+                  </Tooltip>
+                ) : null}
+                {isPipelineInPipelineRun(obj) ? (
+                  <Tooltip content={t('Pipeline in Pipeline Run')}>
+                    <PipelineInPipelineIcon className="opp-pipeline-run-list__results-indicator" />
                   </Tooltip>
                 ) : null}
               </>

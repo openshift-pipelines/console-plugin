@@ -262,25 +262,21 @@ function isVersionSatisfied(installed: string, required: string): boolean {
 
 /**
  * Find the fix version that matches the same major as the installed version.
- * If no exact major match, falls forward to the nearest higher fix version
- * (e.g., installed 3.x with fixes [2.5.6, 4.0.6] → returns 4.0.6).
+ * Returns undefined if no same-major fix exists — never crosses major boundaries
+ * because forcing e.g. 1.x → 2.x can break semver contracts of consuming packages.
  */
 function getFixForVersion(
   installed: string,
   fixedVersions: string[],
 ): string | undefined {
   const major = semver.major(installed);
-  const exactMatch = fixedVersions.find((fv) => semver.major(fv) === major);
-  if (exactMatch) return exactMatch;
-  const higher = fixedVersions
-    .filter((fv) => semver.major(fv) > major)
-    .sort((a, b) => semver.compare(a, b));
-  return higher[0];
+  return fixedVersions.find((fv) => semver.major(fv) === major);
 }
 
 /**
  * Check if an installed version is satisfied by any of the fixed versions
- * (matched by major). Returns true if the installed version >= the fix for its major.
+ * (matched by major). If no same-major fix exists, the version is considered
+ * vulnerable (needs triage — cross-major forcing breaks semver contracts).
  */
 function isVersionSatisfiedMulti(
   installed: string,
@@ -292,8 +288,11 @@ function isVersionSatisfiedMulti(
 }
 
 /**
- * Build per-major-version resolution entries for all vulnerable installed versions.
- * e.g. {"pkg@^2.0.0": "2.5.6", "pkg@^4.0.0": "4.0.6"}
+ * Build resolution entries for all vulnerable installed versions.
+ * Groups versions by major and checks ALL copies — not just the first.
+ * Generates both scoped ("pkg@^X.0.0") and pinned ("pkg@X.Y.Z") entries
+ * to catch both range-based and exact-pinned dependency descriptors.
+ * Skips majors with no same-major fix (those become triage-needed).
  */
 function buildResolutionEntries(
   pkg: string,
@@ -301,15 +300,23 @@ function buildResolutionEntries(
   fixedVersions: string[],
 ): Record<string, string> {
   const entries: Record<string, string> = {};
-  const seenMajors = new Set<number>();
+  const byMajor = new Map<number, string[]>();
   for (const v of installedVersions) {
     const major = semver.major(v);
-    if (seenMajors.has(major)) continue;
-    seenMajors.add(major);
-    const fix = getFixForVersion(v, fixedVersions);
-    if (fix && !isVersionSatisfied(v, fix)) {
-      const key = fixedVersions.length > 1 ? `${pkg}@^${major}.0.0` : pkg;
-      entries[key] = fix;
+    if (!byMajor.has(major)) byMajor.set(major, []);
+    byMajor.get(major)!.push(v);
+  }
+
+  for (const [major, versions] of byMajor) {
+    const fix = getFixForVersion(versions[0], fixedVersions);
+    if (!fix) continue;
+
+    const vulnerable = versions.filter((v) => !isVersionSatisfied(v, fix));
+    if (vulnerable.length === 0) continue;
+
+    entries[`${pkg}@^${major}.0.0`] = fix;
+    for (const v of vulnerable) {
+      entries[`${pkg}@${v}`] = fix;
     }
   }
   return entries;
@@ -331,11 +338,32 @@ function main(): void {
   if (installedVersions.length === 0 && currentVersion) {
     installedVersions = [currentVersion];
   }
-  const allSatisfied =
-    installedVersions.length > 0 &&
-    installedVersions.every((v) =>
-      isVersionSatisfiedMulti(v, args.fixedVersions),
-    );
+
+  if (installedVersions.length === 0) {
+    const result: AnalysisResult = {
+      package: args.package,
+      currentVersion,
+      fixedVersion: args.fixedVersion,
+      isSharedWithSDK: false,
+      dependencyChains: chains,
+      directParents: [],
+      parentUpgradeAvailable: false,
+      parentUpgradeSuggestions: [],
+      fixedVersionAvailable: true,
+      availableVersions: [],
+      strategy: 'already-remediated',
+      reason: 'Package is not installed in the dependency tree',
+      yarnWhyRaw,
+      npmLsRaw,
+      resolutionEntries: {},
+    };
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
+
+  const allSatisfied = installedVersions.every((v) =>
+    isVersionSatisfiedMulti(v, args.fixedVersions),
+  );
   if (allSatisfied) {
     const sharedWithSDK = isTransitiveSDKDep(chains);
     const result: AnalysisResult = {
@@ -402,6 +430,15 @@ function main(): void {
     installedVersions,
     args.fixedVersions,
   );
+
+  if (
+    strategy === 'resolution' &&
+    Object.keys(resolutionEntries).length === 0
+  ) {
+    strategy = 'triage-needed';
+    reason =
+      'No same-major fix available — cross-major resolution would break semver contracts; needs manual triage';
+  }
 
   const result: AnalysisResult = {
     package: args.package,

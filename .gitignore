@@ -11,3 +11,9 @@ yarn-error.log
 *.pem
 integration-tests/cypress-a11y-report.json
 .yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+.agentready/
+cve-artifacts/

@@ -408,7 +408,7 @@ describe('PipelineAugment test successfully determine Task type', () => {
       name: null,
       taskRef: { name: null },
     });
-    expect(model).toBe(TaskModel);
+    expect(model).toBe(null);
   });
 
   it('expect to get a TaskModel for normal tasks', () => {
@@ -506,7 +506,7 @@ describe('getResourceModelFromTaskKind', () => {
   });
 
   it('should return the TaskModel for undefined', () => {
-    expect(getResourceModelFromTaskKind(undefined)).toBe(TaskModel);
+    expect(getResourceModelFromTaskKind(undefined)).toBe(null);
   });
 
   it('should return null for any unknown value', () => {

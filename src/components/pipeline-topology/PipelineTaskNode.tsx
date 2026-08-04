@@ -20,10 +20,15 @@ import {
 import classNames from 'classnames';
 import { Link } from 'react-router';
 import { NodeType } from './const';
-import { PipelineRunModel, TaskModel } from '../../models';
+import { PipelineModel, PipelineRunModel, TaskModel } from '../../models';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
-import { ComputedStatus, TaskKind } from '../../types';
+import {
+  ComputedStatus,
+  TaskKind,
+  PipelineKind,
+  PipelineTask,
+} from '../../types';
 import { pipelineRunFilterReducer } from '../utils/pipeline-filter-reducer';
 import {
   createStepStatus,
@@ -39,6 +44,36 @@ type PipelineTaskNodeProps = {
 } & WithContextMenuProps &
   WithSelectionProps;
 
+const getResource = (
+  ref: PipelineTask['pipelineRef'] | PipelineTask['taskRef'],
+  ns: string,
+  model: typeof TaskModel | typeof PipelineModel,
+  prop: 'task' | 'pipeline',
+) => {
+  if (!ref) return undefined;
+  if (ref.resolver === 'cluster') {
+    const resourceName = ref?.params?.find(
+      (param) => param.name === 'name',
+    )?.value;
+    const resourceNamespace = ref?.params?.find(
+      (param) => param.name === 'namespace',
+    )?.value;
+
+    return {
+      kind: getReferenceForModel(model),
+      name: resourceName,
+      namespace: resourceNamespace || ns,
+      prop,
+    };
+  }
+  return {
+    kind: getReferenceForModel(model),
+    name: ref.name,
+    namespace: ns,
+    prop,
+  };
+};
+
 const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
   element,
   onContextMenu,
@@ -47,41 +82,36 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const data = element.getData();
+  const ns = data.pipeline.metadata.namespace;
+
   const [hover, hoverRef] = useHover();
   const taskRef = useRef();
   const detailsLevel = useDetailsLevel();
   const isFinallyTask = element.getType() === NodeType.FINALLY_NODE;
-  let resources;
-  if (data.task?.taskRef?.resolver === 'cluster') {
-    const taskName = data.task.taskRef?.params?.find(
-      (param) => param.name === 'name',
-    )?.value;
-    const taskNamespace = data.task.taskRef?.params?.find(
-      (param) => param.name === 'namespace',
-    )?.value;
+  const isPipelineTask = !!data.task?.pipelineRef;
 
-    resources = {
-      kind: getReferenceForModel(TaskModel),
-      name: taskName,
-      namespace: taskNamespace || data.pipeline.metadata.namespace,
-      prop: 'task',
-    };
-  } else if (data.task?.taskRef) {
-    resources = {
-      kind: getReferenceForModel(TaskModel),
-      name: data.task.taskRef.name,
-      namespace: data.pipeline.metadata.namespace,
-      prop: 'task',
-    };
-  }
-  const [task] = useK8sWatchResource<TaskKind>(resources);
+  const resources = isPipelineTask
+    ? getResource(data.task?.pipelineRef, ns, PipelineModel, 'pipeline')
+    : getResource(data.task?.taskRef, ns, TaskModel, 'task');
 
-  const computedTask = task && Object.keys(task).length ? task : data.task;
+  //const resources = getResource(data.task?.taskRef, ns, TaskModel, 'task');
+
+  const [resource] = useK8sWatchResource<TaskKind | PipelineKind>(resources);
+
+  const computedTask = isPipelineTask
+    ? data.task
+    : resource && Object.keys(resource).length
+    ? (resource as TaskKind)
+    : data.task;
   const stepList =
     computedTask?.status?.steps ||
     computedTask?.spec?.steps ||
     computedTask?.taskSpec?.steps ||
     [];
+
+  const childPipelineTasks = isPipelineTask
+    ? (resource as PipelineKind)?.spec?.tasks
+    : undefined;
 
   const pipelineRunStatus =
     data.pipelineRun && pipelineRunFilterReducer(data.pipelineRun);
@@ -120,7 +150,7 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
     ({ status }) => status === ComputedStatus.Succeeded,
   ).length;
 
-  const badge =
+  const statusBadge =
     stepStatusList.length > 0 && data.status
       ? `${succeededStepsCount}/${stepStatusList.length}`
       : null;
@@ -135,6 +165,7 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
     return newData;
   }, [data]);
 
+  const kindModel = isPipelineTask ? PipelineModel : TaskModel;
   const hasTaskIcon = !!(data.taskIconClass || data.taskIcon);
   const tooltipContent = getTooltipContent(data.task?.status?.reason, t);
   const whenDecorator = data.whenStatus ? (
@@ -169,6 +200,11 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
 
   const taskNode = (
     <TaskNode
+      badge={
+        kindModel === TaskModel && statusBadge
+          ? `${kindModel.abbr} ${statusBadge}`
+          : kindModel.abbr
+      }
       className="odc-pipeline-topology__task-node"
       element={element}
       onContextMenu={data.showContextMenu ? onContextMenu : undefined}
@@ -179,7 +215,6 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
       hideDetailsAtMedium
       {...passedData}
       {...rest}
-      badge={badge}
       truncateLength={element.getData()?.label?.length}
     >
       {whenDecorator}
@@ -209,7 +244,11 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
             <PipelineVisualizationStepList
               isSpecOverview={!data.status}
               taskName={element.getLabel()}
-              steps={stepStatusList}
+              steps={
+                kindModel === PipelineModel
+                  ? childPipelineTasks
+                  : stepStatusList
+              }
               isFinallyTask={isFinallyTask}
             />
           }

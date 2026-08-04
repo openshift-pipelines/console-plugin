@@ -1,15 +1,15 @@
 import {
   ComponentFactory,
   DagreLayout,
+  DefaultTaskGroup,
+  Graph,
   GraphComponent,
   LayoutFactory,
   ModelKind,
-  Graph,
-  TaskEdge,
   PipelineDagreLayout,
-  withPanZoom,
   SpacerNode,
-  DefaultTaskGroup,
+  TaskEdge,
+  withPanZoom,
 } from '@patternfly/react-topology';
 import ApprovalTaskNode from './ApprovalTaskNode';
 import BuilderFinallyNode from './BuilderFinallyNode';
@@ -72,6 +72,7 @@ export const dagreViewerComponentFactory: ComponentFactory = (
     case ModelKind.node:
       switch (type) {
         case NodeType.TASK_NODE:
+        case NodeType.PIPELINE_NODE:
         case NodeType.FINALLY_NODE:
           return PipelineTaskNode;
         case NodeType.CUSTOM_TASK_NODE:

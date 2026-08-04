@@ -11,8 +11,23 @@ import { groupVersionFor } from '../utils/k8s-utils';
 import { getSafeTaskResourceKind } from '../utils/pipeline-augment';
 
 type PipelineTaskLinks = {
+  pipelineLinks: ResourceModelLink[];
   taskLinks: ResourceModelLink[];
   finallyTaskLinks: ResourceModelLink[];
+};
+
+const partition = (items: ResourceModelLink[]) => {
+  const pipelines: ResourceModelLink[] = [];
+  const tasks: ResourceModelLink[] = [];
+  for (const item of items) {
+    if (item.resourceKind === 'Pipeline') {
+      pipelines.push(item);
+    } else {
+      /* Embedded tasks, approval tasks, custom tasks, and any unresolved kinds are pushed to tasks */
+      tasks.push(item);
+    }
+  }
+  return { pipelines, tasks };
 };
 
 export const getPipelineTaskLinks = (
@@ -55,6 +70,30 @@ export const getPipelineTaskLinks = (
               qualifier: task.name,
               disableLink: true,
             };
+      } else if (task?.pipelineRef) {
+        if (task.pipelineRef.resolver === 'cluster') {
+          const nameParam = task.pipelineRef.params?.find(
+            (param) => param.name === 'name',
+          )?.value;
+          const namespaceParam = task.pipelineRef.params?.find(
+            (param) => param.name === 'namespace',
+          )?.value;
+
+          return {
+            resourceKind: getSafeTaskResourceKind(task.pipelineRef.kind),
+            name: nameParam,
+            qualifier: task.name,
+            namespace: namespaceParam ?? PIPELINE_NAMESPACE,
+            resourceApiVersion: version,
+          };
+        }
+
+        return {
+          resourceKind: 'Pipeline',
+          name: task.pipelineRef.name,
+          qualifier: task.name,
+          resourceApiVersion: version,
+        };
       }
       return {
         resourceKind: 'EmbeddedTask',
@@ -64,9 +103,17 @@ export const getPipelineTaskLinks = (
       };
     });
   };
+
+  const allTask = toResourceLinkData(pipeline.spec.tasks);
+  const allFinallyTask = toResourceLinkData(pipeline.spec.finally);
+  const { pipelines: taskPipelines, tasks: taskLinks } = partition(allTask);
+  const { pipelines: finallyPipelines, tasks: finallyTaskLinks } =
+    partition(allFinallyTask);
+
   return {
-    taskLinks: toResourceLinkData(pipeline.spec.tasks),
-    finallyTaskLinks: toResourceLinkData(pipeline.spec.finally),
+    pipelineLinks: [...taskPipelines, ...finallyPipelines],
+    taskLinks,
+    finallyTaskLinks,
   };
 };
 

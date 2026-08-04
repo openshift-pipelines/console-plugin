@@ -36,9 +36,7 @@ type PipelineVisualizationSurfaceProps = {
   noScrollbar?: boolean;
 };
 
-const PipelineVisualizationSurface: FC<
-  PipelineVisualizationSurfaceProps
-> = ({
+const PipelineVisualizationSurface: FC<PipelineVisualizationSurfaceProps> = ({
   model,
   componentFactory,
   showControlBar = false,
@@ -100,6 +98,21 @@ const PipelineVisualizationSurface: FC<
     [setMaxSize, layout],
   );
 
+  const applyStoredGraphState = useCallback((nextModel: Model) => {
+    const stored = storedGraphModel.current;
+    // Only restore pan/zoom for the same graph.
+    if (stored && stored.id === nextModel.graph?.id) {
+      nextModel.graph = {
+        ...nextModel.graph,
+        x: stored.x,
+        y: stored.y,
+        scale: stored.scale,
+      };
+    } else {
+      storedGraphModel.current = null;
+    }
+  }, []);
+
   useEffect(() => {
     if (vis === null) {
       const visualization = new Visualization();
@@ -114,24 +127,18 @@ const PipelineVisualizationSurface: FC<
       });
       setVis(visualization);
     } else {
-      const graph = storedGraphModel.current;
-      if (graph) {
-        model.graph = graph;
-      }
+      applyStoredGraphState(model);
       vis.fromModel(model);
       vis.getGraph().layout();
     }
-  }, [vis, model, onLayoutUpdate, componentFactory]);
+  }, [vis, model, onLayoutUpdate, componentFactory, applyStoredGraphState]);
 
   useEffect(() => {
     if (model && vis) {
-      const graph = storedGraphModel.current;
-      if (graph) {
-        model.graph = graph;
-      }
+      applyStoredGraphState(model);
       vis.fromModel(model);
     }
-  }, [model, vis]);
+  }, [model, vis, applyStoredGraphState]);
 
   if (!vis) return null;
 

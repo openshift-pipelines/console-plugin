@@ -22,6 +22,7 @@ export enum AddNodeDirection {
 }
 
 export enum NodeType {
+  PIPELINE_NODE = 'pipeline-task', // for pipeline in pipelines
   TASK_NODE = 'task',
   CUSTOM_TASK_NODE = 'custom-task',
   APPROVAL_TASK_NODE = 'approval-task',

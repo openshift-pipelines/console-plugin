@@ -22,6 +22,7 @@ import {
 import {
   appendPipelineRunStatus,
   getPipelineTasks,
+  isPipelineInPipelineTask,
 } from '../utils/pipeline-utils';
 import {
   AddNodeDirection,
@@ -485,6 +486,9 @@ export const getGraphDataModel = (
     const getNodeType = (taskKind: string) => {
       if (!taskKind || taskKind === 'Task' || taskKind === 'task') {
         return NodeType.TASK_NODE;
+      }
+      if (isPipelineInPipelineTask(task) || taskKind === 'Pipeline') {
+        return NodeType.PIPELINE_NODE;
       }
       if (taskKind === 'ApprovalTask') {
         return NodeType.APPROVAL_TASK_NODE;

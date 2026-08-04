@@ -7,10 +7,10 @@ import {
   useResolvedExtensions,
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as _ from 'lodash';
+import { HUB_INTEGRATION_KEY } from '../../consts';
 import { TektonConfigModel } from '../../models';
 import { useK8sGet } from '../hooks/use-k8sGet-hook';
 import * as catalogImg from '../imgs/catalog-icon.svg';
-import { TEKTON_HUB_INTEGRATION_KEY, TektonHubTask } from './apis/tektonHub';
 
 enum CatalogVisibilityState {
   Enabled = 'Enabled',
@@ -152,28 +152,24 @@ export const getIconProps = (item: CatalogItem) => {
   return { iconImg: catalogImg, iconClass: null };
 };
 
-export const getClusterPlatform = (): string =>
-  `${(window as any).SERVER_FLAGS.GOOS}/${(window as any).SERVER_FLAGS.GOARCH}`;
-
-export const filterBySupportedPlatforms = (task: TektonHubTask): boolean => {
-  const supportedPlatforms = task?.platforms.map((p) => p.name) ?? [];
-  return supportedPlatforms.includes(getClusterPlatform());
-};
-
-export const useTektonHubIntegration = () => {
+/* Returns [artifactHubIntegrationStatus, IsIntegrationLoaded] */
+export const useHubIntegration = (): [boolean, boolean] => {
   const [config, configLoaded, configLoadErr] = useK8sGet<K8sResourceKind>(
     TektonConfigModel,
     'config',
   );
   if (!configLoaded) {
-    return false;
+    return [false, false];
   }
-  // return false only if TEKTON_HUB_INTEGRATION_KEY value is set to 'false'
-  if (config && configLoaded && !configLoadErr) {
+  if (config && !configLoadErr) {
     const devconsoleIntegrationEnabled = config.spec?.hub?.params?.find(
-      (p) => p.name === TEKTON_HUB_INTEGRATION_KEY,
+      (p) => p.name === HUB_INTEGRATION_KEY,
     );
-    return devconsoleIntegrationEnabled?.value?.toLowerCase() !== 'false';
+    return [
+      devconsoleIntegrationEnabled?.value?.toLowerCase() !== 'false',
+      true,
+    ];
   }
-  return true;
+  // If the param "enable-devconsole-integration" is unset then integration defaults to enabled. ArtifactHub tasks will show up -- same behavior as setting it to "true".
+  return [true, true];
 };

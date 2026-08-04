@@ -325,20 +325,6 @@
     }
   },
   {
-    "type": "console.model-metadata",
-    "properties": {
-      "model": {
-        "group": "operator.tekton.dev",
-        "version": "v1alpha1",
-        "kind": "TektonHub"
-      },
-      "color": "#38812f",
-      "label": "%plugin__pipelines-console-plugin~TektonHub%",
-      "labelPlural": "%plugin__pipelines-console-plugin~TektonHubs%",
-      "abbr": "TH"
-    }
-  }, 
-  {
     "type": "console.context-provider",
     "properties": {
       "provider": {
@@ -1480,7 +1466,7 @@
     "properties": {
       "type": "Community",
       "title": "%plugin__pipelines-console-plugin~Community%",
-      "catalogDescription": "%plugin__pipelines-console-plugin~Browse tekton hub tasks.%"
+      "catalogDescription": "%plugin__pipelines-console-plugin~Browse community tasks.%"
     },
     "flags": {
       "required": [
@@ -1496,21 +1482,6 @@
       "type": "Red Hat",
       "title": "%plugin__pipelines-console-plugin~Tasks%",
       "provider": { "$codeRef": "catalog.TektonTaskProvider" }
-    },
-    "flags": {
-      "required": [
-        "OPENSHIFT_PIPELINE",
-        "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
-      ]
-    }
-  },
-  {
-    "type": "console.catalog/item-provider",
-    "properties": {
-      "catalogId": "pipelines-task-catalog",
-      "type": "Community",
-      "title": "%plugin__pipelines-console-plugin~Tasks%",
-      "provider": { "$codeRef": "catalog.TektonHubTaskProvider" }
     },
     "flags": {
       "required": [

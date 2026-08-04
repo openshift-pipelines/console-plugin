@@ -19,6 +19,7 @@ import { fetchArtifactHubTasks } from '../catalog/apis/artifactHub';
 import { normalizeArtifactHubTasks } from '../catalog/providers/useArtifactHubTasksProvider';
 import { TaskSearchCallback } from '../pipeline-builder/types';
 import useTasksProvider from '../catalog/providers/useTasksProvider';
+import { useHubIntegration } from '../catalog/catalog-utils';
 
 import './QuickSearchModalBody.scss';
 import { FLAGS } from '../../types';
@@ -58,6 +59,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   const MIN_WIDTH = 225;
   const history = useHistory();
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
+  const [artifactHubIntegrationStatus] = useHubIntegration();
   const [catalogItems, setCatalogItems] = React.useState<CatalogItem[]>(null);
   const [catalogTypes, setCatalogTypes] = React.useState<CatalogType[]>([]);
   const [isRndActive, setIsRndActive] = React.useState(false);
@@ -164,7 +166,9 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       }
 
       const [artifactHubResults, catalogResults] = await Promise.all([
-        fetchArtifactHubTasks(value),
+        artifactHubIntegrationStatus
+          ? fetchArtifactHubTasks(value) // only fetch artifact hub tasks if the integration is enabled
+          : Promise.resolve([]), // if the integration is disabled, return an empty array
         searchCatalog(value),
       ]);
 
@@ -196,7 +200,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       setQueryArgument('catalogSearch', value);
       setSelectedItemId(null);
     },
-    [searchCatalog],
+    [searchCatalog, artifactHubIntegrationStatus],
   );
 
   const debouncedHandleSearch = React.useMemo(

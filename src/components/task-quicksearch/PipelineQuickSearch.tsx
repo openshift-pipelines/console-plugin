@@ -12,13 +12,11 @@ import {
   UpdateTasksCallback,
 } from '../pipeline-builder/types';
 import {
-  createTask,
   findInstalledTask,
   getSelectedVersionUrl,
   isArtifactHubTask,
   isTaskSearchable,
   TaskProviders,
-  updateTask,
 } from './pipeline-quicksearch-utils';
 import { safeName } from '../pipeline-builder/utils';
 import PipelineQuickSearchDetails from './PipelineQuickSearchDetails';
@@ -28,6 +26,7 @@ import { QuickSearchProviders } from './quick-search-types';
 import { QuickSearchController } from '../quick-search';
 import {
   createArtifactHubTask,
+  getArtifactHubTaskDetails,
   updateArtifactHubTask,
 } from '../catalog/apis/artifactHub';
 import { FLAGS } from '../../types';
@@ -112,62 +111,44 @@ const Contents: React.FC<
 
   const catalogServiceItems = catalogService.items.reduce((acc, item) => {
     const installedTask = findInstalledTask(catalogService.items, item);
-
     if (
-      (item.provider === TaskProviders.artifactHub ||
-        item.provider === TaskProviders.tektonHub) &&
+      item.provider === TaskProviders.artifactHub &&
       item.type !== TaskProviders.redhat
     ) {
       item.attributes.installed = '';
       if (installedTask) {
         item.attributes.installed =
-          installedTask.attributes?.versions[0]?.version?.toString();
+          installedTask.attributes?.versions[0]?.version?.toString() ??
+          installedTask.attributes?.installed?.toString();
       }
     }
 
-    item.cta.callback = ({ selectedVersion }) => {
+    item.cta.callback = async ({ selectedVersion }) => {
+      let selectedVersionUrl = getSelectedVersionUrl(item, selectedVersion);
+      if (isArtifactHubTask(item) && !selectedVersionUrl) {
+        try {
+          const details = await getArtifactHubTaskDetails(
+            item,
+            selectedVersion,
+            isDevConsoleProxyAvailable,
+          );
+          selectedVersionUrl = details.content_url;
+        } catch (err) {
+          console.warn('Error fetching ArtifactHub task details:', err);
+          return;
+        }
+      }
+
       return new Promise((resolve) => {
         if (!isArtifactHubTask(item)) {
-          if (item.provider === TaskProviders.tektonHub) {
-            const selectedVersionUrl = getSelectedVersionUrl(
-              item,
-              selectedVersion,
-            );
-            if (installedTask) {
-              if (selectedVersion === item.attributes.installed) {
-                resolve(savedCallback.current(installedTask.data));
-              } else {
-                resolve(
-                  savedCallback.current({ metadata: { name: item.data.name } }),
-                );
-                updateTask(
-                  selectedVersionUrl,
-                  installedTask,
-                  namespace,
-                  item.data.name,
-                ).catch(() => setFailedTasks([...failedTasks, item.data.name]));
-              }
-            } else {
-              handleTaskCreationWithNameConflict(
-                item.data.name,
-                (taskNameToUse) =>
-                  createTask(selectedVersionUrl, namespace, taskNameToUse),
-                resolve,
-              );
-            }
-          } else {
-            resolve(savedCallback.current(item.data));
-          }
+          resolve(savedCallback.current(item.data));
+          return;
         }
 
         if (
           item.provider === TaskProviders.artifactHub &&
           isArtifactHubTask(item)
         ) {
-          const selectedVersionUrl = getSelectedVersionUrl(
-            item,
-            selectedVersion,
-          );
           if (installedTask) {
             if (selectedVersion === item.attributes.installed) {
               resolve(savedCallback.current(installedTask.data));
@@ -184,9 +165,13 @@ const Contents: React.FC<
                 item.data.task.name,
                 selectedVersion,
                 isDevConsoleProxyAvailable,
-              ).catch(() =>
-                setFailedTasks([...failedTasks, item.data.task.name]),
-              );
+              ).catch((error) => {
+                console.warn(
+                  'Error updating ArtifactHub task - callsite PipelineQuickSearch:',
+                  error,
+                );
+                setFailedTasks([...failedTasks, item.data.task.name]);
+              });
             }
           } else {
             handleTaskCreationWithNameConflict(

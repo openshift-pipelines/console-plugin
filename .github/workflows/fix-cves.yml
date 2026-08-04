@@ -1,0 +1,239 @@
+name: Fix CVEs
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_branch:
+        description: Release branch to fix (e.g. release-v1.22.x)
+        required: true
+        type: string
+      jira_id:
+        description: Jira ticket ID (optional, e.g. SRVKP-12345)
+        required: false
+        type: string
+        default: ""
+      fixes:
+        description: >-
+          One package per line: package@version or package@ver1,ver2
+          Example: protobufjs@7.6.5,8.6.6
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  fix-cves:
+    runs-on: ubuntu-latest
+    env:
+      ARTIFACTS_DIR: cve-artifacts
+      JIRA_ID: ${{ inputs.jira_id }}
+      RELEASE_BRANCH: ${{ inputs.release_branch }}
+
+    steps:
+      - name: Checkout release branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_branch }}
+          fetch-depth: 0
+
+      - name: Load CVE scripts from default branch
+        run: |
+          git fetch origin master --depth=1
+          git checkout origin/master -- scripts/fix-cves/
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack install --global yarn@4.6.0
+          yarn --version
+      - name: Install dependencies
+        run: yarn install --no-immutable
+      - name: Write fixes input
+        env:
+          FIXES_TEXT: ${{ inputs.fixes }}
+        run: |
+          mkdir -p "$ARTIFACTS_DIR"
+          printf '%s\n' "$FIXES_TEXT" > "$ARTIFACTS_DIR/fixes.txt"
+          echo "Fixes input:"
+          cat "$ARTIFACTS_DIR/fixes.txt"
+
+      - name: Apply dependency fixes
+        id: apply
+        continue-on-error: true
+        run: |
+          yarn ts-node --project scripts/fix-cves/tsconfig.json \
+            scripts/fix-cves/apply-fixes.ts \
+            --jira "$JIRA_ID" \
+            --release-branch "$RELEASE_BRANCH" \
+            --fixes "$ARTIFACTS_DIR/fixes.txt" \
+            --artifacts-dir "$ARTIFACTS_DIR"
+
+      - name: Verify fixes
+        id: verify
+        continue-on-error: true
+        run: |
+          yarn ts-node --project scripts/fix-cves/tsconfig.json \
+            scripts/fix-cves/verify-fixes.ts \
+            --artifacts-dir "$ARTIFACTS_DIR"
+
+      - name: Build
+        id: build
+        continue-on-error: true
+        run: yarn build
+
+      - name: Test
+        id: test
+        continue-on-error: true
+        run: yarn test
+
+      - name: Record build/test status
+        if: always() && hashFiles('cve-artifacts/results.json') != ''
+        run: |
+          python3 -c "
+          import json
+          r = json.load(open('$ARTIFACTS_DIR/results.json'))
+          r['buildPassed'] = '${{ steps.build.outcome }}' == 'success'
+          r['testPassed'] = '${{ steps.test.outcome }}' == 'success'
+          json.dump(r, open('$ARTIFACTS_DIR/results.json', 'w'), indent=2)
+          "
+
+      - name: Generate report
+        if: always() && hashFiles('cve-artifacts/results.json') != ''
+        run: |
+          yarn ts-node --project scripts/fix-cves/tsconfig.json \
+            scripts/fix-cves/create-report.ts \
+            --artifacts-dir "$ARTIFACTS_DIR"
+
+      - name: Check triage / verification status
+        if: always() && hashFiles('cve-artifacts/results.json') != ''
+        id: status
+        run: |
+          TRIAGE=$(python3 -c "import json; print('true' if json.load(open('$ARTIFACTS_DIR/results.json')).get('triageNeeded') else 'false')")
+          VERIFY_FAILED=$(python3 -c "import json; print('true' if json.load(open('$ARTIFACTS_DIR/results.json')).get('verificationFailed') else 'false')")
+          if [[ "${{ steps.verify.outcome }}" == "failure" ]]; then
+            VERIFY_FAILED=true
+          fi
+          echo "triage_needed=$TRIAGE" >> "$GITHUB_OUTPUT"
+          echo "verification_failed=$VERIFY_FAILED" >> "$GITHUB_OUTPUT"
+          if [[ "$TRIAGE" == "true" ]]; then
+            echo "::warning::One or more packages require triage"
+          fi
+          if [[ "$VERIFY_FAILED" == "true" ]]; then
+            echo "::warning::Verification failed for one or more packages"
+          fi
+
+      - name: Create branch, commit, and push
+        id: commit
+        if: always()
+        shell: bash
+        run: |
+          if [[ -n "$JIRA_ID" ]]; then
+            BRANCH="auto/cve/${JIRA_ID}"
+          else
+            BRANCH="auto/cve/fix-${RELEASE_BRANCH}"
+          fi
+
+          git fetch origin "$BRANCH" || true
+
+          git checkout -B "$BRANCH"
+
+          git config user.name "openshift-pipelines-bot"
+          git config user.email "pipelines-extcomm@redhat.com"
+
+          git add package.json yarn.lock
+          if git diff --cached --quiet; then
+            echo "No dependency changes to commit (already remediated or lockfile unchanged)."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          COMMIT_MSG="chore: fix CVEs"
+          if [[ -n "$JIRA_ID" ]]; then
+            COMMIT_MSG="chore: fix CVEs for ${JIRA_ID}"
+          fi
+          git commit -m "$COMMIT_MSG"
+
+          git push --force-with-lease origin "$BRANCH"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request
+        id: pr
+        if: always() && steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          BRANCH="${{ steps.commit.outputs.branch }}"
+
+          if [[ -n "$JIRA_ID" ]]; then
+            TITLE="${JIRA_ID}: Fix vulnerable dependencies"
+          else
+            TITLE="chore: Fix vulnerable dependencies on ${RELEASE_BRANCH}"
+          fi
+
+          EXISTING_PR=$(gh pr list --head "$BRANCH" --repo "${{ github.repository }}" --state open --json url -q '.[0].url' 2>/dev/null || true)
+          if [[ -n "$EXISTING_PR" ]]; then
+            PR_URL="$EXISTING_PR"
+            echo "PR already exists (open): $PR_URL — updating body"
+            gh pr edit "$BRANCH" \
+              --repo "${{ github.repository }}" \
+              --title "$TITLE" \
+              --body-file "$ARTIFACTS_DIR/pr-body.md"
+          else
+            PR_URL=$(gh pr create \
+              --base "$RELEASE_BRANCH" \
+              --head "$BRANCH" \
+              --title "$TITLE" \
+              --body-file "$ARTIFACTS_DIR/pr-body.md")
+            echo "Created PR: $PR_URL"
+          fi
+
+          echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Regenerate report with PR URL
+        if: always() && steps.pr.outputs.pr_url != ''
+        run: |
+          yarn ts-node --project scripts/fix-cves/tsconfig.json \
+            scripts/fix-cves/create-report.ts \
+            --artifacts-dir "$ARTIFACTS_DIR" \
+            --pr-url "${{ steps.pr.outputs.pr_url }}"
+
+      - name: Write job summary
+        if: always()
+        run: |
+          if [ -f "$ARTIFACTS_DIR/job-summary.md" ]; then
+            cat "$ARTIFACTS_DIR/job-summary.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cve-fix-${{ inputs.release_branch }}
+          path: |
+            cve-artifacts/cve-report.md
+            cve-artifacts/cve-report-jira.md
+            cve-artifacts/results.json
+            cve-artifacts/analysis/
+            cve-artifacts/npm-ls/
+            cve-artifacts/yarn-why/
+            cve-artifacts/verification/
+            cve-artifacts/pr-body.md
+            cve-artifacts/job-summary.md
+          if-no-files-found: warn
+
+      - name: Fail on triage or verification failure
+        if: steps.status.outputs.triage_needed == 'true' || steps.status.outputs.verification_failed == 'true'
+        run: |
+          echo "Workflow failed: triage needed and/or verification failed."
+          echo "See cve-report.md in the uploaded artifacts for details."
+          exit 1

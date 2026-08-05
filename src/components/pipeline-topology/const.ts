@@ -1,6 +1,6 @@
 import * as dagre from 'dagre';
 
-export const NODE_SEPARATION_HORIZONTAL = 10;
+export const NODE_SEPARATION_HORIZONTAL = 15;
 export const NODE_SEPARATION_VERTICAL = 20;
 export const DROP_SHADOW_SPACING = 5;
 export const BUILDER_NODE_ADD_RADIUS = 9;
@@ -81,7 +81,7 @@ const DAGRE_SHARED_PROPS: dagre.GraphLabel = {
   edgesep: 50,
   ranker: 'longest-path',
   rankdir: 'LR',
-  marginx: 20,
+  marginx: 30,
   marginy: 20,
 };
 export const DAGRE_VIEWER_PROPS: dagre.GraphLabel = {

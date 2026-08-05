@@ -11,16 +11,23 @@ interface PipelineTopologyVisualizationProps {
   pipeline: PipelineKind;
   pipelineRun?: PipelineRunKind;
   taskRuns?: TaskRunKind[];
+  childPipelineRuns?: PipelineRunKind[];
 }
 
 const PipelineVisualization: FC<PipelineTopologyVisualizationProps> = ({
   pipeline,
   pipelineRun,
   taskRuns,
+  childPipelineRuns,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   let content: ReactElement;
-  const model = getGraphDataModel(pipeline, pipelineRun, taskRuns);
+  const model = getGraphDataModel(
+    pipeline,
+    pipelineRun,
+    taskRuns,
+    childPipelineRuns,
+  );
 
   if (!model || (model.nodes.length === 0 && model.edges.length === 0)) {
     // Nothing to render

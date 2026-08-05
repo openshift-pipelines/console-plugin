@@ -9,8 +9,8 @@ import {
   getSpacerNodes,
 } from '@patternfly/react-topology';
 import * as dagre from 'dagre';
-import * as _ from 'lodash';
 import { TFunction } from 'i18next';
+import * as _ from 'lodash';
 import {
   ComputedStatus,
   PipelineKind,
@@ -612,6 +612,7 @@ export const getGraphDataModel = (
     pipeline,
     pipelineRun,
     taskRuns,
+    null,
     true,
   );
 
@@ -719,11 +720,9 @@ export const getWhenExpressionDiamondState = (
       diamondColor = getRunStatusColor(status, t).pftoken.value;
     }
   } else if (!isFinallyTask) {
-    diamondColor =
-      'var(--pf-t--global--background--color--secondary--default)';
+    diamondColor = 'var(--pf-t--global--background--color--secondary--default)';
   } else {
-    diamondColor =
-      'var(--pf-t--global--background--color--primary--default)';
+    diamondColor = 'var(--pf-t--global--background--color--primary--default)';
   }
 
   let tooltipContent: string;

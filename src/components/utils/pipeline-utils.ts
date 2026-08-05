@@ -137,6 +137,7 @@ export const appendPipelineRunStatus = (
   pipeline,
   pipelineRun,
   taskRuns: TaskRunKind[],
+  childPipelineRuns?: PipelineRunKind[],
   isFinallyTasks = false,
 ) => {
   const tasks =
@@ -146,7 +147,10 @@ export const appendPipelineRunStatus = (
     if (!pipelineRun.status) {
       return task;
     }
-    if (!taskRuns || taskRuns.length === 0) {
+    if (
+      (!taskRuns || taskRuns.length === 0) &&
+      (!childPipelineRuns || childPipelineRuns.length === 0)
+    ) {
       if (
         pipelineRun.spec.status === SucceedConditionReason.PipelineRunCancelled
       ) {
@@ -168,7 +172,16 @@ export const appendPipelineRunStatus = (
       (tr) =>
         tr.metadata.labels[TektonResourceLabel.pipelineTask] === task.name,
     );
-    const taskStatus: TaskRunStatus = taskRun?.status;
+
+    const childPipelineRun = _.find(
+      childPipelineRuns,
+      (plr) =>
+        plr.metadata.labels[TektonResourceLabel.pipelineTask] === task.name,
+    );
+
+    const taskStatus: TaskRunStatus = isPipelineInPipelineTask(task)
+      ? childPipelineRun?.status
+      : taskRun?.status;
 
     const mTask = {
       ...task,
@@ -202,13 +215,19 @@ export const getPipelineTasks = (
     spec: {},
   },
   taskRuns: TaskRunKind[],
+  childPipelineRuns?: PipelineRunKind[],
 ): PipelineTask[][] => {
   // Each unit in 'out' array is termed as stage | out = [stage1 = [task1], stage2 = [task2,task3], stage3 = [task4]]
   const out = [];
   if (!pipeline.spec?.tasks || _.isEmpty(pipeline.spec.tasks)) {
     return out;
   }
-  const taskList = appendPipelineRunStatus(pipeline, pipelineRun, taskRuns);
+  const taskList = appendPipelineRunStatus(
+    pipeline,
+    pipelineRun,
+    taskRuns,
+    childPipelineRuns,
+  );
 
   // Step 1: Push all nodes without any dependencies in different stages
   taskList.forEach((task) => {
@@ -293,7 +312,7 @@ export const getFinallyTasksWithStatus = (
   pipeline: PipelineKind,
   pipelineRun: PipelineRunKind,
   taskRuns: TaskRunKind[],
-) => appendPipelineRunStatus(pipeline, pipelineRun, taskRuns, true);
+) => appendPipelineRunStatus(pipeline, pipelineRun, taskRuns, null, true);
 
 export const containerToLogSourceStatus = (
   container: ContainerStatus,

@@ -1,6 +1,6 @@
 import type { FC, ReactNode, MouseEvent } from 'react';
 import * as _ from 'lodash-es';
-import Linkify from 'react-linkify';
+import Linkify from 'linkify-react';
 import { useTranslation } from 'react-i18next';
 import classnames from 'classnames';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
@@ -63,10 +63,10 @@ const EditButton: FC<EditButtonProps> = (props) => {
   );
 };
 
-export const LinkifyExternal: FC<{ children: ReactNode }> = ({
-  children,
-}) => (
-  <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>
+export const LinkifyExternal: FC<{ children: ReactNode }> = ({ children }) => (
+  <Linkify
+    options={{ attributes: { target: '_blank', rel: 'noopener noreferrer' } }}
+  >
     {children}
   </Linkify>
 );

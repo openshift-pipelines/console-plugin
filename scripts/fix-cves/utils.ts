@@ -8,12 +8,21 @@ export function runCmd(cmd: string, args: string[]): string {
     return execFileSync(cmd, args, {
       encoding: 'utf-8',
       maxBuffer: 10 * 1024 * 1024,
+      // Yarn colors when FORCE_COLOR is set (common in CI/Cursor); disable it.
+      env: { ...process.env, NO_COLOR: '1', FORCE_COLOR: '0' },
     });
   } catch (e: any) {
     return e.stdout ?? '';
   }
 }
 
+/** Strip ANSI SGR sequences (ESC[...m) from captured CLI output. */
+export function stripAnsi(text: string): string {
+  return text.replace(
+    new RegExp(`${String.fromCharCode(0x1b)}\\[[0-9;]*m`, 'g'),
+    '',
+  );
+}
 export function runCmdOrThrow(cmd: string, args: string[]): string {
   return execFileSync(cmd, args, {
     encoding: 'utf-8',

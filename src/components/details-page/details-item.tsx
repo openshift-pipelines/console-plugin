@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import Linkify from 'react-linkify';
+import Linkify from 'linkify-react';
 import { useTranslation } from 'react-i18next';
 import classnames from 'classnames';
 import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon';
@@ -64,7 +64,9 @@ const EditButton: React.SFC<EditButtonProps> = (props) => {
 export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => (
-  <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>
+  <Linkify
+    options={{ attributes: { target: '_blank', rel: 'noopener noreferrer' } }}
+  >
     {children}
   </Linkify>
 );

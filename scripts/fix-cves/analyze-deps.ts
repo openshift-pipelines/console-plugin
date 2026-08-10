@@ -60,10 +60,20 @@ function runCmd(cmd: string, args: string[]): string {
     return execFileSync(cmd, args, {
       encoding: 'utf-8',
       maxBuffer: 10 * 1024 * 1024,
+      // Yarn colors when FORCE_COLOR is set (common in CI/Cursor); disable it.
+      env: { ...process.env, NO_COLOR: '1', FORCE_COLOR: '0' },
     });
   } catch (e: any) {
     return e.stdout ?? '';
   }
+}
+
+/** Strip ANSI SGR sequences (ESC[...m) from captured CLI output. */
+function stripAnsi(text: string): string {
+  return text.replace(
+    new RegExp(`${String.fromCharCode(0x1b)}\\[[0-9;]*m`, 'g'),
+    '',
+  );
 }
 
 function parseArgs(): CLIArgs {
@@ -97,9 +107,10 @@ function parseArgs(): CLIArgs {
 
 /**
  * Run `yarn why <pkg>` and return raw output + parsed dependency chains.
+ * Output is plain text (no ANSI) so evidence and chain parsing stay clean.
  */
 function getYarnWhy(pkg: string): { raw: string; chains: string[] } {
-  const raw = runCmd('yarn', ['why', pkg]);
+  const raw = stripAnsi(runCmd('yarn', ['why', pkg]));
   const chains: string[] = [];
   for (const line of raw.split('\n')) {
     const trimmed = line.trim();
@@ -151,7 +162,9 @@ function getAllInstalledVersions(pkg: string): string[] {
   try {
     const tree = JSON.parse(output);
     findVersions(tree, pkg, versions);
-  } catch {}
+  } catch (_err) {
+    // npm ls produced invalid JSON (e.g. unmet peer deps warnings) — return empty
+  }
   return [...versions];
 }
 
@@ -167,9 +180,17 @@ function findVersions(node: any, pkg: string, versions: Set<string>): void {
 
 /**
  * Fetch available versions from the npm registry.
+ * Uses --prefer-online to bypass stale local cache — important in CI
+ * where a cached older index could mask a newly published fix version.
  */
 function getAvailableVersions(pkg: string): string[] {
-  const output = runCmd('npm', ['view', pkg, 'versions', '--json']);
+  const output = runCmd('npm', [
+    'view',
+    pkg,
+    'versions',
+    '--json',
+    '--prefer-online',
+  ]);
   try {
     const parsed = JSON.parse(output);
     return Array.isArray(parsed) ? parsed : [parsed];
@@ -190,10 +211,12 @@ function isDirectDep(pkg: string): boolean {
 }
 
 /**
- * Parse `yarn why` chains to find the direct (top-level) packages that
- * transitively pull in the target package.
+ * Parse `yarn why` output (already fetched) to find direct top-level packages
+ * that transitively pull in the target package.
+ *
+ * Accepts pre-fetched yarnWhyOutput to avoid running `yarn why` a second time.
  */
-function getDirectParents(pkg: string): string[] {
+function getDirectParents(pkg: string, yarnWhyOutput: string): string[] {
   const pjPath = path.join(process.cwd(), 'package.json');
   if (!fs.existsSync(pjPath)) return [];
   const pj = JSON.parse(fs.readFileSync(pjPath, 'utf-8'));
@@ -202,9 +225,8 @@ function getDirectParents(pkg: string): string[] {
     ...Object.keys(pj.devDependencies ?? {}),
   ]);
 
-  const output = runCmd('yarn', ['why', pkg]);
   const parents = new Set<string>();
-  for (const line of output.split('\n')) {
+  for (const line of yarnWhyOutput.split('\n')) {
     for (const dep of allDirect) {
       if (line.includes(dep)) parents.add(dep);
     }
@@ -304,7 +326,8 @@ function buildResolutionEntries(
   for (const v of installedVersions) {
     const major = semver.major(v);
     if (!byMajor.has(major)) byMajor.set(major, []);
-    byMajor.get(major)!.push(v);
+    const bucket = byMajor.get(major);
+    if (bucket) bucket.push(v);
   }
 
   for (const [major, versions] of byMajor) {
@@ -322,12 +345,30 @@ function buildResolutionEntries(
   return entries;
 }
 
+/**
+ * Identify which installed majors have no corresponding fix version.
+ * Used to produce an actionable triage-needed reason string.
+ */
+function getStrandedMajors(
+  installedVersions: string[],
+  fixedVersions: string[],
+): number[] {
+  const fixedMajors = new Set(fixedVersions.map((fv) => semver.major(fv)));
+  const installedMajors = new Set(
+    installedVersions.map((v) => semver.major(v)),
+  );
+  return [...installedMajors].filter((m) => !fixedMajors.has(m)).sort();
+}
+
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
 function main(): void {
   const args = parseArgs();
+
+  // Single yarn why call; result reused everywhere (getDirectParents no longer
+  // shells out again — it accepts the pre-fetched output as a parameter).
   const { raw: yarnWhyRaw, chains } = getYarnWhy(args.package);
   const npmLsRaw = runCmd('npm', ['ls', '--all', args.package]).trimEnd();
   const currentVersion = getCurrentVersion(args.package);
@@ -393,7 +434,11 @@ function main(): void {
     versions.includes(fv),
   );
   const direct = isDirectDep(args.package);
-  const directParents = direct ? [] : getDirectParents(args.package);
+
+  // Reuse yarnWhyRaw — no second subprocess call
+  const directParents = direct
+    ? []
+    : getDirectParents(args.package, yarnWhyRaw);
   const parentSuggestions = direct
     ? []
     : checkParentUpgrades(args.package, args.fixedVersion, directParents);
@@ -435,9 +480,19 @@ function main(): void {
     strategy === 'resolution' &&
     Object.keys(resolutionEntries).length === 0
   ) {
+    // Surface which majors are stranded so engineers know exactly what to triage
+    const strandedMajors = getStrandedMajors(
+      installedVersions,
+      args.fixedVersions,
+    );
+    const fixedMajors = args.fixedVersions.map((fv) => semver.major(fv));
     strategy = 'triage-needed';
     reason =
-      'No same-major fix available — cross-major resolution would break semver contracts; needs manual triage';
+      `No same-major fix for installed major(s) [${strandedMajors.join(
+        ', ',
+      )}] — ` +
+      `available fixes cover major(s) [${fixedMajors.join(', ')}]; ` +
+      `cross-major resolution would break semver contracts — needs manual triage`;
   }
 
   const result: AnalysisResult = {

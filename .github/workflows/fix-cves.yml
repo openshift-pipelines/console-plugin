@@ -1,4 +1,4 @@
-name: Fix CVEs
+name: Automate CVE Fixes
 
 on:
   workflow_dispatch:
@@ -14,10 +14,32 @@ on:
         default: ""
       fixes:
         description: >-
-          One package per line: package@version or package@ver1,ver2
-          Example: protobufjs@7.6.5,8.6.6
-        required: true
+          Packages to fix. Separate multiple packages with newlines or semicolons.
+          Multiple fixed versions for one package are comma-separated.
+          Leave blank to auto-discover from npm audit (high + critical only).
+          Examples: protobufjs@7.6.5,8.6.6;linkify-it@5.0.1
+                    protobufjs@7.6.5
+                    @scope/pkg@1.2.3
+        required: false
         type: string
+        default: ""
+      severity:
+        description: >-
+          Minimum severity to auto-discover when fixes is blank (comma-separated).
+          Options: info, low, moderate, high, critical
+        required: false
+        type: string
+        default: "high,critical"
+      fail_on_triage:
+        description: Fail the workflow if any package requires manual triage
+        required: false
+        type: boolean
+        default: false
+
+  # Run weekly to catch newly-published CVEs on active release branches.
+  # Commits only when there are actual changes; creates/updates the PR automatically.
+  schedule:
+    - cron: "0 6 * * 1"  # Mondays 06:00 UTC
 
 permissions:
   contents: write
@@ -28,14 +50,18 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ARTIFACTS_DIR: cve-artifacts
-      JIRA_ID: ${{ inputs.jira_id }}
-      RELEASE_BRANCH: ${{ inputs.release_branch }}
+      JIRA_ID: ${{ inputs.jira_id || '' }}
+      RELEASE_BRANCH: ${{ inputs.release_branch || github.ref_name }}
+      SEVERITY: ${{ inputs.severity || 'high,critical' }}
 
     steps:
+      # -----------------------------------------------------------------------
+      # Setup
+      # -----------------------------------------------------------------------
       - name: Checkout release branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.release_branch }}
+          ref: ${{ inputs.release_branch || github.ref_name }}
           fetch-depth: 0
 
       - name: Load CVE scripts from default branch
@@ -53,82 +79,205 @@ jobs:
           corepack enable
           corepack install --global yarn@4.6.0
           yarn --version
+
       - name: Install dependencies
         run: yarn install --no-immutable
-      - name: Write fixes input
+
+      # -----------------------------------------------------------------------
+      # Input resolution: manual fixes string → fixes.json
+      #                   (or auto-discover via npm audit when blank)
+      # -----------------------------------------------------------------------
+      - name: Prepare fixes input
         env:
           FIXES_TEXT: ${{ inputs.fixes }}
         run: |
           mkdir -p "$ARTIFACTS_DIR"
-          printf '%s\n' "$FIXES_TEXT" > "$ARTIFACTS_DIR/fixes.txt"
-          echo "Fixes input:"
-          cat "$ARTIFACTS_DIR/fixes.txt"
 
+          if [[ -z "$FIXES_TEXT" ]]; then
+            echo "No fixes provided — running npm audit to auto-discover CVEs..."
+            yarn ts-node --project scripts/fix-cves/tsconfig.json \
+              scripts/fix-cves/scan.ts \
+              --output "$ARTIFACTS_DIR/fixes.json" \
+              --severity "$SEVERITY"
+          else
+            # Convert the multi-line text input to the JSON format scan.ts produces
+            printf '%s\n' "$FIXES_TEXT" > "$ARTIFACTS_DIR/fixes.txt"
+            echo "Fixes provided manually:"
+            cat "$ARTIFACTS_DIR/fixes.txt"
+
+            # Transform "pkg@ver1,ver2" entries → [{"package":"pkg","fixedVersions":["ver1","ver2"]}]
+            # Entries may be separated by newlines OR semicolons, e.g.:
+            #   protobufjs@7.6.5,8.6.6;linkify-it@5.0.1   (two packages, one line)
+            #   protobufjs@7.6.5,8.6.6                     (one package per line)
+            python3 - <<'PYEOF'
+          import json, os, re, sys
+
+          fixes_txt = os.environ.get("FIXES_TEXT", "")
+          # Normalise: treat semicolons as entry separators alongside newlines
+          normalised = fixes_txt.replace(';', '\n')
+          entries = []
+          for line in normalised.splitlines():
+              line = line.strip()
+              if not line:
+                  continue
+              # Match pkg@ver1,ver2 (handles scoped packages like @scope/pkg)
+              m = re.match(r'^(@?[^@]+)@(.+)$', line)
+              if not m:
+                  print(f"::warning::Could not parse fix entry: {line!r}", file=sys.stderr)
+                  continue
+              pkg, ver_str = m.group(1), m.group(2)
+              versions = [v.strip() for v in ver_str.split(',') if v.strip()]
+              entries.append({"package": pkg, "fixedVersions": versions})
+
+          out = os.path.join(os.environ["ARTIFACTS_DIR"], "fixes.json")
+          with open(out, "w") as f:
+              json.dump(entries, f, indent=2)
+          print(f"Wrote {len(entries)} fix entries to {out}")
+          PYEOF
+          fi
+
+          echo "Fixes JSON:"
+          cat "$ARTIFACTS_DIR/fixes.json"
+
+          # Fail early if there's nothing to process (avoids misleading green runs)
+          COUNT=$(python3 -c "import json; print(len(json.load(open('$ARTIFACTS_DIR/fixes.json'))))")
+          echo "fix_count=$COUNT" >> "$GITHUB_ENV"
+          if [[ "$COUNT" == "0" ]]; then
+            echo "::notice::No CVEs found at the requested severity level — nothing to do."
+          fi
+
+      # -----------------------------------------------------------------------
+      # Check resolutions hygiene before applying new fixes.
+      # Stale/orphaned entries interfere with resolution-strategy fixes and
+      # should be surfaced early rather than buried in the final report.
+      # -----------------------------------------------------------------------
+      - name: Check existing resolutions
+        if: env.fix_count != '0'
+        continue-on-error: true
+        run: |
+          yarn ts-node --project scripts/fix-cves/tsconfig.json \
+            scripts/fix-cves/check-resolutions.ts \
+            --artifacts-dir "$ARTIFACTS_DIR"
+
+      # -----------------------------------------------------------------------
+      # Apply fixes
+      # -----------------------------------------------------------------------
       - name: Apply dependency fixes
         id: apply
+        if: env.fix_count != '0'
         continue-on-error: true
         run: |
+          TRIAGE_FLAG=""
+          if [[ "${{ inputs.fail_on_triage }}" == "true" ]]; then
+            TRIAGE_FLAG="--fail-on-triage"
+          fi
+
           yarn ts-node --project scripts/fix-cves/tsconfig.json \
-            scripts/fix-cves/apply-fixes.ts \
+            scripts/fix-cves/apply-fix.ts \
             --jira "$JIRA_ID" \
             --release-branch "$RELEASE_BRANCH" \
-            --fixes "$ARTIFACTS_DIR/fixes.txt" \
-            --artifacts-dir "$ARTIFACTS_DIR"
+            --fixes "$ARTIFACTS_DIR/fixes.json" \
+            --artifacts-dir "$ARTIFACTS_DIR" \
+            $TRIAGE_FLAG
 
+      # -----------------------------------------------------------------------
+      # Verify fixes (clean reinstall then re-analyze)
+      # -----------------------------------------------------------------------
       - name: Verify fixes
         id: verify
+        if: env.fix_count != '0'
         continue-on-error: true
         run: |
           yarn ts-node --project scripts/fix-cves/tsconfig.json \
-            scripts/fix-cves/verify-fixes.ts \
+            scripts/fix-cves/verify-fix.ts \
             --artifacts-dir "$ARTIFACTS_DIR"
 
+      # -----------------------------------------------------------------------
+      # Build and test — run unconditionally so failures are always surfaced
+      # in the report even when fixes had issues.
+      # -----------------------------------------------------------------------
       - name: Build
         id: build
+        if: env.fix_count != '0'
         continue-on-error: true
         run: yarn build
 
       - name: Test
         id: test
+        if: env.fix_count != '0'
         continue-on-error: true
         run: yarn test
 
+      # -----------------------------------------------------------------------
+      # Record outcomes into results.json
+      # -----------------------------------------------------------------------
       - name: Record build/test status
         if: always() && hashFiles('cve-artifacts/results.json') != ''
         run: |
-          python3 -c "
-          import json
-          r = json.load(open('$ARTIFACTS_DIR/results.json'))
-          r['buildPassed'] = '${{ steps.build.outcome }}' == 'success'
-          r['testPassed'] = '${{ steps.test.outcome }}' == 'success'
-          json.dump(r, open('$ARTIFACTS_DIR/results.json', 'w'), indent=2)
-          "
+          python3 - <<'PYEOF'
+          import json, os
 
+          path = os.path.join(os.environ["ARTIFACTS_DIR"], "results.json")
+          with open(path) as f:
+              r = json.load(f)
+
+          r["buildPassed"] = os.environ.get("BUILD_OUTCOME") == "success"
+          r["testPassed"]  = os.environ.get("TEST_OUTCOME")  == "success"
+
+          with open(path, "w") as f:
+              json.dump(r, f, indent=2)
+          PYEOF
+        env:
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          TEST_OUTCOME: ${{ steps.test.outcome }}
+
+      # -----------------------------------------------------------------------
+      # Generate human-readable report (Markdown + Jira-flavoured variant)
+      # -----------------------------------------------------------------------
       - name: Generate report
         if: always() && hashFiles('cve-artifacts/results.json') != ''
         run: |
           yarn ts-node --project scripts/fix-cves/tsconfig.json \
-            scripts/fix-cves/create-report.ts \
-            --artifacts-dir "$ARTIFACTS_DIR"
+            scripts/fix-cves/audit-report.ts \
+            --artifacts-dir "$ARTIFACTS_DIR" \
+            --output "$ARTIFACTS_DIR/cve-report.md"
 
+      # -----------------------------------------------------------------------
+      # Determine overall status for gate check and PR label
+      # -----------------------------------------------------------------------
       - name: Check triage / verification status
         if: always() && hashFiles('cve-artifacts/results.json') != ''
         id: status
         run: |
-          TRIAGE=$(python3 -c "import json; print('true' if json.load(open('$ARTIFACTS_DIR/results.json')).get('triageNeeded') else 'false')")
-          VERIFY_FAILED=$(python3 -c "import json; print('true' if json.load(open('$ARTIFACTS_DIR/results.json')).get('verificationFailed') else 'false')")
-          if [[ "${{ steps.verify.outcome }}" == "failure" ]]; then
-            VERIFY_FAILED=true
-          fi
-          echo "triage_needed=$TRIAGE" >> "$GITHUB_OUTPUT"
-          echo "verification_failed=$VERIFY_FAILED" >> "$GITHUB_OUTPUT"
-          if [[ "$TRIAGE" == "true" ]]; then
-            echo "::warning::One or more packages require triage"
-          fi
-          if [[ "$VERIFY_FAILED" == "true" ]]; then
-            echo "::warning::Verification failed for one or more packages"
-          fi
+          python3 - <<'PYEOF'
+          import json, os
 
+          path = os.path.join(os.environ["ARTIFACTS_DIR"], "results.json")
+          r = json.load(open(path))
+
+          triage       = str(r.get("triageNeeded", False)).lower()
+          verify_fail  = str(r.get("verificationFailed", False)).lower()
+
+          # verify step crashing = verification failed
+          if os.environ.get("VERIFY_OUTCOME") == "failure":
+              verify_fail = "true"
+
+          # Write GitHub outputs
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write(f"triage_needed={triage}\n")
+              out.write(f"verification_failed={verify_fail}\n")
+
+          if triage == "true":
+              print("::warning::One or more packages require triage")
+          if verify_fail == "true":
+              print("::warning::Verification failed for one or more packages")
+          PYEOF
+        env:
+          VERIFY_OUTCOME: ${{ steps.verify.outcome }}
+
+      # -----------------------------------------------------------------------
+      # Commit changes (package.json + yarn.lock) and push to fix branch
+      # -----------------------------------------------------------------------
       - name: Create branch, commit, and push
         id: commit
         if: always()
@@ -140,32 +289,32 @@ jobs:
             BRANCH="auto/cve/fix-${RELEASE_BRANCH}"
           fi
 
-          git fetch origin "$BRANCH" || true
-
+          git fetch origin "$BRANCH" 2>/dev/null || true
           git checkout -B "$BRANCH"
 
-          git config user.name "openshift-pipelines-bot"
+          git config user.name  "openshift-pipelines-bot"
           git config user.email "pipelines-extcomm@redhat.com"
 
           git add package.json yarn.lock
           if git diff --cached --quiet; then
             echo "No dependency changes to commit (already remediated or lockfile unchanged)."
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+            echo "branch=$BRANCH"  >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           COMMIT_MSG="chore: fix CVEs"
-          if [[ -n "$JIRA_ID" ]]; then
-            COMMIT_MSG="chore: fix CVEs for ${JIRA_ID}"
-          fi
+          [[ -n "$JIRA_ID" ]] && COMMIT_MSG="chore: fix CVEs for ${JIRA_ID}"
           git commit -m "$COMMIT_MSG"
 
           git push --force-with-lease origin "$BRANCH"
-          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "changed=true"  >> "$GITHUB_OUTPUT"
           echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
 
-      - name: Create Pull Request
+      # -----------------------------------------------------------------------
+      # Open or update Pull Request
+      # -----------------------------------------------------------------------
+      - name: Create or update Pull Request
         id: pr
         if: always() && steps.commit.outputs.changed == 'true'
         env:
@@ -180,60 +329,168 @@ jobs:
             TITLE="chore: Fix vulnerable dependencies on ${RELEASE_BRANCH}"
           fi
 
-          EXISTING_PR=$(gh pr list --head "$BRANCH" --repo "${{ github.repository }}" --state open --json url -q '.[0].url' 2>/dev/null || true)
+          # Determine labels to apply (requires labels to exist in the repo)
+          LABELS="automated-cve-fix"
+          if [[ "${{ steps.status.outputs.triage_needed }}" == "true" ]]; then
+            LABELS="$LABELS,needs-triage"
+          fi
+          if [[ "${{ steps.status.outputs.verification_failed }}" == "true" ]]; then
+            LABELS="$LABELS,verification-failed"
+          fi
+
+          EXISTING_PR=$(gh pr list \
+            --head "$BRANCH" \
+            --repo "${{ github.repository }}" \
+            --state open \
+            --json url -q '.[0].url' 2>/dev/null || true)
+
           if [[ -n "$EXISTING_PR" ]]; then
             PR_URL="$EXISTING_PR"
-            echo "PR already exists (open): $PR_URL — updating body"
+            echo "Updating existing PR: $PR_URL"
             gh pr edit "$BRANCH" \
               --repo "${{ github.repository }}" \
               --title "$TITLE" \
-              --body-file "$ARTIFACTS_DIR/pr-body.md"
+              --body-file "$ARTIFACTS_DIR/cve-report.md"
           else
             PR_URL=$(gh pr create \
               --base "$RELEASE_BRANCH" \
               --head "$BRANCH" \
               --title "$TITLE" \
-              --body-file "$ARTIFACTS_DIR/pr-body.md")
+              --body-file "$ARTIFACTS_DIR/cve-report.md")
             echo "Created PR: $PR_URL"
           fi
 
+          # Apply labels (non-fatal if label doesn't exist in repo)
+          gh pr edit "$BRANCH" \
+            --repo "${{ github.repository }}" \
+            --add-label "$LABELS" 2>/dev/null || true
+
           echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
 
+      # -----------------------------------------------------------------------
+      # Regenerate report now that we know the PR URL
+      # -----------------------------------------------------------------------
       - name: Regenerate report with PR URL
         if: always() && steps.pr.outputs.pr_url != ''
         run: |
           yarn ts-node --project scripts/fix-cves/tsconfig.json \
-            scripts/fix-cves/create-report.ts \
+            scripts/fix-cves/audit-report.ts \
             --artifacts-dir "$ARTIFACTS_DIR" \
+            --output "$ARTIFACTS_DIR/cve-report.md" \
             --pr-url "${{ steps.pr.outputs.pr_url }}"
 
+      # -----------------------------------------------------------------------
+      # Write job summary (visible in the Actions run UI)
+      # -----------------------------------------------------------------------
       - name: Write job summary
         if: always()
         run: |
-          if [ -f "$ARTIFACTS_DIR/job-summary.md" ]; then
-            cat "$ARTIFACTS_DIR/job-summary.md" >> "$GITHUB_STEP_SUMMARY"
+          if [[ "${{ env.fix_count }}" == "0" ]]; then
+            echo "## CVE Fix — nothing to do" >> "$GITHUB_STEP_SUMMARY"
+            echo "No vulnerabilities found at severity \`$SEVERITY\`." >> "$GITHUB_STEP_SUMMARY"
+          elif [[ -f "$ARTIFACTS_DIR/cve-report.md" ]]; then
+            cat "$ARTIFACTS_DIR/cve-report.md" >> "$GITHUB_STEP_SUMMARY"
           fi
 
+      # -----------------------------------------------------------------------
+      # Upload all artifacts for audit trail
+      # -----------------------------------------------------------------------
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cve-fix-${{ inputs.release_branch }}
+          name: cve-fix-${{ inputs.release_branch || github.ref_name }}
           path: |
             cve-artifacts/cve-report.md
-            cve-artifacts/cve-report-jira.md
             cve-artifacts/results.json
+            cve-artifacts/fixes.json
+            cve-artifacts/check-resolutions.json
             cve-artifacts/analysis/
             cve-artifacts/npm-ls/
             cve-artifacts/yarn-why/
             cve-artifacts/verification/
-            cve-artifacts/pr-body.md
-            cve-artifacts/job-summary.md
           if-no-files-found: warn
+          # Retain CVE artifacts for 90 days for compliance audit trail
+          retention-days: 90
 
+      # -----------------------------------------------------------------------
+      # Gate: fail the run if verification failed or triage is required.
+      # Placed last so all artifacts and the PR are always created first.
+      # -----------------------------------------------------------------------
       - name: Fail on triage or verification failure
-        if: steps.status.outputs.triage_needed == 'true' || steps.status.outputs.verification_failed == 'true'
+        if: |
+          steps.status.outputs.triage_needed == 'true' ||
+          steps.status.outputs.verification_failed == 'true'
         run: |
           echo "Workflow failed: triage needed and/or verification failed."
           echo "See cve-report.md in the uploaded artifacts for details."
+          echo "PR: ${{ steps.pr.outputs.pr_url }}"
           exit 1
+
+  # ---------------------------------------------------------------------------
+  # Scheduled resolutions hygiene check (runs separately from fix-cves so it
+  # never blocks the main remediation path, and can be triggered standalone).
+  # ---------------------------------------------------------------------------
+  check-resolutions:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    env:
+      ARTIFACTS_DIR: cve-artifacts
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Load CVE scripts from default branch
+        run: |
+          git fetch origin master --depth=1
+          git checkout origin/master -- scripts/fix-cves/
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack install --global yarn@4.6.0
+
+      - run: yarn install --no-immutable
+
+      - name: Check resolution hygiene
+        run: |
+          mkdir -p "$ARTIFACTS_DIR"
+          yarn ts-node --project scripts/fix-cves/tsconfig.json \
+            scripts/fix-cves/check-resolutions.ts \
+            --artifacts-dir "$ARTIFACTS_DIR"
+
+      - name: Write job summary
+        if: always()
+        run: |
+          if [[ -f "$ARTIFACTS_DIR/check-resolutions.json" ]]; then
+            python3 - <<'PYEOF'
+          import json, os
+
+          data = json.load(open(os.path.join(os.environ["ARTIFACTS_DIR"], "check-resolutions.json")))
+          lines = ["## Resolution hygiene check\n"]
+          counts = {}
+          for r in data:
+              counts[r["status"]] = counts.get(r["status"], 0) + 1
+              icon = {"ok": "✅", "stale": "🕒", "orphaned": "🗑", "redundant": "♻️"}.get(r["status"], "❓")
+              lines.append(f"- {icon} `{r['descriptor']}` → `{r['pinnedVersion']}` — {r['detail']}")
+          summary_line = " | ".join(f"{k}: {v}" for k, v in sorted(counts.items()))
+          lines.insert(1, f"**Summary:** {summary_line}\n")
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+              f.write("\n".join(lines) + "\n")
+          PYEOF
+          fi
+
+      - name: Upload resolution check artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resolution-check-${{ github.ref_name }}
+          path: cve-artifacts/check-resolutions.json
+          if-no-files-found: warn
+          retention-days: 30

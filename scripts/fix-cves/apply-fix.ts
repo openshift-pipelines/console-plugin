@@ -8,6 +8,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import type { AnalysisResult, FixRunResults, PackageFixResult } from './types';
+import { analyzePackage } from './analyze';
 import {
   cleanInstall,
   ensureDir,
@@ -19,38 +20,83 @@ import {
   runCmd,
   runCmdOrThrow,
   sanitizePackageFilename,
+  stripAnsi,
   writeFile,
 } from './utils';
 
-const ANALYZE_SCRIPT = path.join(__dirname, 'analyze-deps.ts');
+// ---------------------------------------------------------------------------
+// Validation
+// ---------------------------------------------------------------------------
 
-function analyzePackage(pkg: string, fixedVersions: string[]): AnalysisResult {
-  const raw = runCmdOrThrow('yarn', [
-    'ts-node',
-    '--project',
-    'scripts/fix-cves/tsconfig.json',
-    ANALYZE_SCRIPT,
-    '--package',
-    pkg,
-    '--fixed-version',
-    fixedVersions.join(','),
-  ]);
-  // analyze-deps prints only JSON to stdout
-  const match = raw.match(/\{\s*"package"/);
-  const jsonStart = match?.index ?? -1;
-  if (jsonStart < 0) {
-    throw new Error(`analyze-deps produced no JSON for ${pkg}:\n${raw}`);
+/**
+ * Validate all fix entries up-front before touching the filesystem or
+ * running any subprocesses. Catches malformed input early with clear messages.
+ */
+function validateFixes(fixes: ReturnType<typeof parseFixesInput>): void {
+  for (const fix of fixes) {
+    if (typeof fix.package !== 'string' || !fix.package.trim()) {
+      console.error(
+        `Invalid fix entry — missing or empty "package": ${JSON.stringify(
+          fix,
+        )}`,
+      );
+      process.exit(1);
+    }
+    const versions = getFixedVersions(fix);
+    if (!versions.length) {
+      console.error(
+        `Invalid fix entry — no fixed versions provided: ${JSON.stringify(
+          fix,
+        )}`,
+      );
+      process.exit(1);
+    }
   }
-  return JSON.parse(raw.slice(jsonStart)) as AnalysisResult;
 }
 
-function applyResolutions(entries: Record<string, string>): string {
+// ---------------------------------------------------------------------------
+// Strategy application
+// ---------------------------------------------------------------------------
+
+/**
+ * Apply yarn resolutions for transitive deps that cannot be fixed via a
+ * direct or parent upgrade.
+ *
+ * After writing resolutions and reinstalling, performs a sanity-check that
+ * each pinned version actually landed in the tree. Yarn's deduplication or a
+ * conflicting constraint can silently override a resolution entry; catching
+ * that here prevents a false "already-remediated" result during verification.
+ */
+function applyResolutions(
+  pkg: string,
+  entries: Record<string, string>,
+): string {
   const pjPath = path.join(process.cwd(), 'package.json');
   const pj = JSON.parse(fs.readFileSync(pjPath, 'utf-8'));
   pj.resolutions = { ...(pj.resolutions ?? {}), ...entries };
   fs.writeFileSync(pjPath, `${JSON.stringify(pj, null, 2)}\n`, 'utf-8');
   runCmdOrThrow('yarn', ['install', '--no-immutable']);
-  return `Updated resolutions: ${JSON.stringify(entries)}`;
+
+  // Sanity-check: confirm the target version is present in the installed tree.
+  // Use a Set so we only check each target version once (multiple descriptors
+  // can map to the same target).
+  const targetVersions = new Set(Object.values(entries));
+  const lsOut = runCmd('npm', ['ls', '--all', pkg]);
+  const warnings: string[] = [];
+  for (const targetVersion of targetVersions) {
+    if (!lsOut.includes(targetVersion)) {
+      warnings.push(
+        `⚠ Resolution for ${pkg} → ${targetVersion} may not have taken effect (not found in npm ls output)`,
+      );
+    }
+  }
+  if (warnings.length) {
+    warnings.forEach((w) => console.warn(w));
+  }
+
+  return `Updated resolutions: ${JSON.stringify(entries)}${
+    warnings.length ? ` [WARNINGS: ${warnings.join(' | ')}]` : ''
+  }`;
 }
 
 function applyDirectUpgrade(pkg: string, version: string): string {
@@ -87,7 +133,7 @@ function applyStrategy(analysis: AnalysisResult): string {
           'Resolution strategy selected but no entries generated — needs manual triage',
         );
       }
-      return applyResolutions(entries);
+      return applyResolutions(analysis.package, entries);
     }
     case 'triage-needed':
       return 'Skipped — triage needed (cannot auto-remediate)';
@@ -98,12 +144,26 @@ function applyStrategy(analysis: AnalysisResult): string {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+
 function main(): void {
   const jiraId = getArg('--jira') ?? '';
   const releaseBranch = getArg('--release-branch') ?? '';
   const artifactsDir = getArg('--artifacts-dir') ?? 'cve-artifacts';
   const skipClean = process.argv.includes('--skip-clean');
+
+  // --fail-on-triage: exit 1 if any package requires manual triage.
+  // Default is to continue (so report artifacts are always produced) and emit
+  // a warning. Pass this flag in strict CI pipelines where a triage-needed
+  // result must block the PR.
+  const failOnTriage = process.argv.includes('--fail-on-triage');
+
   const fixes = parseFixesInput(requireArg('--fixes'));
+
+  // Validate all entries before touching disk or running subprocesses
+  validateFixes(fixes);
 
   ensureDir(artifactsDir);
   ensureDir(path.join(artifactsDir, 'analysis'));
@@ -124,9 +184,14 @@ function main(): void {
       `\n=== Analyzing ${fix.package} (fixed: ${fixedVersions.join(', ')}) ===`,
     );
 
-    // Capture raw evidence before/alongside analysis (analyze-deps also runs these)
+    // Capture raw evidence alongside analysis.
+    // Note: analyze-deps also runs npm ls / yarn why internally and returns
+    // them in analysis.npmLsRaw / analysis.yarnWhyRaw. We capture them here
+    // first so we have evidence even if analyzePackage throws.
     const npmLsRaw = runCmd('npm', ['ls', '--all', fix.package]).trimEnd();
-    const yarnWhyRaw = runCmd('yarn', ['why', fix.package]).trimEnd();
+    const yarnWhyRaw = stripAnsi(
+      runCmd('yarn', ['why', fix.package]),
+    ).trimEnd();
     writeFile(
       path.join(artifactsDir, 'npm-ls', `${safeName}.txt`),
       npmLsRaw + '\n',
@@ -136,6 +201,7 @@ function main(): void {
       yarnWhyRaw + '\n',
     );
 
+    // Shared analyzePackage from analyze.ts (eliminates duplication with verify-fix)
     const analysis = analyzePackage(fix.package, fixedVersions);
     const analysisPath = path.join(
       artifactsDir,
@@ -144,7 +210,7 @@ function main(): void {
     );
     writeFile(analysisPath, JSON.stringify(analysis, null, 2) + '\n');
 
-    // Prefer analyze-deps evidence when present
+    // Prefer analyze-deps evidence when present (it may be richer)
     if (analysis.npmLsRaw) {
       writeFile(
         path.join(artifactsDir, 'npm-ls', `${safeName}.txt`),
@@ -201,12 +267,20 @@ function main(): void {
   );
 
   console.log(`\nWrote results to ${path.join(artifactsDir, 'results.json')}`);
+
   if (triageNeeded) {
-    console.error(
-      'One or more packages require triage and cannot be auto-remediated.',
-    );
-    // Continue so report/artifacts can still be produced; workflow fails later.
-    process.exitCode = 0;
+    const msg =
+      'One or more packages require triage and cannot be auto-remediated.';
+    if (failOnTriage) {
+      console.error(msg);
+      process.exit(1);
+    } else {
+      console.warn(
+        `⚠ ${msg} Continuing to produce artifacts. ` +
+          `Pass --fail-on-triage to treat this as a hard failure in CI.`,
+      );
+      // exitCode stays 0 so downstream report/artifact steps still run
+    }
   }
 }
 

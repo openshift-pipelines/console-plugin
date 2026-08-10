@@ -6,7 +6,6 @@ import {
   updateArtifactHubTask,
   useGetArtifactHubTasks,
 } from '../apis/artifactHub';
-import { TektonHubTask } from '../apis/tektonHub';
 import {
   CatalogItem,
   ExtensionHook,
@@ -17,7 +16,7 @@ import {
 import { TaskProviders } from '../../task-quicksearch/pipeline-quicksearch-utils';
 import { TaskModel } from '../../../models';
 import { getReferenceForModel } from '../../pipelines-overview/utils';
-import { useTektonHubIntegration } from '../catalog-utils';
+import { useHubIntegration } from '../catalog-utils';
 import { t } from '../../utils/common-utils';
 import { ArtifactHubTask, FLAGS } from '../../../types';
 import useTasksProvider from './useTasksProvider';
@@ -75,6 +74,10 @@ export const normalizeArtifactHubTasks = (
                   selectedVersion,
                   isDevConsoleProxyAvailable,
                 ).catch((error) => {
+                  console.warn(
+                    'Error updating ArtifactHub task - callsite useArtifactHubTasksProvider:',
+                    error,
+                  );
                   setFailedTasks((prev) => [
                     ...prev,
                     selectedItem.data.task.name,
@@ -113,7 +116,8 @@ export const normalizeArtifactHubTasks = (
 const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, string] => {
-  const artifactHubIntegration = useTektonHubIntegration();
+  const [artifactHubIntegrationStatus, isIntegrationLoaded] =
+    useHubIntegration();
   const [tektonTasks] = useTasksProvider({});
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
   const canCreateTask = useAccessReview({
@@ -131,12 +135,13 @@ const useArtifactHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
   });
 
   const [artifactHubTasks, tasksLoaded, tasksError] = useGetArtifactHubTasks(
-    canCreateTask && canUpdateTask && artifactHubIntegration,
+    isIntegrationLoaded &&
+      canCreateTask &&
+      canUpdateTask &&
+      artifactHubIntegrationStatus,
     isDevConsoleProxyAvailable,
   );
-  const normalizedArtifactHubTasks = React.useMemo<
-    CatalogItem<TektonHubTask>[]
-  >(
+  const normalizedArtifactHubTasks = React.useMemo<CatalogItem[]>(
     () => normalizeArtifactHubTasks(artifactHubTasks, tektonTasks),
     [artifactHubTasks, tektonTasks],
   );

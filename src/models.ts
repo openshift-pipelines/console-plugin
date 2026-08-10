@@ -470,23 +470,6 @@ export const ConsoleYAMLSampleModel: K8sKind = {
   crd: true,
 };
 
-export const TektonHubModel: K8sKind = {
-  apiGroup: 'operator.tekton.dev',
-  apiVersion: 'v1alpha1',
-  label: 'TektonHub',
-  // t('plugin__pipelines-console-plugin~TektonHub')
-  labelKey: 'plugin__pipelines-console-plugin~TektonHub',
-  // t('plugin__pipelines-console-plugin~TektonHubs')
-  labelPluralKey: 'plugin__pipelines-console-plugin~TektonHubs',
-  plural: 'tektonhubs',
-  abbr: 'TH',
-  namespaced: false,
-  kind: 'TektonHub',
-  id: 'tektonhub',
-  labelPlural: 'TektonHubs',
-  crd: true,
-};
-
 export const TektonConfigModel: K8sKind = {
   apiGroup: 'operator.tekton.dev',
   apiVersion: 'v1alpha1',

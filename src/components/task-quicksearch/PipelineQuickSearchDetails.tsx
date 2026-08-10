@@ -25,15 +25,9 @@ import {
   isArtifactHubTask,
   isOneVersionInstalled,
   isTaskVersionInstalled,
-  isTektonHubTaskWithoutVersions,
 } from './pipeline-quicksearch-utils';
 import PipelineQuickSearchTaskAlert from './PipelineQuickSearchTaskAlert';
 import PipelineQuickSearchVersionDropdown from './PipelineQuickSearchVersionDropdown';
-import {
-  getHubUIPath,
-  getTektonHubTaskVersions,
-} from '../catalog/apis/tektonHub';
-import { ExternalLink } from '../utils/link';
 import { handleCta } from '../quick-search';
 import { QuickSearchDetailsRendererProps } from '../quick-search/QuickSearchDetails';
 import { FLAGS } from '../../types';
@@ -57,6 +51,9 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
   const [hasInstalledVersion, setHasInstalledVersion] = React.useState<boolean>(
     isOneVersionInstalled(selectedItem),
   );
+  const [detailsLoaded, setDetailsLoaded] = React.useState<boolean>(
+    !isArtifactHubTask(selectedItem),
+  );
   const resetVersions = React.useCallback(() => {
     setVersions(selectedItem?.attributes?.versions ?? []);
     setSelectedVersion(selectedItem?.attributes?.installed ?? '');
@@ -67,20 +64,24 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
     (key) => {
       setSelectedVersion(key);
       if (isArtifactHubTask(selectedItem)) {
+        setDetailsLoaded(false);
         getArtifactHubTaskDetails(selectedItem, key, isDevConsoleProxyAvailable)
           .then((item) => {
             selectedItem.attributes.versions = item.available_versions;
             selectedItem.attributes.selectedVersionContentUrl =
               item.content_url;
+            selectedItem.attributes.selectedVersionForContentUrl = key;
             selectedItem.tags = item.keywords;
 
             setVersions([...item.available_versions]);
             setHasInstalledVersion(isOneVersionInstalled(selectedItem));
+            setDetailsLoaded(true);
           })
           .catch((err) => {
             // eslint-disable-next-line no-console
             console.warn('Error while getting ArtifactHub Task details:', err);
             resetVersions();
+            setDetailsLoaded(true);
           });
       }
     },
@@ -89,37 +90,10 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
 
   React.useEffect(() => {
     resetVersions();
-    const mounted = true;
-    if (
-      isTektonHubTaskWithoutVersions(selectedItem) &&
-      !isArtifactHubTask(selectedItem)
-    ) {
-      const debouncedLoadVersions = debounce(async () => {
-        if (mounted) {
-          try {
-            const itemVersions = await getTektonHubTaskVersions(
-              selectedItem?.data?.id,
-              selectedItem?.attributes?.apiURL,
-            );
-
-            selectedItem.attributes.versions = itemVersions;
-
-            if (mounted) {
-              setVersions([...itemVersions]);
-              setHasInstalledVersion(isOneVersionInstalled(selectedItem));
-            }
-          } catch (err) {
-            if (mounted) {
-              resetVersions();
-            }
-            console.log('failed to fetch versions:', err); // eslint-disable-line no-console
-          }
-        }
-      }, 10);
-      debouncedLoadVersions();
-    }
+    let mounted = true;
 
     if (isArtifactHubTask(selectedItem)) {
+      setDetailsLoaded(false);
       const debouncedLoadDetails = debounce(async () => {
         if (mounted) {
           try {
@@ -128,25 +102,33 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
               undefined,
               isDevConsoleProxyAvailable,
             );
-            selectedItem.attributes.versions = item.available_versions;
-            selectedItem.attributes.selectedVersionContentUrl =
-              item.content_url;
-            selectedItem.tags = item.keywords;
             if (mounted) {
+              selectedItem.attributes.versions = item.available_versions;
+              selectedItem.attributes.selectedVersionContentUrl =
+                item.content_url;
+              selectedItem.attributes.selectedVersionForContentUrl =
+                selectedItem.data?.task?.version?.toString();
+              selectedItem.tags = item.keywords;
               setVersions([...item.available_versions]);
               setHasInstalledVersion(isOneVersionInstalled(selectedItem));
+              setDetailsLoaded(true);
             }
           } catch (err) {
             if (mounted) {
               resetVersions();
+              setDetailsLoaded(true);
             }
           }
         }
       }, 10);
       debouncedLoadDetails();
+    } else {
+      setDetailsLoaded(true);
     }
 
-    // return () => (mounted = false);
+    return () => {
+      mounted = false;
+    };
   }, [resetVersions, selectedItem]);
 
   React.useEffect(() => {
@@ -159,18 +141,6 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
       );
     }
   }, [selectedItem]);
-  const loadedVersion = React.useMemo(
-    () =>
-      versions?.find(
-        (version) => version.version?.toString() === selectedVersion,
-      ),
-    [selectedVersion, versions],
-  );
-
-  const hubLink = getHubUIPath(
-    loadedVersion?.hubURLPath,
-    selectedItem.attributes.uiURL,
-  );
   return (
     <div className="opp-quick-search-details">
       <Level hasGutter>
@@ -188,10 +158,10 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
           <Split hasGutter>
             <SplitItem>
               <Button
-                isDisabled={isTektonHubTaskWithoutVersions(selectedItem)}
                 data-test="task-cta"
                 variant={ButtonVariant.primary}
                 className="opp-quick-search-details__form-button"
+                isDisabled={!detailsLoaded}
                 onClick={(e) => {
                   handleCta(e, selectedItem, closeModal, history, {
                     selectedVersion,
@@ -241,14 +211,6 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
         data-test="task-description"
       >
         {selectedItem.description}
-        {hubLink && (
-          <ExternalLink
-            additionalClassName="opp-quick-search-details__hublink"
-            dataTestID="task-hub-link"
-            href={hubLink}
-            text={t('Read more')}
-          />
-        )}
       </TextContent>
       <Stack className="opp-quick-search-details__badges-section" hasGutter>
         {selectedItem?.attributes?.categories?.length > 0 && (

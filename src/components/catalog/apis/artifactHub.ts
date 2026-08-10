@@ -58,6 +58,7 @@ export const useGetArtifactHubTasks = (
     const fetchTasks = async () => {
       try {
         if (!hasPermission) {
+          setResult([]);
           setLoaded(true);
           return;
         }
@@ -104,6 +105,11 @@ export const createArtifactHubTask = (
   isDevConsoleProxyAvailable?: boolean,
   customName?: string,
 ) => {
+  if (!url || typeof url !== 'string') {
+    return Promise.reject(
+      new Error('ArtifactHub task content URL is missing or invalid'),
+    );
+  }
   const fetchTask = async (): Promise<K8sResourceKind> => {
     if (isDevConsoleProxyAvailable) {
       const yamlPath = url.startsWith(GITHUB_BASE_URL)
@@ -152,6 +158,9 @@ export const updateArtifactHubTask = async (
   version: string,
   isDevConsoleProxyAvailable?: boolean,
 ) => {
+  if (!url || typeof url !== 'string') {
+    throw new Error('ArtifactHub task content URL is missing or invalid');
+  }
   const fetchTask = async (): Promise<K8sResourceKind> => {
     if (isDevConsoleProxyAvailable) {
       const yamlPath = url.startsWith(GITHUB_BASE_URL)

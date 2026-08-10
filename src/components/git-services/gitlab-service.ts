@@ -1,5 +1,6 @@
+import type { RepositoryTreeSchema } from '@gitbeaker/core';
+import { Gitlab } from '@gitbeaker/rest';
 import { consoleFetchJSON } from '@openshift-console/dynamic-plugin-sdk';
-import { Gitlab } from 'gitlab';
 import i18n from 'i18next';
 import { Base64 } from 'js-base64';
 import { BaseService } from './base-service';
@@ -15,9 +16,10 @@ import {
 } from './types';
 import { parseGitUrl } from './utils/common';
 
-type GitlabRepo = {
+type GitlabProject = {
   id: number;
   path_with_namespace: string;
+  default_branch: string;
 };
 
 type GLWebhookBody = {
@@ -40,11 +42,11 @@ export const GITLAB_WEBHOOK_BACKEND_URL = '/api/dev-console/webhooks/gitlab';
 const removeLeadingSlash = (str: string) => str?.replace(/^\//, '') || '';
 
 export class GitlabService extends BaseService {
-  private readonly client: any;
+  private readonly client: InstanceType<typeof Gitlab>;
 
   private readonly metadata: RepoMetadata;
 
-  private repo: GitlabRepo;
+  private repo: GitlabProject | null;
 
   constructor(gitsource: GitSource) {
     super(gitsource);
@@ -57,13 +59,13 @@ export class GitlabService extends BaseService {
     this.repo = null;
   }
 
-  private getRepo = async (): Promise<GitlabRepo> => {
+  private getRepo = async (): Promise<GitlabProject> => {
     if (this.repo) {
       return Promise.resolve(this.repo);
     }
-    const repo: GitlabRepo = await this.client.Projects.show(
+    const repo = (await this.client.Projects.show(
       this.metadata.fullName,
-    );
+    )) as GitlabProject;
     if (!repo) {
       throw new Error(i18n.t('Unable to find repository'));
     } else if (repo.path_with_namespace !== this.metadata.fullName) {
@@ -104,7 +106,7 @@ export class GitlabService extends BaseService {
     };
   }
 
-  getAuthProvider = (): any => {
+  getAuthProvider = (): string | null => {
     switch (this.gitsource.secretType) {
       case GitSecretType.PERSONAL_ACCESS_TOKEN:
       case GitSecretType.OAUTH:
@@ -115,7 +117,7 @@ export class GitlabService extends BaseService {
     }
   };
 
-  getProjectId = async (): Promise<any> => {
+  getProjectId = async (): Promise<number> => {
     const repo = await this.getRepo();
     return repo.id;
   };
@@ -162,12 +164,13 @@ export class GitlabService extends BaseService {
   }): Promise<RepoFileList> => {
     try {
       const projectID = await this.getProjectId();
-      const resp = await this.client.Repositories.tree(projectID, {
-        ...(params?.specificPath
-          ? { path: this.filePath(params.specificPath) }
-          : { path: this.metadata.contextDir }),
-      });
-      const files = resp.reduce((acc, file) => {
+      const resp: RepositoryTreeSchema[] =
+        await this.client.Repositories.allRepositoryTrees(projectID, {
+          ...(params?.specificPath
+            ? { path: this.filePath(params.specificPath) }
+            : { path: this.metadata.contextDir }),
+        });
+      const files = resp.reduce((acc: string[], file: RepositoryTreeSchema) => {
         if (
           file.type === 'blob' ||
           (params?.includeFolder && file.type === 'tree')
@@ -184,7 +187,7 @@ export class GitlabService extends BaseService {
   getRepoLanguageList = async (): Promise<RepoLanguageList> => {
     try {
       const projectID = await this.getProjectId();
-      const resp = await this.client.Projects.languages(projectID);
+      const resp = await this.client.Projects.showLanguages(projectID);
       return { languages: Object.keys(resp) };
     } catch (e) {
       return { languages: [] };
@@ -231,8 +234,7 @@ export class GitlabService extends BaseService {
   isFilePresent = async (path: string): Promise<boolean> => {
     try {
       const projectID = await this.getProjectId();
-      const ref =
-        this.metadata.defaultBranch || (this.repo as any)?.default_branch;
+      const ref = this.metadata.defaultBranch || this.repo?.default_branch;
       await this.client.RepositoryFiles.showRaw(projectID, path, ref);
       return true;
     } catch (e) {
@@ -243,14 +245,14 @@ export class GitlabService extends BaseService {
   getFileContent = async (path: string): Promise<string | null> => {
     try {
       const projectID = await this.getProjectId();
-      const ref =
-        this.metadata.defaultBranch || (this.repo as any)?.default_branch;
+      const ref = this.metadata.defaultBranch || this.repo?.default_branch;
       const filePath = path.replace(/^\/+/, '');
-      return await this.client.RepositoryFiles.showRaw(
+      const content = await this.client.RepositoryFiles.showRaw(
         projectID,
         filePath,
         ref,
       );
+      return typeof content === 'string' ? content : null;
     } catch (e) {
       return null;
     }
@@ -268,9 +270,10 @@ export class GitlabService extends BaseService {
   isTektonFolderPresent = async (): Promise<boolean> => {
     try {
       const projectID = await this.getProjectId();
-      const resp = await this.client.Repositories.tree(projectID, {
-        path: this.metadata.contextDir,
-      });
+      const resp: RepositoryTreeSchema[] =
+        await this.client.Repositories.allRepositoryTrees(projectID, {
+          path: this.metadata.contextDir,
+        });
       const tektonFolderPresent = resp.find(
         (file) => file.type === 'tree' && file.name === '.tekton',
       );

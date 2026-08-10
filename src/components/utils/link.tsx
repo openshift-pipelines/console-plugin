@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import cx from 'classnames';
-import Linkify from 'react-linkify';
+import Linkify from 'linkify-react';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
 import { Tooltip } from '@patternfly/react-core';
@@ -159,7 +159,9 @@ export const ExternalLinkWithCopy: React.FC<ExternalLinkWithCopyProps> = ({
 export const LinkifyExternal: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => (
-  <Linkify properties={{ target: '_blank', rel: 'noopener noreferrer' }}>
+  <Linkify
+    options={{ attributes: { target: '_blank', rel: 'noopener noreferrer' } }}
+  >
     {children}
   </Linkify>
 );

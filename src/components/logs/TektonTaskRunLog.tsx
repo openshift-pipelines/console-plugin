@@ -6,6 +6,7 @@ import { TektonResourceLabel } from '../../consts';
 import { LoadingInline } from '../Loading';
 import { useTRTaskRunLog } from '../hooks/useTektonResult';
 import { Banner } from '@patternfly/react-core';
+import { processCarriageReturns } from './logs-utils';
 import './TektonTaskRunLog.scss';
 
 type TektonTaskRunLogProps = {
@@ -39,7 +40,7 @@ export const TektonTaskRunLog: React.FC<TektonTaskRunLogProps> = ({
     if (!trResults) return '';
     const formattedTaskName = `${taskName.toUpperCase()}`;
 
-    return `${formattedTaskName}\n${trResults}\n\n`;
+    return processCarriageReturns(`${formattedTaskName}\n${trResults}\n\n`);
   }, [trResults, taskName]);
   const lastRowIndex = trResults ? formattedResults.split('\n').length : 0;
 

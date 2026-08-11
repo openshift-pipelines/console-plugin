@@ -3,8 +3,8 @@ import { FormikTouched, useFormikContext } from 'formik';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PIPELINE_NAMESPACE } from '../../consts';
-import { TaskModel } from '../../models';
-import { PipelineTask, TaskKind } from '../../types';
+import { PipelineModel, TaskModel } from '../../models';
+import { PipelineKind, PipelineTask, TaskKind } from '../../types';
 import { AddNodeDirection } from '../pipeline-topology/const';
 import {
   PipelineBuilderTaskNodeModel,
@@ -51,26 +51,36 @@ export const useFormikFetchAndSaveTasks = (
   const { setFieldValue, setStatus } =
     useFormikContext<PipelineBuilderFormikValues>();
 
-  const { namespacedTasks, clusterResolverTasks } = useK8sWatchResources<{
-    namespacedTasks: TaskKind[];
-    clusterResolverTasks: TaskKind[];
-  }>({
-    namespacedTasks: {
-      kind: getReferenceForModel(TaskModel),
-      isList: true,
-      namespace,
-    },
-    clusterResolverTasks: {
-      kind: getReferenceForModel(TaskModel),
-      isList: true,
-      namespace: PIPELINE_NAMESPACE,
-    },
-  });
+  const { namespacedTasks, clusterResolverTasks, namespacedPipelines } =
+    useK8sWatchResources<{
+      namespacedTasks: TaskKind[];
+      clusterResolverTasks: TaskKind[];
+      namespacedPipelines: PipelineKind[];
+    }>({
+      namespacedTasks: {
+        kind: getReferenceForModel(TaskModel),
+        isList: true,
+        namespace,
+      },
+      clusterResolverTasks: {
+        kind: getReferenceForModel(TaskModel),
+        isList: true,
+        namespace: PIPELINE_NAMESPACE,
+      },
+      namespacedPipelines: {
+        kind: getReferenceForModel(PipelineModel),
+        isList: true,
+        namespace,
+      },
+    });
   const namespacedTaskData = namespacedTasks.loaded
     ? namespacedTasks.data
     : null;
   const clusterResolverTaskData = clusterResolverTasks.loaded
     ? clusterResolverTasks.data
+    : null;
+  const namespacedPipelineData = namespacedPipelines.loaded
+    ? namespacedPipelines.data
     : null;
 
   useEffect(() => {
@@ -84,20 +94,30 @@ export const useFormikFetchAndSaveTasks = (
         false,
       );
     }
+    if (namespacedPipelineData) {
+      setFieldValue(
+        'taskResources.namespacedPipelines',
+        namespacedPipelineData,
+        false,
+      );
+    }
     const tasksLoaded = !!namespacedTaskData && !!clusterResolverTaskData;
     setFieldValue('taskResources.tasksLoaded', tasksLoaded, false);
     if (tasksLoaded) {
-      // Wait for Formik to fully understand the set values (thread end) and then validate again
       setTimeout(() => validateForm(), 0);
     }
   }, [
     setFieldValue,
     namespacedTaskData,
     clusterResolverTaskData,
+    namespacedPipelineData,
     validateForm,
   ]);
 
-  const error = namespacedTasks.loadError || clusterResolverTasks.loadError;
+  const error =
+    namespacedTasks.loadError ||
+    clusterResolverTasks.loadError ||
+    namespacedPipelines.loadError;
   useEffect(() => {
     if (!error) return;
 

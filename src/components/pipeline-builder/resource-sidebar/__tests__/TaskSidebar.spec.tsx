@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { TektonParam, TaskKind, SelectedBuilderTask } from '../../../../types';
-import TaskSidebar from '../TaskSidebar';
+import ResourceSidebar from '../ResourceSidebar';
 
 const mockFieldValue = {
   name: 'my-task',
@@ -25,17 +25,17 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-jest.mock('../TaskSidebarHeader', () => ({
+jest.mock('../ResourceSidebarHeader', () => ({
   __esModule: true,
   default: () => <div data-testid="task-sidebar-header" />,
 }));
 
-jest.mock('../TaskSidebarName', () => ({
+jest.mock('../ResourceSidebarName', () => ({
   __esModule: true,
   default: () => <div data-testid="task-sidebar-name" />,
 }));
 
-jest.mock('../TaskSidebarParam', () => ({
+jest.mock('../ResourceSidebarParam', () => ({
   __esModule: true,
   default: ({ resourceParam }: { resourceParam: TektonParam }) => (
     <div data-testid={`task-sidebar-param-${resourceParam.name}`}>
@@ -49,12 +49,12 @@ jest.mock('../TaskSidebarWhenExpression', () => ({
   default: () => <div data-testid="task-sidebar-when" />,
 }));
 
-jest.mock('../TaskSidebarWorkspace', () => ({
+jest.mock('../ResourceSidebarWorkspace', () => ({
   __esModule: true,
   default: () => <div data-testid="task-sidebar-workspace" />,
 }));
 
-jest.mock('../TaskSidebarResource', () => ({
+jest.mock('../ResourceSidebarResource', () => ({
   __esModule: true,
   default: () => <div data-testid="task-sidebar-resource" />,
 }));
@@ -87,16 +87,16 @@ const makeTaskResource = (params: TektonParam[]): TaskKind =>
       params,
       workspaces: [],
     },
-  }) as unknown as TaskKind;
+  } as unknown as TaskKind);
 
 const makeSelectedData = (taskResource: TaskKind): SelectedBuilderTask =>
   ({
     isFinallyTask: false,
     taskIndex: 0,
     resource: taskResource,
-  }) as SelectedBuilderTask;
+  } as SelectedBuilderTask);
 
-describe('TaskSidebar', () => {
+describe('ResourceSidebar', () => {
   const defaultProps = {
     errorMap: [],
     onRemoveTask: jest.fn(),
@@ -114,7 +114,7 @@ describe('TaskSidebar', () => {
     it('should show all params when hideOptionalTaskParam is false', () => {
       const taskResource = makeTaskResource([requiredParam, optionalParam]);
       render(
-        <TaskSidebar
+        <ResourceSidebar
           {...defaultProps}
           selectedData={makeSelectedData(taskResource)}
           hideOptionalTaskParam={false}
@@ -128,7 +128,7 @@ describe('TaskSidebar', () => {
     it('should hide optional params when hideOptionalTaskParam is true', () => {
       const taskResource = makeTaskResource([requiredParam, optionalParam]);
       render(
-        <TaskSidebar
+        <ResourceSidebar
           {...defaultProps}
           selectedData={makeSelectedData(taskResource)}
           hideOptionalTaskParam={true}
@@ -142,7 +142,7 @@ describe('TaskSidebar', () => {
     it('should show warning alert when all params are optional and toggle is on', () => {
       const taskResource = makeTaskResource([optionalParam]);
       render(
-        <TaskSidebar
+        <ResourceSidebar
           {...defaultProps}
           selectedData={makeSelectedData(taskResource)}
           hideOptionalTaskParam={true}
@@ -158,7 +158,7 @@ describe('TaskSidebar', () => {
     it('should show all params including optional when toggle is off, even if all are optional', () => {
       const taskResource = makeTaskResource([optionalParam]);
       render(
-        <TaskSidebar
+        <ResourceSidebar
           {...defaultProps}
           selectedData={makeSelectedData(taskResource)}
           hideOptionalTaskParam={false}
@@ -174,7 +174,7 @@ describe('TaskSidebar', () => {
     it('should show required params and no alert when toggle is on and required params exist', () => {
       const taskResource = makeTaskResource([requiredParam, optionalParam]);
       render(
-        <TaskSidebar
+        <ResourceSidebar
           {...defaultProps}
           selectedData={makeSelectedData(taskResource)}
           hideOptionalTaskParam={true}
@@ -190,7 +190,7 @@ describe('TaskSidebar', () => {
     it('should not render parameters section when task has no params', () => {
       const taskResource = makeTaskResource([]);
       render(
-        <TaskSidebar
+        <ResourceSidebar
           {...defaultProps}
           selectedData={makeSelectedData(taskResource)}
           hideOptionalTaskParam={true}

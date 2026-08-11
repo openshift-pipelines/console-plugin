@@ -1,10 +1,5 @@
 import type { SetStateAction, Dispatch, ReactNode, FC } from 'react';
-import {
-  Button,
-  ButtonVariant,
-  Content,
-  Title,
-} from '@patternfly/react-core';
+import { Button, ButtonVariant, Content, Title } from '@patternfly/react-core';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
@@ -15,12 +10,17 @@ import { TaskSearchCallback } from '../pipeline-builder/types';
 import './QuickSearchDetails.scss';
 
 export type QuickSearchDetailsRendererProps = {
+  kind?: string;
   selectedItem: CatalogItem;
   closeModal: () => void;
   namespace?: string;
   callback?: TaskSearchCallback;
   setFailedTasks?: Dispatch<SetStateAction<string[]>>;
+  hideCta?: boolean;
+  onSelectedVersionChange?: (version: string) => void;
+  onDetailsReadyChange?: (ready: boolean) => void;
 };
+
 export type DetailsRendererFunction = (
   props: QuickSearchDetailsRendererProps,
 ) => ReactNode;
@@ -30,12 +30,16 @@ export interface QuickSearchDetailsProps
 }
 
 const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
+  kind,
   selectedItem,
   closeModal,
   detailsRenderer,
   namespace,
   callback,
   setFailedTasks,
+  hideCta,
+  onSelectedVersionChange,
+  onDetailsReadyChange,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const navigate = useNavigate();
@@ -55,16 +59,18 @@ const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
         {selectedItem.badges?.length > 0 ? (
           <CatalogBadges badges={selectedItem.badges} />
         ) : undefined}
-        <Button
-          variant={ButtonVariant.primary}
-          className="ocs-quick-search-details__form-button"
-          data-test="create-quick-search"
-          onClick={(e) => {
-            handleCta(e, props.selectedItem, props.closeModal, navigate);
-          }}
-        >
-          {props.selectedItem.cta.label}
-        </Button>
+        {!props.hideCta && (
+          <Button
+            variant={ButtonVariant.primary}
+            className="ocs-quick-search-details__form-button"
+            data-test="create-quick-search"
+            onClick={(e) => {
+              handleCta(e, props.selectedItem, props.closeModal, navigate);
+            }}
+          >
+            {props.selectedItem.cta.label}
+          </Button>
+        )}
         <Content className="ocs-quick-search-details__description">
           {props.selectedItem.description}
         </Content>
@@ -77,11 +83,15 @@ const QuickSearchDetails: FC<QuickSearchDetailsProps> = ({
   return (
     <div className="ocs-quick-search-details">
       {detailsContentRenderer({
+        kind,
         selectedItem,
         closeModal,
         namespace,
         callback,
         setFailedTasks,
+        hideCta,
+        onSelectedVersionChange,
+        onDetailsReadyChange,
       })}
     </div>
   );

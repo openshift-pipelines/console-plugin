@@ -53,6 +53,7 @@ export type PipelineTask = {
   taskRef?: PipelineTaskRef;
   taskSpec?: TektonTaskSpec;
   pipelineRef?: PipelineTaskRef;
+  pipelineSpec?: PipelineSpec;
   when?: WhenExpression[];
   workspaces?: PipelineTaskWorkspace[];
 };

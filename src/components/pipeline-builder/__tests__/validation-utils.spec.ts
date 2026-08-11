@@ -147,7 +147,7 @@ describe('Pipeline Build validation schema', () => {
         .catch(
           hasError(
             'formData.tasks[0]',
-            'TaskSpec or TaskRef must be provided.',
+            'TaskSpec, TaskRef, PipelineRef, or PipelineSpec must be provided.',
           ),
         );
     });
@@ -156,6 +156,33 @@ describe('Pipeline Build validation schema', () => {
       await withFormData({
         ...initialPipelineFormData,
         tasks: [{ name: 'test', taskSpec: {} }],
+      })
+        .then(hasResults)
+        .catch(shouldHavePassed);
+    });
+
+    it('should pass if provided a pipelineSpec with nested tasks', async () => {
+      await withFormData({
+        ...initialPipelineFormData,
+        tasks: [
+          {
+            name: 'echo-task-1',
+            params: [{ name: 'mystr', value: 'pipeline-in-pipeline-task-1' }],
+            taskRef: { kind: 'Task', name: 'echo-task' },
+          },
+          {
+            name: 'nested-pipeline',
+            pipelineSpec: {
+              tasks: [
+                {
+                  name: 'echo-task-1',
+                  params: [{ name: 'mystr', value: 'nested-pipeline-task-1' }],
+                  taskRef: { kind: 'Task', name: 'echo-task' },
+                },
+              ],
+            },
+          },
+        ],
       })
         .then(hasResults)
         .catch(shouldHavePassed);

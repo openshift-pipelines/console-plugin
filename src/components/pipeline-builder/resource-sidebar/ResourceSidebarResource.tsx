@@ -7,7 +7,7 @@ import FormSelectField, {
   FormSelectFieldOption,
 } from '../../common/FormSelectField';
 
-type TaskSidebarResourceProps = {
+type ResourceSidebarResourceProps = {
   availableResources: TektonResource[];
   hasResource: boolean;
   name: string;
@@ -19,7 +19,7 @@ interface ResourceLink {
   resource: string;
 }
 
-const TaskSidebarResource: FC<TaskSidebarResourceProps> = (props) => {
+const ResourceSidebarResource: FC<ResourceSidebarResourceProps> = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { getFieldMeta, setFieldValue } =
     useFormikContext<PipelineBuilderFormikValues>();
@@ -90,4 +90,4 @@ const TaskSidebarResource: FC<TaskSidebarResourceProps> = (props) => {
   );
 };
 
-export default TaskSidebarResource;
+export default ResourceSidebarResource;

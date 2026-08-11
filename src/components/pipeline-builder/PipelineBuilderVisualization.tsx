@@ -30,9 +30,7 @@ type PipelineBuilderVisualizationProps = {
   taskResources: PipelineBuilderTaskResources;
 };
 
-const PipelineBuilderVisualization: FC<
-  PipelineBuilderVisualizationProps
-> = ({
+const PipelineBuilderVisualization: FC<PipelineBuilderVisualizationProps> = ({
   onTaskSelection,
   onUpdateTasks,
   onTaskSearch,

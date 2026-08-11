@@ -16,7 +16,11 @@ import {
   convertPipelineToBuilderForm,
 } from './utils';
 import { validationSchema } from './validation-utils';
-import { DocumentTitle, k8sCreate, k8sUpdate } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  DocumentTitle,
+  k8sCreate,
+  k8sUpdate,
+} from '@openshift-console/dynamic-plugin-sdk';
 import { returnValidPipelineModel } from '../utils/pipeline-utils';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useNavigate, useParams } from 'react-router';
@@ -43,6 +47,7 @@ const PipelineBuilderPage: FC<PipelineBuilderPageProps> = (props) => {
     taskResources: {
       clusterResolverTasks: [],
       namespacedTasks: [],
+      namespacedPipelines: [],
       tasksLoaded: false,
     },
   };
@@ -98,9 +103,7 @@ const PipelineBuilderPage: FC<PipelineBuilderPageProps> = (props) => {
 
   return (
     <div className="odc-pipeline-builder-page">
-      <DocumentTitle>
-        {t('Pipeline builder')}
-      </DocumentTitle>
+      <DocumentTitle>{t('Pipeline builder')}</DocumentTitle>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

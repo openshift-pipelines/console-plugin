@@ -36,8 +36,8 @@ const PlusNodeDecorator: FC<PlusNodeProps> = ({
           r={BUILDER_NODE_ADD_RADIUS}
           className="odc-plus-node-decorator__circle"
         />
-        <g transform="translate(-6, -6)">
-          <PlusIcon color="white" />
+        <g transform="translate(-7, -7)">
+          <PlusIcon size={BUILDER_NODE_ADD_RADIUS - 7} color="white" />
         </g>
       </g>
     </Tooltip>

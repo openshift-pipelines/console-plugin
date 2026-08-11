@@ -1,12 +1,43 @@
-.pipelines-ocs-quick-search-modal {
-  box-shadow: none !important;
-  overflow: unset;
-  background: none !important;
-  &__no-backdrop {
-    .pf-v6-c-backdrop {
-      background: none;
-      position: absolute;
-      overflow: hidden;
+.pipelines-console-plugin-quick-search-modal__search
+  .pf-v6-c-text-input-group__text-input:focus {
+  outline: none;
+}
+
+.pipelines-console-plugin-quick-search-modal {
+  &__body {
+    padding-right: 0;
+    padding-left: 0;
+    overflow-y: hidden;
+  }
+  &__navitem {
+    cursor: pointer;
+    border-block-end: var(--pf-t--global--border--width--divider--default, 1px)
+      solid var(--pf-t--global--border--color--default);
+    border-left: 4px solid transparent;
+
+    &__active {
+      border-left-color: #2b9af3;
+    }
+    &__textellipsis {
+      min-width: 0;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      text-wrap: nowrap;
+    }
+  }
+  &__split {
+    max-height: 50vh;
+  }
+  &__split-pane {
+    height: 50vh;
+    overflow-y: auto;
+    margin-right: 0px !important;
+    .pf-v6-c-nav {
+      padding-top: 0px !important;
+    }
+    .pf-v6-c-nav__list {
+      row-gap: 0px !important;
+      overflow-x: hidden;
     }
   }
 }

@@ -61,19 +61,22 @@ const TaskSidebarWhenExpression: FC<TaskSidebarWhenExpressionProps> = (
             />
             <div className="opp-task-sidebar-when-expression__control-button-wrapper">
               <Tooltip content={removeWhenExpressionLabel}>
-                <Button icon={<>
-                  <MinusCircleIcon />
-                  <span className="opp-task-sidebar-when-expression__control-label">
-                    {removeWhenExpressionLabel}
-                  </span>
-                </>}
+                <Button
+                  icon={
+                    <>
+                      <MinusCircleIcon />
+                      <span className="opp-task-sidebar-when-expression__control-label">
+                        {removeWhenExpressionLabel}
+                      </span>
+                    </>
+                  }
                   onClick={onDelete}
                   data-test="remove-when-expression"
                   className="opp-task-sidebar-when-expression__control-button"
                   aria-label={removeWhenExpressionLabel}
                   variant={ButtonVariant.plain}
                   type={ButtonType.button}
-                 />
+                />
               </Tooltip>
             </div>
           </div>

@@ -1371,7 +1371,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:latest":
+"@babel/runtime@npm:^8.0.0":
   version: 8.0.0
   resolution: "@babel/runtime@npm:8.0.0"
   checksum: 10c0/450857cf52b3a3935d4aad505277201361c86185dad3bdd2ae083d78b76c6265c7fc7610e170c80de1b825d5bfdcfb50697f0853fff922b2661c91cff1fbbd81
@@ -5012,9 +5012,9 @@ __metadata:
   linkType: hard
 
 "ansi-regex@npm:^6.2.2":
-  version: 6.2.2
-  resolution: "ansi-regex@npm:6.2.2"
-  checksum: 10c0/05d4acb1d2f59ab2cf4b794339c7b168890d44dda4bf0ce01152a8da0213aca207802f930442ce8cd22d7a92f44907664aac6508904e75e038fa944d2601b30f
+  version: 6.3.0
+  resolution: "ansi-regex@npm:6.3.0"
+  checksum: 10c0/bc047786d0531f1f22d1e22e9863e8554488a399f1ee5270b753efa6de938a788d27456f2b256770f11fdd8b1e847483bc1b55ddc2b3ffe82ec45c875292c651
   languageName: node
   linkType: hard
 
@@ -11876,7 +11876,7 @@ __metadata:
     "@babel/preset-env": "npm:^7.24.7"
     "@babel/preset-react": "npm:^7.28.5"
     "@babel/preset-typescript": "npm:^7.24.7"
-    "@babel/runtime": "npm:latest"
+    "@babel/runtime": "npm:^8.0.0"
     "@gitbeaker/core": "npm:^43.0.0"
     "@gitbeaker/rest": "npm:^43.0.0"
     "@octokit/core": "npm:^5.0.0"

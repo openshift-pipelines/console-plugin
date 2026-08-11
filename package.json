@@ -168,7 +168,7 @@
     }
   },
   "dependencies": {
-    "@babel/runtime": "latest",
+    "@babel/runtime": "^8.0.0",
     "@gitbeaker/rest": "^43.0.0",
     "@patternfly/react-drag-drop": "^6.0.0",
     "@types/express": "^4.17.18",

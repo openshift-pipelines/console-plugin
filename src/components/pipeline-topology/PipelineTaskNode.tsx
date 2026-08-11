@@ -22,12 +22,16 @@ import { Link } from 'react-router';
 import { NodeType } from './const';
 import { PipelineModel, PipelineRunModel, TaskModel } from '../../models';
 import { getReferenceForModel } from '../pipelines-overview/utils';
-import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  getGroupVersionKindForModel,
+  ResourceIcon,
+  useK8sWatchResource,
+} from '@openshift-console/dynamic-plugin-sdk';
 import {
   ComputedStatus,
-  TaskKind,
   PipelineKind,
   PipelineTask,
+  TaskKind,
 } from '../../types';
 import { pipelineRunFilterReducer } from '../utils/pipeline-filter-reducer';
 import {
@@ -200,11 +204,7 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
 
   const taskNode = (
     <TaskNode
-      badge={
-        kindModel === TaskModel && statusBadge
-          ? `${kindModel.abbr} ${statusBadge}`
-          : kindModel.abbr
-      }
+      badge={statusBadge}
       className="odc-pipeline-topology__task-node"
       element={element}
       onContextMenu={data.showContextMenu ? onContextMenu : undefined}
@@ -216,6 +216,18 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
       {...passedData}
       {...rest}
       truncateLength={element.getData()?.label?.length}
+      taskIcon={
+        <span className="osp-pipeline-task-node__icon">
+          <ResourceIcon
+            groupVersionKind={
+              isPipelineTask
+                ? getGroupVersionKindForModel(PipelineModel)
+                : getGroupVersionKindForModel(TaskModel)
+            }
+          />
+        </span>
+      }
+      taskIconPadding={1}
     >
       {whenDecorator}
     </TaskNode>

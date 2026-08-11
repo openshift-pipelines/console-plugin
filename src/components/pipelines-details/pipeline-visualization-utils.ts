@@ -388,6 +388,7 @@ export const getGraphDataModel = (
     spec: {},
   },
   taskRuns: TaskRunKind[],
+  childPipelineRuns: PipelineRunKind[],
 ): {
   graph: GraphModel;
   nodes: PipelineMixedNodeModel[];
@@ -397,7 +398,9 @@ export const getGraphDataModel = (
     return null;
   }
 
-  const taskList = _.flatten(getPipelineTasks(pipeline, pipelineRun, taskRuns));
+  const taskList = _.flatten(
+    getPipelineTasks(pipeline, pipelineRun, taskRuns, childPipelineRuns),
+  );
 
   const dag = new DAG();
   taskList?.forEach((task: PipelineTask) => {
@@ -524,6 +527,7 @@ export const getGraphDataModel = (
     pipeline,
     pipelineRun,
     taskRuns,
+    null,
     true,
   );
 

@@ -8,6 +8,10 @@ import { LoadingBox } from '../status/status-box';
 import PipelineVisualization from '../pipelines-details/PipelineVisualization';
 import { pipelineRunFilterReducer } from '../utils/pipeline-filter-reducer';
 import './PipelineRunVisualization.scss';
+import {
+  useChildPipelineRunReferences,
+  useChildPipelineRuns,
+} from '../hooks/useChildPipelineRuns';
 
 type PipelineRunVisualizationProps = {
   pipelineRun: PipelineRunKind;
@@ -37,6 +41,15 @@ const PipelineRunVisualization: FC<PipelineRunVisualizationProps> = ({
   /* this needs decoupling */
   const taskRunsLoaded = k8sLoaded || trLoaded;
   const pipeline: PipelineKind = usePipelineFromPipelineRun(pipelineRun);
+
+  const childPipelineRunRefs = useChildPipelineRunReferences(pipelineRun);
+  const [childPipelineRuns] = useChildPipelineRuns(
+    pipelineRun?.metadata?.namespace,
+    pipelineRun?.metadata?.name,
+    childPipelineRunRefs,
+    { depth: 1 },
+  );
+
   if (!pipeline || !taskRunsLoaded) {
     return (
       <div className="pipeline-plr-loader">
@@ -67,6 +80,7 @@ const PipelineRunVisualization: FC<PipelineRunVisualizationProps> = ({
           pipeline={pipeline}
           pipelineRun={pipelineRun}
           taskRuns={taskRuns}
+          childPipelineRuns={childPipelineRuns}
         />
       )}
     </>

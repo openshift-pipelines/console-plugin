@@ -412,7 +412,13 @@ describe('pipeline-utils ', () => {
     const { pipeline, pipelineRuns } =
       pipelineTestData[PipelineExampleNames.PIPELINE_WITH_FINALLY];
     const pipelineRun = pipelineRuns[DataState.SUCCESS];
-    const taskList = appendPipelineRunStatus(pipeline, pipelineRun, [], true);
+    const taskList = appendPipelineRunStatus(
+      pipeline,
+      pipelineRun,
+      [],
+      [],
+      true,
+    );
     expect(taskList).toHaveLength(1);
   });
 
@@ -420,7 +426,13 @@ describe('pipeline-utils ', () => {
     const { pipeline, pipelineRuns } =
       pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
     const pipelineRun = pipelineRuns[DataState.IN_PROGRESS];
-    const taskList = appendPipelineRunStatus(pipeline, pipelineRun, [], true);
+    const taskList = appendPipelineRunStatus(
+      pipeline,
+      pipelineRun,
+      [],
+      [],
+      true,
+    );
     expect(taskList).toHaveLength(0);
   });
 

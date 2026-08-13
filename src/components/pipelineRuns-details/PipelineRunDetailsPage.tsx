@@ -1,6 +1,9 @@
 import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
-import { ResourceStatus } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  NavPage,
+  ResourceStatus,
+} from '@openshift-console/dynamic-plugin-sdk';
 import { PipelineRunModel } from '../../models';
 import { LoadingBox } from '../status/status-box';
 import DetailsPage from '../details-page/DetailsPage';
@@ -14,6 +17,7 @@ import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { navFactory } from '../utils/horizontal-nav';
 import PipelineRunDetails from './PipelineRunDetails';
+import PipelineRunChildPipelineRunsList from './PipelineRunChildPipelineRunsList';
 import ResourceYAMLEditorViewOnly from '../yaml-editor/ResourceYAMLEditorViewOnly';
 import {
   chainsSignedAnnotation,
@@ -113,6 +117,37 @@ const PipelineRunDetailsPage: FC<PipelineRunDetailsPageProps> = ({
       </div>
     );
   }, [pipelineRun]);
+
+  const pages = useMemo((): NavPage[] => {
+    const navPages: NavPage[] = [
+      navFactory.details(PipelineRunDetails),
+      navFactory.editYaml(ResourceYAMLEditorViewOnly),
+      {
+        href: 'parameters',
+        name: t('Parameters'),
+        component: (pageProps) => (
+          <PipelineRunParametersForm obj={pipelineRun} {...pageProps} />
+        ),
+      },
+      {
+        href: 'logs',
+        name: t('Logs'),
+        component: PipelineRunLogsWithActiveTask,
+      },
+      navFactory.events(PipelineRunEvents),
+    ];
+
+    if (isPipelineInPipelineRun(pipelineRun)) {
+      navPages.push({
+        href: 'pipeline-runs',
+        name: t('PipelineRuns'),
+        component: PipelineRunChildPipelineRunsList,
+      });
+    }
+
+    return navPages;
+  }, [pipelineRun, t]);
+
   if (!pipelineRunLoaded) {
     return <LoadingBox />;
   }
@@ -139,23 +174,7 @@ const PipelineRunDetailsPage: FC<PipelineRunDetailsPageProps> = ({
           name: t('PipelineRun details'),
         },
       ]}
-      pages={[
-        navFactory.details(PipelineRunDetails),
-        navFactory.editYaml(ResourceYAMLEditorViewOnly),
-        {
-          href: 'parameters',
-          name: t('Parameters'),
-          component: (pageProps) => (
-            <PipelineRunParametersForm obj={pipelineRun} {...pageProps} />
-          ),
-        },
-        {
-          href: 'logs',
-          name: t('Logs'),
-          component: PipelineRunLogsWithActiveTask,
-        },
-        navFactory.events(PipelineRunEvents),
-      ]}
+      pages={pages}
       customActionMenu={customActionMenu}
     />
   );

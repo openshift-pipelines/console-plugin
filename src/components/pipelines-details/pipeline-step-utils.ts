@@ -133,3 +133,16 @@ export const sortPipelineAndTaskRunsByDuration = <
     return direction === 'asc' ? durationA - durationB : durationB - durationA;
   });
 };
+
+export const sortRunsByComputedStatus = <
+  T extends PipelineRunKind | TaskRunKind,
+>(
+  data: T[],
+  direction: 'asc' | 'desc',
+  reducer: (run: T) => string,
+): T[] => {
+  return data.sort((a, b) => {
+    const cmp = reducer(a).localeCompare(reducer(b));
+    return direction === 'asc' ? cmp : -cmp;
+  });
+};

@@ -15,6 +15,7 @@ import {
   getMultiClusterLogsUrl,
   getMultiClusterLogsStreamPath,
 } from '../utils/multi-cluster-api';
+import { processCarriageReturns } from './logs-utils';
 
 type LogsProps = {
   resource: PodKind;
@@ -56,7 +57,7 @@ const processLogData = (
       }
     }
   });
-  return result;
+  return processCarriageReturns(result);
 };
 
 const Logs: React.FC<LogsProps> = ({
@@ -125,9 +126,9 @@ const Logs: React.FC<LogsProps> = ({
               },
             };
           } else {
-            // Otherwise, append the blockContent to the existing logs
-            const existingLogs = prevLogData[containerName]?.logs || [];
-            const updatedLogs = [...existingLogs, blockContent.trimEnd()];
+            // Otherwise, concatenate the blockContent to the existing logs
+            const existingLog = prevLogData[containerName]?.logs?.[0] || '';
+            const updatedLogs = [existingLog + blockContent];
 
             return {
               ...prevLogData,

@@ -16,13 +16,19 @@ import { useTaskRuns } from '../hooks/useTaskRuns';
 import TaskRunsRow from './TaskRunsRow';
 import { TaskRunModel } from '../../models';
 import { ALL_NAMESPACES_KEY, TektonResourceLabel } from '../../consts';
-import { ComputedStatus, PipelineRunKind } from '../../types';
-import { pipelineRunFilterReducer } from '../utils/pipeline-filter-reducer';
+import { ComputedStatus, PipelineRunKind, TaskRunKind } from '../../types';
+import {
+  pipelineRunFilterReducer,
+  taskRunFilterReducer,
+} from '../utils/pipeline-filter-reducer';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useTaskRunsFilters } from './useTaskRunsFilters';
 import { useLoadMoreOnScroll } from '../utils/tekton-results';
 import { ListPageFilter } from '../list-pages/ListPageFilter';
-import { sortPipelineAndTaskRunsByDuration } from '../pipelines-details/pipeline-step-utils';
+import {
+  sortPipelineAndTaskRunsByDuration,
+  sortRunsByComputedStatus,
+} from '../pipelines-details/pipeline-step-utils';
 
 interface TaskRunsListPageProps {
   showTitle?: boolean;
@@ -70,7 +76,8 @@ const useTaskColumns = () => {
     },
     {
       id: 'taskrunstatus',
-      sort: 'status.conditions[0].reason',
+      sort: (data: TaskRunKind[], direction: SortByDirection) =>
+        sortRunsByComputedStatus(data, direction, taskRunFilterReducer),
       title: t('Status'),
       transforms: [sortable],
     },

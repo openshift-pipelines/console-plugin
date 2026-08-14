@@ -10,6 +10,7 @@ import { Tooltip } from '@patternfly/react-core';
 import { CopyIcon } from '@patternfly/react-icons/dist/esm/icons/copy-icon';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { ALL_NAMESPACES_KEY } from '../../consts';
+import { sanitizeHref } from './utils';
 
 // Kubernetes "dns-friendly" names match
 // [a-z0-9]([-a-z0-9]*[a-z0-9])?  and are 63 or fewer characters
@@ -85,18 +86,33 @@ export const ExternalLink: FC<ExternalLinkProps> = ({
   additionalClassName = '',
   dataTestID,
   stopPropagation,
-}) => (
-  <a
-    className={cx('co-external-link', additionalClassName)}
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    data-test-id={dataTestID}
-    {...(stopPropagation ? { onClick: (e) => e.stopPropagation() } : {})}
-  >
-    {children || text}
-  </a>
-);
+}) => {
+  const safeHref = sanitizeHref(href);
+
+  if (!safeHref) {
+    return (
+      <span
+        className={cx('co-external-link', additionalClassName)}
+        data-test-id={dataTestID}
+      >
+        {children || text || href}
+      </span>
+    );
+  }
+
+  return (
+    <a
+      className={cx('co-external-link', additionalClassName)}
+      href={safeHref}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-test-id={dataTestID}
+      {...(stopPropagation ? { onClick: (e) => e.stopPropagation() } : {})}
+    >
+      {children || text}
+    </a>
+  );
+};
 
 // Opens link with copy-to-clipboard
 
@@ -107,7 +123,8 @@ export const ExternalLinkWithCopy: FC<ExternalLinkWithCopyProps> = ({
   dataTestID,
 }) => {
   const [copied, setCopied] = useState(false);
-
+  const safeLink = sanitizeHref(link);
+  const isUnsafe = !safeLink;
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const tooltipText = copied
     ? t('Copied to clipboard')
@@ -118,10 +135,19 @@ export const ExternalLinkWithCopy: FC<ExternalLinkWithCopyProps> = ({
     </span>,
   ];
 
+  // From Qodo review: render label as inert text, no anchor, no copy control.
+  if (isUnsafe) {
+    return (
+      <div className={cx(additionalClassName)}>
+        <span data-test-id={dataTestID}>{text ?? link}</span>
+      </div>
+    );
+  }
+
   return (
     <div className={cx(additionalClassName)}>
       <a
-        href={link}
+        href={safeLink}
         target="_blank"
         rel="noopener noreferrer"
         data-test-id={dataTestID}
@@ -140,7 +166,7 @@ export const ExternalLinkWithCopy: FC<ExternalLinkWithCopyProps> = ({
           trigger="click mouseenter focus"
           exitDelay={1250}
         >
-          <CTC text={link} onCopy={() => setCopied(true)}>
+          <CTC text={safeLink} onCopy={() => setCopied(true)}>
             <span
               onMouseEnter={() => setCopied(false)}
               className="co-external-link-with-copy__icon co-external-link-with-copy__copyicon"

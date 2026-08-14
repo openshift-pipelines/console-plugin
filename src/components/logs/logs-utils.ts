@@ -339,6 +339,28 @@ export const getDownloadAllLogsCallbackMultiCluster = (
   return () => fetchMcLogs();
 };
 
+/*
+ * Handles carriage return (\r) the same way a terminal does.
+ * A carriage return moves the cursor back to the beginning of the
+ * current line, so the new text overwrites what was previously there.
+ * This keeps the displayed output consistent with terminal behavior.
+ */
+export const processCarriageReturns = (text: string): string => {
+  if (!text || !text.includes('\r')) return text;
+
+  return text
+    .split('\n')
+    .map((line) => {
+      if (!line.includes('\r')) return line;
+      const segments = line.split('\r');
+      for (let i = segments.length - 1; i >= 0; i--) {
+        if (segments[i] !== '') return segments[i];
+      }
+      return '';
+    })
+    .join('\n');
+};
+
 export const resetAnsiStatePerLine = (logData: string): string => {
   if (!logData) return logData;
   return logData.replace(/\n/g, '\n\x1b[0m');

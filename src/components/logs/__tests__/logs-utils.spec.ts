@@ -1,5 +1,5 @@
 import { PodStatus } from '../../../types';
-import { getRenderContainers } from '../logs-utils';
+import { getRenderContainers, processCarriageReturns } from '../logs-utils';
 import { podData } from './logs-test-data';
 
 describe('logs utils', () => {
@@ -144,5 +144,63 @@ Deployment successful`;
     expect(findTargetRowForActiveStep(formattedString, 'build')).toBe(4);
     expect(findTargetRowForActiveStep(formattedString, 'test')).toBe(8);
     expect(findTargetRowForActiveStep(formattedString, 'deploy')).toBe(12);
+  });
+});
+
+describe('processCarriageReturns', () => {
+  it('should return text unchanged when no \\r is present', () => {
+    expect(processCarriageReturns('hello world')).toBe('hello world');
+  });
+
+  it('should return empty string unchanged', () => {
+    expect(processCarriageReturns('')).toBe('');
+  });
+
+  it('should overwrite line from the beginning on \\r (same length)', () => {
+    expect(
+      processCarriageReturns('Processing row 1/300\rProcessing row 2/300'),
+    ).toBe('Processing row 2/300');
+  });
+
+  it('should keep the last non-empty segment when new text is shorter', () => {
+    expect(processCarriageReturns('long line here\rshort')).toBe('short');
+  });
+
+  it('should handle trailing \\r (cursor reset with no new text)', () => {
+    expect(processCarriageReturns('hello\r')).toBe('hello');
+  });
+
+  it('should handle multiple \\r in a single line', () => {
+    expect(
+      processCarriageReturns(
+        'Processing row 1/300\rProcessing row 2/300\rProcessing row 3/300',
+      ),
+    ).toBe('Processing row 3/300');
+  });
+
+  it('should process each \\n-delimited line independently', () => {
+    expect(processCarriageReturns('line1a\rline1b\nline2a\rline2b')).toBe(
+      'line1b\nline2b',
+    );
+  });
+
+  it('should not affect lines without \\r in multi-line text', () => {
+    expect(processCarriageReturns('normal line\nhas cr\roverwritten')).toBe(
+      'normal line\noverwritten',
+    );
+  });
+
+  it('should treat \\r\\n as a normal line ending (not an overwrite)', () => {
+    expect(processCarriageReturns('Line 1\r\nLine 2\r\nLine 3')).toBe(
+      'Line 1\nLine 2\nLine 3',
+    );
+  });
+
+  it('should handle the reproducer scenario (progress counter)', () => {
+    const input = Array.from(
+      { length: 300 },
+      (_, i) => `Processing row ${i + 1}/300`,
+    ).join('\r');
+    expect(processCarriageReturns(input)).toBe('Processing row 300/300');
   });
 });

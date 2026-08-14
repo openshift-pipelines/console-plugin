@@ -16,7 +16,7 @@ import {
   getMultiClusterLogsUrl,
   getMultiClusterLogsStreamPath,
 } from '../utils/multi-cluster-api';
-import { resetAnsiStatePerLine } from './logs-utils';
+import { processCarriageReturns, resetAnsiStatePerLine } from './logs-utils';
 
 type LogsProps = {
   resource: PodKind;
@@ -58,7 +58,7 @@ const processLogData = (
       }
     }
   });
-  return resetAnsiStatePerLine(result);
+  return resetAnsiStatePerLine(processCarriageReturns(result));
 };
 
 const Logs: FC<LogsProps> = ({
@@ -127,9 +127,9 @@ const Logs: FC<LogsProps> = ({
               },
             };
           } else {
-            // Otherwise, append the blockContent to the existing logs
-            const existingLogs = prevLogData[containerName]?.logs || [];
-            const updatedLogs = [...existingLogs, blockContent.trimEnd()];
+            // Otherwise, concatenate the blockContent to the existing logs
+            const existingLog = prevLogData[containerName]?.logs?.[0] || '';
+            const updatedLogs = [existingLog + blockContent];
 
             return {
               ...prevLogData,

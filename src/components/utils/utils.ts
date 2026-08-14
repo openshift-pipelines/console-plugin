@@ -239,3 +239,23 @@ export const getPipelineRunData = (
   };
   return migratePipelineRun(newPipelineRun);
 };
+
+const SAFE_SCHEMES = ['https:', 'http:'];
+
+/* Normalize backslashes to forward slashes before parsing, then reject any result that is an absolute URL with an unsafe scheme, a protocol-relative path (//), or an unrecognized bare string — returning the normalized form rather than the raw input. */
+
+export function sanitizeHref(url: string | undefined): string {
+  if (!url) return '';
+
+  const normalized = url.replace(/\\/g, '/');
+
+  try {
+    const parsed = new URL(normalized);
+    return SAFE_SCHEMES.includes(parsed.protocol) ? parsed.href : '';
+  } catch {
+    const isRelative =
+      (normalized.startsWith('/') && !normalized.startsWith('//')) ||
+      normalized.startsWith('.');
+    return isRelative ? normalized : '';
+  }
+}

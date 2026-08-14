@@ -1,6 +1,9 @@
 import { ComputedStatus, PipelineRunKind } from '../../../types';
 import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
-import { sortPipelineAndTaskRunsByDuration } from '../pipeline-step-utils';
+import {
+  sortPipelineAndTaskRunsByDuration,
+  sortRunsByComputedStatus,
+} from '../pipeline-step-utils';
 
 // Mock the pipeline-filter-reducer module
 jest.mock('../../utils/pipeline-filter-reducer', () => ({
@@ -233,6 +236,148 @@ describe('sortPipelineAndTaskRunsByDuration', () => {
 
       // Should handle negative duration gracefully
       expect(result).toHaveLength(2);
+    });
+  });
+});
+
+describe('sortRunsByComputedStatus', () => {
+  const createMockRun = (name: string): PipelineRunKind => ({
+    metadata: { name, namespace: 'test-namespace' },
+    spec: {},
+    status: { pipelineSpec: { tasks: [] } },
+  });
+
+  describe('ascending order', () => {
+    it('should sort items alphabetically by computed status', () => {
+      const runs = [
+        createMockRun('run-c'),
+        createMockRun('run-a'),
+        createMockRun('run-b'),
+      ];
+      const reducer = (run: PipelineRunKind) => {
+        if (run.metadata.name === 'run-a') return 'Failed';
+        if (run.metadata.name === 'run-b') return 'Running';
+        return 'Succeeded';
+      };
+
+      const result = sortRunsByComputedStatus(runs, 'asc', reducer);
+
+      expect(result.map((r) => r.metadata.name)).toEqual([
+        'run-a', // Failed
+        'run-b', // Running
+        'run-c', // Succeeded
+      ]);
+    });
+  });
+
+  describe('descending order', () => {
+    it('should sort items in reverse alphabetical order by computed status', () => {
+      const runs = [
+        createMockRun('run-failed'),
+        createMockRun('run-succeeded'),
+        createMockRun('run-running'),
+      ];
+      const reducer = (run: PipelineRunKind) => {
+        if (run.metadata.name === 'run-failed') return 'Failed';
+        if (run.metadata.name === 'run-running') return 'Running';
+        return 'Succeeded';
+      };
+
+      const result = sortRunsByComputedStatus(runs, 'desc', reducer);
+
+      expect(result.map((r) => r.metadata.name)).toEqual([
+        'run-succeeded', // Succeeded
+        'run-running', // Running
+        'run-failed', // Failed
+      ]);
+    });
+  });
+
+  describe('multiple raw reasons mapping to one computed status', () => {
+    it('should group items with different raw reasons but same computed status', () => {
+      const runs = [
+        createMockRun('run-timeout'),
+        createMockRun('run-succeeded'),
+        createMockRun('run-failed-normal'),
+        createMockRun('run-cancelled'),
+      ];
+      const reducer = (run: PipelineRunKind) => {
+        switch (run.metadata.name) {
+          case 'run-timeout':
+            return 'Failed';
+          case 'run-failed-normal':
+            return 'Failed';
+          case 'run-cancelled':
+            return 'Cancelled';
+          default:
+            return 'Succeeded';
+        }
+      };
+
+      const result = sortRunsByComputedStatus(runs, 'asc', reducer);
+
+      expect(result.map((r) => r.metadata.name)).toEqual([
+        'run-cancelled', // Cancelled
+        'run-timeout', // Failed
+        'run-failed-normal', // Failed
+        'run-succeeded', // Succeeded
+      ]);
+    });
+  });
+
+  describe('missing status conditions', () => {
+    it('should handle runs where reducer returns a fallback value', () => {
+      const runs = [
+        createMockRun('run-ok'),
+        createMockRun('run-no-status'),
+        createMockRun('run-failed'),
+      ];
+      const reducer = (run: PipelineRunKind) => {
+        if (run.metadata.name === 'run-no-status') return '-';
+        if (run.metadata.name === 'run-failed') return 'Failed';
+        return 'Succeeded';
+      };
+
+      const result = sortRunsByComputedStatus(runs, 'asc', reducer);
+
+      expect(result.map((r) => r.metadata.name)).toEqual([
+        'run-no-status', // '-' (ComputedStatus.Other)
+        'run-failed', // Failed
+        'run-ok', // Succeeded
+      ]);
+    });
+  });
+
+  describe('deterministic behavior', () => {
+    it('should maintain relative order of items with equal computed status', () => {
+      const runs = [
+        createMockRun('run-z'),
+        createMockRun('run-a'),
+        createMockRun('run-m'),
+      ];
+      const reducer = () => 'Failed';
+
+      const result1 = sortRunsByComputedStatus(runs, 'asc', reducer);
+      const result2 = sortRunsByComputedStatus(runs, 'asc', reducer);
+
+      expect(result1.map((r) => r.metadata.name)).toEqual(
+        result2.map((r) => r.metadata.name),
+      );
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should handle empty array', () => {
+      const result = sortRunsByComputedStatus([], 'asc', () => 'Failed');
+      expect(result).toEqual([]);
+    });
+
+    it('should handle single item', () => {
+      const runs = [createMockRun('only-run')];
+      const result = sortRunsByComputedStatus(runs, 'asc', () => 'Succeeded');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].metadata.name).toBe('only-run');
     });
   });
 });

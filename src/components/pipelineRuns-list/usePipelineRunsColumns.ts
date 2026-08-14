@@ -1,4 +1,5 @@
 import { TableColumn } from '@openshift-console/dynamic-plugin-sdk';
+import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import {
   RepoAnnotationFields,
@@ -7,7 +8,11 @@ import {
   RepositoryLabels,
 } from '../../consts';
 import { PipelineRunKind } from '../../types';
-import { sortPipelineAndTaskRunsByDuration } from '../pipelines-details/pipeline-step-utils';
+import {
+  sortPipelineAndTaskRunsByDuration,
+  sortRunsByComputedStatus,
+} from '../pipelines-details/pipeline-step-utils';
+import { pipelineRunFilterReducer } from '../utils/pipeline-filter-reducer';
 
 export const tableColumnInfo = [
   {id: 'name', classNames: 'pf-v6-m-width-20'},
@@ -63,13 +68,13 @@ const usePipelineRunsColumns = (
     {
       id: tableColumnInfo[4].id,
       title: t('Status'),
-      sort: 'status.conditions[0].reason',
+      sort: (data: PipelineRunKind[], direction: SortByDirection) =>
+        sortRunsByComputedStatus(data, direction, pipelineRunFilterReducer),
       props: { className: tableColumnInfo[4].classNames, modifier: 'nowrap' },
     },
     {
       id: tableColumnInfo[5].id,
       title: t('Task status'),
-      sort: 'status.conditions[0].reason',
       props: { className: tableColumnInfo[5].classNames, modifier: 'nowrap' },
     },
     {

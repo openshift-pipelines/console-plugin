@@ -37,7 +37,10 @@ import {
   TektonResourceLabel,
 } from '../../consts';
 import { getReferenceForModel } from '../pipelines-overview/utils';
-import { sortPipelineAndTaskRunsByDuration } from '../pipelines-details/pipeline-step-utils';
+import {
+  sortPipelineAndTaskRunsByDuration,
+  sortRunsByComputedStatus,
+} from '../pipelines-details/pipeline-step-utils';
 import { TaskRunKind } from '../../types';
 import { taskRunFilterReducer } from '../utils/pipeline-filter-reducer';
 import TaskRunStatus from './TaskRunStatus';
@@ -257,7 +260,8 @@ const TaskRunsList: FC<TaskRunsListPageProps> = ({
       {
         title: t('Status'),
         id: 'taskrunstatus',
-        sort: 'status.conditions[0].reason',
+        sort: (data: TaskRunKind[], direction: SortByDirection) =>
+          sortRunsByComputedStatus(data, direction, taskRunFilterReducer),
         props: { modifier: 'nowrap' },
       },
       {

@@ -24,7 +24,10 @@ import { DASH } from '../../consts';
 import { Tooltip } from '@patternfly/react-core';
 import { AutomationIcon as PipelineInPipelineIcon } from '@patternfly/react-icons';
 import { t } from '../utils/common-utils';
-import { isPipelineInPipeline } from '../utils/pipeline-utils';
+import {
+  isPipelineInPipeline,
+  isPipelineInPipelineRun,
+} from '../utils/pipeline-utils';
 
 type PipelineStatusProps = {
   obj: PipelineWithLatest;
@@ -80,6 +83,15 @@ export const getPipelineListDataViewRows: GetDataViewRows<
             groupVersionKind={getGroupVersionKindForModel(PipelineRunModel)}
             name={obj.latestRun.metadata.name}
             namespace={obj.latestRun.metadata.namespace}
+            nameSuffix={
+              <>
+                {isPipelineInPipelineRun(obj.latestRun) ? (
+                  <Tooltip content={t('Pipeline in Pipeline Run')}>
+                    <PipelineInPipelineIcon className="opp-pipeline-run-list__results-indicator" />
+                  </Tooltip>
+                ) : null}
+              </>
+            }
           />
         ) : (
           DASH

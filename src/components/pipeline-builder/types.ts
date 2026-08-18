@@ -2,6 +2,7 @@ import { FormikErrors, FormikValues } from 'formik';
 import {
   PipelineTask,
   TaskKind,
+  PipelineKind,
   TektonParam,
   TektonResource,
   TektonWorkspace,
@@ -50,6 +51,7 @@ export type PipelineBuilderTaskGrouping = {
 export type PipelineBuilderTaskResources = {
   namespacedTasks: TaskKind[];
   clusterResolverTasks: TaskKind[];
+  namespacedPipelines?: PipelineKind[];
   tasksLoaded: boolean;
 };
 
@@ -84,7 +86,7 @@ export type PipelineBuilderFormikStatus = {
 
 export type SelectTaskCallback = (
   task: PipelineTask,
-  taskResource: TaskKind,
+  taskResource: TaskKind | PipelineKind,
   isFinallyTask: boolean,
 ) => void;
 
@@ -110,7 +112,7 @@ export type UpdateOperationAddData = UpdateOperationBaseData & {
 };
 export type UpdateOperationConvertToTaskData = UpdateOperationBaseData & {
   name: string;
-  resource: TaskKind;
+  resource: TaskKind | PipelineKind;
   runAfter?: string[];
 };
 export type UpdateOperationConvertToFinallyTaskData = {
@@ -119,14 +121,14 @@ export type UpdateOperationConvertToFinallyTaskData = {
 
 export type UpdateOperationConvertToLoadingTaskData = {
   name: string;
-  resource: TaskKind;
+  resource: TaskKind | PipelineKind;
   runAfter?: string[];
   isFinallyTask: boolean;
 };
 
 export type UpdateOperationFixInvalidTaskListData = UpdateOperationBaseData & {
   existingName: string;
-  resource: TaskKind;
+  resource: TaskKind | PipelineKind;
   runAfter?: string[];
 };
 export type UpdateOperationDeleteListTaskData = UpdateOperationBaseData & {

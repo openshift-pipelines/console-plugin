@@ -10,20 +10,20 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TaskKind } from '../../../types';
-import TaskSidebarShortcuts from './TaskSidebarShortcuts';
+import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
+import ResourceSidebarShortcuts from './ResourceSidebarShortcuts';
 import PipelineResourceRef from '../../triggers-details/PipelineResourceRef';
 
-import './TaskSidebarHeader.scss';
+import './ResourceSidebarHeader.scss';
 
-type TaskSidebarHeaderProps = {
+type ResourceSidebarHeaderProps = {
   removeThisTask: () => void;
-  taskResource: TaskKind;
+  resource: K8sResourceCommon;
 };
 
-const TaskSidebarHeader: FC<TaskSidebarHeaderProps> = ({
+const ResourceSidebarHeader: FC<ResourceSidebarHeaderProps> = ({
   removeThisTask,
-  taskResource,
+  resource,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
@@ -38,12 +38,12 @@ const TaskSidebarHeader: FC<TaskSidebarHeaderProps> = ({
   };
 
   return (
-    (<div className="opp-task-sidebar-header">
+    <div className="opp-task-sidebar-header">
       <Title headingLevel="h2" className="opp-task-sidebar-header__title">
         <div className="co-m-pane__name co-resource-item">
           <PipelineResourceRef
-            resourceKind={taskResource.kind}
-            resourceName={taskResource.metadata.name}
+            resourceKind={resource.kind}
+            resourceName={resource.metadata.name}
             largeIcon
             disableLink
           />
@@ -65,18 +65,18 @@ const TaskSidebarHeader: FC<TaskSidebarHeaderProps> = ({
           >
             <DropdownList>
               <DropdownItem key="remove-task" onClick={() => removeThisTask()}>
-                {t('Remove task')}
+                {t('Remove')}
               </DropdownItem>
             </DropdownList>
           </Dropdown>
         </div>
       </Title>
       <div className="opp-task-sidebar-header__shortcuts clearfix">
-        <TaskSidebarShortcuts />
+        <ResourceSidebarShortcuts />
       </div>
       <Divider className="co-divider" />
-    </div>)
+    </div>
   );
 };
 
-export default TaskSidebarHeader;
+export default ResourceSidebarHeader;

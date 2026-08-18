@@ -10,16 +10,16 @@ import { useBuilderParams } from '../../auto-complete/autoCompleteValueParsers';
 import { paramIsRequired } from '../../start-pipeline/validation-utils';
 import TextAreaField from '../../common/TextAreaField';
 
-import './TaskSidebarParam.scss';
+import './ResourceSidebarParam.scss';
 
-type TaskSidebarParamProps = {
+type ResourceSidebarParamProps = {
   hasParam: boolean;
   name: string;
   resourceParam: TektonParam;
   selectedData?: SelectedBuilderTask;
 };
 
-const TaskSidebarParam: FC<TaskSidebarParamProps> = (props) => {
+const ResourceSidebarParam: FC<ResourceSidebarParamProps> = (props) => {
   const { setFieldValue } = useFormikContext<PipelineBuilderFormikValues>();
   const { hasParam, name, resourceParam, selectedData } = props;
   const autoCompleteOptions = useBuilderParams(selectedData);
@@ -40,10 +40,7 @@ const TaskSidebarParam: FC<TaskSidebarParamProps> = (props) => {
     [hasParam, fieldName, name, setFieldValue, resourceParamName],
   );
 
-  const textAreaSettings: Omit<
-    ComponentProps<typeof TextAreaField>,
-    'name'
-  > = {
+  const textAreaSettings: Omit<ComponentProps<typeof TextAreaField>, 'name'> = {
     rows: 1,
     resizeOrientation: 'vertical',
   };
@@ -123,4 +120,4 @@ const TaskSidebarParam: FC<TaskSidebarParamProps> = (props) => {
   );
 };
 
-export default TaskSidebarParam;
+export default ResourceSidebarParam;

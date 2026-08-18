@@ -36,11 +36,15 @@ import { FLAGS } from '../../types';
 import './PipelineQuickSearchDetails.scss';
 
 const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
+  kind,
   selectedItem,
   closeModal,
   namespace,
   callback,
   setFailedTasks,
+  hideCta,
+  onSelectedVersionChange,
+  onDetailsReadyChange,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const navigate = useNavigate();
@@ -55,15 +59,30 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
   const [detailsLoaded, setDetailsLoaded] = useState<boolean>(
     !isArtifactHubTask(selectedItem),
   );
+
+  useEffect(() => {
+    onDetailsReadyChange?.(detailsLoaded);
+  }, [detailsLoaded, onDetailsReadyChange]);
+
+  const updateSelectedVersion = useCallback(
+    (version: string) => {
+      setSelectedVersion(version);
+      onSelectedVersionChange?.(version);
+    },
+    [onSelectedVersionChange],
+  );
+
   const resetVersions = useCallback(() => {
     setVersions(selectedItem?.attributes?.versions ?? []);
-    setSelectedVersion(selectedItem?.attributes?.installed ?? '');
+    const installed = selectedItem?.attributes?.installed ?? '';
+    setSelectedVersion(installed);
+    onSelectedVersionChange?.(installed);
     setHasInstalledVersion(isOneVersionInstalled(selectedItem));
-  }, [selectedItem]);
+  }, [selectedItem, onSelectedVersionChange]);
 
   const onChangeVersion = useCallback(
     (key) => {
-      setSelectedVersion(key);
+      updateSelectedVersion(key);
       if (isArtifactHubTask(selectedItem)) {
         setDetailsLoaded(false);
         getArtifactHubTaskDetails(selectedItem, key, isDevConsoleProxyAvailable)
@@ -86,7 +105,12 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
           });
       }
     },
-    [resetVersions, selectedItem],
+    [
+      resetVersions,
+      selectedItem,
+      updateSelectedVersion,
+      isDevConsoleProxyAvailable,
+    ],
   );
 
   useEffect(() => {
@@ -134,14 +158,15 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
 
   useEffect(() => {
     if (isTaskVersionInstalled(selectedItem)) {
-      setSelectedVersion(selectedItem.attributes.installed);
+      updateSelectedVersion(selectedItem.attributes.installed);
     } else {
-      setSelectedVersion(
+      const version =
         selectedItem.data?.latestVersion?.version?.toString() ||
-          selectedItem.data?.task?.version?.toString(),
-      );
+        selectedItem.data?.task?.version?.toString() ||
+        '';
+      updateSelectedVersion(version);
     }
-  }, [selectedItem]);
+  }, [selectedItem, updateSelectedVersion]);
 
   return (
     <div className="opp-quick-search-details">
@@ -151,33 +176,48 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
             {selectedItem.name}
           </Title>
         </LevelItem>
-        <LevelItem>
-          <Label data-test="task-provider">{selectedItem.provider}</Label>
-        </LevelItem>
+        {kind == 'Task' && selectedItem.provider !== 'Red Hat' && (
+          <LevelItem>
+            <Label data-test="task-provider">{selectedItem.provider}</Label>
+          </LevelItem>
+        )}
+        {(hasInstalledVersion || kind === 'Pipeline') && (
+          <LevelItem>
+            <Label
+              color="green"
+              icon={<CheckCircleIcon />}
+              data-test="task-installed-badge"
+            >
+              {t('Installed')}
+            </Label>
+          </LevelItem>
+        )}
       </Level>
       <Level hasGutter>
         <LevelItem>
           <Split hasGutter>
-            <SplitItem>
-              <Button
-                data-test="task-cta"
-                variant={ButtonVariant.primary}
-                className="opp-quick-search-details__form-button"
-                isDisabled={!detailsLoaded}
-                onClick={(e) => {
-                  handleCta(e, selectedItem, closeModal, navigate, {
-                    selectedVersion,
-                    selectedItem,
-                    isDevConsoleProxyAvailable,
-                    namespace,
-                    callback,
-                    setFailedTasks,
-                  });
-                }}
-              >
-                {getCtaButtonText(selectedItem, selectedVersion)}
-              </Button>
-            </SplitItem>
+            {!hideCta && (
+              <SplitItem>
+                <Button
+                  data-test="task-cta"
+                  variant={ButtonVariant.primary}
+                  className="opp-quick-search-details__form-button"
+                  isDisabled={!detailsLoaded}
+                  onClick={(e) => {
+                    handleCta(e, selectedItem, closeModal, navigate, {
+                      selectedVersion,
+                      selectedItem,
+                      isDevConsoleProxyAvailable,
+                      namespace,
+                      callback,
+                      setFailedTasks,
+                    });
+                  }}
+                >
+                  {getCtaButtonText(selectedItem, selectedVersion)}
+                </Button>
+              </SplitItem>
+            )}
             {versions.length > 0 && (
               <SplitItem data-test="task-version-dropdown">
                 <PipelineQuickSearchVersionDropdown
@@ -191,17 +231,6 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
             )}
           </Split>
         </LevelItem>
-        {hasInstalledVersion && (
-          <LevelItem>
-            <Label
-              color="green"
-              icon={<CheckCircleIcon />}
-              data-test="task-installed-badge"
-            >
-              {t('Installed')}
-            </Label>
-          </LevelItem>
-        )}
       </Level>
       {
         <PipelineQuickSearchTaskAlert
@@ -235,7 +264,10 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
         )}
         {selectedItem?.tags?.length > 0 && (
           <StackItem>
-            <LabelGroup categoryName={t('Tags')} data-test="task-tag-list">
+            <LabelGroup
+              categoryName={kind === 'Task' ? t('tags') : null}
+              data-test="task-tag-list"
+            >
               {selectedItem.tags.map((tag) => (
                 <Label color="blue" key={tag} data-test="task-tag-list-item">
                   {tag}

@@ -8,7 +8,7 @@ export type TaskKind = K8sResourceCommon & {
 };
 
 export type SelectedBuilderTask = {
-  resource: TaskKind;
+  resource: TaskKind | K8sResourceCommon;
   taskIndex: number;
   isFinallyTask: boolean;
 };

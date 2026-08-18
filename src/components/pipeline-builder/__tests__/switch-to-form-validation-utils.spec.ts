@@ -204,6 +204,30 @@ describe('Tasks validation', () => {
       .catch(shouldHavePassed);
   });
 
+  it('should pass if provided a pipelineSpec with nested tasks', async () => {
+    await withFormData(formDataBasicPassState, 'spec.tasks', [
+      {
+        name: 'echo-task-1',
+        params: [{ name: 'mystr', value: 'pipeline-in-pipeline-task-1' }],
+        taskRef: { kind: 'Task', name: 'echo-task' },
+      },
+      {
+        name: 'nested-pipeline',
+        pipelineSpec: {
+          tasks: [
+            {
+              name: 'echo-task-1',
+              params: [{ name: 'mystr', value: 'nested-pipeline-task-1' }],
+              taskRef: { kind: 'Task', name: 'echo-task' },
+            },
+          ],
+        },
+      },
+    ])
+      .then(hasResults)
+      .catch(shouldHavePassed);
+  });
+
   it('should fail if a task does not have a name', async () => {
     await withFormData(formDataBasicPassState, 'spec.tasks', [
       { notName: 'test', taskRef: { name: 'external-task' } },
@@ -216,7 +240,10 @@ describe('Tasks validation', () => {
     await withFormData(formDataBasicPassState, 'spec.tasks', [{ name: 'test' }])
       .then(shouldHaveFailed)
       .catch(
-        hasError('spec.tasks[0]', 'TaskSpec or TaskRef must be provided.'),
+        hasError(
+          'spec.tasks[0]',
+          'TaskSpec, TaskRef, PipelineRef, or PipelineSpec must be provided.',
+        ),
       );
   });
 

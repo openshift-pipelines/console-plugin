@@ -118,18 +118,30 @@ export const getTopLevelErrorMessage: GetErrorMessage =
 export const findTask = (
   resourceTasks: PipelineBuilderTaskResources,
   task: PipelineTask,
-): TaskKind => {
-  const getTaskName = (task: PipelineTask): string | null => {
-    if (!task?.taskRef) return null;
-
-    const { taskRef } = task;
-
-    if (taskRef.resolver === 'cluster') {
-      const nameParam = taskRef.params?.find((param) => param.name === 'name');
+): TaskKind | PipelineKind => {
+  const getRefName = (
+    ref?: PipelineTask['taskRef'] | PipelineTask['pipelineRef'],
+  ): string | null => {
+    if (!ref) return null;
+    if (ref.resolver === 'cluster') {
+      const nameParam = ref.params?.find((param) => param.name === 'name');
       return nameParam ? nameParam.value : null;
     }
-    return taskRef.name;
+    return ref.name;
   };
+
+  if (task?.pipelineRef) {
+    if (!resourceTasks?.tasksLoaded) {
+      return null;
+    }
+    const pipelineName = getRefName(task.pipelineRef);
+    return (
+      resourceTasks.namespacedPipelines?.find(
+        (pipeline) => pipeline.metadata.name === pipelineName,
+      ) || null
+    );
+  }
+
   if (task?.taskRef) {
     if (
       !resourceTasks?.tasksLoaded ||
@@ -139,10 +151,13 @@ export const findTask = (
       return null;
     }
 
-    const taskName = getTaskName(task);
-
-    const matchingName = (taskResource: TaskKind) =>
+    const taskName = getRefName(task.taskRef);
+    const matchingName = (taskResource: TaskKind | PipelineKind) =>
       taskResource.metadata.name === taskName;
+
+    if (task.taskRef.kind === PipelineModel.kind) {
+      return resourceTasks.namespacedPipelines?.find(matchingName) || null;
+    }
 
     return (
       resourceTasks.namespacedTasks.find(matchingName) ||
@@ -167,7 +182,7 @@ export const findTask = (
 export const findTaskFromFormikData = (
   formikData: PipelineBuilderFormYamlValues,
   task: PipelineTask,
-): TaskKind => {
+): TaskKind | PipelineKind => {
   const { taskResources } = formikData;
   return findTask(taskResources, task);
 };
@@ -305,7 +320,7 @@ export const safeName = (
 
 export const convertResourceToLoadingTask = (
   usedNames: string[],
-  resource: TaskKind,
+  resource: TaskKind | PipelineKind,
   isFinallyTask: boolean,
   runAfter?: string[],
 ): PipelineBuilderLoadingTask => {
@@ -317,12 +332,14 @@ export const convertResourceToLoadingTask = (
       kind,
       name: resource.metadata.name,
     },
-    resource,
+    resource: resource as TaskKind,
     isFinallyTask,
   };
 };
 
-export const getTaskParameters = (taskResource: TaskKind): TektonParam[] => {
+export const getTaskParameters = (
+  taskResource: TaskKind | PipelineKind,
+): TektonParam[] => {
   return (
     _.get(taskResource, PATHS.alphaParameters) ||
     _.get(taskResource, PATHS.betaParameters) ||
@@ -362,11 +379,30 @@ export const filterOptionalTaskParams = (
 };
 export const convertResourceToTask = (
   usedNames: string[],
-  resource: TaskKind,
+  resource: TaskKind | PipelineKind,
   runAfter?: string[],
   namespace?: string,
 ): PipelineTask => {
   const kind = resource.kind ?? TaskModel.kind;
+  const name = safeName(usedNames, resource.metadata.name);
+  const params = getTaskParameters(resource).map(
+    (param: TektonParam): PipelineTaskParam => ({
+      name: param.name,
+      value: param.default,
+    }),
+  );
+
+  if (kind === PipelineModel.kind) {
+    return {
+      name,
+      runAfter,
+      pipelineRef: {
+        name: resource.metadata.name,
+      },
+      params,
+    };
+  }
+
   let taskRef;
   if (
     resource.metadata.namespace === PIPELINE_NAMESPACE &&
@@ -387,15 +423,10 @@ export const convertResourceToTask = (
     };
   }
   return {
-    name: safeName(usedNames, resource.metadata.name),
+    name,
     runAfter,
     taskRef,
-    params: getTaskParameters(resource).map(
-      (param: TektonParam): PipelineTaskParam => ({
-        name: param.name,
-        value: param.default,
-      }),
-    ),
+    params,
   };
 };
 

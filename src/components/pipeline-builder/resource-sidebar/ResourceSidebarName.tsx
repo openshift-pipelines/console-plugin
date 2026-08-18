@@ -17,13 +17,13 @@ import { NameErrorStatus, PipelineBuilderFormikValues } from '../types';
 import { nameValidationSchema } from '../validation-utils';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 
-type TaskSidebarNameProps = {
+type ResourceSidebarNameProps = {
   name: string;
   onChange: (newName: string) => void;
   taskName: string;
 };
 
-const TaskSidebarName: FC<TaskSidebarNameProps> = (props) => {
+const ResourceSidebarName: FC<ResourceSidebarNameProps> = (props) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { name, onChange, taskName } = props;
   const { setStatus, status, values } =
@@ -38,9 +38,7 @@ const TaskSidebarName: FC<TaskSidebarNameProps> = (props) => {
     statusPath,
     {},
   );
-  const [interimName, setInterimName] = useState(
-    nameError ?? initialName,
-  );
+  const [interimName, setInterimName] = useState(nameError ?? initialName);
   const [validating, setValidating] = useState(null);
   const isValid = !errorMessage;
   const reservedNames: string[] = [...tasks, ...finallyTasks]
@@ -119,4 +117,4 @@ const TaskSidebarName: FC<TaskSidebarNameProps> = (props) => {
   );
 };
 
-export default TaskSidebarName;
+export default ResourceSidebarName;

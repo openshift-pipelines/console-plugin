@@ -7,7 +7,7 @@ import FormSelectField, {
   FormSelectFieldOption,
 } from '../../common/FormSelectField';
 
-type TaskSidebarWorkspaceProps = {
+type ResourceSidebarWorkspaceProps = {
   availableWorkspaces: TektonWorkspace[];
   hasWorkspace: boolean;
   name: string;
@@ -19,7 +19,7 @@ interface WorkspaceLink {
   workspace: string;
 }
 
-const TaskSidebarWorkspace: FC<TaskSidebarWorkspaceProps> = (props) => {
+const ResourceSidebarWorkspace: FC<ResourceSidebarWorkspaceProps> = (props) => {
   const {
     availableWorkspaces,
     hasWorkspace,
@@ -84,4 +84,4 @@ const TaskSidebarWorkspace: FC<TaskSidebarWorkspaceProps> = (props) => {
   );
 };
 
-export default TaskSidebarWorkspace;
+export default ResourceSidebarWorkspace;

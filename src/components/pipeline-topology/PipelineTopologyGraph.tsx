@@ -28,6 +28,7 @@ const PipelineTopologyGraph: FC<PipelineTopologyGraphProps> = ({
         model={model}
         componentFactory={componentFactory}
         noScrollbar={builder}
+        showControlBar={true}
         {...props}
       />
     </div>

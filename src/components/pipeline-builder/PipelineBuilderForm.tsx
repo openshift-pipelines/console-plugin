@@ -26,7 +26,7 @@ import {
 import RemoveTaskModal from './modals';
 import PipelineBuilderFormEditor from './PipelineBuilderFormEditor';
 import PipelineBuilderHeader from './PipelineBuilderHeader';
-import TaskSidebar from './task-sidebar/TaskSidebar';
+import ResourceSidebar from './resource-sidebar/ResourceSidebar';
 import {
   CleanupResults,
   PipelineBuilderTaskGroup,
@@ -94,7 +94,7 @@ const PipelineBuilderForm: FC<PipelineBuilderFormProps> = (props) => {
   };
   const onTaskSelection = (
     task: PipelineTask,
-    resource: TaskKind,
+    resource: TaskKind | PipelineKind,
     isFinallyTask: boolean,
   ) => {
     const builderNodes = isFinallyTask ? formData.finallyTasks : formData.tasks;
@@ -225,8 +225,7 @@ const PipelineBuilderForm: FC<PipelineBuilderFormProps> = (props) => {
         panelContent={
           selectedTask ? (
             <DrawerPanelContent>
-              <TaskSidebar
-                // Intentional remount when selection changes
+              <ResourceSidebar
                 key={
                   selectedTask?.resource?.metadata?.name +
                   selectedTask?.taskIndex +

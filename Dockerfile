@@ -1,5 +1,5 @@
-ARG BUILDER=registry.access.redhat.com/ubi9/nodejs-22
-ARG RUNTIME=registry.access.redhat.com/ubi9/nginx-124
+ARG BUILDER=registry.access.redhat.com/ubi9/nodejs-22@sha256:2c3bb588fae7d9d1e5acd1afd77a61cc8cbae2d0d3f85bb7ec03bb3275ba2420
+ARG RUNTIME=registry.access.redhat.com/ubi9/nginx-124@sha256:2a819f43952e42003101db5dd6f3a7d9a14ca38cac4b95016f23dcf678e22d2d
 
 # Stage 1: Build UI
 FROM $BUILDER AS builder-ui

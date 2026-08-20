@@ -176,11 +176,13 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
             {selectedItem.name}
           </Title>
         </LevelItem>
-        {kind == 'Task' && selectedItem.provider !== 'Red Hat' && (
-          <LevelItem>
-            <Label data-test="task-provider">{selectedItem.provider}</Label>
-          </LevelItem>
-        )}
+        {kind == 'Task' &&
+          selectedItem.provider !== 'Red Hat' &&
+          !hasInstalledVersion && (
+            <LevelItem>
+              <Label data-test="task-provider">{selectedItem.provider}</Label>
+            </LevelItem>
+          )}
         {(hasInstalledVersion || kind === 'Pipeline') && (
           <LevelItem>
             <Label

@@ -35,6 +35,10 @@
       border-left: 3px solid transparent;
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
+      min-width: 0;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      text-wrap: nowrap;
 
       &.pf-m-current {
         border-left-color: var(--pf-t--global--color--brand--default);

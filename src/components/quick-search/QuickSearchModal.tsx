@@ -28,6 +28,7 @@ import {
   TextInputGroupUtilities,
   Button,
   ButtonVariant,
+  Bullseye,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import RhMicronsCloseIcon from '@patternfly/react-icons/dist/esm/icons/rh-microns-close-icon';
@@ -280,27 +281,26 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
           </StackItem>
 
           <Divider />
-
-          <StackItem isFilled>
-            <Flex
-              className="pipelines-console-plugin-quick-search-modal__split"
-              direction={{ default: 'row' }}
-            >
-              <FlexItem
-                className="pipelines-console-plugin-quick-search-modal__split-pane"
-                flex={{ default: 'flex_1' }}
+          {showEmpty ? (
+            <Bullseye>
+              <EmptyState headingLevel="h5" icon={SearchIcon}>
+                <EmptyStateBody>
+                  {t('No results found')}
+                  <br />
+                  {t('Please try a different search term.')}
+                </EmptyStateBody>
+              </EmptyState>
+            </Bullseye>
+          ) : (
+            <StackItem isFilled>
+              <Flex
+                className="pipelines-console-plugin-quick-search-modal__split"
+                direction={{ default: 'row' }}
               >
-                {showEmpty ? (
-                  <EmptyState
-                    titleText={t('No results found')}
-                    headingLevel="h4"
-                    icon={SearchIcon}
-                  >
-                    <EmptyStateBody>
-                      {t('Try a different search term.')}
-                    </EmptyStateBody>
-                  </EmptyState>
-                ) : (
+                <FlexItem
+                  className="pipelines-console-plugin-quick-search-modal__split-pane"
+                  flex={{ default: 'flex_1' }}
+                >
                   <Nav aria-label={listAriaLabel}>
                     <NavList>
                       {(items || []).map((item) => {
@@ -360,32 +360,32 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
                       })}
                     </NavList>
                   </Nav>
-                )}
-              </FlexItem>
+                </FlexItem>
 
-              <Divider orientation={{ default: 'vertical' }} />
+                <Divider orientation={{ default: 'vertical' }} />
 
-              <FlexItem
-                className="pipelines-console-plugin-quick-search-modal-split__pane"
-                flex={{ default: 'flex_2' }}
-              >
-                {selectedItem && (
-                  <QuickSearchDetails
-                    kind={kind}
-                    detailsRenderer={detailsRenderer}
-                    selectedItem={selectedItem}
-                    closeModal={handleClose}
-                    namespace={namespace}
-                    callback={callback}
-                    setFailedTasks={setFailedTasks}
-                    hideCta
-                    onSelectedVersionChange={setSelectedVersion}
-                    onDetailsReadyChange={setDetailsReady}
-                  />
-                )}
-              </FlexItem>
-            </Flex>
-          </StackItem>
+                <FlexItem
+                  className="pipelines-console-plugin-quick-search-modal-split__pane"
+                  flex={{ default: 'flex_2' }}
+                >
+                  {selectedItem && (
+                    <QuickSearchDetails
+                      kind={kind}
+                      detailsRenderer={detailsRenderer}
+                      selectedItem={selectedItem}
+                      closeModal={handleClose}
+                      namespace={namespace}
+                      callback={callback}
+                      setFailedTasks={setFailedTasks}
+                      hideCta
+                      onSelectedVersionChange={setSelectedVersion}
+                      onDetailsReadyChange={setDetailsReady}
+                    />
+                  )}
+                </FlexItem>
+              </Flex>
+            </StackItem>
+          )}
         </Stack>
       </ModalBody>
       <Divider />

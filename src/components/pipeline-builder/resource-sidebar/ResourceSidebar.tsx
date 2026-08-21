@@ -79,9 +79,15 @@ const ResourceSidebar: FC<ResourceSidebarProps> = (props) => {
   const displayTaskParams: boolean =
     !hideOptionalTaskParam || params?.some((param) => paramIsRequired(param));
 
-  const { pipelineLinks, taskLinks, finallyTaskLinks } = isPipeline
-    ? getPipelineTaskLinks(pipelineResource)
-    : { pipelineLinks: [], taskLinks: [], finallyTaskLinks: [] };
+  const { pipelineLinks, taskLinks, finallyPipelineLinks, finallyTaskLinks } =
+    isPipeline
+      ? getPipelineTaskLinks(pipelineResource)
+      : {
+          pipelineLinks: [],
+          taskLinks: [],
+          finallyPipelineLinks: [],
+          finallyTaskLinks: [],
+        };
   const namespace = resource.metadata?.namespace;
 
   const renderResource =
@@ -231,11 +237,18 @@ const ResourceSidebar: FC<ResourceSidebarProps> = (props) => {
                   title={t('Tasks')}
                 />
               )}
+              {finallyPipelineLinks.length > 0 && (
+                <DynamicResourceLinkList
+                  namespace={namespace}
+                  links={finallyPipelineLinks}
+                  title={t('Finally Pipelines')}
+                />
+              )}
               {finallyTaskLinks.length > 0 && (
                 <DynamicResourceLinkList
                   namespace={namespace}
                   links={finallyTaskLinks}
-                  title={t('Finally tasks')}
+                  title={t('Finally Tasks')}
                 />
               )}
             </div>

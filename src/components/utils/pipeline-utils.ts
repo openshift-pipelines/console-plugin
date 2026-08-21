@@ -790,7 +790,9 @@ export const getChildPipelinesFromPipelineRun = (
   pipelineRun: PipelineRunKind,
 ): PipelineKind[] => {
   const childPipelineNames = pipelineRun.status?.pipelineSpec?.tasks
-    ?.map((child) => (child.pipelineRef ? child.name : null))
+    ?.map((child) =>
+      child.pipelineRef || child.pipelineSpec ? child.name : null,
+    )
     .filter(Boolean);
   return childPipelineNames.map((name) => ({
     apiVersion: `${PipelineModel.apiGroup}/${PipelineModel.apiVersion}`,
@@ -806,7 +808,7 @@ export const isPipelineInPipeline = (pipeline: PipelineKind): boolean =>
   pipeline?.spec?.tasks?.some(isPipelineInPipelineTask) ?? false;
 
 export const isPipelineInPipelineTask = (task: PipelineTask): boolean =>
-  !!task?.pipelineRef;
+  !!task?.pipelineRef || !!task?.pipelineSpec;
 
 export const isPipelineInPipelineRun = (
   pipelineRun: PipelineRunKind,
@@ -814,7 +816,9 @@ export const isPipelineInPipelineRun = (
   pipelineRun?.status?.childReferences?.some(
     (child) => child.kind === 'PipelineRun',
   ) ||
-  pipelineRun?.status?.pipelineSpec?.tasks?.some((item) => item.pipelineRef);
+  pipelineRun?.status?.pipelineSpec?.tasks?.some(
+    (item) => item.pipelineRef || item.pipelineSpec,
+  );
 
 export const isChildPipelineRun = (pipelineRun: K8sResourceKind): boolean =>
   pipelineRun?.metadata?.ownerReferences?.some(

@@ -13,6 +13,7 @@ import { getSafeTaskResourceKind } from '../utils/pipeline-augment';
 type PipelineTaskLinks = {
   pipelineLinks: ResourceModelLink[];
   taskLinks: ResourceModelLink[];
+  finallyPipelineLinks: ResourceModelLink[];
   finallyTaskLinks: ResourceModelLink[];
 };
 
@@ -20,7 +21,10 @@ const partition = (items: ResourceModelLink[]) => {
   const pipelines: ResourceModelLink[] = [];
   const tasks: ResourceModelLink[] = [];
   for (const item of items) {
-    if (item.resourceKind === 'Pipeline') {
+    if (
+      item.resourceKind === 'Pipeline' ||
+      item.resourceKind === 'EmbeddedPipeLine'
+    ) {
       pipelines.push(item);
     } else {
       /* Embedded tasks, approval tasks, custom tasks, and any unresolved kinds are pushed to tasks */
@@ -94,6 +98,13 @@ export const getPipelineTaskLinks = (
           qualifier: task.name,
           resourceApiVersion: version,
         };
+      } else if (task?.pipelineSpec) {
+        return {
+          resourceKind: 'EmbeddedPipeLine', // intentional capitalization for EPL
+          name: t('Embedded Pipeline'),
+          qualifier: task.name,
+          disableLink: true,
+        };
       }
       return {
         resourceKind: 'EmbeddedTask',
@@ -106,13 +117,14 @@ export const getPipelineTaskLinks = (
 
   const allTask = toResourceLinkData(pipeline.spec.tasks);
   const allFinallyTask = toResourceLinkData(pipeline.spec.finally);
-  const { pipelines: taskPipelines, tasks: taskLinks } = partition(allTask);
-  const { pipelines: finallyPipelines, tasks: finallyTaskLinks } =
+  const { pipelines: pipelineLinks, tasks: taskLinks } = partition(allTask);
+  const { pipelines: finallyPipelineLinks, tasks: finallyTaskLinks } =
     partition(allFinallyTask);
 
   return {
-    pipelineLinks: [...taskPipelines, ...finallyPipelines],
+    pipelineLinks,
     taskLinks,
+    finallyPipelineLinks,
     finallyTaskLinks,
   };
 };

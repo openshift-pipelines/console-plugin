@@ -13,6 +13,7 @@ export interface PipelineVisualizationStepListProps {
   steps: StepStatus[] | PipelineTask[];
   isFinallyTask?: boolean;
   hideHeader?: boolean;
+  isPipelineTask?: boolean;
 }
 
 const TooltipColoredStatusIcon = ({ status }) => {
@@ -48,7 +49,14 @@ const TooltipColoredStatusIcon = ({ status }) => {
 
 export const PipelineVisualizationStepList: FC<
   PipelineVisualizationStepListProps
-> = ({ isSpecOverview, taskName, steps, isFinallyTask, hideHeader }) => {
+> = ({
+  isSpecOverview,
+  taskName,
+  steps,
+  isFinallyTask,
+  hideHeader,
+  isPipelineTask = false,
+}) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   return (
     <div className="odc-pipeline-visualization-step-list">
@@ -59,7 +67,7 @@ export const PipelineVisualizationStepList: FC<
       )}
       {isFinallyTask && (
         <div className="odc-pipeline-visualization-step-list__task-type">
-          {t('Finally task')}
+          {isPipelineTask ? t('Finally Pipeline') : t('Finally Task')}
         </div>
       )}
       {!!steps?.length &&
@@ -75,14 +83,10 @@ export const PipelineVisualizationStepList: FC<
               )}
               key={name}
             >
-              {!isSpecOverview ? (
+              {!isSpecOverview && (
                 <div className="odc-pipeline-visualization-step-list__icon">
                   <TooltipColoredStatusIcon status={status} />
                 </div>
-              ) : (
-                <span className="odc-pipeline-visualization-step-list__bullet">
-                  &bull;
-                </span>
               )}
               <div className="odc-pipeline-visualization-step-list__name">
                 {name}

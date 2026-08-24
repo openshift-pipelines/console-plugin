@@ -42,6 +42,7 @@ import { PipelineVisualizationStepList } from '../pipelines-details/PipelineVisu
 import { resourcePathFromModel } from '../utils/utils';
 import { getTooltipContent } from './utils';
 import './PipelineTaskNode.scss';
+import { isPipelineInPipelineTask } from '../utils/pipeline-utils';
 
 type PipelineTaskNodeProps = {
   element: Node;
@@ -92,7 +93,7 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
   const taskRef = useRef();
   const detailsLevel = useDetailsLevel();
   const isFinallyTask = element.getType() === NodeType.FINALLY_NODE;
-  const isPipelineTask = !!data.task?.pipelineRef;
+  const isPipelineTask = isPipelineInPipelineTask(data.task);
 
   const resources = isPipelineTask
     ? getResource(data.task?.pipelineRef, ns, PipelineModel, 'pipeline')
@@ -114,7 +115,9 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
     [];
 
   const childPipelineTasks = isPipelineTask
-    ? (resource as PipelineKind)?.spec?.tasks
+    ? data.task?.pipelineRef
+      ? (resource as PipelineKind)?.spec?.tasks
+      : data.task?.pipelineSpec?.tasks
     : undefined;
 
   const pipelineRunStatus =
@@ -262,6 +265,7 @@ const PipelineTaskNode: FunctionComponent<PipelineTaskNodeProps> = ({
                   : stepStatusList
               }
               isFinallyTask={isFinallyTask}
+              isPipelineTask={isPipelineTask}
             />
           }
         >

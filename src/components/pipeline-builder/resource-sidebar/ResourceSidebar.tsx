@@ -119,6 +119,7 @@ const ResourceSidebar: FC<ResourceSidebarProps> = (props) => {
         <ResourceSidebarHeader
           resource={resource}
           removeThisTask={() => onRemoveTask(thisTask.name)}
+          isPipeline={isPipeline}
         />
       </StackItem>
       <StackItem className="opp-task-sidebar__content pf-v6-c-form">
@@ -228,6 +229,7 @@ const ResourceSidebar: FC<ResourceSidebarProps> = (props) => {
                   namespace={namespace}
                   links={pipelineLinks}
                   title={t('Pipelines')}
+                  openInNewTab
                 />
               )}
               {taskLinks.length > 0 && (
@@ -235,6 +237,7 @@ const ResourceSidebar: FC<ResourceSidebarProps> = (props) => {
                   namespace={namespace}
                   links={taskLinks}
                   title={t('Tasks')}
+                  openInNewTab
                 />
               )}
               {finallyPipelineLinks.length > 0 && (
@@ -242,6 +245,7 @@ const ResourceSidebar: FC<ResourceSidebarProps> = (props) => {
                   namespace={namespace}
                   links={finallyPipelineLinks}
                   title={t('Finally Pipelines')}
+                  openInNewTab
                 />
               )}
               {finallyTaskLinks.length > 0 && (
@@ -249,6 +253,7 @@ const ResourceSidebar: FC<ResourceSidebarProps> = (props) => {
                   namespace={namespace}
                   links={finallyTaskLinks}
                   title={t('Finally Tasks')}
+                  openInNewTab
                 />
               )}
             </div>

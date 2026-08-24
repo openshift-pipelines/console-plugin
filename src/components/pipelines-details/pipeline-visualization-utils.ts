@@ -527,7 +527,7 @@ export const getGraphDataModel = (
     pipeline,
     pipelineRun,
     taskRuns,
-    null,
+    childPipelineRuns,
     true,
   );
 

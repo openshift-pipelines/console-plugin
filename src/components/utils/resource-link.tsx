@@ -28,6 +28,8 @@ export type ResourceLinkProps = {
   nameSuffix?: ReactNode;
   children?: ReactNode;
   model?: K8sModel;
+  openInNewTab?: boolean;
+  largeIcon?: boolean;
 };
 
 /**
@@ -58,6 +60,8 @@ export const ResourceLinkWithIcon: FC<ResourceLinkProps> = ({
   onClick,
   truncate,
   model,
+  openInNewTab = false,
+  largeIcon,
 }) => {
   if (!kind && !groupVersionKind) {
     return null;
@@ -74,7 +78,12 @@ export const ResourceLinkWithIcon: FC<ResourceLinkProps> = ({
 
   return (
     <span className={classes}>
-      {!hideIcon && <ResourceIcon kind={kindReference} />}
+      {!hideIcon && (
+        <ResourceIcon
+          kind={kindReference}
+          className={cx({ 'co-m-resource-icon--lg': largeIcon })}
+        />
+      )}
       {path ? (
         <Link
           to={path}
@@ -83,6 +92,8 @@ export const ResourceLinkWithIcon: FC<ResourceLinkProps> = ({
           data-test-id={value}
           data-test={dataTest ?? value}
           onClick={onClick}
+          target={openInNewTab ? '_blank' : undefined}
+          rel={openInNewTab ? 'noopener noreferrer' : undefined}
         >
           {value}
           {nameSuffix}

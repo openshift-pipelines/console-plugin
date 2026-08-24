@@ -147,15 +147,15 @@ const PipelineRunLogsComponent: React.FC<PipelineRunLogsProps> = ({
         ? getDownloadAllLogsCallbackMultiCluster(
             taskRunNames,
             tRuns,
-            obj.metadata?.namespace,
-            obj.metadata?.name,
+            obj?.metadata?.namespace,
+            obj?.metadata?.name,
             isDevConsoleProxyAvailable,
           )
         : getDownloadAllLogsCallback(
             taskRunNames,
             tRuns,
-            obj.metadata?.namespace,
-            obj.metadata?.name,
+            obj?.metadata?.namespace,
+            obj?.metadata?.name,
             isDevConsoleProxyAvailable,
           )
       : undefined;
@@ -171,7 +171,7 @@ const PipelineRunLogsComponent: React.FC<PipelineRunLogsProps> = ({
     podName && {
       name: podName,
       kind: 'Pod',
-      namespace: obj.metadata.namespace,
+      namespace: obj?.metadata?.namespace,
       isList: false,
     };
   const waitingForPods = !!(activeItem && !resources);
@@ -184,8 +184,8 @@ const PipelineRunLogsComponent: React.FC<PipelineRunLogsProps> = ({
 
   const logsPath = `${resourcePathFromModel(
     PipelineRunModel,
-    obj.metadata.name,
-    obj.metadata.namespace,
+    obj?.metadata?.name,
+    obj?.metadata?.namespace,
   )}/logs`;
 
   return (
@@ -250,7 +250,7 @@ const PipelineRunLogsComponent: React.FC<PipelineRunLogsProps> = ({
             taskRun={activeTaskRun}
             activeStep={activeStep}
             isResourceManagedByKueue={isResourceManagedByKueue}
-            pipelineRunName={obj.metadata?.name}
+            pipelineRunName={obj?.metadata?.name}
             pipelineRunFinished={pipelineRunFinished}
           />
         ) : (
@@ -269,7 +269,7 @@ const PipelineRunLogsComponent: React.FC<PipelineRunLogsProps> = ({
               data={
                 waitingForPods && !pipelineRunFinished
                   ? `Waiting for ${taskName} task to start`
-                  : !resources && pipelineRunFinished && !obj.status
+                  : !resources && pipelineRunFinished && !obj?.status
                   ? t('No logs found')
                   : logDetails?.staticMessage ?? ''
               }
@@ -308,9 +308,11 @@ export const PipelineRunLogsWithActiveTask: React.FC<
   const [taskRuns, taskRunsLoaded, , , pendingAdmission, proxyUnavailable] =
     useTaskRuns(obj?.metadata?.namespace, obj?.metadata?.name, {
       pipelineRunFinished,
-      pipelineRunManagedBy: obj?.spec?.managedBy
+      pipelineRunManagedBy: obj?.spec?.managedBy,
     });
-  const { isResourceManagedByKueue } = useMultiClusterProxyService({ managedBy: obj?.spec?.managedBy });
+  const { isResourceManagedByKueue } = useMultiClusterProxyService({
+    managedBy: obj?.spec?.managedBy,
+  });
 
   return (
     <>

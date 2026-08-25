@@ -9,14 +9,21 @@ import {
 import { EditorType } from '../types';
 import { validationSchema } from '../validation-utils';
 import {
+  clusterResolverPipelineRefTask,
   createSafeTask,
+  doublyNestedPipelineSpecTask,
   embeddedTaskSpec,
+  externalPipelineWithRequiredParam,
   externalTaskNoDefaultParam,
   externalTaskWitEmptyDefaultParam,
   externalTaskWithDefaultParam,
   formDataBasicPassState,
   hasError,
   hasResults,
+  mixedTasksWithClusterResolverPipeline,
+  pipelineRefTask,
+  pipelineSpecWithFinally,
+  pipelineSpecWithInternalRunAfter,
   shouldHaveFailed,
   shouldHavePassed,
   withFormData,
@@ -28,7 +35,7 @@ const requiredMessage = 'Required';
 describe('Pipeline Build validation schema', () => {
   describe('Form/YAML switcher validation', () => {
     it('should fail when provided an unknown editor type', async () => {
-      await validationSchema(t)
+      await validationSchema(t, false)
         .validate({
           editorType: 'not a real value',
           yamlData: '',
@@ -44,7 +51,7 @@ describe('Pipeline Build validation schema', () => {
     });
 
     it('should fail initial values because there are no tasks', async () => {
-      await validationSchema(t)
+      await validationSchema(t, false)
         .validate({
           editorType: EditorType.Form,
           yamlData: '',
@@ -161,31 +168,71 @@ describe('Pipeline Build validation schema', () => {
         .catch(shouldHavePassed);
     });
 
-    it('should pass if provided a pipelineSpec with nested tasks', async () => {
-      await withFormData({
-        ...initialPipelineFormData,
-        tasks: [
-          {
-            name: 'echo-task-1',
-            params: [{ name: 'mystr', value: 'pipeline-in-pipeline-task-1' }],
-            taskRef: { kind: 'Task', name: 'echo-task' },
-          },
-          {
-            name: 'nested-pipeline',
-            pipelineSpec: {
-              tasks: [
-                {
-                  name: 'echo-task-1',
-                  params: [{ name: 'mystr', value: 'nested-pipeline-task-1' }],
-                  taskRef: { kind: 'Task', name: 'echo-task' },
-                },
-              ],
+    it('should pass if provided a pipelineSpec with nested tasks and alpha is enabled', async () => {
+      await withFormData(
+        {
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'echo-task-1',
+              params: [{ name: 'mystr', value: 'pipeline-in-pipeline-task-1' }],
+              taskRef: { kind: 'Task', name: 'echo-task' },
             },
-          },
-        ],
-      })
+            {
+              name: 'nested-pipeline',
+              pipelineSpec: {
+                tasks: [
+                  {
+                    name: 'echo-task-1',
+                    params: [
+                      { name: 'mystr', value: 'nested-pipeline-task-1' },
+                    ],
+                    taskRef: { kind: 'Task', name: 'echo-task' },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        undefined,
+        true, // pipelineSpec requires alpha to be enabled
+      )
         .then(hasResults)
         .catch(shouldHavePassed);
+    });
+
+    it('should fail if provided a pipelineSpec with nested tasks and alpha is disabled', async () => {
+      await withFormData(
+        {
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'echo-task-1',
+              taskRef: { kind: 'Task', name: 'echo-task' },
+            },
+            {
+              name: 'nested-pipeline',
+              pipelineSpec: {
+                tasks: [
+                  {
+                    name: 'echo-task-1',
+                    taskRef: { kind: 'Task', name: 'echo-task' },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        undefined,
+        false,
+      )
+        .then(shouldHaveFailed)
+        .catch(
+          hasError(
+            'formData.tasks[1].pipelineSpec',
+            'Embedding a Pipeline requires the alpha API fields to be enabled.',
+          ),
+        );
     });
 
     xit('should fail if provided an incomplete taskRef', async () => {
@@ -325,31 +372,220 @@ describe('Pipeline Build validation schema', () => {
           .then(hasResults)
           .catch(shouldHavePassed);
       });
+
+      it('should pass if runAfter connects tasks with a cluster-resolver pipelineRef', async () => {
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            tasks: mixedTasksWithClusterResolverPipeline,
+          },
+          undefined,
+          true,
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should fail if runAfter is broken in a mix of plain tasks and a cluster-resolver pipelineRef task', async () => {
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            tasks: [
+              { name: 'first-task', taskRef: { name: 'external-task' } },
+              {
+                ...clusterResolverPipelineRefTask,
+                runAfter: ['first-task'],
+              },
+              {
+                name: 'last-task',
+                taskRef: { name: 'external-task' },
+                // References a task name that does not exist anywhere in
+                // this pipeline, even though a valid pipelineRef task sits
+                // right before it in the chain — proves invalid runAfter is
+                // still caught when a pipeline-in-pipeline task is part of
+                // the mix.
+                runAfter: ['does-not-exist'],
+              },
+            ],
+          },
+          undefined,
+          true,
+        )
+          .then(shouldHaveFailed)
+          .catch(hasError('formData.tasks[2].runAfter', 'Invalid runAfter'));
+      });
+
+      it('should fail if a nested pipelineSpec task runAfter references an outer-scope task name', async () => {
+        await withFormData(
+          {
+            ...formDataBasicPassState,
+            tasks: [
+              ...formDataBasicPassState.tasks,
+              {
+                name: 'nested-pipeline',
+                pipelineSpec: {
+                  tasks: [
+                    {
+                      name: 'inner-task',
+                      taskRef: { name: 'not-a-real-task' },
+                      runAfter: [formDataBasicPassState.tasks[0].name],
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+          undefined,
+          true,
+        )
+          .then(shouldHaveFailed)
+          .catch(
+            hasError(
+              'formData.tasks[1].pipelineSpec.tasks[0].runAfter',
+              'Invalid runAfter',
+            ),
+          );
+      });
+
+      it('should pass if a pipelineSpec contains finally tasks and alpha is enabled', async () => {
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            tasks: [pipelineSpecWithFinally],
+          },
+          undefined,
+          true,
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should pass if pipelineSpec is nested multiple levels deep and alpha is enabled', async () => {
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            tasks: [doublyNestedPipelineSpecTask],
+          },
+          undefined,
+          true,
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should pass if a nested pipelineSpec task runAfter references its own sibling', async () => {
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            tasks: [pipelineSpecWithInternalRunAfter],
+          },
+          undefined,
+          true,
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+    });
+
+    describe('Validate Pipeline References (alpha)', () => {
+      it('should fail if a task has a pipelineRef and alpha is disabled', async () => {
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            tasks: [pipelineRefTask],
+          },
+          undefined,
+          false,
+        )
+          .then(shouldHaveFailed)
+          .catch(
+            hasError(
+              'formData.tasks[0].pipelineRef',
+              'Referencing a Pipeline requires the alpha API fields to be enabled.',
+            ),
+          );
+      });
+
+      it('should pass if a task has a pipelineRef and alpha is enabled', async () => {
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            tasks: [pipelineRefTask],
+          },
+          undefined,
+          true,
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should fail if a task has a cluster-resolver pipelineRef and alpha is disabled', async () => {
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            tasks: [clusterResolverPipelineRefTask],
+          },
+          undefined,
+          false,
+        )
+          .then(shouldHaveFailed)
+          .catch(
+            hasError(
+              'formData.tasks[0].pipelineRef',
+              'Referencing a Pipeline requires the alpha API fields to be enabled.',
+            ),
+          );
+      });
+
+      it('should pass if a task has a cluster-resolver pipelineRef and alpha is enabled', async () => {
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            tasks: [clusterResolverPipelineRefTask],
+          },
+          undefined,
+          true,
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should not require alpha for a plain taskRef task', async () => {
+        await withFormData(formDataBasicPassState, undefined, false)
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should not require alpha for a taskSpec task', async () => {
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            tasks: [{ name: 'test', taskSpec: embeddedTaskSpec }],
+          },
+          undefined,
+          false,
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
     });
 
     describe('Validate Parameters', () => {
-      it('should fail if task params is missing a required param', async () => {
+      it('should fail if pipeline params is missing a required param', async () => {
         await withFormData(
           {
             ...initialPipelineFormData,
             tasks: [
               {
-                name: 'test-task',
-                taskRef: {
-                  resolver: 'cluster',
-                  params: [
-                    { name: 'kind', value: 'task' },
-                    { name: 'name', value: 'external-task' },
-                    { name: 'namespace', value: PIPELINE_NAMESPACE },
-                  ],
-                },
+                ...pipelineRefTask,
                 params: [],
               },
             ],
           },
           {
-            clusterResolverTasks: [externalTaskNoDefaultParam],
+            namespacedPipelines: [externalPipelineWithRequiredParam],
           },
+          true, // pipelineRefTask requires alpha
         )
           .then(shouldHaveFailed)
           .catch(
@@ -358,6 +594,26 @@ describe('Pipeline Build validation schema', () => {
               getTaskErrorString(TaskErrorType.MISSING_REQUIRED_PARAMS),
             ),
           );
+      });
+
+      it('should pass if pipeline params supplies the referenced Pipeline required param', async () => {
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            tasks: [
+              {
+                ...pipelineRefTask,
+                params: [{ name: 'required-param', value: 'supplied-value' }],
+              },
+            ],
+          },
+          {
+            namespacedPipelines: [externalPipelineWithRequiredParam],
+          },
+          true,
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
       });
 
       it('should fail if task params has no value and also the task lacks a default', async () => {
@@ -843,6 +1099,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(shouldHavePassed);
       });
     });
+
     describe('Validate When Expresssions', () => {
       const invalidWhenExpressionCheck = hasError(
         'formData.tasks[0].when',

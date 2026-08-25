@@ -6,11 +6,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { FormikErrors } from 'formik';
 import * as _ from 'lodash';
-import {
-  DEFAULT_WORKSPACE_ANNOTATION,
-  PIPELINE_NAMESPACE,
-  VolumeTypes,
-} from '../../consts';
+import { DEFAULT_WORKSPACE_ANNOTATION, VolumeTypes } from '../../consts';
 import { PipelineModel, TaskModel } from '../../models';
 import {
   PipelineKind,
@@ -129,39 +125,65 @@ export const findTask = (
     }
     return ref.name;
   };
+  const getRefNamespace = (
+    ref?: PipelineTask['taskRef'] | PipelineTask['pipelineRef'],
+  ): string | null => {
+    if (!ref?.resolver) return null;
+    return ref.params?.find((p) => p.name === 'namespace')?.value ?? null;
+  };
 
   if (task?.pipelineRef) {
-    if (!resourceTasks?.tasksLoaded) {
+    const { tasksLoaded, clusterResolverPipelines, namespacedPipelines } =
+      resourceTasks ?? {};
+    if (!tasksLoaded || !clusterResolverPipelines || !namespacedPipelines) {
       return null;
     }
+
     const pipelineName = getRefName(task.pipelineRef);
+    const isResolverRef = task.pipelineRef.resolver === 'cluster';
+    const pipelineNamespace = isResolverRef
+      ? getRefNamespace(task.pipelineRef)
+      : null;
+
+    const isMatch = (candidate: PipelineKind) => {
+      if (candidate.metadata.name !== pipelineName) return false;
+      if (isResolverRef)
+        return candidate.metadata.namespace === pipelineNamespace;
+      return true;
+    };
+
+    if (!isResolverRef) {
+      return namespacedPipelines.find(isMatch);
+    }
+
     return (
-      resourceTasks.namespacedPipelines?.find(
-        (pipeline) => pipeline.metadata.name === pipelineName,
-      ) || null
+      namespacedPipelines?.find(isMatch) ||
+      clusterResolverPipelines?.find(isMatch)
     );
   }
 
   if (task?.taskRef) {
-    if (
-      !resourceTasks?.tasksLoaded ||
-      !resourceTasks.clusterResolverTasks ||
-      !resourceTasks.namespacedTasks
-    ) {
+    const { tasksLoaded, clusterResolverTasks, namespacedTasks } =
+      resourceTasks ?? {};
+    if (!tasksLoaded || !clusterResolverTasks || !namespacedTasks) {
       return null;
     }
-
     const taskName = getRefName(task.taskRef);
-    const matchingName = (taskResource: TaskKind | PipelineKind) =>
-      taskResource.metadata.name === taskName;
+    const isResolverRef = task.taskRef.resolver === 'cluster';
+    const taskNamespace = isResolverRef ? getRefNamespace(task.taskRef) : null;
 
-    if (task.taskRef.kind === PipelineModel.kind) {
-      return resourceTasks.namespacedPipelines?.find(matchingName) || null;
+    const isMatch = (candidate: TaskKind) => {
+      if (candidate.metadata.name !== taskName) return false;
+      if (isResolverRef) return candidate.metadata.namespace === taskNamespace;
+      return true;
+    };
+
+    if (!isResolverRef) {
+      return namespacedTasks.find(isMatch);
     }
 
     return (
-      resourceTasks.namespacedTasks.find(matchingName) ||
-      resourceTasks.clusterResolverTasks.find(matchingName)
+      namespacedTasks?.find(isMatch) || clusterResolverTasks?.find(isMatch)
     );
   }
 
@@ -173,6 +195,17 @@ export const findTask = (
         name: t('Embedded task'),
       },
       spec: task.taskSpec,
+    };
+  }
+
+  if (task?.pipelineSpec) {
+    return {
+      apiVersion: getAPIVersionForModel(PipelineModel),
+      kind: 'EmbeddedPipeLine',
+      metadata: {
+        name: t('Embedded pipeline'),
+      },
+      spec: task.pipelineSpec,
     };
   }
 
@@ -318,23 +351,93 @@ export const safeName = (
   return desiredName;
 };
 
+export const appendExternalResource = (
+  taskResources: PipelineBuilderTaskResources,
+  resource: TaskKind | PipelineKind,
+  builderNamespace: string,
+): PipelineBuilderTaskResources => {
+  const resourceNamespace = resource.metadata?.namespace;
+
+  const isExternal =
+    !!resourceNamespace && resourceNamespace !== builderNamespace;
+  if (!isExternal) {
+    return taskResources;
+  }
+
+  const isSameResource = (candidate: TaskKind | PipelineKind) =>
+    candidate.metadata.name === resource.metadata.name &&
+    candidate.metadata.namespace === resource.metadata.namespace;
+
+  const isPipeline = resource.kind === PipelineModel.kind;
+  const listKey = isPipeline
+    ? 'clusterResolverPipelines'
+    : 'clusterResolverTasks';
+  const existingList = taskResources[listKey] ?? [];
+
+  if (existingList.some(isSameResource)) {
+    return taskResources;
+  }
+
+  return {
+    ...taskResources,
+    [listKey]: [...existingList, resource],
+  };
+};
+
+const isPipelineResource = (resource: TaskKind | PipelineKind): boolean =>
+  resource.kind === PipelineModel.kind;
+
+const buildPipelineTaskRef = (
+  resource: TaskKind | PipelineKind,
+  builderNamespace?: string,
+): PipelineTask['taskRef'] | PipelineTask['pipelineRef'] => {
+  const kind = resource.kind ?? TaskModel.kind;
+  const clusterResolverKind = isPipelineResource(resource)
+    ? 'pipeline'
+    : 'task';
+  const resourceNamespace = resource.metadata?.namespace;
+
+  if (
+    resourceNamespace &&
+    builderNamespace &&
+    resourceNamespace !== builderNamespace
+  ) {
+    return {
+      resolver: 'cluster',
+      params: [
+        { name: 'kind', value: clusterResolverKind },
+        { name: 'name', value: resource.metadata.name },
+        { name: 'namespace', value: resourceNamespace },
+      ],
+    };
+  }
+
+  return {
+    kind,
+    name: resource.metadata.name,
+  };
+};
+
 export const convertResourceToLoadingTask = (
   usedNames: string[],
   resource: TaskKind | PipelineKind,
   isFinallyTask: boolean,
   runAfter?: string[],
+  builderNamespace?: string,
 ): PipelineBuilderLoadingTask => {
-  const kind = resource.kind ?? TaskModel.kind;
-  return {
+  const ref = buildPipelineTaskRef(resource, builderNamespace);
+  const baseTask: PipelineBuilderLoadingTask = {
     name: safeName(usedNames, resource.metadata.name),
     runAfter: isFinallyTask ? [] : runAfter,
-    taskRef: {
-      kind,
-      name: resource.metadata.name,
-    },
     resource: resource as TaskKind,
     isFinallyTask,
   };
+
+  if (isPipelineResource(resource)) {
+    return { ...baseTask, pipelineRef: ref };
+  }
+
+  return { ...baseTask, taskRef: ref };
 };
 
 export const getTaskParameters = (
@@ -383,51 +486,23 @@ export const convertResourceToTask = (
   runAfter?: string[],
   namespace?: string,
 ): PipelineTask => {
-  const kind = resource.kind ?? TaskModel.kind;
-  const name = safeName(usedNames, resource.metadata.name);
-  const params = getTaskParameters(resource).map(
-    (param: TektonParam): PipelineTaskParam => ({
-      name: param.name,
-      value: param.default,
-    }),
-  );
-
-  if (kind === PipelineModel.kind) {
-    return {
-      name,
-      runAfter,
-      pipelineRef: {
-        name: resource.metadata.name,
-      },
-      params,
-    };
-  }
-
-  let taskRef;
-  if (
-    resource.metadata.namespace === PIPELINE_NAMESPACE &&
-    namespace !== PIPELINE_NAMESPACE
-  ) {
-    taskRef = {
-      resolver: 'cluster',
-      params: [
-        { name: 'kind', value: 'task' },
-        { name: 'name', value: resource.metadata.name },
-        { name: 'namespace', value: PIPELINE_NAMESPACE },
-      ],
-    };
-  } else {
-    taskRef = {
-      kind,
-      name: resource.metadata.name,
-    };
-  }
-  return {
-    name,
+  const ref = buildPipelineTaskRef(resource, namespace);
+  const baseTask: PipelineTask = {
+    name: safeName(usedNames, resource.metadata.name),
     runAfter,
-    taskRef,
-    params,
+    params: getTaskParameters(resource).map(
+      (param: TektonParam): PipelineTaskParam => ({
+        name: param.name,
+        value: param.default,
+      }),
+    ),
   };
+
+  if (isPipelineResource(resource)) {
+    return { ...baseTask, pipelineRef: ref };
+  }
+
+  return { ...baseTask, taskRef: ref };
 };
 
 const removeListRunAfters = (

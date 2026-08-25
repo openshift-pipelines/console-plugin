@@ -2,10 +2,10 @@ import { TFunction, TOptions } from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import {
-  PipelineSpec,
   PipelineTask,
   PipelineTaskParam,
   PipelineTaskWorkspace,
+  TektonParam,
   TektonWorkspace,
   WhenExpression,
 } from '../../types';
@@ -52,13 +52,21 @@ const areRequiredParamsAdded = (
   pipelineTask: PipelineTask,
   params: PipelineTaskParam[] = [],
 ): boolean => {
-  const task = findTaskFromFormikData(formValues, pipelineTask);
-  if (!task) {
-    // No task, means we don't know if the param is nullable, so pass the test
-    return true;
+  // For embedded taskSpec, we can get params directly
+  let taskParams: TektonParam[] = [];
+  if (pipelineTask.taskSpec) {
+    taskParams = (pipelineTask.taskSpec.params as TektonParam[]) || [];
+  } else {
+    // For referenced tasks, look them up
+    const task = findTaskFromFormikData(formValues, pipelineTask);
+    if (!task) {
+      // No task, means we don't know if the param is nullable, so pass the test
+      return true;
+    }
+    taskParams = getTaskParameters(task);
   }
 
-  const requiredTaskParams = getTaskParameters(task).filter(paramIsRequired);
+  const requiredTaskParams = taskParams.filter(paramIsRequired);
   if (requiredTaskParams.length === 0) {
     // No required params, no issue
     return true;
@@ -100,13 +108,20 @@ const findWorkspace = (
   const taskPath = path.split('.').slice(0, 2).join('.');
   const pipelineTask: PipelineTask = _.get(formValues, taskPath);
 
-  // Find the task based on the ref
-  const task = findTaskFromFormikData(formValues, pipelineTask);
-  if (!task) {
-    // No task, can't find resources
-    return false;
+  // For embedded taskSpec, we can get workspaces directly
+  let taskSpec;
+  if (pipelineTask.taskSpec) {
+    taskSpec = pipelineTask.taskSpec;
+  } else {
+    // For referenced tasks, look them up
+    const task = findTaskFromFormikData(formValues, pipelineTask);
+    if (!task) {
+      // No task, can't find resources
+      return false;
+    }
+    taskSpec = task.spec;
   }
-  return task.spec.workspaces?.find(({ name }) => name === workspaceName);
+  return taskSpec.workspaces?.find(({ name }) => name === workspaceName);
 };
 
 /**
@@ -117,14 +132,22 @@ const hasRequiredWorkspaces = (
   pipelineTask: PipelineTask,
   taskWorkspaces: PipelineTaskWorkspace[],
 ) => {
-  const task = findTaskFromFormikData(formValues, pipelineTask);
-  if (!task) {
-    // No matching task, can't verify if workspaces are needed
-    return true;
+  // For embedded taskSpec, we can get workspaces directly
+  let taskSpec;
+  if (pipelineTask.taskSpec) {
+    taskSpec = pipelineTask.taskSpec;
+  } else {
+    // For referenced tasks, look them up
+    const task = findTaskFromFormikData(formValues, pipelineTask);
+    if (!task) {
+      // No matching task, can't verify if workspaces are needed
+      return true;
+    }
+    taskSpec = task.spec;
   }
 
   const requiredWorkspaces =
-    task.spec.workspaces?.filter(({ optional }) => !optional) || [];
+    taskSpec.workspaces?.filter(({ optional }) => !optional) || [];
   const noWorkspaces = !taskWorkspaces || taskWorkspaces.length === 0;
   const needWorkspaces = requiredWorkspaces?.length > 0;
   if (noWorkspaces) {
@@ -159,26 +182,16 @@ export const runAfterMatches = (
   return !runAfter.some((name) => !taskNames.includes(name));
 };
 
-export const runAfterMatchesInScope = (
-  scopeTaskNames: string[],
-  runAfter: string[],
-  thisTaskName: string,
-): boolean => {
-  if (!runAfter || runAfter.length === 0) {
-    return true;
-  }
-  if (runAfter.includes(thisTaskName)) {
-    return false;
-  }
-  return !runAfter.some((name) => !scopeTaskNames.includes(name));
-};
-
 /**
  * Validates a runAfter to have valid values.
  *
  * Note: Expects to be in an object of { name: string(), runAfter: thisFunction(...), ... }
  */
-const validRunAfter = (formData: PipelineBuilderFormValues, t: TFunction) => {
+const validRunAfter = (
+  formData: PipelineBuilderFormValues,
+  scopeTasks: PipelineTask[],
+  t: TFunction,
+) => {
   return yup
     .array()
     .of(yup.string())
@@ -186,229 +199,237 @@ const validRunAfter = (formData: PipelineBuilderFormValues, t: TFunction) => {
       'tasks-matches-runAfters',
       t('Invalid runAfter'),
       function (runAfter: string[]) {
-        return runAfterMatches(formData, runAfter, this.parent.name);
-      },
-    );
-};
-
-const validRunAfterInScope = (scopeTaskNames: string[], t: TFunction) => {
-  return yup
-    .array()
-    .of(yup.string())
-    .test(
-      'tasks-matches-runAfters',
-      t('Invalid runAfter'),
-      function (runAfter: string[]) {
-        return runAfterMatchesInScope(
-          scopeTaskNames,
+        return runAfterMatches(
+          { ...formData, tasks: scopeTasks },
           runAfter,
           this.parent.name,
         );
       },
     );
 };
-
 /**
  * Validates Tasks or Finally Tasks for valid structure
  */
-const hasTaskDefinition = (task?: PipelineTask): boolean => {
-  if (task?.taskRef || task?.taskSpec || task?.pipelineRef) {
-    return true;
-  }
-  const pipelineSpec = task?.pipelineSpec;
-  return !!(pipelineSpec?.tasks?.length || pipelineSpec?.finally?.length);
-};
-
-const TASK_DEFINITION_MESSAGE =
-  'TaskSpec, TaskRef, PipelineRef, or PipelineSpec must be provided.';
-
-const buildPipelineSpecFormSchema = (
+const taskValidation = (
   formValues: PipelineBuilderFormYamlValues,
+  taskType: TaskType,
   t: TFunction,
-) =>
-  yup.lazy((pipelineSpecValue?: PipelineSpec) => {
-    if (!pipelineSpecValue) {
-      return yup.mixed().notRequired();
-    }
-    const scopeTasks = [
-      ...(pipelineSpecValue?.tasks ?? []),
-      ...(pipelineSpecValue?.finally ?? []),
-    ];
-    return yup.object({
-      params: yup.array().of(
-        yup.object({
-          name: yup.string().required(t('Required')),
-          description: yup.string(),
-          default: yup.string(),
-        }),
-      ),
-      workspaces: yup.array().of(
-        yup.object({
-          name: yup.string().required(t('Required')),
-        }),
-      ),
-      tasks: buildTaskValidationFormSchema(formValues, t, scopeTasks),
-      finally: buildTaskValidationFormSchema(formValues, t, scopeTasks),
-    });
-  });
-
-const buildTaskValidationFormSchema = (
-  formValues: PipelineBuilderFormYamlValues,
-  t: TFunction,
-  scopeTasks?: PipelineTask[],
+  isAlphaEnabled: boolean,
+  scopeTasks: PipelineTask[] = formValues.formData.tasks,
 ) => {
   const {
     formData: { workspaces },
   } = formValues;
 
   return yup.array().of(
-    yup.lazy((taskObject: PipelineTask) =>
-      yup
-        .object({
-          // `name` is properly validated in ResourceSidebarName
-          name: yup.string().required(t('Required')),
-          taskRef: yup
-            .object({
-              name: yup.string().when('resolver', ([resolver]) => {
-                return !resolver
-                  ? yup.string().required(t('Required'))
-                  : yup.string().notRequired();
-              }),
-              kind: yup.string(),
-              resolver: yup.string().oneOf(['cluster']).notRequired(),
-              params: yup
-                .array()
-                .of(
-                  yup.object({
-                    name: yup.string().required(t('Required')),
-                    value: yup.string().required(t('Required')),
-                  }),
-                )
-                .when('resolver', ([resolver]) => {
-                  return resolver
-                    ? yup.array().min(1, t('Required'))
-                    : yup.array().notRequired();
-                }),
-            })
-            .default(undefined),
-          pipelineRef: yup
-            .object({
-              name: yup.string().required(t('Required')),
-              kind: yup.string(),
-              resolver: yup.string().oneOf(['cluster']).notRequired(),
-              params: yup.array().of(
+    yup
+      .object({
+        name: yup.string().required(t('Required')),
+        taskRef: yup
+          .object({
+            name: yup.string().when('resolver', ([resolver]) => {
+              return !resolver
+                ? yup.string().required(t('Required'))
+                : yup.string().notRequired();
+            }),
+            kind: yup.string(),
+            resolver: yup.string().oneOf(['cluster']).notRequired(),
+            params: yup
+              .array()
+              .of(
                 yup.object({
                   name: yup.string().required(t('Required')),
                   value: yup.string().required(t('Required')),
                 }),
+              )
+              .when('resolver', ([resolver]) => {
+                return resolver
+                  ? yup.array().min(1, t('Required'))
+                  : yup.array().notRequired();
+              }),
+          })
+          .default(undefined),
+        pipelineRef: yup
+          .object({
+            name: yup.string().when('resolver', ([resolver]) => {
+              return !resolver
+                ? yup.string().required(t('Required'))
+                : yup.string().notRequired();
+            }),
+            kind: yup.string(),
+            resolver: yup.string().oneOf(['cluster']).notRequired(),
+            params: yup
+              .array()
+              .of(
+                yup.object({
+                  name: yup.string().required(t('Required')),
+                  value: yup.string().required(t('Required')),
+                }),
+              )
+              .when('resolver', ([resolver]) => {
+                return resolver
+                  ? yup.array().min(1, t('Required'))
+                  : yup.array().notRequired();
+              }),
+          })
+          .default(undefined)
+          .test(
+            'pipelineRef-requires-alpha',
+            t(
+              'Referencing a Pipeline requires the alpha API fields to be enabled.',
+            ),
+            (pipelineRef) => !pipelineRef || isAlphaEnabled,
+          )
+          .default(undefined),
+        taskSpec: yup.object(),
+        pipelineSpec: yup.lazy((pipelineSpecValue) => {
+          if (!pipelineSpecValue) {
+            return yup.mixed().notRequired();
+          }
+          const nestedScopeTasks = pipelineSpecValue.tasks ?? [];
+          return yup
+            .object({
+              tasks: taskValidation(
+                formValues,
+                'tasks',
+                t,
+                isAlphaEnabled,
+                nestedScopeTasks,
+              ),
+              finally: taskValidation(
+                formValues,
+                'finallyTasks',
+                t,
+                isAlphaEnabled,
+                nestedScopeTasks,
               ),
             })
-            .default(undefined),
-          pipelineSpec: buildPipelineSpecFormSchema(formValues, t),
-          taskSpec: yup.object(),
-          runAfter: scopeTasks
-            ? validRunAfterInScope(
-                scopeTasks.map((task) => task.name),
-                t,
-              )
-            : validRunAfter(formValues.formData, t),
-          params: yup
-            .array()
-            .of(
-              yup.object({
-                name: yup.string().required(t('Required')),
-                value: yup.lazy((value) => {
-                  if (Array.isArray(value)) {
-                    return yup.array().of(yup.string());
-                  }
-                  return yup.string();
-                }),
-                type: yup.string().oneOf(['string', 'array']),
-              }),
-            )
             .test(
-              'is-param-optional',
-              getTaskErrorString(TaskErrorType.MISSING_REQUIRED_PARAMS),
-              function (params?: PipelineTaskParam[]) {
-                return areRequiredParamsAdded(formValues, this.parent, params);
-              },
-            ),
-          when: yup
-            .array()
-            .of(
-              yup.object({
-                input: yup.string().required(t('Required')),
-                operator: yup.string().required(t('Required')),
-                values: yup.array().of(yup.string().required(t('Required'))),
-              }),
-            )
-            .test(
-              'is-when-expression-required',
-              getTaskErrorString(
-                TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS,
+              'pipelineSpec-requires-alpha',
+              t(
+                'Embedding a Pipeline requires the alpha API fields to be enabled.',
               ),
-              function (when?: WhenExpression[]) {
-                return areRequiredWhenExpressionsAdded(when);
-              },
-            ),
-
-          workspaces: yup
-            .array()
-            .of(
-              yup.object({
-                name: yup.string().required(t('Required')),
-                workspace: yup
-                  .string()
-                  .test(
-                    'is-workspace-is-required',
-                    t('Required'),
-                    function (workspaceValue?: string): any {
-                      const workspace = findWorkspace(
-                        formValues,
-                        this.path,
-                        this.parent.name,
-                      );
-                      return !workspace || workspace.optional || workspaceValue;
-                    },
-                  )
-                  .test(
-                    'are-workspaces-available',
-                    t('No workspaces available. Add pipeline workspaces.'),
-                    () => workspaces?.length > 0,
-                  )
-                  .test(
-                    'is-workspace-link-broken',
-                    t('Workspace name has changed; reselect.'),
-                    (workspaceValue?: string) =>
-                      !workspaceValue ||
-                      !!workspaces.find(({ name }) => name === workspaceValue),
-                  ),
+              () => isAlphaEnabled,
+            );
+        }),
+        runAfter: validRunAfter(formValues.formData, scopeTasks, t),
+        params: yup
+          .array()
+          .of(
+            yup.object({
+              name: yup.string().required(t('Required')),
+              value: yup.lazy((value) => {
+                if (Array.isArray(value)) {
+                  return yup.array().of(yup.string());
+                }
+                return yup.string();
               }),
-            )
-            .test(
-              'is-workspaces-required',
-              getTaskErrorString(TaskErrorType.MISSING_WORKSPACES),
-              function (workspaceList?: PipelineTaskWorkspace[]) {
-                return hasRequiredWorkspaces(
-                  formValues,
-                  this.parent,
-                  workspaceList,
-                );
-              },
-            ),
-        })
-        .test('task-definition', t(TASK_DEFINITION_MESSAGE), (task) =>
-          hasTaskDefinition(task as PipelineTask | undefined),
-        ),
-    ),
+              type: yup.string().oneOf(['string', 'array']),
+            }),
+          )
+          .test(
+            'is-param-optional',
+            getTaskErrorString(TaskErrorType.MISSING_REQUIRED_PARAMS),
+            function (params?: PipelineTaskParam[]) {
+              return areRequiredParamsAdded(formValues, this.parent, params);
+            },
+          ),
+        when: yup
+          .array()
+          .of(
+            yup.object({
+              input: yup.string().required(t('Required')),
+              operator: yup.string().required(t('Required')),
+              values: yup.array().of(yup.string().required(t('Required'))),
+            }),
+          )
+          .test(
+            'is-when-expression-required',
+            getTaskErrorString(TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS),
+            function (when?: WhenExpression[]) {
+              return areRequiredWhenExpressionsAdded(when);
+            },
+          ),
+
+        workspaces: yup
+          .array()
+          .of(
+            yup.object({
+              name: yup.string().required(t('Required')),
+              workspace: yup
+                .string()
+                .test(
+                  'is-workspace-is-required',
+                  t('Required'),
+                  function (workspaceValue?: string): any {
+                    const workspace = findWorkspace(
+                      formValues,
+                      this.path,
+                      this.parent.name,
+                    );
+                    return !workspace || workspace.optional || workspaceValue;
+                  },
+                )
+                .test(
+                  'are-workspaces-available',
+                  t('No workspaces available. Add pipeline workspaces.'),
+                  () => workspaces?.length > 0,
+                )
+                .test(
+                  'is-workspace-link-broken',
+                  t('Workspace name has changed; reselect.'),
+                  (workspaceValue?: string) =>
+                    !workspaceValue ||
+                    !!workspaces.find(({ name }) => name === workspaceValue),
+                ),
+            }),
+          )
+          .test(
+            'is-workspaces-required',
+            getTaskErrorString(TaskErrorType.MISSING_WORKSPACES),
+            function (workspaceList?: PipelineTaskWorkspace[]) {
+              return hasRequiredWorkspaces(
+                formValues,
+                this.parent,
+                workspaceList,
+              );
+            },
+          ),
+      })
+      .test(
+        'taskRef-or-taskSpec-or-pipelineRef-or-pipelineSpec',
+        t('TaskSpec, TaskRef, PipelineRef, or PipelineSpec must be provided.'),
+        function (task) {
+          // Check if taskRef is properly defined
+          const hasTaskRef = !!(
+            task.taskRef &&
+            (task.taskRef.name ||
+              (task.taskRef.resolver &&
+                task.taskRef.params &&
+                task.taskRef.params.length > 0))
+          );
+          // Check if pipelineRef is properly defined
+          const hasPipelineRef = !!(
+            task.pipelineRef &&
+            (task.pipelineRef.name ||
+              (task.pipelineRef.resolver &&
+                task.pipelineRef.params &&
+                task.pipelineRef.params.length > 0))
+          );
+          // Check if taskSpec is defined (can be empty object)
+          const hasTaskSpec = !!task.taskSpec;
+          // Check if pipelineSpec is properly defined
+          const hasPipelineSpec = !!(
+            task.pipelineSpec &&
+            (task.pipelineSpec.tasks?.length > 0 ||
+              task.pipelineSpec.finally?.length > 0)
+          );
+
+          return hasTaskRef || hasPipelineRef || hasTaskSpec || hasPipelineSpec;
+        },
+      ),
   );
 };
-
-const taskValidation = (
-  formValues: PipelineBuilderFormYamlValues,
-  _taskType: TaskType,
-  t: TFunction,
-) => buildTaskValidationFormSchema(formValues, t);
 
 /**
  * Validates the Form side of the Form/YAML switcher
@@ -416,6 +437,7 @@ const taskValidation = (
 const pipelineBuilderFormSchema = (
   formValues: PipelineBuilderFormYamlValues,
   t: TFunction,
+  isAlphaEnabled: boolean,
 ) => {
   return yup.object({
     name: nameValidationSchema(t).required(t('Required')),
@@ -423,24 +445,26 @@ const pipelineBuilderFormSchema = (
       yup.object({
         name: yup.string().required(t('Required')),
         description: yup.string(),
-        default: yup.string(), // TODO: should include string[]
-        // TODO: should have type (string | string[])
+        default: yup.string(),
       }),
     ),
     workspaces: yup.array().of(
       yup.object({
         name: yup.string().required(t('Required')),
-        // TODO: should include optional flag
       }),
     ),
-    tasks: taskValidation(formValues, 'tasks', t)
+    tasks: taskValidation(formValues, 'tasks', t, isAlphaEnabled)
       .min(1, t('Must define at least one task.'))
       .required(t('Required')),
-    finallyTasks: taskValidation(formValues, 'finallyTasks', t),
+    finallyTasks: taskValidation(formValues, 'finallyTasks', t, isAlphaEnabled),
     listTasks: yup.array().of(
       yup.object({
         name: yup.string().required(t('Required')),
-        runAfter: validRunAfter(formValues.formData, t),
+        runAfter: validRunAfter(
+          formValues.formData,
+          formValues.formData.tasks,
+          t,
+        ),
       }),
     ),
     finallyListTasks: yup.array().of(
@@ -451,7 +475,7 @@ const pipelineBuilderFormSchema = (
   });
 };
 
-export const validationSchema = (t: TFunction) =>
+export const validationSchema = (t: TFunction, isAlphaEnabled: boolean) =>
   yup.mixed().test({
     test(formValues: PipelineBuilderFormYamlValues) {
       const formYamlDefinition: any = yup.object({
@@ -459,12 +483,13 @@ export const validationSchema = (t: TFunction) =>
         yamlData: yup.string(),
         formData: yup.mixed().when('editorType', ([editorType]) => {
           if (editorType === EditorType.Form) {
-            return pipelineBuilderFormSchema(formValues, t);
+            return pipelineBuilderFormSchema(formValues, t, isAlphaEnabled);
           }
+
           return yup.mixed().notRequired();
         }),
       });
 
-      return formYamlDefinition.validate(formValues, { abortEarly: false });
+      return formYamlDefinition.validateSync(formValues, { abortEarly: false });
     },
   });

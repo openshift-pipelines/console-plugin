@@ -1,7 +1,15 @@
-import { CatalogItem } from '@openshift-console/dynamic-plugin-sdk';
-import { TaskModel } from '../../models';
+import {
+  CatalogItem,
+  ResourceIcon,
+  getGroupVersionKindForModel,
+} from '@openshift-console/dynamic-plugin-sdk';
+import { PipelineModel, TaskModel } from '../../models';
 import { t } from '../utils/common-utils';
 import { ARTIFACTHUB, CTALabel } from './const';
+import { TaskKind } from 'src/types/task';
+import { PipelineKind } from 'src/types/pipeline';
+import { SearchKind } from '../quick-search/QuickSearchModal';
+import { TaskSearchCallback } from '../pipelines-details/types';
 
 export enum TaskProviders {
   redhat = 'Red Hat',
@@ -127,3 +135,44 @@ export const findInstalledTask = (
         ARTIFACTHUB,
   );
 };
+
+export const normalizeResourceItems = (
+  resources: (TaskKind | PipelineKind)[],
+  resourceKind: SearchKind, // 'Task' | 'Pipeline'
+  provider: string,
+  onAdd: TaskSearchCallback | undefined,
+): CatalogItem[] =>
+  (Array.isArray(resources) ? resources : []).map((resource) => ({
+    uid: resource.metadata.uid,
+    name: resource.metadata.name,
+    description: (resource.spec as { description?: string })?.description ?? '',
+    type: resourceKind,
+    namespace: resource.metadata.namespace,
+    provider,
+    icon: {
+      node: (
+        <ResourceIcon
+          groupVersionKind={getGroupVersionKindForModel(
+            resourceKind === 'Pipeline' ? PipelineModel : TaskModel,
+          )}
+        />
+      ),
+    },
+    cta: {
+      label: 'Add',
+      callback: async () => {
+        onAdd?.(resource as any);
+      },
+    },
+    attributes: {
+      installed: 'installed',
+      versions: [],
+    },
+    tags:
+      resourceKind === 'Pipeline'
+        ? Object.keys(resource?.spec)
+            .filter((key) => key !== 'description')
+            .map((key) => `${resource.spec[key].length} ${key}`)
+        : [],
+    data: resource,
+  }));

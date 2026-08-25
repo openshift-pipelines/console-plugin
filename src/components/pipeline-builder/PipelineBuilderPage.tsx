@@ -26,6 +26,7 @@ import { getReferenceForModel } from '../pipelines-overview/utils';
 import { useNavigate, useParams } from 'react-router';
 
 import './PipelineBuilderPage.scss';
+import { useAlphaApiFields } from '../hooks/useAlphaApiFields';
 
 type PipelineBuilderPageProps = {
   existingPipeline?: PipelineKind;
@@ -36,6 +37,7 @@ const PipelineBuilderPage: FC<PipelineBuilderPageProps> = (props) => {
   const navigate = useNavigate();
   const { ns } = useParams();
   const { existingPipeline } = props;
+  const [isAlphaEnabled] = useAlphaApiFields();
 
   const initialValues: PipelineBuilderFormYamlValues = {
     editorType: EditorType.Form,
@@ -45,6 +47,7 @@ const PipelineBuilderPage: FC<PipelineBuilderPageProps> = (props) => {
       ...(convertPipelineToBuilderForm(existingPipeline) || {}),
     },
     taskResources: {
+      clusterResolverPipelines: [],
       clusterResolverTasks: [],
       namespacedTasks: [],
       namespacedPipelines: [],
@@ -108,7 +111,7 @@ const PipelineBuilderPage: FC<PipelineBuilderPageProps> = (props) => {
         initialValues={initialValues}
         onSubmit={handleSubmit}
         onReset={() => navigate(-1)}
-        validationSchema={validationSchema(t)}
+        validationSchema={validationSchema(t, isAlphaEnabled)}
       >
         {(formikProps) => (
           <PipelineBuilderForm

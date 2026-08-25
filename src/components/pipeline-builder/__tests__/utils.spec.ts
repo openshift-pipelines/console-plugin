@@ -1,5 +1,6 @@
 import { FormikErrors } from 'formik';
-import { PipelineTask, TaskKind } from '../../../types';
+import { PIPELINE_NAMESPACE } from '../../../consts';
+import { PipelineKind, PipelineTask, TaskKind } from '../../../types';
 import {
   getTaskErrorString,
   initialPipelineFormData,
@@ -44,6 +45,7 @@ describe('findTaskFromFormikData / findTask', () => {
       formData: initialPipelineFormData,
       taskResources: {
         clusterResolverTasks,
+        clusterResolverPipelines: [],
         namespacedTasks,
         tasksLoaded:
           clusterResolverTasks.length > 0 || namespacedTasks.length > 0,
@@ -71,6 +73,8 @@ describe('findTaskFromFormikData / findTask', () => {
           tasksLoaded: true,
           clusterResolverTasks: [externalTask],
           namespacedTasks: [],
+          clusterResolverPipelines: [],
+          namespacedPipelines: [],
         },
         null,
       ),
@@ -81,6 +85,8 @@ describe('findTaskFromFormikData / findTask', () => {
           tasksLoaded: true,
           clusterResolverTasks: [externalTask],
           namespacedTasks: [],
+          clusterResolverPipelines: [],
+          namespacedPipelines: [],
         },
         { name: 'test', taskRef: { name: 'unavailable-task' } },
       ),
@@ -187,6 +193,84 @@ describe('convertResourceToTask', () => {
 
     it('should match the params that was given', () => {
       expect(result.params).toHaveLength(resource.spec.params.length);
+    });
+  });
+
+  describe('namespaced pipeline', () => {
+    const resource: PipelineKind = {
+      apiVersion: 'tekton.dev/v1',
+      kind: 'Pipeline',
+      metadata: {
+        name: 'example-pipeline',
+        namespace: 'test-ns',
+      },
+      spec: {
+        params: [{ name: 'param-1', type: 'string', default: 'value-1' }],
+        tasks: [],
+      },
+    };
+    const result = convertResourceToTask([], resource, undefined, 'test-ns');
+
+    it('should use pipelineRef instead of taskRef', () => {
+      expect(result.taskRef).toBeUndefined();
+      expect(result.pipelineRef).toEqual({
+        kind: 'Pipeline',
+        name: 'example-pipeline',
+      });
+    });
+  });
+
+  describe('cluster resolver pipeline from openshift-pipelines', () => {
+    const resource: PipelineKind = {
+      apiVersion: 'tekton.dev/v1',
+      kind: 'Pipeline',
+      metadata: {
+        name: 'cluster-pipeline',
+        namespace: PIPELINE_NAMESPACE,
+      },
+      spec: {
+        tasks: [],
+      },
+    };
+    const result = convertResourceToTask([], resource, undefined, 'my-ns');
+
+    it('should use pipelineRef with cluster resolver', () => {
+      expect(result.taskRef).toBeUndefined();
+      expect(result.pipelineRef).toEqual({
+        resolver: 'cluster',
+        params: [
+          { name: 'kind', value: 'pipeline' },
+          { name: 'name', value: 'cluster-pipeline' },
+          { name: 'namespace', value: PIPELINE_NAMESPACE },
+        ],
+      });
+    });
+  });
+
+  describe('cluster resolver pipeline from selected namespace', () => {
+    const resource: PipelineKind = {
+      apiVersion: 'tekton.dev/v1',
+      kind: 'Pipeline',
+      metadata: {
+        name: 'other-ns-pipeline',
+        namespace: 'other-ns',
+      },
+      spec: {
+        tasks: [],
+      },
+    };
+    const result = convertResourceToTask([], resource, undefined, 'my-ns');
+
+    it('should use pipelineRef with cluster resolver using resource namespace', () => {
+      expect(result.taskRef).toBeUndefined();
+      expect(result.pipelineRef).toEqual({
+        resolver: 'cluster',
+        params: [
+          { name: 'kind', value: 'pipeline' },
+          { name: 'name', value: 'other-ns-pipeline' },
+          { name: 'namespace', value: 'other-ns' },
+        ],
+      });
     });
   });
 });

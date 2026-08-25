@@ -2,11 +2,7 @@ import * as yup from 'yup';
 import { PipelineSpec, PipelineTask } from '../../types';
 import { t } from '../utils/common-utils';
 import { PipelineBuilderFormValues } from './types';
-import {
-  nameValidationSchema,
-  runAfterMatches,
-  runAfterMatchesInScope,
-} from './validation-utils';
+import { nameValidationSchema } from './validation-utils';
 
 const TASK_DEFINITION_MESSAGE =
   'TaskSpec, TaskRef, PipelineRef, or PipelineSpec must be provided.';
@@ -30,6 +26,7 @@ const resourceDefinitionYAML = () => {
 
 export const validRunAfter = (
   formData: PipelineBuilderFormValues,
+  scopeTasks: PipelineTask[],
   thisTask: PipelineTask,
 ) => {
   return yup.array().of(
@@ -39,68 +36,28 @@ export const validRunAfter = (
         'tasks-matches-runAfters',
         t('Invalid runAfter'),
         function (runAfter: string) {
-          return runAfterMatches(formData, [runAfter], thisTask.name);
-        },
-      ),
-  );
-};
+          if (!runAfter) return true;
+          // Check if task is trying to run after itself
+          if (runAfter === thisTask?.name) return false;
 
-const validRunAfterInScope = (
-  scopeTaskNames: string[],
-  thisTask: PipelineTask,
-) => {
-  return yup.array().of(
-    yup
-      .string()
-      .test(
-        'tasks-matches-runAfters',
-        t('Invalid runAfter'),
-        function (runAfter: string) {
-          return runAfterMatchesInScope(
-            scopeTaskNames,
-            [runAfter],
-            thisTask.name,
+          const taskNames = scopeTasks.map((task) => task.name);
+          const listTaskNames = (formData.listTasks ?? []).map(
+            (listTask) => listTask.name,
+          );
+          return (
+            taskNames.includes(runAfter) || listTaskNames.includes(runAfter)
           );
         },
       ),
   );
 };
 
-const pipelineSpecYAMLSchema = (formData: PipelineBuilderFormValues) =>
-  yup.lazy((pipelineSpecValue?: PipelineSpec) => {
-    if (!pipelineSpecValue) {
-      return yup.mixed().notRequired();
-    }
-    const scopeTasks = [
-      ...(pipelineSpecValue?.tasks ?? []),
-      ...(pipelineSpecValue?.finally ?? []),
-    ];
-    return yup.object({
-      params: yup.array().of(
-        yup.object({
-          name: yup.string(),
-          description: yup.string(),
-          default: yup.lazy((val) =>
-            Array.isArray(val) ? yup.array() : yup.string(),
-          ),
-        }),
-      ),
-      workspaces: yup.array().of(
-        yup.object({
-          name: yup.string(),
-        }),
-      ),
-      tasks: buildTaskValidationYAMLSchema(formData, scopeTasks),
-      finally: buildTaskValidationYAMLSchema(formData, scopeTasks),
-    });
-  });
-
-const buildTaskValidationYAMLSchema = (
+const taskValidationYAMLSchema = (
   formData: PipelineBuilderFormValues,
-  scopeTasks?: PipelineTask[],
+  scopeTasks: PipelineTask[],
 ) => {
   return yup.array().of(
-    yup.lazy((taskObject: PipelineTask) =>
+    yup.lazy((taskObject) =>
       yup
         .object({
           name: nameValidationSchema(t),
@@ -108,22 +65,28 @@ const buildTaskValidationYAMLSchema = (
             .object({
               name: yup.string(),
               kind: yup.string(),
+              resolver: yup.string(),
+              params: yup
+                .array()
+                .of(yup.object({ name: yup.string(), value: yup.string() })),
             })
             .default(undefined),
           pipelineRef: yup
             .object({
               name: yup.string(),
               kind: yup.string(),
+              resolver: yup.string(),
+              params: yup
+                .array()
+                .of(yup.object({ name: yup.string(), value: yup.string() })),
             })
             .default(undefined),
-          pipelineSpec: pipelineSpecYAMLSchema(formData),
+          pipelineSpec: pipelineSpecYAMLSchema(
+            formData,
+            taskObject.pipelineSpec,
+          ),
           taskSpec: yup.object(),
-          runAfter: scopeTasks
-            ? validRunAfterInScope(
-                scopeTasks.map((task) => task.name),
-                taskObject,
-              )
-            : validRunAfter(formData, taskObject),
+          runAfter: validRunAfter(formData, scopeTasks, taskObject),
           params: yup.array().of(
             yup.object({
               name: yup.string().required(),
@@ -162,15 +125,19 @@ const buildTaskValidationYAMLSchema = (
   );
 };
 
-const taskValidationYAMLSchema = (formData: PipelineBuilderFormValues) =>
-  buildTaskValidationYAMLSchema(formData);
-
-export const pipelineBuilderYAMLSchema = (
+const pipelineSpecYAMLSchema = (
   formData: PipelineBuilderFormValues,
-) => {
-  return yup.object({
-    metadata: yup.object({ name: yup.string() }),
-    spec: yup.object({
+  pipelineSpecValue?: PipelineSpec,
+) =>
+  yup.lazy(() => {
+    if (!pipelineSpecValue) {
+      return yup.mixed().notRequired();
+    }
+    const scopeTasks = [
+      ...(pipelineSpecValue?.tasks ?? []),
+      ...(pipelineSpecValue?.finally ?? []),
+    ];
+    return yup.object({
       params: yup.array().of(
         yup.object({
           name: yup.string(),
@@ -180,19 +147,50 @@ export const pipelineBuilderYAMLSchema = (
           ),
         }),
       ),
-      resources: yup.array().of(
-        yup.object({
-          name: yup.string(),
-          type: yup.string(),
-        }),
-      ),
       workspaces: yup.array().of(
         yup.object({
           name: yup.string(),
         }),
       ),
-      tasks: taskValidationYAMLSchema(formData),
-      finally: taskValidationYAMLSchema(formData),
+      tasks: taskValidationYAMLSchema(formData, scopeTasks),
+      finally: taskValidationYAMLSchema(formData, scopeTasks),
+    });
+  });
+
+export const pipelineBuilderYAMLSchema = (
+  formData: PipelineBuilderFormValues,
+) => {
+  return yup.object({
+    metadata: yup.object({ name: yup.string() }),
+    spec: yup.lazy((specValue?: PipelineSpec) => {
+      const topLevelScopeTasks = [
+        ...(specValue?.tasks ?? []),
+        ...(specValue?.finally ?? []),
+      ];
+      return yup.object({
+        params: yup.array().of(
+          yup.object({
+            name: yup.string(),
+            description: yup.string(),
+            default: yup.lazy((val) =>
+              Array.isArray(val) ? yup.array() : yup.string(),
+            ),
+          }),
+        ),
+        resources: yup.array().of(
+          yup.object({
+            name: yup.string(),
+            type: yup.string(),
+          }),
+        ),
+        workspaces: yup.array().of(
+          yup.object({
+            name: yup.string(),
+          }),
+        ),
+        tasks: taskValidationYAMLSchema(formData, topLevelScopeTasks),
+        finally: taskValidationYAMLSchema(formData, topLevelScopeTasks),
+      });
     }),
   });
 };

@@ -1,8 +1,8 @@
 import { FormikErrors, FormikValues } from 'formik';
 import {
+  PipelineKind,
   PipelineTask,
   TaskKind,
-  PipelineKind,
   TektonParam,
   TektonResource,
   TektonWorkspace,
@@ -33,11 +33,11 @@ export type PipelineBuilderListTask = PipelineBuilderTaskBase;
 
 export type PipelineBuilderLoadingTask = PipelineBuilderTaskBase & {
   isFinallyTask: boolean;
-  resource: TaskKind;
-  taskRef: {
-    kind: string;
-    name: string;
-  };
+  resource: TaskKind | PipelineKind;
+  taskRef?: PipelineTask['taskRef'];
+  pipelineRef?: PipelineTask['pipelineRef'];
+  taskSpec?: PipelineTask['taskSpec'];
+  pipelineSpec?: PipelineTask['pipelineSpec'];
 };
 
 export type PipelineBuilderTaskGrouping = {
@@ -51,6 +51,7 @@ export type PipelineBuilderTaskGrouping = {
 export type PipelineBuilderTaskResources = {
   namespacedTasks: TaskKind[];
   clusterResolverTasks: TaskKind[];
+  clusterResolverPipelines?: PipelineKind[];
   namespacedPipelines?: PipelineKind[];
   tasksLoaded: boolean;
 };

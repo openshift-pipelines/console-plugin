@@ -116,28 +116,6 @@ NOTE: If you have a Mac with Apple silicon, you will need to add the flag
 `--platform=linux/amd64` when building the image to target the correct platform
 to run in-cluster.
 
-## Deployment on cluster
-
-A [Helm](https://helm.sh) chart is available to deploy the plugin to an OpenShift environment.
-
-The following Helm parameters are required:
-
-`plugin.image`: The location of the image containing the plugin that was previously pushed
-
-Additional parameters can be specified if desired. Consult the chart [values](charts/openshift-console-plugin/values.yaml) file for the full set of supported parameters.
-
-### Installing the Helm Chart
-
-Install the chart using the name of the plugin as the Helm release name into a new namespace or an existing namespace as specified by the `plugin_console-plugin-template` parameter and providing the location of the image within the `plugin.image` parameter by using the following command:
-
-```shell
-helm upgrade -i  my-plugin charts/openshift-console-plugin -n plugin__console-plugin-template --create-namespace --set plugin.image=my-plugin-image-location
-```
-
-NOTE: When deploying on OpenShift 4.10, it is recommended to add the parameter `--set plugin.securityContext.enabled=false` which will omit configurations related to Pod Security.
-
-NOTE: When defining i18n namespace, adhere `plugin__<name-of-the-plugin>` format. The name of the plugin should be extracted from the `consolePlugin` declaration within the [package.json](package.json) file.
-
 ## i18n
 
 The plugin use [react-i18next](https://react.i18next.com/) to translate messages.

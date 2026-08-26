@@ -32,7 +32,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo 'branches=["${{ inputs.branch }}"]' >> "$GITHUB_OUTPUT"
           else
-            echo 'branches=["master","main","release-v1.15.x","release-v1.20.x","release-v1.21.x","release-v1.22.x","release-v1.23.x","release-v1.24.x"]' >> "$GITHUB_OUTPUT"
+            echo 'branches=["master","main","release-v1.15.x","release-v1.22.x","release-v1.23.x","release-v1.24.x"]' >> "$GITHUB_OUTPUT"
           fi
 
   refresh:

@@ -38,7 +38,7 @@
     "@babel/preset-react": "^7.24.7",
     "@babel/preset-typescript": "^7.24.7",
     "@badeball/cypress-cucumber-preprocessor": "latest",
-    "@cypress/webpack-preprocessor": "^5.15.5",
+    "@cypress/webpack-preprocessor": "8.0.0",
     "@gitbeaker/core": "^43.0.0",
     "@octokit/core": "^5.0.0",
     "@openshift-console/dynamic-plugin-sdk": "1.4.0",

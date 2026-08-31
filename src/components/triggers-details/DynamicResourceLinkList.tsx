@@ -9,6 +9,9 @@ import {
 import PipelineResourceRef from './PipelineResourceRef';
 
 import './DynamicResourceLinkList.scss';
+import { ResourceLinkWithIcon } from '../utils/resource-link';
+import { getResourceModelFromTaskKind } from '../utils/pipeline-augment';
+import { getGroupVersionKindForModel } from '@openshift-console/dynamic-plugin-sdk';
 
 export type ResourceModelLink = {
   resourceKind: string;
@@ -24,6 +27,7 @@ type DynamicResourceLinkListProps = {
   namespace: string;
   title?: string;
   removeSpaceBelow?: boolean;
+  openInNewTab?: boolean;
 };
 
 const DynamicResourceLinkList: FC<DynamicResourceLinkListProps> = ({
@@ -31,6 +35,7 @@ const DynamicResourceLinkList: FC<DynamicResourceLinkListProps> = ({
   namespace,
   title,
   removeSpaceBelow,
+  openInNewTab = false,
 }) => {
   if (links.length === 0) {
     return null;
@@ -52,22 +57,35 @@ const DynamicResourceLinkList: FC<DynamicResourceLinkListProps> = ({
                 qualifier = '',
                 disableLink = false,
                 namespace: namespaceForTask,
-                resourceApiVersion,
+                resourceApiVersion = '',
               }) => {
                 let linkName = qualifier;
                 if (qualifier?.length > 0 && name !== qualifier) {
                   linkName += ` (${name})`;
                 }
+                const model = getResourceModelFromTaskKind(resourceKind);
                 return (
                   <div key={`${resourceKind}/${linkName}`}>
-                    <PipelineResourceRef
-                      resourceKind={resourceKind}
-                      resourceName={name}
-                      displayName={linkName}
-                      namespace={namespaceForTask || namespace}
-                      disableLink={disableLink}
-                      resourceApiVersion={resourceApiVersion}
-                    />
+                    {openInNewTab ? (
+                      <ResourceLinkWithIcon
+                        groupVersionKind={getGroupVersionKindForModel(model)}
+                        model={model}
+                        name={name}
+                        displayName={linkName}
+                        namespace={namespaceForTask || namespace}
+                        openInNewTab
+                        linkTo={!disableLink}
+                      />
+                    ) : (
+                      <PipelineResourceRef
+                        resourceKind={resourceKind}
+                        resourceName={name}
+                        displayName={linkName}
+                        namespace={namespaceForTask || namespace}
+                        disableLink={disableLink}
+                        resourceApiVersion={resourceApiVersion}
+                      />
+                    )}
                   </div>
                 );
               },

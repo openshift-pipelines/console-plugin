@@ -83,7 +83,7 @@ export const PipelineVisualizationStepList: FC<
               )}
               key={name}
             >
-              {!isSpecOverview && (
+              {!isSpecOverview && !isPipelineTask && (
                 <div className="odc-pipeline-visualization-step-list__icon">
                   <TooltipColoredStatusIcon status={status} />
                 </div>

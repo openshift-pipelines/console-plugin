@@ -10,20 +10,26 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  getGroupVersionKindForResource,
+  K8sResourceCommon,
+} from '@openshift-console/dynamic-plugin-sdk';
 import ResourceSidebarShortcuts from './ResourceSidebarShortcuts';
-import PipelineResourceRef from '../../triggers-details/PipelineResourceRef';
 
 import './ResourceSidebarHeader.scss';
+import { ResourceLinkWithIcon } from '../../../components/utils/resource-link';
+import { PipelineModel, TaskModel } from '../../..//models';
 
 type ResourceSidebarHeaderProps = {
   removeThisTask: () => void;
   resource: K8sResourceCommon;
+  isPipeline?: boolean;
 };
 
 const ResourceSidebarHeader: FC<ResourceSidebarHeaderProps> = ({
   removeThisTask,
   resource,
+  isPipeline = false,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
@@ -41,11 +47,15 @@ const ResourceSidebarHeader: FC<ResourceSidebarHeaderProps> = ({
     <div className="opp-task-sidebar-header">
       <Title headingLevel="h2" className="opp-task-sidebar-header__title">
         <div className="co-m-pane__name co-resource-item">
-          <PipelineResourceRef
-            resourceKind={resource.kind}
-            resourceName={resource.metadata.name}
+          <ResourceLinkWithIcon
+            groupVersionKind={getGroupVersionKindForResource(resource)}
+            model={isPipeline ? PipelineModel : TaskModel}
+            name={resource.metadata.name}
+            namespace={resource.metadata.namespace}
+            openInNewTab
             largeIcon
-            disableLink
+            linkTo={isPipeline}
+            data-test-id={resource.metadata.name}
           />
         </div>
         <div className="co-actions">

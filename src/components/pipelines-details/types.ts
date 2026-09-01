@@ -75,11 +75,11 @@ export type PipelineBuilderTaskBase = { name: string; runAfter?: string[] };
 
 export type PipelineBuilderLoadingTask = PipelineBuilderTaskBase & {
   isFinallyTask: boolean;
-  resource: TaskKind;
-  taskRef: {
-    kind: string;
-    name: string;
-  };
+  resource: TaskKind | PipelineKind;
+  taskRef?: PipelineTask['taskRef'];
+  pipelineRef?: PipelineTask['pipelineRef'];
+  taskSpec?: PipelineTask['taskSpec'];
+  pipelineSpec?: PipelineTask['pipelineSpec'];
 };
 
 export type TaskSearchCallback = (callback: () => void) => void;

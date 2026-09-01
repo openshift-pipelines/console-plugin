@@ -92,4 +92,6 @@ export type PipelineBuilderTaskResources = {
   namespacedTasks: TaskKind[];
   clusterResolverTasks: TaskKind[];
   tasksLoaded: boolean;
+  clusterResolverPipelines?: PipelineKind[];
+  namespacedPipelines?: PipelineKind[];
 };

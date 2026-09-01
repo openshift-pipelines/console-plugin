@@ -2,16 +2,12 @@ import type { FC } from 'react';
 import { useRef, useState, useCallback, useMemo, memo } from 'react';
 import { debounce } from 'lodash-es';
 import { useTranslation } from 'react-i18next';
+import { CatalogItem, useFlag } from '@openshift-console/dynamic-plugin-sdk';
 import {
-  CatalogItem,
-  ResourceIcon,
-  getGroupVersionKindForModel,
-  useFlag,
-  useK8sWatchResource,
-} from '@openshift-console/dynamic-plugin-sdk';
-import {
+  useAccessibleNamespaces,
   useCleanupOnFailure,
   useLoadingTaskCleanup,
+  useNamespaceClusterResources,
 } from '../pipeline-builder/hooks';
 import {
   PipelineBuilderTaskGroup,
@@ -23,6 +19,7 @@ import {
   getSelectedVersionUrl,
   isArtifactHubTask,
   isTaskSearchable,
+  normalizeResourceItems,
   TaskProviders,
 } from './pipeline-quicksearch-utils';
 import { safeName } from '../pipeline-builder/utils';
@@ -39,14 +36,8 @@ import { normalizeArtifactHubTasks } from '../catalog/providers/useArtifactHubTa
 import { quickSearch } from '../quick-search/utils/quick-search-utils';
 import useTasksProvider from '../catalog/providers/useTasksProvider';
 import { useAlphaApiFields } from '../hooks/useAlphaApiFields';
-import { PipelineModel } from '../../models';
 import { PipelineKind } from '../../types';
 import { FLAGS } from '../../types';
-import {
-  getQueryArgument,
-  removeQueryArgument,
-  setQueryArgument,
-} from '../utils/router';
 import QuickSearchModal, { SearchKind } from '../quick-search/QuickSearchModal';
 
 interface QuickSearchProps {
@@ -57,41 +48,9 @@ interface QuickSearchProps {
   callback: TaskSearchCallback;
   onUpdateTasks: UpdateTasksCallback;
   taskGroup: PipelineBuilderTaskGroup;
+  pipelines: PipelineKind[];
+  pipelinesLoaded: boolean;
 }
-
-const normalizePipelines = (
-  pipelines: PipelineKind[],
-  onAdd: TaskSearchCallback | undefined,
-  clusterLabel: string,
-): CatalogItem[] =>
-  (pipelines || []).map((pipeline) => ({
-    uid: pipeline.metadata.uid,
-    name: pipeline.metadata.name,
-    description: (pipeline.spec as { description?: string })?.description ?? '',
-    type: 'Pipeline',
-    provider: clusterLabel,
-    icon: {
-      node: (
-        <ResourceIcon
-          groupVersionKind={getGroupVersionKindForModel(PipelineModel)}
-        />
-      ),
-    },
-    cta: {
-      label: 'Add',
-      callback: async () => {
-        onAdd?.(pipeline as any);
-      },
-    },
-    attributes: {
-      installed: 'installed',
-      versions: [],
-    },
-    tags: Object.keys(pipeline?.spec)
-      .filter((key) => key !== 'description')
-      .map((key) => `${pipeline.spec[key].length} ${key}`),
-    data: pipeline,
-  }));
 
 const Contents: FC<
   {
@@ -105,6 +64,8 @@ const Contents: FC<
   callback,
   onUpdateTasks,
   taskGroup,
+  pipelines,
+  pipelinesLoaded,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const savedCallback = useRef(null);
@@ -113,13 +74,14 @@ const Contents: FC<
   savedCallback.current = callback;
   const [failedTasks, setFailedTasks] = useState<string[]>([]);
   const [kind, setKind] = useState<SearchKind>('Task');
-  const [searchTerm, setSearchTerm] = useState<string>(
-    getQueryArgument('catalogSearch') || '',
-  );
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [catalogItems, setCatalogItems] = useState<CatalogItem[] | null>(null);
   const [catalogTypes, setCatalogTypes] = useState<CatalogType[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchError, setIsSearchError] = useState(false);
+  const { namespaces, loaded: namespacesLoaded } = useAccessibleNamespaces();
+  const [selectedNamespace, setSelectedNamespace] = useState<string>(namespace);
+  const isClusterResolverMode = selectedNamespace !== namespace;
   const searchVersionRef = useRef(0);
 
   const [tektonTasks] = useTasksProvider({});
@@ -127,16 +89,14 @@ const Contents: FC<
   useLoadingTaskCleanup(onUpdateTasks, taskGroup);
   useCleanupOnFailure(failedTasks, onUpdateTasks, taskGroup);
 
-  const [pipelines, pipelinesLoaded] = useK8sWatchResource<PipelineKind[]>({
-    isList: true,
-    groupVersionKind: getGroupVersionKindForModel(PipelineModel),
-    namespace,
-    optional: true,
-  });
-
   const pipelineItems = useMemo(
     () =>
-      normalizePipelines(pipelines, callback, t('Red Hat')).filter((item) =>
+      normalizeResourceItems(
+        pipelines,
+        'Pipeline',
+        t('Red Hat'),
+        callback,
+      ).filter((item) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase()),
       ),
     [pipelines, callback, searchTerm, t],
@@ -315,18 +275,13 @@ const Contents: FC<
       if (kind === 'Pipeline') {
         setIsSearching(false);
         setIsSearchError(false);
-        if (value) {
-          setQueryArgument('catalogSearch', value);
-        } else {
-          removeQueryArgument('catalogSearch');
-        }
+
         return;
       }
 
       if (!value) {
         setCatalogItems(null);
         setCatalogTypes([]);
-        removeQueryArgument('catalogSearch');
         setIsSearching(false);
         setIsSearchError(false);
         return;
@@ -364,7 +319,6 @@ const Contents: FC<
 
         setCatalogItems(mergedItems);
         setCatalogTypes(catalogItemTypes);
-        setQueryArgument('catalogSearch', value);
       } catch {
         if (currentVersion !== searchVersionRef.current) return;
         setIsSearchError(true);
@@ -396,6 +350,36 @@ const Contents: FC<
     [debouncedHandleSearch, handleSearch],
   );
 
+  const {
+    tasks: clusterTasks,
+    pipelines: clusterPipelines,
+    loaded: clusterResourcesLoaded,
+    loadError: clusterResourcesLoadError,
+  } = useNamespaceClusterResources(
+    isClusterResolverMode ? selectedNamespace : null,
+  );
+
+  const clusterResolverItems = useMemo(() => {
+    if (!isClusterResolverMode) return [];
+    const resources = kind === 'Pipeline' ? clusterPipelines : clusterTasks;
+    return normalizeResourceItems(
+      resources,
+      kind,
+      selectedNamespace,
+      callback,
+    ).filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+  }, [
+    isClusterResolverMode,
+    kind,
+    clusterPipelines,
+    clusterTasks,
+    selectedNamespace,
+    callback,
+    searchTerm,
+  ]);
+
   const handleKindChange = useCallback(
     (newKind: SearchKind) => {
       if (newKind === kind) return;
@@ -407,7 +391,6 @@ const Contents: FC<
       setSearchTerm('');
       setIsSearching(false);
       setIsSearchError(false);
-      removeQueryArgument('catalogSearch');
 
       if (newKind === 'Task') {
         setCatalogItems(null);
@@ -417,27 +400,39 @@ const Contents: FC<
     [kind, debouncedHandleSearch],
   );
 
-  const displayedItems = kind === 'Pipeline' ? pipelineItems : catalogItems;
+  const handleCloseModal = useCallback(() => {
+    setIsOpen(false);
+    onSearchChange('');
+    setSelectedNamespace(namespace);
+  }, [setIsOpen, onSearchChange, namespace]);
 
-  const isLoading =
-    kind === 'Task' ? !catalogService.loaded || isSearching : !pipelinesLoaded;
+  const displayedItems = isClusterResolverMode
+    ? clusterResolverItems
+    : kind === 'Pipeline'
+    ? pipelineItems
+    : catalogItems;
+
+  const isLoading = isClusterResolverMode
+    ? !clusterResourcesLoaded
+    : kind === 'Task'
+    ? !catalogService.loaded || isSearching
+    : !pipelinesLoaded;
+
+  const isSearchErrorState = isClusterResolverMode
+    ? !!clusterResourcesLoadError
+    : isSearchError;
 
   const showEmpty =
     !isLoading &&
-    !isSearchError &&
-    (kind === 'Pipeline'
-      ? (displayedItems?.length ?? 0) === 0
-      : catalogItems !== null && (displayedItems?.length ?? 0) === 0);
+    !isSearchErrorState &&
+    (displayedItems?.length ?? 0) === 0 &&
+    (isClusterResolverMode || kind === 'Pipeline' || catalogItems !== null);
 
   return (
     <QuickSearchModal
       isOpen={isOpen}
       namespace={namespace}
-      closeModal={() => {
-        setIsOpen(false);
-        onSearchChange('');
-        removeQueryArgument('catalogSearch');
-      }}
+      closeModal={handleCloseModal}
       searchPlaceholder={t('Find by name...')}
       callback={savedCallback.current}
       setFailedTasks={setFailedTasks}
@@ -453,6 +448,10 @@ const Contents: FC<
       searchTerm={searchTerm}
       onSearchChange={onSearchChange}
       detailsRenderer={(props) => <PipelineQuickSearchDetails {...props} />}
+      namespaces={namespaces}
+      namespacesLoaded={namespacesLoaded}
+      selectedNamespace={selectedNamespace}
+      onNamespaceChange={setSelectedNamespace}
     />
   );
 };
@@ -465,6 +464,8 @@ const PipelineQuickSearch: FC<QuickSearchProps> = ({
   callback,
   onUpdateTasks,
   taskGroup,
+  pipelines,
+  pipelinesLoaded,
 }) => {
   return (
     <CatalogServiceProvider
@@ -482,6 +483,8 @@ const PipelineQuickSearch: FC<QuickSearchProps> = ({
             callback,
             onUpdateTasks,
             taskGroup,
+            pipelines,
+            pipelinesLoaded,
           }}
         />
       )}

@@ -1,10 +1,20 @@
-import { useK8sWatchResources } from '@openshift-console/dynamic-plugin-sdk';
-import { FormikTouched, useFormikContext } from 'formik';
-import { useEffect, useRef } from 'react';
+import {
+  getGroupVersionKindForModel,
+  useAccessReview,
+  useK8sWatchResource,
+  useK8sWatchResources,
+} from '@openshift-console/dynamic-plugin-sdk';
+import { FormikErrors, FormikTouched, useFormikContext } from 'formik';
+import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PIPELINE_NAMESPACE } from '../../consts';
-import { PipelineModel, TaskModel } from '../../models';
-import { PipelineKind, PipelineTask, TaskKind } from '../../types';
+import { PipelineModel, ProjectModel, TaskModel } from '../../models';
+import {
+  K8sResourceKind,
+  PipelineKind,
+  PipelineTask,
+  TaskKind,
+} from '../../types';
 import { AddNodeDirection } from '../pipeline-topology/const';
 import {
   PipelineBuilderTaskNodeModel,
@@ -45,79 +55,177 @@ import { findTask, getTopLevelErrorMessage } from './utils';
 
 export const useFormikFetchAndSaveTasks = (
   namespace: string,
-  validateForm: () => void,
+  validateForm: () => Promise<FormikErrors<PipelineBuilderFormikValues>>,
 ) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
-  const { setFieldValue, setStatus } =
+  const { setFieldValue, setStatus, values } =
     useFormikContext<PipelineBuilderFormikValues>();
 
-  const { namespacedTasks, clusterResolverTasks, namespacedPipelines } =
-    useK8sWatchResources<{
-      namespacedTasks: TaskKind[];
-      clusterResolverTasks: TaskKind[];
-      namespacedPipelines: PipelineKind[];
-    }>({
-      namespacedTasks: {
-        kind: getReferenceForModel(TaskModel),
-        isList: true,
-        namespace,
-      },
-      clusterResolverTasks: {
-        kind: getReferenceForModel(TaskModel),
-        isList: true,
-        namespace: PIPELINE_NAMESPACE,
-      },
-      namespacedPipelines: {
-        kind: getReferenceForModel(PipelineModel),
-        isList: true,
-        namespace,
-      },
+  const [canListClusterPipelines, canListClusterPipelinesLoading] =
+    useAccessReview({
+      group: PipelineModel.apiGroup,
+      resource: PipelineModel.plural,
+      verb: 'list',
+      namespace: PIPELINE_NAMESPACE,
     });
-  const namespacedTaskData = namespacedTasks.loaded
-    ? namespacedTasks.data
-    : null;
-  const clusterResolverTaskData = clusterResolverTasks.loaded
-    ? clusterResolverTasks.data
-    : null;
-  const namespacedPipelineData = namespacedPipelines.loaded
-    ? namespacedPipelines.data
-    : null;
+
+  const [canListNamespacedPipelines, canListNamespacedPipelinesLoading] =
+    useAccessReview({
+      group: PipelineModel.apiGroup,
+      resource: PipelineModel.plural,
+      verb: 'list',
+      namespace,
+    });
+
+  const { namespacedTasks, clusterResolverTasks } = useK8sWatchResources<{
+    namespacedTasks: TaskKind[];
+    clusterResolverTasks: TaskKind[];
+  }>({
+    namespacedTasks: {
+      kind: getReferenceForModel(TaskModel),
+      isList: true,
+      namespace,
+    },
+    clusterResolverTasks: {
+      kind: getReferenceForModel(TaskModel),
+      isList: true,
+      namespace: PIPELINE_NAMESPACE,
+      optional: true,
+    },
+  });
+
+  const [
+    namespacedPipelinesRaw,
+    namespacedPipelinesLoaded,
+    namespacedPipelinesLoadError,
+  ] = useK8sWatchResource<PipelineKind[]>(
+    canListNamespacedPipelinesLoading || !canListNamespacedPipelines
+      ? null
+      : {
+          kind: getReferenceForModel(PipelineModel),
+          isList: true,
+          namespace,
+        },
+  );
+
+  const [
+    clusterResolverPipelinesRaw,
+    clusterResolverPipelinesLoaded,
+    clusterResolverPipelinesLoadError,
+  ] = useK8sWatchResource<PipelineKind[]>(
+    canListClusterPipelinesLoading || !canListClusterPipelines
+      ? null
+      : {
+          kind: getReferenceForModel(PipelineModel),
+          isList: true,
+          namespace: PIPELINE_NAMESPACE,
+        },
+  );
+
+  const namespacedTaskData = useMemo(() => {
+    return namespacedTasks.loaded ? namespacedTasks.data : null;
+  }, [namespacedTasks.loaded, namespacedTasks.data]);
+
+  const clusterResolverTaskData = useMemo(() => {
+    return clusterResolverTasks.loaded ? clusterResolverTasks.data : null;
+  }, [clusterResolverTasks.loaded, clusterResolverTasks.data]);
+
+  const namespacedPipelineData = useMemo(() => {
+    if (canListNamespacedPipelinesLoading) {
+      return null;
+    }
+
+    if (!canListNamespacedPipelines) {
+      return [];
+    }
+
+    return namespacedPipelinesLoaded ? namespacedPipelinesRaw : null;
+  }, [
+    canListNamespacedPipelinesLoading,
+    canListNamespacedPipelines,
+    namespacedPipelinesLoaded,
+    namespacedPipelinesRaw,
+  ]);
+
+  const clusterResolverPipelineData = useMemo(() => {
+    if (canListClusterPipelinesLoading) {
+      return null;
+    }
+
+    if (!canListClusterPipelines) {
+      return [];
+    }
+
+    return clusterResolverPipelinesLoaded ? clusterResolverPipelinesRaw : null;
+  }, [
+    canListClusterPipelinesLoading,
+    canListClusterPipelines,
+    clusterResolverPipelinesLoaded,
+    clusterResolverPipelinesRaw,
+  ]);
 
   useEffect(() => {
     if (namespacedTaskData) {
       setFieldValue('taskResources.namespacedTasks', namespacedTaskData, false);
     }
     if (clusterResolverTaskData) {
+      const existingExternal = (
+        values.taskResources?.clusterResolverTasks ?? []
+      ).filter(
+        (task: TaskKind) => task.metadata.namespace !== PIPELINE_NAMESPACE,
+      );
       setFieldValue(
         'taskResources.clusterResolverTasks',
-        clusterResolverTaskData,
+        [...clusterResolverTaskData, ...existingExternal],
         false,
       );
     }
-    if (namespacedPipelineData) {
+    if (namespacedPipelineData !== null) {
       setFieldValue(
         'taskResources.namespacedPipelines',
         namespacedPipelineData,
         false,
       );
     }
-    const tasksLoaded = !!namespacedTaskData && !!clusterResolverTaskData;
+    if (clusterResolverPipelineData !== null) {
+      const existingExternal = (
+        values.taskResources?.clusterResolverPipelines ?? []
+      ).filter(
+        (pipeline: PipelineKind) =>
+          pipeline.metadata.namespace !== PIPELINE_NAMESPACE,
+      );
+      setFieldValue(
+        'taskResources.clusterResolverPipelines',
+        [...clusterResolverPipelineData, ...existingExternal],
+        false,
+      );
+    }
+
+    const tasksLoaded =
+      !!namespacedTaskData &&
+      !!clusterResolverTaskData &&
+      namespacedPipelineData !== null &&
+      clusterResolverPipelineData !== null;
     setFieldValue('taskResources.tasksLoaded', tasksLoaded, false);
     if (tasksLoaded) {
-      setTimeout(() => validateForm(), 0);
+      setTimeout(() => {
+        validateForm().catch(() => {});
+      }, 0);
     }
   }, [
     setFieldValue,
     namespacedTaskData,
     clusterResolverTaskData,
     namespacedPipelineData,
+    clusterResolverPipelineData,
     validateForm,
   ]);
 
   const error =
     namespacedTasks.loadError ||
     clusterResolverTasks.loadError ||
-    namespacedPipelines.loadError;
+    (canListNamespacedPipelines ? namespacedPipelinesLoadError : undefined) ||
+    (canListClusterPipelines ? clusterResolverPipelinesLoadError : undefined);
   useEffect(() => {
     if (!error) return;
 
@@ -139,7 +247,12 @@ const useConnectFinally = (
   taskResources: PipelineBuilderTaskResources,
   tasksInError: TaskErrors,
 ): PipelineMixedNodeModel => {
-  const { clusterResolverTasks, namespacedTasks } = taskResources;
+  const {
+    clusterResolverTasks,
+    namespacedTasks,
+    clusterResolverPipelines,
+    namespacedPipelines,
+  } = taskResources;
   const taskGroupRef = useRef(taskGroup);
   taskGroupRef.current = taskGroup;
   const addNewFinallyListNode = () => {
@@ -246,6 +359,8 @@ const useConnectFinally = (
     namespace,
     namespaceTaskList: namespacedTasks,
     clusterResolverTaskList: clusterResolverTasks,
+    clusterResolverPipelineList: clusterResolverPipelines,
+    namespacedPipelineList: namespacedPipelines,
     task: {
       isFinallyTask: true,
       name: finallyNodeName,
@@ -279,7 +394,12 @@ export const useNodes = (
   taskResources: PipelineBuilderTaskResources,
   tasksInError: BuilderTasksErrorGroup,
 ): PipelineMixedNodeModel[] => {
-  const { clusterResolverTasks, namespacedTasks } = taskResources;
+  const {
+    clusterResolverTasks,
+    namespacedTasks,
+    clusterResolverPipelines,
+    namespacedPipelines,
+  } = taskResources;
 
   const taskGroupRef = useRef(taskGroup);
   taskGroupRef.current = taskGroup;
@@ -324,6 +444,8 @@ export const useNodes = (
     createTaskListNode(name, {
       namespaceTaskList: namespacedTasks,
       clusterResolverTaskList: clusterResolverTasks,
+      clusterResolverPipelineList: clusterResolverPipelines,
+      namespacedPipelineList: namespacedPipelines,
       onNewTask: (resource: TaskKind) => {
         resource.kind
           ? onNewTask(resource, name, runAfter)
@@ -352,6 +474,8 @@ export const useNodes = (
     createInvalidTaskListNode(name, {
       namespaceTaskList: namespacedTasks,
       clusterResolverTaskList: clusterResolverTasks,
+      clusterResolverPipelineList: clusterResolverPipelines,
+      namespacedPipelineList: namespacedPipelines,
       onNewTask: (resource: TaskKind) => {
         const data: UpdateOperationFixInvalidTaskListData = {
           existingName: name,
@@ -539,4 +663,77 @@ export const useCleanupOnFailure = (
       }
     });
   }, [values, onUpdateTasks, taskGroup, failedTasks]);
+};
+
+export const useAccessibleNamespaces = (): {
+  namespaces: string[];
+  loaded: boolean;
+  loadError: unknown;
+} => {
+  const { projects } = useK8sWatchResources<{
+    projects: K8sResourceKind[];
+  }>({
+    projects: {
+      isList: true,
+      groupVersionKind: getGroupVersionKindForModel(ProjectModel),
+      optional: true,
+    },
+  });
+
+  const { data, loaded, loadError } = projects;
+
+  const namespaces = useMemo(
+    () =>
+      loaded
+        ? data
+            .map((p) => p.metadata.name)
+            .filter((name): name is string => !!name)
+            .sort((a, b) => a.localeCompare(b))
+        : [],
+    [data, loaded],
+  );
+
+  return { namespaces, loaded, loadError };
+};
+
+export const useNamespaceClusterResources = (
+  namespace: string | null,
+): {
+  tasks: TaskKind[];
+  pipelines: PipelineKind[];
+  loaded: boolean;
+  loadError: unknown;
+} => {
+  const [tasks, tasksLoaded, tasksLoadError] = useK8sWatchResource<TaskKind[]>(
+    namespace
+      ? {
+          isList: true,
+          groupVersionKind: getGroupVersionKindForModel(TaskModel),
+          namespace,
+        }
+      : null,
+  );
+
+  const [pipelines, pipelinesLoaded, pipelinesLoadError] = useK8sWatchResource<
+    PipelineKind[]
+  >(
+    namespace
+      ? {
+          isList: true,
+          groupVersionKind: getGroupVersionKindForModel(PipelineModel),
+          namespace,
+        }
+      : null,
+  );
+
+  if (!namespace) {
+    return { tasks: [], pipelines: [], loaded: false, loadError: null };
+  }
+
+  return {
+    tasks: tasks ?? [],
+    pipelines: pipelines ?? [],
+    loaded: tasksLoaded && pipelinesLoaded,
+    loadError: tasksLoadError || pipelinesLoadError,
+  };
 };

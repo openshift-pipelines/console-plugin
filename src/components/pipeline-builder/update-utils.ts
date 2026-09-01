@@ -222,7 +222,7 @@ const convertLoadingNodeToTask: UpdateOperationAction<
 
 const convertToLoadingTask: UpdateOperationAction<
   UpdateOperationConvertToLoadingTaskData
-> = (taskGrouping, data) => {
+> = (taskGrouping, data, namespace) => {
   const { name, resource, runAfter, isFinallyTask } = data;
   const { tasks, listTasks, finallyTasks, finallyListTasks, loadingTasks } =
     taskGrouping;
@@ -232,6 +232,7 @@ const convertToLoadingTask: UpdateOperationAction<
     resource,
     isFinallyTask,
     runAfter,
+    namespace,
   );
 
   return {
@@ -512,6 +513,7 @@ export const applyChange = (
       return convertToLoadingTask(
         taskGrouping,
         data as UpdateOperationConvertToLoadingTaskData,
+        namespace,
       );
     case UpdateOperationType.CONVERT_LOADING_TASK_TO_TASK:
       return convertLoadingNodeToTask(

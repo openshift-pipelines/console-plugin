@@ -45,6 +45,7 @@ const TaskList: FC<any> = ({
   width,
   height,
   listOptions,
+  pipelineListOptions = [],
   unselectedText,
   onRemoveTask,
   onNewTask,
@@ -56,9 +57,10 @@ const TaskList: FC<any> = ({
   const [hover, hoverRef] = useHover();
 
   const options = _.sortBy(
-    listOptions.map((task) => taskToOption(task, onNewTask)),
+    listOptions?.map((task) => taskToOption(task, onNewTask)),
     (o) => o.label,
   );
+  const hasAnyOptions = options?.length > 0 || pipelineListOptions?.length > 0;
   const unselectedTaskText = unselectedText || t('Add');
 
   const truncatedTaskText = useMemo(
@@ -94,12 +96,12 @@ const TaskList: FC<any> = ({
         <rect
           ref={triggerRef}
           className={classnames('odc-task-list-node__trigger-background', {
-            'is-disabled': options.length === 0,
+            'is-disabled': !hasAnyOptions,
           })}
           width={width}
           height={height}
         />
-        {options.length === 0 ? (
+        {!hasAnyOptions ? (
           <text
             className="odc-task-list-node__trigger-disabled"
             x={width / 2}

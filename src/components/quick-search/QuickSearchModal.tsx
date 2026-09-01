@@ -29,6 +29,11 @@ import {
   Button,
   ButtonVariant,
   Bullseye,
+  Select,
+  SelectOption,
+  MenuToggle,
+  InputGroup,
+  InputGroupText,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import RhMicronsCloseIcon from '@patternfly/react-icons/dist/esm/icons/rh-microns-close-icon';
@@ -40,7 +45,6 @@ import {
 import { DetailsRendererFunction } from './QuickSearchDetails';
 import { handleCta } from './utils/quick-search-utils';
 import { CatalogType } from '../catalog/types';
-import { removeQueryArgument } from '../utils/router';
 import { TaskSearchCallback } from '../pipeline-builder/types';
 import { PipelineModel, TaskModel } from '../../models';
 import { useTranslation } from 'react-i18next';
@@ -69,6 +73,10 @@ export interface QuickSearchModalProps {
   onKindChange: (kind: SearchKind) => void;
   searchTerm: string;
   onSearchChange: (value: string) => void;
+  namespaces: string[];
+  namespacesLoaded: boolean;
+  selectedNamespace: string | null;
+  onNamespaceChange: (namespace: string | null) => void;
 }
 
 const QuickSearchModal: FC<QuickSearchModalProps> = ({
@@ -90,6 +98,10 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
   onKindChange,
   searchTerm,
   onSearchChange,
+  namespaces,
+  namespacesLoaded,
+  selectedNamespace,
+  onNamespaceChange,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const navigate = useNavigate();
@@ -97,6 +109,7 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
   const [selectedItemId, setSelectedItemId] = useState<string>('');
   const [selectedVersion, setSelectedVersion] = useState<string>('');
   const [detailsReady, setDetailsReady] = useState(true);
+  const [isNsSelectOpen, setIsNsSelectOpen] = useState(false);
 
   const selectedVersionRef = useRef<string>('');
   const selectedItemRef = useRef<CatalogItem | null>(null);
@@ -114,7 +127,6 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
   const canAdd = !!selectedItem && detailsReady;
 
   const handleClose = useCallback(() => {
-    removeQueryArgument('catalogSearch');
     closeModal();
   }, [closeModal]);
 
@@ -212,33 +224,74 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
       <Divider />
       <ModalBody className="pipelines-console-plugin-quick-search-modal__body">
         <Stack>
-          {showPipelineKind && (
-            <StackItem>
+          <StackItem>
+            <Flex
+              alignItems={{ default: 'alignItemsCenter' }}
+              justifyContent={{ default: 'justifyContentSpaceBetween' }}
+              className="pf-v6-u-px-md pf-v6-u-mb-md"
+            >
               <Flex
+                alignItems={{ default: 'alignItemsCenter' }}
                 spaceItems={{ default: 'spaceItemsMd' }}
-                className="pf-v6-u-px-md pf-v6-u-mb-md"
               >
-                <FlexItem>
-                  <Radio
-                    id="kind-task"
-                    name="kind"
-                    label={t('Task')}
-                    isChecked={kind === 'Task'}
-                    onChange={() => onKindChange('Task')}
-                  />
-                </FlexItem>
-                <FlexItem>
-                  <Radio
-                    id="kind-pipeline"
-                    name="kind"
-                    label={t('Pipeline')}
-                    isChecked={kind === 'Pipeline'}
-                    onChange={() => onKindChange('Pipeline')}
-                  />
-                </FlexItem>
+                {showPipelineKind && (
+                  <>
+                    <FlexItem>
+                      <Radio
+                        id="kind-task"
+                        name="kind"
+                        label={t('Task')}
+                        isChecked={kind === 'Task'}
+                        onChange={() => onKindChange('Task')}
+                      />
+                    </FlexItem>
+                    <FlexItem>
+                      <Radio
+                        id="kind-pipeline"
+                        name="kind"
+                        label={t('Pipeline')}
+                        isChecked={kind === 'Pipeline'}
+                        onChange={() => onKindChange('Pipeline')}
+                      />
+                    </FlexItem>
+                  </>
+                )}
               </Flex>
-            </StackItem>
-          )}
+
+              <FlexItem align={{ default: 'alignRight' }}>
+                <InputGroup>
+                  <InputGroupText>{t('Project')}</InputGroupText>
+                  <Select
+                    isOpen={isNsSelectOpen}
+                    maxMenuHeight="300px"
+                    onOpenChange={setIsNsSelectOpen}
+                    selected={selectedNamespace}
+                    onSelect={(_e, value) => {
+                      onNamespaceChange(value as string);
+                      setIsNsSelectOpen(false);
+                    }}
+                    toggle={(toggleRef) => (
+                      <MenuToggle
+                        ref={toggleRef}
+                        onClick={() => setIsNsSelectOpen((open) => !open)}
+                        isExpanded={isNsSelectOpen}
+                        isDisabled={!namespacesLoaded}
+                      >
+                        {selectedNamespace || t('Select a namespace')}
+                      </MenuToggle>
+                    )}
+                  >
+                    {namespaces.map((ns) => (
+                      <SelectOption key={ns} value={ns}>
+                        {ns}
+                      </SelectOption>
+                    ))}
+                  </Select>
+                </InputGroup>
+              </FlexItem>
+            </Flex>
+          </StackItem>
+
           <StackItem>
             <TextInputGroup
               isPlain

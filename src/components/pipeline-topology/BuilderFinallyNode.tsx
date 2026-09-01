@@ -32,6 +32,8 @@ const BuilderFinallyNode: FC<BuilderFinallyNodeProps> = ({ element }) => {
   const {
     clusterResolverTaskList = [],
     namespaceTaskList = [],
+    namespacedPipelineList = [],
+    clusterResolverPipelineList = [],
     task,
     namespace,
   } = element.getData();
@@ -160,6 +162,10 @@ const BuilderFinallyNode: FC<BuilderFinallyNodeProps> = ({ element }) => {
               width={NODE_WIDTH}
               height={NODE_HEIGHT}
               listOptions={[...clusterResolverTaskList, ...namespaceTaskList]}
+              pipelineListOptions={[
+                ...namespacedPipelineList,
+                ...clusterResolverPipelineList,
+              ]}
               onRemoveTask={ivl.onRemoveTask}
               onNewTask={ivl.convertList}
               onTaskSearch={onTaskSearch}
@@ -204,6 +210,10 @@ const BuilderFinallyNode: FC<BuilderFinallyNodeProps> = ({ element }) => {
               width={NODE_WIDTH}
               height={NODE_HEIGHT}
               listOptions={[...clusterResolverTaskList, ...namespaceTaskList]}
+              pipelineListOptions={[
+                ...namespacedPipelineList,
+                ...clusterResolverPipelineList,
+              ]}
               onRemoveTask={flt.onRemoveTask}
               onNewTask={flt.convertList}
               onTaskSearch={onTaskSearch}

@@ -33,7 +33,7 @@
     "po-to-i18n": "node ./i18n-scripts/po-to-i18n.js"
   },
   "devDependencies": {
-    "@cypress/webpack-preprocessor": "^5.15.5",
+    "@cypress/webpack-preprocessor": "8.0.0",
     "@openshift-console/dynamic-plugin-sdk": "1.4.0",
     "@openshift-console/dynamic-plugin-sdk-webpack": "1.1.1",
     "@openshift/dynamic-plugin-sdk": "^4.0.0",

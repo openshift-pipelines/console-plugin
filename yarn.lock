@@ -465,19 +465,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/webpack-preprocessor@npm:^5.15.5":
-  version: 5.17.1
-  resolution: "@cypress/webpack-preprocessor@npm:5.17.1"
+"@cypress/webpack-preprocessor@npm:8.0.0":
+  version: 8.0.0
+  resolution: "@cypress/webpack-preprocessor@npm:8.0.0"
   dependencies:
     bluebird: "npm:3.7.1"
     debug: "npm:^4.3.4"
     lodash: "npm:^4.17.20"
+    semver: "npm:^7.7.3"
   peerDependencies:
-    "@babel/core": ^7.0.1
-    "@babel/preset-env": ^7.0.0
-    babel-loader: ^8.0.2 || ^9
-    webpack: ^4 || ^5
-  checksum: 10c0/2f8a43c70ef4d36167c2a13157d67c299ef15bc6d1b25c96e55cafb5b115fda879b9d62903b8fe99081dce0607062b0b2dbfaa9b0f099a2bbbaf9959e9d439e4
+    "@babel/core": ^7.28.0
+    "@babel/preset-env": ^7.26.0
+    babel-loader: ^9 || ^10
+    webpack: ^5
+  checksum: 10c0/e0439e9a8379ed9e2489d8838e4967ae4dd59879f8d8f8e683f27c618eeeeaa62e5a800f90bb7f81e296744adf6e740ffd51208be0d87153c4efc176ddf12c92
   languageName: node
   linkType: hard
 
@@ -6019,9 +6020,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.402":
-  version: 1.5.417
-  resolution: "electron-to-chromium@npm:1.5.417"
-  checksum: 10c0/268f13ddc2c032f72b4aef74db90d1d0f71e188bc62f82fe2d020ef45dd9b7078ac01177f9de4e28b82f73efed3cf1a27a680c9d6a9173ce96766c9cbe7202fd
+  version: 1.5.418
+  resolution: "electron-to-chromium@npm:1.5.418"
+  checksum: 10c0/8c901037c516e4affce66d5c8f4058ef963cb6bcc377aa13f357eb20ac4e72cbf97c1b6d67795ff8c24a1b61a4948008bd938f9268c0fcd916f1c67de7909c6b
   languageName: node
   linkType: hard
 
@@ -11208,7 +11209,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "pipelines-console-plugin@workspace:."
   dependencies:
-    "@cypress/webpack-preprocessor": "npm:^5.15.5"
+    "@cypress/webpack-preprocessor": "npm:8.0.0"
     "@openshift-console/dynamic-plugin-sdk": "npm:1.4.0"
     "@openshift-console/dynamic-plugin-sdk-webpack": "npm:1.1.1"
     "@openshift/dynamic-plugin-sdk": "npm:^4.0.0"
@@ -12735,7 +12736,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.2, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.8.5":
+"semver@npm:^7.3.2, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.7.3, semver@npm:^7.8.5":
   version: 7.8.5
   resolution: "semver@npm:7.8.5"
   bin:
@@ -14234,9 +14235,9 @@ __metadata:
   linkType: hard
 
 "undici@npm:^8.4.1":
-  version: 8.10.0
-  resolution: "undici@npm:8.10.0"
-  checksum: 10c0/37ae2b1db8f65c3a003504e2040e96887b99f9db16ba07dcf49c37ed8b7f8c72f4452f2d46f52f7c9e49518fe8325e3b5e7e02ac3a2424886bd67d4b62a0ecab
+  version: 8.10.1
+  resolution: "undici@npm:8.10.1"
+  checksum: 10c0/90ac5636aa9d22fb710a261ef05e136df6b4bd7a0122201796bd2eb59ccab6661cdf4f635e543ca04420379eafe3f4d214031bbc7623214287988881c24dad55
   languageName: node
   linkType: hard
 

@@ -26,6 +26,7 @@ import {
   isArtifactHubTask,
   isOneVersionInstalled,
   isTaskVersionInstalled,
+  TaskProviders,
 } from './pipeline-quicksearch-utils';
 import PipelineQuickSearchTaskAlert from './PipelineQuickSearchTaskAlert';
 import PipelineQuickSearchVersionDropdown from './PipelineQuickSearchVersionDropdown';
@@ -177,13 +178,14 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
           </Title>
         </LevelItem>
         {kind == 'Task' &&
-          selectedItem.provider !== 'Red Hat' &&
+          selectedItem.provider !== TaskProviders.redhat &&
           !hasInstalledVersion && (
             <LevelItem>
               <Label data-test="task-provider">{selectedItem.provider}</Label>
             </LevelItem>
           )}
-        {(hasInstalledVersion || kind === 'Pipeline') && (
+        {(hasInstalledVersion ||
+          selectedItem.provider === TaskProviders.redhat) && (
           <LevelItem>
             <Label
               color="green"
@@ -234,11 +236,11 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
           </Split>
         </LevelItem>
       </Level>
-      {
+      {selectedItem.provider !== TaskProviders.redhat && (
         <PipelineQuickSearchTaskAlert
           ctaType={getTaskCtaType(selectedItem, selectedVersion)}
         />
-      }
+      )}
       <Content
         className="opp-quick-search-details__description"
         data-test="task-description"

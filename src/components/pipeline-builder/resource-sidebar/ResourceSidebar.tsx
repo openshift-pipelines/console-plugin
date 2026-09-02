@@ -60,7 +60,9 @@ const ResourceSidebar: FC<ResourceSidebarProps> = (props) => {
     hideOptionalTaskParam,
   } = props;
   const { isFinallyTask, taskIndex, resource } = selectedData;
-  const isPipeline = resource.kind === PipelineModel.kind;
+  const isPipeline =
+    resource.kind === PipelineModel.kind ||
+    resource.kind === 'EmbeddedPipeLine';
   const pipelineResource = isPipeline ? (resource as PipelineKind) : null;
   const taskResource = isPipeline ? null : (resource as TaskKind);
   const taskType: TaskType = isFinallyTask ? 'finallyTasks' : 'tasks';

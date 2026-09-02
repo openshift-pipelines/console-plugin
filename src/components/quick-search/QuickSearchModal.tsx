@@ -77,6 +77,7 @@ export interface QuickSearchModalProps {
   namespacesLoaded: boolean;
   selectedNamespace: string | null;
   onNamespaceChange: (namespace: string | null) => void;
+  isClusterResolverMode?: boolean;
 }
 
 const QuickSearchModal: FC<QuickSearchModalProps> = ({
@@ -102,6 +103,7 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
   namespacesLoaded,
   selectedNamespace,
   onNamespaceChange,
+  isClusterResolverMode,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const navigate = useNavigate();
@@ -269,6 +271,7 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
                     onSelect={(_e, value) => {
                       onNamespaceChange(value as string);
                       setIsNsSelectOpen(false);
+                      onSearchChange('');
                     }}
                     toggle={(toggleRef) => (
                       <MenuToggle
@@ -320,17 +323,36 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
           </StackItem>
 
           <StackItem className="pf-v6-u-p-md pf-v6-u-pt-0">
-            <Content component={ContentVariants.small}>
-              {isLoading ? (
-                <Spinner size="md" aria-label={t('Loading')} />
-              ) : isSearchError ? (
-                t('Unable to show results at the moment')
-              ) : (
-                `${resultCount} ${
-                  kind === 'Task' ? t('Tasks') : t('Pipelines')
-                }`
+            <Flex
+              justifyContent={{ default: 'justifyContentSpaceBetween' }}
+              alignItems={{ default: 'alignItemsCenter' }}
+            >
+              <FlexItem>
+                <Content component={ContentVariants.small}>
+                  {isLoading ? (
+                    <Spinner size="md" aria-label={t('Loading')} />
+                  ) : isSearchError ? (
+                    t('Unable to show results at the moment')
+                  ) : (
+                    `${resultCount} ${
+                      kind === 'Task' ? t('Tasks') : t('Pipelines')
+                    }`
+                  )}
+                </Content>
+              </FlexItem>
+              {kind === 'Task' && isClusterResolverMode && (
+                <FlexItem>
+                  <Content component={ContentVariants.small}>
+                    {t(
+                      'Showing installed tasks from the {{namespace}} project',
+                      {
+                        namespace: selectedNamespace,
+                      },
+                    )}
+                  </Content>
+                </FlexItem>
               )}
-            </Content>
+            </Flex>
           </StackItem>
 
           <Divider />

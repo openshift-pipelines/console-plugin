@@ -139,40 +139,59 @@ export const findInstalledTask = (
 export const normalizeResourceItems = (
   resources: (TaskKind | PipelineKind)[],
   resourceKind: SearchKind, // 'Task' | 'Pipeline'
-  provider: string,
   onAdd: TaskSearchCallback | undefined,
 ): CatalogItem[] =>
-  (Array.isArray(resources) ? resources : []).map((resource) => ({
-    uid: resource.metadata.uid,
-    name: resource.metadata.name,
-    description: (resource.spec as { description?: string })?.description ?? '',
-    type: resourceKind,
-    namespace: resource.metadata.namespace,
-    provider,
-    icon: {
-      node: (
-        <ResourceIcon
-          groupVersionKind={getGroupVersionKindForModel(
-            resourceKind === 'Pipeline' ? PipelineModel : TaskModel,
-          )}
-        />
-      ),
-    },
-    cta: {
-      label: 'Add',
-      callback: async () => {
-        onAdd?.(resource as any);
+  (Array.isArray(resources) ? resources : []).map((resource) => {
+    const {
+      uid,
+      name,
+      annotations = {},
+      creationTimestamp,
+      labels = {},
+    } = resource.metadata;
+    const version =
+      resource.metadata.labels?.[TektonTaskLabel.version] ?? undefined;
+    const categories =
+      annotations[TektonTaskAnnotation.categories]?.split(/\s*,\s*/) || [];
+    const provider =
+      annotations[TektonTaskAnnotation.installedFrom] || TaskProviders.redhat;
+
+    return {
+      uid,
+      name,
+      description:
+        (resource.spec as { description?: string })?.description ?? '',
+      type: resourceKind,
+      namespace: resource.metadata.namespace,
+      labels,
+      creationTimestamp,
+      provider,
+      icon: {
+        node: (
+          <ResourceIcon
+            groupVersionKind={getGroupVersionKindForModel(
+              resourceKind === 'Pipeline' ? PipelineModel : TaskModel,
+            )}
+          />
+        ),
       },
-    },
-    attributes: {
-      installed: 'installed',
-      versions: [],
-    },
-    tags:
-      resourceKind === 'Pipeline'
-        ? Object.keys(resource?.spec)
-            .filter((key) => key !== 'description')
-            .map((key) => `${resource.spec[key].length} ${key}`)
-        : [],
-    data: resource,
-  }));
+      cta: {
+        label: 'Add',
+        callback: async () => {
+          onAdd?.(resource as any);
+        },
+      },
+      attributes: {
+        installed: version ?? 'installed',
+        versions: version ? [{ id: version, version }] : [],
+        categories,
+      },
+      tags:
+        resourceKind === 'Pipeline'
+          ? Object.keys(resource?.spec)
+              .filter((key) => key !== 'description')
+              .map((key) => `${resource.spec[key].length} ${key}`)
+          : [],
+      data: resource,
+    };
+  });

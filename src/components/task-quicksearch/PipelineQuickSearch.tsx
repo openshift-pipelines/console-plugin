@@ -55,10 +55,14 @@ interface QuickSearchProps {
 const Contents: FC<
   {
     catalogService: CatalogService;
+    selectedNamespace: string;
+    setSelectedNamespace: (namespace: string) => void;
   } & QuickSearchProps
 > = ({
   catalogService,
   namespace,
+  selectedNamespace,
+  setSelectedNamespace,
   isOpen,
   setIsOpen,
   callback,
@@ -80,7 +84,6 @@ const Contents: FC<
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchError, setIsSearchError] = useState(false);
   const { namespaces, loaded: namespacesLoaded } = useAccessibleNamespaces();
-  const [selectedNamespace, setSelectedNamespace] = useState<string>(namespace);
   const isClusterResolverMode = selectedNamespace !== namespace;
   const searchVersionRef = useRef(0);
 
@@ -91,12 +94,7 @@ const Contents: FC<
 
   const pipelineItems = useMemo(
     () =>
-      normalizeResourceItems(
-        pipelines,
-        'Pipeline',
-        t('Red Hat'),
-        callback,
-      ).filter((item) =>
+      normalizeResourceItems(pipelines, 'Pipeline', callback).filter((item) =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase()),
       ),
     [pipelines, callback, searchTerm, t],
@@ -362,12 +360,7 @@ const Contents: FC<
   const clusterResolverItems = useMemo(() => {
     if (!isClusterResolverMode) return [];
     const resources = kind === 'Pipeline' ? clusterPipelines : clusterTasks;
-    return normalizeResourceItems(
-      resources,
-      kind,
-      selectedNamespace,
-      callback,
-    ).filter((item) =>
+    return normalizeResourceItems(resources, kind, callback).filter((item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [
@@ -406,11 +399,17 @@ const Contents: FC<
     setSelectedNamespace(namespace);
   }, [setIsOpen, onSearchChange, namespace]);
 
-  const displayedItems = isClusterResolverMode
-    ? clusterResolverItems
-    : kind === 'Pipeline'
-    ? pipelineItems
-    : catalogItems;
+  let displayedItems;
+
+  if (isClusterResolverMode) {
+    displayedItems = clusterResolverItems;
+  } else if (kind === 'Pipeline') {
+    displayedItems = pipelineItems;
+  } else if (searchTerm) {
+    displayedItems = catalogItems;
+  } else {
+    displayedItems = catalogServiceItems;
+  }
 
   const isLoading = isClusterResolverMode
     ? !clusterResourcesLoaded
@@ -422,18 +421,37 @@ const Contents: FC<
     ? !!clusterResourcesLoadError
     : isSearchError;
 
-  const showEmpty =
+  let showEmpty = false;
+
+  if (
     !isLoading &&
     !isSearchErrorState &&
-    (displayedItems?.length ?? 0) === 0 &&
-    (isClusterResolverMode || kind === 'Pipeline' || catalogItems !== null);
+    (displayedItems?.length ?? 0) === 0
+  ) {
+    if (isClusterResolverMode || kind === 'Pipeline' || searchTerm) {
+      showEmpty = catalogItems !== null;
+    } else {
+      showEmpty = true;
+    }
+  }
+
+  const customPlaceholder =
+    kind === 'Pipeline'
+      ? t('Search pipelines by name in the project - {{namespace}}', {
+          namespace: selectedNamespace,
+        })
+      : isClusterResolverMode
+      ? t('Search installed tasks by name in the project - {{namespace}}', {
+          namespace: selectedNamespace,
+        })
+      : t('Search by name...');
 
   return (
     <QuickSearchModal
       isOpen={isOpen}
       namespace={namespace}
       closeModal={handleCloseModal}
-      searchPlaceholder={t('Find by name...')}
+      searchPlaceholder={customPlaceholder}
       callback={savedCallback.current}
       setFailedTasks={setFailedTasks}
       isDevConsoleProxyAvailable={isDevConsoleProxyAvailable}
@@ -452,6 +470,7 @@ const Contents: FC<
       namespacesLoaded={namespacesLoaded}
       selectedNamespace={selectedNamespace}
       onNamespaceChange={setSelectedNamespace}
+      isClusterResolverMode={isClusterResolverMode}
     />
   );
 };
@@ -467,15 +486,19 @@ const PipelineQuickSearch: FC<QuickSearchProps> = ({
   pipelines,
   pipelinesLoaded,
 }) => {
+  const [selectedNamespace, setSelectedNamespace] = useState<string>(namespace);
+
   return (
     <CatalogServiceProvider
-      namespace={namespace}
+      namespace={selectedNamespace}
       catalogId="pipelines-task-catalog"
     >
       {(catalogService: CatalogService) => (
         <Contents
           {...{
             namespace,
+            selectedNamespace,
+            setSelectedNamespace,
             viewContainer,
             isOpen,
             setIsOpen,

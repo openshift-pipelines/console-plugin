@@ -198,10 +198,12 @@ const PipelineRunLogs: FC<PipelineRunLogsProps> = ({
   useEffect(() => {
     if (!navUntouched) return;
     const next = getActiveRun(sortedRuns, activeTask);
-    if (next !== activeItem) {
+    if (sortedRuns.length == 0 && pipelineTasks.length > 0 && !next) {
+      setActiveItem(pipelineTasks.at(-1).name);
+    } else if (!!next && next !== activeItem) {
       setActiveItem(next);
     }
-  }, [sortedRuns, activeTask, navUntouched, activeItem]);
+  }, [sortedRuns, activeTask, navUntouched, activeItem, pipelineTasks]);
 
   return (
     <div className="odc-pipeline-run-logs-main-div pf-v6-u-h-100">

@@ -41,6 +41,7 @@ const PipelineVisualization: FC<PipelineTopologyVisualizationProps> = ({
   } else {
     content = (
       <PipelineTopologyGraph
+        key={pipeline.metadata.uid}
         data-test="pipeline-visualization"
         componentFactory={dagreViewerComponentFactory}
         model={model}

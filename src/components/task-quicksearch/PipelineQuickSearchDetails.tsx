@@ -35,6 +35,8 @@ import { QuickSearchDetailsRendererProps } from '../quick-search/QuickSearchDeta
 import { FLAGS } from '../../types';
 
 import './PipelineQuickSearchDetails.scss';
+import { PipelineModel, TaskModel } from '../../models';
+import { QUICK_SEARCH_DETAILS_EXCLUDED_ANNOTATIONS } from './const';
 
 const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
   kind,
@@ -177,7 +179,7 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
             {selectedItem.name}
           </Title>
         </LevelItem>
-        {kind == 'Task' &&
+        {kind == TaskModel.kind &&
           selectedItem.provider !== TaskProviders.redhat &&
           !hasInstalledVersion && (
             <LevelItem>
@@ -269,7 +271,7 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
         {selectedItem?.tags?.length > 0 && (
           <StackItem>
             <LabelGroup
-              categoryName={kind === 'Task' ? t('tags') : null}
+              categoryName={kind === TaskModel.kind ? t('tags') : null}
               data-test="task-tag-list"
             >
               {selectedItem.tags.map((tag) => (
@@ -280,6 +282,59 @@ const PipelineQuickSearchDetails: FC<QuickSearchDetailsRendererProps> = ({
             </LabelGroup>
           </StackItem>
         )}
+        {kind === PipelineModel.kind &&
+          selectedItem?.data?.metadata?.labels &&
+          Object.keys(selectedItem?.data?.metadata?.labels).length > 0 && (
+            <StackItem>
+              <LabelGroup
+                categoryName={t('Labels')}
+                data-test="pipeline-annotation-list"
+              >
+                {Object.keys(selectedItem?.data?.metadata?.labels).map(
+                  (labelKey) => (
+                    <Label
+                      color="grey"
+                      key={labelKey}
+                      data-test="annotations-list-item"
+                    >
+                      {labelKey}=
+                      {selectedItem?.data?.metadata?.labels[labelKey]}
+                    </Label>
+                  ),
+                )}
+              </LabelGroup>
+            </StackItem>
+          )}
+        {kind === PipelineModel.kind &&
+          selectedItem?.data?.metadata?.annotations &&
+          Object.keys(selectedItem?.data?.metadata?.annotations).length > 0 && (
+            <StackItem>
+              <LabelGroup
+                categoryName={t('Annotations')}
+                data-test="pipeline-annotation-list"
+              >
+                {Object.keys(selectedItem?.data?.metadata?.annotations).map(
+                  (annotationKey) =>
+                    !QUICK_SEARCH_DETAILS_EXCLUDED_ANNOTATIONS.includes(
+                      annotationKey,
+                    ) && (
+                      <Label
+                        color="grey"
+                        key={annotationKey}
+                        data-test="annotations-list-item"
+                      >
+                        {annotationKey}=
+                        {
+                          selectedItem?.data?.metadata?.annotations[
+                            annotationKey
+                          ]
+                        }
+                      </Label>
+                    ),
+                )}
+              </LabelGroup>
+            </StackItem>
+          )}
       </Stack>
     </div>
   );

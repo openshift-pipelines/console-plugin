@@ -1,9 +1,6 @@
 import type { FC } from 'react';
 import { useCallback, useMemo } from 'react';
-import {
-  NavPage,
-  ResourceStatus,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { NavPage, ResourceStatus } from '@openshift-console/dynamic-plugin-sdk';
 import { PipelineRunModel } from '../../models';
 import { LoadingBox } from '../status/status-box';
 import DetailsPage from '../details-page/DetailsPage';
@@ -11,6 +8,8 @@ import {
   BreadcrumbItem,
   Content,
   ContentVariants,
+  Flex,
+  FlexItem,
   Tooltip,
 } from '@patternfly/react-core';
 import { Link } from 'react-router';
@@ -77,14 +76,16 @@ const PipelineRunDetailsPage: FC<PipelineRunDetailsPageProps> = ({
 
   const resourceTitleFunc = useMemo((): string | JSX.Element => {
     return (
-      <div className="pipelinerun-details-page pf-v6-l-flex pf-v6-l-gap-md pf-v6-u-align-items-center">
-        {pipelineRun?.metadata?.name}{' '}
+      <Flex className="pipelinerun-details-page">
+        <FlexItem className="pf-v6-u-mr-sm">
+          {pipelineRun?.metadata?.name}
+        </FlexItem>
         {pipelineRun?.metadata?.annotations?.[chainsSignedAnnotation] ===
           'true' && (
           <Tooltip content={t('Signed')}>
-            <div className="opp-pipeline-run-details__signed-indicator">
+            <FlexItem className="opp-pipeline-run-details__signed-indicator pf-v6-u-mr-sm">
               <SignedBadgeIcon width="18" height="18" />
-            </div>
+            </FlexItem>
           </Tooltip>
         )}
         {(pipelineRun?.metadata?.annotations?.[
@@ -93,28 +94,36 @@ const PipelineRunDetailsPage: FC<PipelineRunDetailsPageProps> = ({
           pipelineRun?.metadata?.annotations?.[
             RESOURCE_LOADED_FROM_RESULTS_ANNOTATION
           ] === 'true') && (
-          <Tooltip content={t('Archived in Tekton results')}>
-            <ArchiveIcon className="pipelinerun-details-page__results-indicator" />
-          </Tooltip>
+          <FlexItem className="pf-v6-u-mr-sm">
+            <Tooltip content={t('Archived in Tekton results')}>
+              <ArchiveIcon className="pipelinerun-details-page__results-indicator" />
+            </Tooltip>
+          </FlexItem>
         )}
         {pipelineRun?.spec?.managedBy ===
           PIPELINE_RUN_MANAGED_BY_KUEUE_LABEL && (
-          <Tooltip content={t('Multicluster Pipeline Run')}>
-            <MulticlusterIcon className="pipelinerun-details-page__results-indicator" />
-          </Tooltip>
+          <FlexItem className="pf-v6-u-mr-sm">
+            <Tooltip content={t('Multicluster Pipeline Run')}>
+              <MulticlusterIcon className="pipelinerun-details-page__results-indicator" />
+            </Tooltip>
+          </FlexItem>
         )}
         {isPipelineInPipelineRun(pipelineRun) && (
-          <Tooltip content={t('Pipeline in Pipeline Run')}>
-            <PipelineInPipelineIcon className="opp-pipeline-run-list__results-indicator" />
-          </Tooltip>
+          <FlexItem className="pf-v6-u-mr-sm">
+            <Tooltip content={t('Pipeline in Pipeline Run')}>
+              <PipelineInPipelineIcon className="opp-pipeline-run-list__results-indicator" />
+            </Tooltip>
+          </FlexItem>
         )}
-        <ResourceStatus>
-          <Status
-            status={pipelineRunFilterReducer(pipelineRun)}
-            title={pipelineRunTitleFilterReducer(pipelineRun)}
-          />
-        </ResourceStatus>
-      </div>
+        <FlexItem>
+          <ResourceStatus additionalClassNames="pf-v6-u-p-0">
+            <Status
+              status={pipelineRunFilterReducer(pipelineRun)}
+              title={pipelineRunTitleFilterReducer(pipelineRun)}
+            />
+          </ResourceStatus>
+        </FlexItem>
+      </Flex>
     );
   }, [pipelineRun]);
 

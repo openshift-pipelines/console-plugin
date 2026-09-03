@@ -38,10 +38,11 @@ export const useChildPipelineRuns = (
       return plr && !isTerminal(plr);
     });
 
-  const [result, loaded] = usePipelineRuns(
+  const [result, k8sLoaded, trLoaded] = usePipelineRuns(
     ns,
     watchName ? { name: watchName, limit: 1 } : { skipFetch: true },
   );
+  const loaded = k8sLoaded || trLoaded;
   /* if parentPipelineRunName have changed then reset state params accordingly */
   useEffect(() => {
     setResolved([]);

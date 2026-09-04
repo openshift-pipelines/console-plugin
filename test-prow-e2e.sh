@@ -1,108 +1,39 @@
 #!/usr/bin/env bash
 
-set -exuo pipefail
+set -euo pipefail
 
-# Set Cypress cache to user-writable location as user inside container may not have write access
-export CYPRESS_CACHE_FOLDER="${HOME}/.cache/Cypress"
+ARTIFACT_DIR="${ARTIFACT_DIR:-/tmp/artifacts}"
+ARTIFACTS_DIR="${ARTIFACTS_DIR:-${ARTIFACT_DIR}}"
+TEST_REPO_DIR="${TEST_REPO_DIR:-/tmp/release-ui-tests}"
+TEST_REPO_REF="${RELEASE_UI_TESTS_REF:-release-v4.21}"
 
-# Install and enable Corepack for Yarn 4
-npm install -g corepack 2>/dev/null || true
-corepack enable && corepack prepare yarn@4.6.0 --activate
+mkdir -p "${ARTIFACTS_DIR}"
 
-ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
-SCREENSHOTS_DIR=gui_test_screenshots
-INSTALLER_DIR=${INSTALLER_DIR:=${ARTIFACT_DIR}/installer}
+# The release-ui-tests repository takes care of osp operator and console plugin setup.
+# This script only clones the tests, configures credentials, and runs them.
+rm -rf "${TEST_REPO_DIR}"
+git clone --depth 1 --branch "${TEST_REPO_REF}" \
+  https://github.com/openshift-pipelines/release-ui-tests.git \
+  "${TEST_REPO_DIR}"
+cd "${TEST_REPO_DIR}"
 
-function copyArtifacts {
-  if [ -d "$ARTIFACT_DIR" ] && [ -d "$SCREENSHOTS_DIR" ]; then
-    if [[ -z "$(ls -A -- "$SCREENSHOTS_DIR")" ]]; then
-      echo "No artifacts were copied."
-    else
-      echo "Copying artifacts from $(pwd)..."
-      cp -r "$SCREENSHOTS_DIR" "${ARTIFACT_DIR}/gui_test_screenshots"
-    fi
-  fi
-}
-
-trap copyArtifacts EXIT
-
-
-# don't log kubeadmin-password
-set +x
-BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}")"
-export BRIDGE_KUBEADMIN_PASSWORD
-set -x
-BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
-export BRIDGE_BASE_ADDRESS
-
-if [ ! -d node_modules ]; then
-  yarn install
+# The generic-claim workflow exposes the kubeadmin password through a file.
+# Prefer the explicit CI-provided path and retain the shared-directory fallback.
+password_file="${KUBEADMIN_PASSWORD_FILE:-${SHARED_DIR}/kubeadmin-password}"
+if [[ ! -s "${password_file}" ]]; then
+  echo "ERROR: kubeadmin password file is missing or empty: ${password_file}"
+  exit 1
 fi
 
-# Ensure Cypress binary is installed
-yarn exec cypress install
+export CONSOLE_URL="$(oc get consoles.config.openshift.io cluster \
+  -o jsonpath='{.status.consoleURL}')"
+export CONSOLE_USERNAME="kubeadmin"
+export CONSOLE_PASSWORD="$(<"${password_file}")"
+export ARTIFACTS_DIR
+export APP_TIMEOUT="${APP_TIMEOUT:-90000}"
+export AUTH_TYPE="direct"
+export CAPTURE_SCREENSHOTS="${CAPTURE_SCREENSHOTS:-true}"
+export CAPTURE_RECORDINGS="${CAPTURE_RECORDINGS:-true}"
 
-while getopts s:h:l:n: flag
-do
-  case "${flag}" in
-    s) spec=${OPTARG};;
-    h) headless=${OPTARG};;
-    n) nightly=${OPTARG};;
-  esac
-done
-
-if [ $# -eq 0 ]; then
-    echo "Runs Cypress tests in Test Runner or headless mode"
-    echo "Usage: test-cypress [-s] <filemask> [-h true] [-n true/false]"
-    echo "  '-s <specmask>' is a file mask for spec test files, such as 'tests/pipelines/*'."
-    echo "  '-h true' runs Cypress in headless mode. When omitted, launches Cypress Test Runner"
-    echo "  '-n true' runs the 'nightly' suite, all specs from selected packages in headless mode"
-    echo "Examples:"
-    echo "  test-prow-e2e.sh                                       // displays this help text"
-    echo "  test-prow-e2e.sh -h false                              // opens Cypress Test Runner"
-    echo "  test-prow-e2e.sh -h true                               // runs packages in headless mode"
-    echo "  test-prow-e2e.sh -n true                               // runs the whole nightly suite"
-    yarn run test-cypress-headless
-    trap EXIT
-    exit;
-fi
-
-if [ -n "${nightly-}" ]; then
-  # do not fail fast, let all suites run
-  set +e
-  err=0
-  trap 'err=1' ERR
-
-  yarn run test-cypress-nightly
-
-  exit $err;
-fi
-
-if [ -n !"${headless-}" ]; then
-  yarn run test-cypress
-  exit;
-fi
-
-if [ -n "${headless-}" ]; then
-  yarn run test-cypress-headless
-  exit;
-fi
-
-yarn_script="test-cypress"
-
-if [ -n "${nightly-}" ]; then
-  yarn_script="$yarn_script-nightly"
-elif [ -n !"${headless-}" ]; then
-  yarn_script="$yarn_script"
-elif [ -n "${headless-}" ]; then
-  yarn_script="$yarn_script-headless"
-fi
-
-if [ -n "${spec-}" ] && [ -z "${nightly-}"]; then
-  yarn_script="$yarn_script --spec '$spec'"
-fi
-
-yarn run $yarn_script
-
-# echo "Runs Cypress tests in headless mode"
-# yarn run test-cypress-headless
+pytest -m sanity -v --tb=short 2>&1 | \
+  tee "${ARTIFACTS_DIR}/pytest-output.log"

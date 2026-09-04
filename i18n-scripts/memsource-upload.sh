@@ -41,3 +41,9 @@ do
 done
 
 echo "Uploaded PO files to Memsource"
+
+# Expose the created project UID to callers (workflow step captures this line)
+if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
+  echo "project_id=$PROJECT_ID" >> "$GITHUB_OUTPUT"
+fi
+echo "PROJECT_ID=$PROJECT_ID"

@@ -1,0 +1,287 @@
+name: Memsource translations
+
+on:
+  schedule:
+    # GitHub cron cannot express a true every-other-week schedule.
+    # Run weekly and execute uploads only on even ISO weeks.
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: 'Upload new source strings or download completed translations'
+        required: true
+        type: choice
+        options:
+          - upload
+          - download
+        default: upload
+      project_id:
+        description: 'Memsource project UID; required for download'
+        required: false
+        type: string
+      version:
+        description: 'Version shown in the Memsource project name'
+        required: false
+        default: master
+        type: string
+      sprint:
+        description: 'Sprint shown in the Memsource project name'
+        required: false
+        type: string
+      base_branch:
+        description: 'Branch to update'
+        required: false
+        default: master
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: memsource-translations-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  BASE_BRANCH: ${{ inputs.base_branch || github.event.repository.default_branch }}
+
+jobs:
+  cadence:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.cadence.outputs.run }}
+      operation: ${{ steps.cadence.outputs.operation }}
+    steps:
+      - id: cadence
+        name: Select operation and biweekly week
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REQUESTED_OPERATION: ${{ inputs.operation || 'upload' }}
+        run: |
+          set -euo pipefail
+
+          operation="$REQUESTED_OPERATION"
+          run_workflow=true
+
+          if [[ "$EVENT_NAME" == 'schedule' ]]; then
+            operation=upload
+            iso_week="$(date -u +%V)"
+            if (( 10#$iso_week % 2 != 0 )); then
+              run_workflow=false
+              echo "Skipping ISO week $iso_week; uploads run on even ISO weeks."
+            fi
+          fi
+
+          echo "run=$run_workflow" >> "$GITHUB_OUTPUT"
+          echo "operation=$operation" >> "$GITHUB_OUTPUT"
+
+  upload:
+    needs: cadence
+    if: needs.cadence.outputs.run == 'true' && needs.cadence.outputs.operation == 'upload'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      VERSION: ${{ inputs.version || github.ref_name }}
+      SPRINT: ${{ inputs.sprint || format('biweekly-{0}', github.run_number) }}
+    steps:
+      - name: Checkout target branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.base_branch || github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Use a local branch for the upload script
+        run: git switch --force-create "$BASE_BRANCH" "origin/$BASE_BRANCH"
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack install --global yarn@4.6.0
+          yarn --version
+
+      - name: Install project dependencies
+        run: yarn install --no-immutable
+
+      - name: Setup Python
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce18a7 # v5.4.0
+        with:
+          python-version: '3.12'
+
+      - name: Install Memsource CLI
+        run: |
+          python -m pip install --disable-pip-version-check --no-cache-dir 'memsource-cli-client==0.3.8'
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          memsource --help >/dev/null
+
+      - name: Validate Memsource settings
+        env:
+          MEMSOURCE_URL: ${{ secrets.MEMSOURCE_URL }}
+          MEMSOURCE_USERNAME: ${{ secrets.MEMSOURCE_USERNAME }}
+          MEMSOURCE_PASSWORD: ${{ secrets.MEMSOURCE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          [[ -n "${MEMSOURCE_URL:-}" ]] || { echo 'MEMSOURCE_URL is not set' >&2; exit 1; }
+          [[ -n "${MEMSOURCE_USERNAME:-}" ]] || { echo 'MEMSOURCE_USERNAME is not set' >&2; exit 1; }
+          [[ -n "${MEMSOURCE_PASSWORD:-}" ]] || { echo 'MEMSOURCE_PASSWORD is not set' >&2; exit 1; }
+
+      - name: Authenticate to Memsource
+        env:
+          MEMSOURCE_URL: ${{ secrets.MEMSOURCE_URL }}
+          MEMSOURCE_USERNAME: ${{ secrets.MEMSOURCE_USERNAME }}
+          MEMSOURCE_PASSWORD: ${{ secrets.MEMSOURCE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          token="$(memsource auth login --user-name "$MEMSOURCE_USERNAME" --password "$MEMSOURCE_PASSWORD" -c token -f value)"
+          [[ -n "$token" ]] || { echo 'Memsource login returned an empty token' >&2; exit 1; }
+          echo "::add-mask::$token"
+          echo "MEMSOURCE_TOKEN=$token" >> "$GITHUB_ENV"
+
+      - name: Generate and upload source strings
+        run: |
+          yarn i18n
+          yarn i18n-to-po
+          yarn memsource-upload -v "$VERSION" -s "$SPRINT"
+          {
+            echo '### Memsource upload completed'
+            echo
+            echo "Project title: [Pipelines operator $VERSION] UI Localization - Sprint $SPRINT/Branch $BASE_BRANCH"
+            echo
+            echo 'After Localization completes the jobs, run this workflow manually with operation=download and the project UID.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  download:
+    needs: cadence
+    if: needs.cadence.outputs.run == 'true' && needs.cadence.outputs.operation == 'download'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      PROJECT_ID: ${{ inputs.project_id }}
+      BRANCH: automation/memsource-translations-${{ github.run_id }}
+    steps:
+      - name: Checkout target branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.base_branch || github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Use a local branch for the download script
+        run: git switch --force-create "$BASE_BRANCH" "origin/$BASE_BRANCH"
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack install --global yarn@4.6.0
+          yarn --version
+
+      - name: Install project dependencies
+        run: yarn install --no-immutable
+
+      - name: Setup Python
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce18a7 # v5.4.0
+        with:
+          python-version: '3.12'
+
+      - name: Install Memsource CLI
+        run: |
+          python -m pip install --disable-pip-version-check --no-cache-dir 'memsource-cli-client==0.3.8'
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          memsource --help >/dev/null
+
+      - name: Validate Memsource settings
+        env:
+          MEMSOURCE_URL: ${{ secrets.MEMSOURCE_URL }}
+          MEMSOURCE_USERNAME: ${{ secrets.MEMSOURCE_USERNAME }}
+          MEMSOURCE_PASSWORD: ${{ secrets.MEMSOURCE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          [[ -n "${PROJECT_ID:-}" ]] || { echo 'project_id is required for download' >&2; exit 1; }
+          [[ -n "${MEMSOURCE_URL:-}" ]] || { echo 'MEMSOURCE_URL is not set' >&2; exit 1; }
+          [[ -n "${MEMSOURCE_USERNAME:-}" ]] || { echo 'MEMSOURCE_USERNAME is not set' >&2; exit 1; }
+          [[ -n "${MEMSOURCE_PASSWORD:-}" ]] || { echo 'MEMSOURCE_PASSWORD is not set' >&2; exit 1; }
+
+      - name: Authenticate to Memsource
+        env:
+          MEMSOURCE_URL: ${{ secrets.MEMSOURCE_URL }}
+          MEMSOURCE_USERNAME: ${{ secrets.MEMSOURCE_USERNAME }}
+          MEMSOURCE_PASSWORD: ${{ secrets.MEMSOURCE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          token="$(memsource auth login --user-name "$MEMSOURCE_USERNAME" --password "$MEMSOURCE_PASSWORD" -c token -f value)"
+          [[ -n "$token" ]] || { echo 'Memsource login returned an empty token' >&2; exit 1; }
+          echo "::add-mask::$token"
+          echo "MEMSOURCE_TOKEN=$token" >> "$GITHUB_ENV"
+
+      - name: Download and convert translations
+        run: |
+          set -euo pipefail
+          rm -rf po-files json-locales
+          yarn memsource-download -p "$PROJECT_ID"
+          yarn po-to-i18n
+
+      - name: Copy converted files into repository locales
+        run: |
+          set -euo pipefail
+          source ./i18n-scripts/languages.sh
+          namespace='plugin__pipelines-console-plugin'
+
+          for language in "${LANGUAGES[@]}"; do
+            source_file="json-locales/${namespace}-${language}.json"
+            [[ -s "$source_file" ]] || {
+              echo "Missing converted translation file: $source_file" >&2
+              exit 1
+            }
+
+            target_language="$language"
+            [[ "$target_language" == 'zh-cn' ]] && target_language=zh
+            mkdir -p "locales/$target_language"
+            cp "$source_file" "locales/$target_language/${namespace}.json"
+          done
+
+      - name: Validate translated JSON files
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            node -e 'JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"))' "$file"
+          done < <(find locales -type f -name 'plugin__pipelines-console-plugin.json' -print0)
+
+      - name: Commit and push translation branch
+        id: commit
+        run: |
+          set -euo pipefail
+          git config user.name openshift-pipelines-bot
+          git config user.email pipelines-extcomm@redhat.com
+          git add locales/*/plugin__pipelines-console-plugin.json
+
+          if git diff --cached --quiet; then
+            echo 'No translation changes found.'
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git commit -m 'chore(i18n): update Memsource translations'
+          git switch -c "$BRANCH"
+          git push --set-upstream origin "$BRANCH"
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+
+      - name: Open pull request
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr create \
+            --base "$BASE_BRANCH" \
+            --head "$BRANCH" \
+            --title 'chore(i18n): update Memsource translations' \
+            --body 'This PR was generated by the Memsource translation workflow. The translated locale JSON files were downloaded from the specified Memsource project and validated as JSON.'

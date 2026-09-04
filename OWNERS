@@ -10,4 +10,5 @@ reviewers:
   - arvindk-softwaredev
   - ankrsinha
   - adityavshinde
+  - bharatmajjiga
 component: OpenShift Pipelines Console Plugin

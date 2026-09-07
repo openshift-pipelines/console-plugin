@@ -5,7 +5,7 @@ import {
   k8sUpdate,
 } from '@openshift-console/dynamic-plugin-sdk';
 import * as _ from 'lodash';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { GITHUB_BASE_URL } from '../../../consts';
 import { TaskModel, TaskModelV1Beta1 } from '../../../models';
 import { ArtifactHubTask, ArtifactHubTaskDetails } from '../../../types';
@@ -16,6 +16,8 @@ import { getTaskDetails, getTaskYAMLFromGithub, searchTasks } from './utils';
 
 export const ARTIFACTHUB = 'ArtifactHub';
 export const ARTIFACTHUB_API_BASE_URL = 'https://artifacthub.io/api/v1';
+
+const ARTIFACTHUB_TASKS_SEARCH_LIMIT = 20;
 
 const ARTIFACRHUB_TASKS_SEARCH_URL = `${ARTIFACTHUB_API_BASE_URL}/packages/search?offset=0&limit=60&facets=false&kind=7&deprecated=false&sort=relevance`;
 
@@ -187,21 +189,32 @@ export const updateArtifactHubTask = async (
   }
 };
 
+interface FetchArtifactHubTasksOptions {
+  limit?: number;
+  signal?: AbortSignal;
+}
+
 export const fetchArtifactHubTasks = async (
   query: string,
-  // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-  limit: number = 20,
+  options: FetchArtifactHubTasksOptions = {},
 ): Promise<ArtifactHubTask[]> => {
-  try {
-    const response = await fetch(
-      `${ARTIFACTHUB_API_BASE_URL}/packages/search?ts_query_web=${encodeURIComponent(
-        query,
-      )}&facets=false&sort=relevance&limit=${limit}&offset=0&kind=7`,
+  const { limit = ARTIFACTHUB_TASKS_SEARCH_LIMIT, signal } = options;
+  const response = await fetch(
+    `${ARTIFACTHUB_API_BASE_URL}/packages/search?ts_query_web=${encodeURIComponent(
+      query,
+    )}&facets=false&sort=relevance&limit=${limit}&offset=0&kind=7`,
+    { signal },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `ArtifactHub search failed: ${response.status} ${response.statusText}`,
     );
-    const data = await response.json();
-    return data.packages || [];
-  } catch (error) {
-    console.warn('Error searching Artifact Hub tasks:', error);
-    throw error;
   }
+
+  const data = await response.json();
+  if (data?.packages) {
+    return data.packages;
+  }
+  return [];
 };

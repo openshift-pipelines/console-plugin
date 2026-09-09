@@ -14,7 +14,7 @@ export const testData: PipelineAugmentData[] = [
       {
         metadata: {
           name: 'apple1',
-          namespace: 'myproject',
+          namespace: 'tekton-pipelines',
         },
       },
     ],

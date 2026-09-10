@@ -27,6 +27,7 @@ fi
 
 export CONSOLE_URL="$(oc get consoles.config.openshift.io cluster \
   -o jsonpath='{.status.consoleURL}')"
+export API_URL="$(oc whoami --show-server)"
 export CONSOLE_USERNAME="kubeadmin"
 export CONSOLE_PASSWORD="$(<"${password_file}")"
 export ARTIFACTS_DIR

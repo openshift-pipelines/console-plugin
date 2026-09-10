@@ -36,6 +36,7 @@ import { normalizeArtifactHubTasks } from '../catalog/providers/useArtifactHubTa
 import { quickSearch } from '../quick-search/utils/quick-search-utils';
 import useTasksProvider from '../catalog/providers/useTasksProvider';
 import { useAlphaApiFields } from '../hooks/useAlphaApiFields';
+import { useHubIntegration } from '../catalog/catalog-utils';
 import { PipelineKind } from '../../types';
 import { FLAGS } from '../../types';
 import QuickSearchModal, { SearchKind } from '../quick-search/QuickSearchModal';
@@ -74,6 +75,7 @@ const Contents: FC<
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const savedCallback = useRef(null);
   const isDevConsoleProxyAvailable = useFlag(FLAGS.DEVCONSOLE_PROXY);
+  const [artifactHubIntegrationStatus] = useHubIntegration();
   const [isAlphaEnabled] = useAlphaApiFields();
   savedCallback.current = callback;
   const [failedTasks, setFailedTasks] = useState<string[]>([]);
@@ -86,6 +88,7 @@ const Contents: FC<
   const { namespaces, loaded: namespacesLoaded } = useAccessibleNamespaces();
   const isClusterResolverMode = selectedNamespace !== namespace;
   const searchVersionRef = useRef(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const [tektonTasks] = useTasksProvider({});
 
@@ -266,14 +269,21 @@ const Contents: FC<
     ],
   );
 
+  const resetInFlightSearch = useCallback((): number => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    return ++searchVersionRef.current;
+  }, []);
+
   const handleSearch = useCallback(
-    async (value: string) => {
-      const currentVersion = ++searchVersionRef.current;
+    (value: string) => {
+      const currentVersion = resetInFlightSearch();
 
       if (kind === 'Pipeline') {
         setIsSearching(false);
         setIsSearchError(false);
-
         return;
       }
 
@@ -285,49 +295,64 @@ const Contents: FC<
         return;
       }
 
-      setIsSearching(true);
       setIsSearchError(false);
-      try {
-        const [artifactHubResults, catalogResults] = await Promise.all([
-          fetchArtifactHubTasks(value),
-          Promise.resolve(searchCatalog(value)),
-        ]);
 
-        if (currentVersion !== searchVersionRef.current) return;
+      const { filteredItems, catalogItemTypes } = searchCatalog(value);
 
-        const normalizedArtifactHubItems = normalizeArtifactHubTasks(
-          artifactHubResults,
-          tektonTasks,
-        );
-        const { filteredItems, catalogItemTypes } = catalogResults;
+      setCatalogItems(filteredItems);
+      setCatalogTypes(catalogItemTypes);
 
-        const mergedItems = [
-          ...filteredItems,
-          ...normalizedArtifactHubItems,
-        ].filter(
-          (item, index, self) =>
-            index ===
-            self.findIndex(
-              (i) =>
-                i.name === item.name &&
-                i.data?.version === item.data?.version &&
-                i.provider === item.provider,
-            ),
-        );
-
-        setCatalogItems(mergedItems);
-        setCatalogTypes(catalogItemTypes);
-      } catch {
-        if (currentVersion !== searchVersionRef.current) return;
-        setIsSearchError(true);
-        setCatalogItems(null);
-      } finally {
-        if (currentVersion === searchVersionRef.current) {
-          setIsSearching(false);
-        }
+      if (!artifactHubIntegrationStatus) {
+        setIsSearching(false);
+        return;
       }
+
+      setIsSearching(true);
+
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
+
+      fetchArtifactHubTasks(value, { signal: abortController.signal })
+        .then((artifactHubResults) => {
+          if (currentVersion !== searchVersionRef.current) return;
+
+          const normalizedArtifactHubItems = normalizeArtifactHubTasks(
+            artifactHubResults,
+            tektonTasks,
+          );
+
+          const mergedItems = [
+            ...filteredItems,
+            ...normalizedArtifactHubItems,
+          ].filter(
+            (item, index, self) =>
+              index ===
+              self.findIndex(
+                (i) =>
+                  i.name === item.name &&
+                  i.data?.version === item.data?.version &&
+                  i.provider === item.provider,
+              ),
+          );
+
+          setCatalogItems(mergedItems);
+          setIsSearching(false);
+        })
+        .catch((err) => {
+          if (currentVersion !== searchVersionRef.current) return;
+
+          console.warn('Error searching Artifact Hub tasks:', err);
+          setIsSearchError(true);
+          setIsSearching(false);
+        });
     },
-    [searchCatalog, kind, tektonTasks],
+    [
+      searchCatalog,
+      kind,
+      tektonTasks,
+      artifactHubIntegrationStatus,
+      resetInFlightSearch,
+    ],
   );
 
   const debouncedHandleSearch = useMemo(
@@ -377,7 +402,7 @@ const Contents: FC<
     (newKind: SearchKind) => {
       if (newKind === kind) return;
 
-      ++searchVersionRef.current;
+      resetInFlightSearch();
       debouncedHandleSearch.cancel();
 
       setKind(newKind);
@@ -390,7 +415,7 @@ const Contents: FC<
         setCatalogTypes([]);
       }
     },
-    [kind, debouncedHandleSearch],
+    [kind, debouncedHandleSearch, resetInFlightSearch],
   );
 
   const handleCloseModal = useCallback(() => {
@@ -425,7 +450,7 @@ const Contents: FC<
 
   if (
     !isLoading &&
-    !isSearchErrorState &&
+    !(isClusterResolverMode && isSearchErrorState) &&
     (displayedItems?.length ?? 0) === 0
   ) {
     if (isClusterResolverMode || kind === 'Pipeline' || searchTerm) {

@@ -332,7 +332,14 @@ const QuickSearchModal: FC<QuickSearchModalProps> = ({
                   {isLoading ? (
                     <Spinner size="md" aria-label={t('Loading')} />
                   ) : isSearchError ? (
-                    t('Unable to show results at the moment')
+                    <>
+                      {`${resultCount} ${
+                        kind === 'Task' ? t('Tasks') : t('Pipelines')
+                      }`}
+                      {` - ${t(
+                        'Unable to show results from ArtifactHub at the moment',
+                      )}`}
+                    </>
                   ) : (
                     `${resultCount} ${
                       kind === 'Task' ? t('Tasks') : t('Pipelines')

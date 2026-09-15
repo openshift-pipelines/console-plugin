@@ -162,7 +162,7 @@
       "taskRunActionsProvider": "./utils/taskRun-actions-provider.tsx"
     },
     "dependencies": {
-      "@console/pluginAPI": ">=4.15"
+      "@console/pluginAPI": ">=4.22"
     }
   },
   "dependencies": {

@@ -153,7 +153,7 @@
     "micromatch": "4.0.8",
     "path-browserify": "^1.0.1",
     "stream-browserify": "^3.0.0",
-    "url": "^0.11.4"
+    "url": "0.11.4"
   },
   "resolutions": {
     "webpack": "5.94.0",

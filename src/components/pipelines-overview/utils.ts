@@ -158,6 +158,10 @@ export const sortTimeStrings = (
 ) => {
   return array.slice().sort((a, b) => {
     const getTimeValue = (timeString) => {
+      if (typeof timeString !== 'string') {
+        return 0;
+      }
+
       const components = timeString?.split(/\s+/);
       let totalSeconds = 0;
 

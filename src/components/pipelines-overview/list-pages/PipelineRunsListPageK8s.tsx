@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useSearchParams } from 'react-router';
 import { Alert, Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
 import {
+  getGroupVersionKindForModel,
   PrometheusResponse,
   useK8sWatchResource,
 } from '@openshift-console/dynamic-plugin-sdk';
@@ -21,8 +22,9 @@ import {
   PipelineQuery,
 } from '../../pipelines-metrics/utils';
 import { getXaxisValues, secondsToHms } from '../dateTime';
-import { Project } from '../../../types';
+import { PipelineKind, Project } from '../../../types';
 import { useTranslation } from 'react-i18next';
+import { PipelineModel } from '../../../models';
 
 type PipelineRunsListPageProps = {
   bordered?: boolean;
@@ -214,6 +216,14 @@ const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
     );
   }, [searchText, summaryDataK8s]);
 
+  const [clusterPipelines, clusterPipelinesLoaded] = useK8sWatchResource<
+    PipelineKind[]
+  >({
+    isList: true,
+    groupVersionKind: getGroupVersionKindForModel(PipelineModel),
+    namespace,
+  });
+
   useQueryParams({
     key: 'search',
     value: searchText,
@@ -291,8 +301,10 @@ const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
                     summaryDataFiltered={summaryDataFiltered}
                     loaded={
                       !loadingPipelineRunsMetricsCount &&
-                      !loadingPipelineRunsMetricsSum
+                      !loadingPipelineRunsMetricsSum &&
+                      clusterPipelinesLoaded
                     }
+                    clusterPipelines={clusterPipelines}
                     hideLastRunTime={true}
                     projects={projects}
                     projectsLoaded={projectsLoaded}

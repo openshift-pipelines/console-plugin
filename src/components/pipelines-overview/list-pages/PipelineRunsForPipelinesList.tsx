@@ -15,10 +15,12 @@ import {
   tableColumnInfo,
 } from './PipelineRunsForPipelinesRow';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
+import { PipelineKind } from '../../../types';
 
 type PipelineRunsForPipelinesListProps = {
   summaryData: SummaryProps[];
   summaryDataFiltered?: SummaryProps[];
+  clusterPipelines?: PipelineKind[];
   loaded: boolean;
   hideLastRunTime?: boolean;
 };
@@ -26,6 +28,7 @@ type PipelineRunsForPipelinesListProps = {
 const PipelineRunsForPipelinesList: FC<PipelineRunsForPipelinesListProps> = ({
   summaryData,
   summaryDataFiltered,
+  clusterPipelines,
   loaded,
   hideLastRunTime,
 }) => {
@@ -123,7 +126,7 @@ const PipelineRunsForPipelinesList: FC<PipelineRunsForPipelinesListProps> = ({
       loaded={loaded}
       loadError={false}
       getDataViewRows={getPipelineRunsForPipelinesDataViewRows}
-      customRowData={{ hideLastRunTime }}
+      customRowData={{ hideLastRunTime, clusterPipelines }}
       hideColumnManagement
       hideNameLabelFilters
     />

@@ -18,7 +18,7 @@ import {
   PipelineModelV1Beta1,
   ProjectModel,
 } from '../../../models';
-import { Project } from '../../../types';
+import { PipelineKind, Project } from '../../../types';
 import { t } from '../../utils/common-utils';
 
 const getClusterVersion = () => {
@@ -45,6 +45,7 @@ export const getPipelineRunsForPipelinesK8sDataViewRows: GetDataViewRows<
     hideLastRunTime?: boolean;
     projects?: Project[];
     projectsLoaded?: boolean;
+    clusterPipelines?: PipelineKind[];
   }
 > = (data, columns) => {
   return data.map(({ obj, rowData }) => {
@@ -64,27 +65,38 @@ export const getPipelineRunsForPipelinesK8sDataViewRows: GetDataViewRows<
 
     const nsExists = isNamespaceExists(namespace);
 
+    const isClusterPipeline = !!rowData?.clusterPipelines?.find(
+      (pipeline) => pipeline.metadata.name === name,
+    );
+
     const rowCells: Record<string, RowCell> = {
       [tableColumnInfo[0].id]: {
-        cell: nsExists ? (
-          <ResourceLink
-            /* needs to be removed when we update console-extension.json */
-            groupVersionKind={
-              isV1SupportCluster
-                ? getGroupVersionKindForModel(PipelineModel)
-                : getGroupVersionKindForModel(PipelineModelV1Beta1)
-            }
-            name={name}
-            namespace={namespace}
-          />
-        ) : (
-          <Tooltip content={t('Resource is deleted.')}>
-            <span>
-              <ResourceIcon kind={pipelineReference} />
-              {name}
-            </span>
-          </Tooltip>
-        ),
+        cell:
+          nsExists && isClusterPipeline ? (
+            <ResourceLink
+              /* needs to be removed when we update console-extension.json */
+              groupVersionKind={
+                isV1SupportCluster
+                  ? getGroupVersionKindForModel(PipelineModel)
+                  : getGroupVersionKindForModel(PipelineModelV1Beta1)
+              }
+              name={name}
+              namespace={namespace}
+            />
+          ) : (
+            <Tooltip
+              content={
+                !isClusterPipeline
+                  ? t('Pipeline Definition does not exist.')
+                  : t('Resource is deleted.')
+              }
+            >
+              <span>
+                <ResourceIcon kind={pipelineReference} />
+                {name}
+              </span>
+            </Tooltip>
+          ),
         props: {
           isStickyColumn: true,
           hasRightBorder: true,
@@ -107,13 +119,14 @@ export const getPipelineRunsForPipelinesK8sDataViewRows: GetDataViewRows<
         ),
       },
       [tableColumnInfo[2].id]: {
-        cell: nsExists ? (
-          <Link to={`/k8s/ns/${namespace}/${pipelineReference}/${name}/Runs`}>
-            {obj.total}
-          </Link>
-        ) : (
-          <span>{obj.total}</span>
-        ),
+        cell:
+          nsExists && isClusterPipeline ? (
+            <Link to={`/k8s/ns/${namespace}/${pipelineReference}/${name}/Runs`}>
+              {obj.total}
+            </Link>
+          ) : (
+            <span>{obj.total}</span>
+          ),
       },
       [tableColumnInfo[3].id]: {
         cell: formatTime(obj.total_duration),

@@ -379,6 +379,7 @@
   "Pipeline {{status}}": "Pipeline {{status}}",
   "Pipeline builder": "Pipeline builder",
   "Pipeline could not be started automatically": "Pipeline could not be started automatically",
+  "Pipeline Definition does not exist.": "Pipeline Definition does not exist.",
   "Pipeline details": "Pipeline details",
   "Pipeline not started": "Pipeline not started",
   "Pipeline not started. Start pipeline.": "Pipeline not started. Start pipeline.",

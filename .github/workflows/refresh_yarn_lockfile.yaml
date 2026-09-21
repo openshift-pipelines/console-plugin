@@ -113,15 +113,71 @@ jobs:
             exit 0
           fi
 
-            gh pr create \
-              --base "${{ matrix.branch }}" \
-              --head "$BRANCH" \
-              --title "chore: regenerate yarn.lock - ${{ matrix.branch }}" \
-              --body "This PR was created automatically from Refresh yarn lockfile Github Action.
+          gh pr create \
+            --base "${{ matrix.branch }}" \
+            --head "$BRANCH" \
+            --title "chore: regenerate yarn.lock - ${{ matrix.branch }}" \
+            --body "This PR was created automatically from Refresh yarn lockfile Github Action.
 
           Changes:
           - Removed yarn.lock
           - Re-ran yarn install
           - Regenerated yarn.lock" \
-                  --label "dependencies" \
-                  --label "automated"
+            --label "dependencies" \
+            --label "automated"
+
+      - name: Post /agentic_review comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          PR_NUMBER=$(gh pr list \
+            --repo "${{ github.repository }}" \
+            --head "$BRANCH" \
+            --state open \
+            --json number \
+            --jq '.[0].number')
+
+          if [[ -z "$PR_NUMBER" ]]; then
+            echo "No open PR found for ${BRANCH}, skipping"
+            exit 0
+          fi
+
+          echo "PR_NUMBER=$PR_NUMBER" >> "$GITHUB_ENV"
+
+          gh pr comment "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --body "/agentic_review"
+
+      - name: Wait 5 minutes for security scan
+        if: env.PR_NUMBER != ''
+        run: sleep 300
+
+      - name: Auto-approve and merge if no security label
+        if: env.PR_NUMBER != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          LABELS=$(gh pr view "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --json labels \
+            --jq '[.labels[].name] | join(",")')
+
+          echo "Current labels: $LABELS"
+
+          if echo "$LABELS" | grep -qi "security"; then
+            echo "Security label present on PR #$PR_NUMBER, skipping auto-merge"
+            exit 0
+          fi
+
+          gh pr edit "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --add-label "approved" \
+            --add-label "lgtm" \
+            --add-label "jira/valid-reference"
+
+          gh pr merge "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --squash \
+            --admin

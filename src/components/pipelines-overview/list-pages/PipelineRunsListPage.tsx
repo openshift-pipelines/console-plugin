@@ -12,15 +12,20 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from '@patternfly/react-core';
-import { useFlag } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  getGroupVersionKindForModel,
+  useFlag,
+  useK8sWatchResource,
+} from '@openshift-console/dynamic-plugin-sdk';
 import PipelineRunsForRepositoriesList from './PipelineRunsForRepositoriesList';
 import PipelineRunsForPipelinesList from './PipelineRunsForPipelinesList';
 import SearchInputField from '../SearchInput';
 import { SummaryProps, useInterval, useQueryParams } from '../utils';
 import { getResultsSummary } from '../../../components/utils/summary-api';
-import { DataType, FLAGS } from '../../../types';
+import { DataType, FLAGS, PipelineKind } from '../../../types';
 import { getDropDownDate } from '../dateTime';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
+import { PipelineModel } from '../../../models';
 
 type PipelineRunsListPageProps = {
   bordered?: boolean;
@@ -123,6 +128,14 @@ const PipelineRunsListPage: FC<PipelineRunsListPageProps> = ({
       });
   };
 
+  const [clusterPipelines, clusterPipelinesLoaded] = useK8sWatchResource<
+    PipelineKind[]
+  >({
+    isList: true,
+    groupVersionKind: getGroupVersionKindForModel(PipelineModel),
+    namespace,
+  });
+
   useInterval(getSummaryData, interval, namespace, date, pageFlag);
 
   useEffect(() => {
@@ -220,7 +233,8 @@ const PipelineRunsListPage: FC<PipelineRunsListPageProps> = ({
                   <PipelineRunsForPipelinesList
                     summaryData={summaryData}
                     summaryDataFiltered={summaryDataFiltered}
-                    loaded={loaded}
+                    clusterPipelines={clusterPipelines}
+                    loaded={loaded && clusterPipelinesLoaded}
                   />
                 ) : (
                   <PipelineRunsForRepositoriesList

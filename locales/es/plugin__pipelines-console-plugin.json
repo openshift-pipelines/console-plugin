@@ -621,7 +621,7 @@
   "Unable to load PipelineRun status": "No se pudo cargar el estado de PipelineRun",
   "Unable to load total runs": "No se pudo cargar el total de ejecuciones",
   "Unable to locate any tasks.": "No se puede localizar ninguna tarea.",
-  "Unable to show results at the moment": "No se pueden mostrar los resultados en este momento.",
+  "Unable to show results from ArtifactHub at the moment": "En este momento no es posible mostrar los resultados de ArtifactHub.",
   "Unique name of the new secret.": "Nombre único del nuevo secreto.",
   "Unknown": "Desconocido",
   "Unknown error retrieving logs": "Error desconocido al recuperar registros",

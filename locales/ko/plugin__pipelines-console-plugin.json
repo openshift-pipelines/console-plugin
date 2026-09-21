@@ -621,7 +621,7 @@
   "Unable to load PipelineRun status": "PipelineRun 상태를 로드할 수 없음",
   "Unable to load total runs": "총 실행을 로드할 수 없음",
   "Unable to locate any tasks.": "작업을 찾을 수 없습니다.",
-  "Unable to show results at the moment": "현재 결과를 표시할 수 없음",
+  "Unable to show results from ArtifactHub at the moment": "현재 ArtifactHub의 결과를 표시할 수 없음",
   "Unique name of the new secret.": "새 시크릿의 고유한 이름입니다.",
   "Unknown": "알 수 없음",
   "Unknown error retrieving logs": "로그를 가져오는 중 알 수 없는 오류 발생",

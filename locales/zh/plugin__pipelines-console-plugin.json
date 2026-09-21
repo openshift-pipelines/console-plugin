@@ -621,7 +621,7 @@
   "Unable to load PipelineRun status": "无法加载 PipelineRun 状态",
   "Unable to load total runs": "无法加载总运行",
   "Unable to locate any tasks.": "无法找到任何任务。",
-  "Unable to show results at the moment": "目前无法显示结果",
+  "Unable to show results from ArtifactHub at the moment": "目前无法显示来自 ArtifactHub 的结果",
   "Unique name of the new secret.": "新 secret 的唯一名称。",
   "Unknown": "未知",
   "Unknown error retrieving logs": "获取日志的未知错误",

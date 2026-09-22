@@ -15,16 +15,25 @@ import {
   tableColumnInfo,
 } from './PipelineRunsForRepositoriesRow';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
+import { Project } from '../../../types';
 
 type PipelineRunsForRepositoriesListProps = {
   summaryData: SummaryProps[];
   summaryDataFiltered: SummaryProps[];
   loaded: boolean;
+  projects?: Project[];
+  projectsLoaded?: boolean;
 };
 
 const PipelineRunsForRepositoriesList: FC<
   PipelineRunsForRepositoriesListProps
-> = ({ summaryData, summaryDataFiltered, loaded }) => {
+> = ({
+  summaryData,
+  summaryDataFiltered,
+  loaded,
+  projects,
+  projectsLoaded,
+}) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [activeNamespace] = useActiveNamespace();
 
@@ -115,6 +124,7 @@ const PipelineRunsForRepositoriesList: FC<
       loaded={loaded}
       loadError={false}
       getDataViewRows={getPipelineRunsForRepositoriesDataViewRows}
+      customRowData={{ projects, projectsLoaded }}
       hideColumnManagement
       hideNameLabelFilters
     />

@@ -221,7 +221,7 @@ const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
   >({
     isList: true,
     groupVersionKind: getGroupVersionKindForModel(PipelineModel),
-    namespace,
+    ...(namespace !== ALL_NAMESPACES_KEY ? { namespace } : {}),
   });
 
   useQueryParams({
@@ -317,6 +317,8 @@ const PipelineRunsListPageK8s: FC<PipelineRunsListPageProps> = ({
                       !loadingPipelineRunsMetricsCount &&
                       !loadingPipelineRunsMetricsSum
                     }
+                    projects={projects}
+                    projectsLoaded={projectsLoaded}
                   />
                 )}
               </GridItem>

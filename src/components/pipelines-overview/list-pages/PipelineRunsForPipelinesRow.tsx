@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link } from 'react-router';
 import {
+  ResourceIcon,
   ResourceLink,
   getGroupVersionKindForModel,
 } from '@openshift-console/dynamic-plugin-sdk';
@@ -9,6 +10,9 @@ import { GetDataViewRows } from '@openshift-console/dynamic-plugin-sdk-internal/
 import { formatTime, formatTimeLastRunTime } from '../dateTime';
 import { SummaryProps, getReferenceForModel } from '../utils';
 import { PipelineModel, PipelineModelV1Beta1 } from '../../../models';
+import { PipelineKind } from '../../../types';
+import { Tooltip } from '@patternfly/react-core';
+import { t } from '../../../components/utils/common-utils';
 
 type RowCell = { cell: ReactNode; props?: Record<string, unknown> };
 
@@ -32,7 +36,7 @@ export const tableColumnInfo = [
 
 export const getPipelineRunsForPipelinesDataViewRows: GetDataViewRows<
   SummaryProps,
-  { hideLastRunTime?: boolean }
+  { hideLastRunTime?: boolean; clusterPipelines: PipelineKind[] }
 > = (data, columns) => {
   return data.map(({ obj, rowData }) => {
     const [namespace, name] = obj.group_value.split('/');
@@ -40,10 +44,13 @@ export const getPipelineRunsForPipelinesDataViewRows: GetDataViewRows<
     const pipelineReference = getReferenceForModel(
       isV1SupportCluster ? PipelineModel : PipelineModelV1Beta1,
     );
+    const isClusterPipeline = !!rowData?.clusterPipelines?.find(
+      (pipeline) => pipeline.metadata.name === name,
+    );
 
     const rowCells: Record<string, RowCell> = {
       [tableColumnInfo[0].id]: {
-        cell: (
+        cell: isClusterPipeline ? (
           <ResourceLink
             /* needs to be removed when we update console-extension.json */
             groupVersionKind={
@@ -54,6 +61,13 @@ export const getPipelineRunsForPipelinesDataViewRows: GetDataViewRows<
             name={name}
             namespace={namespace}
           />
+        ) : (
+          <Tooltip content={t('Pipeline Definition does not exist.')}>
+            <span>
+              <ResourceIcon kind={pipelineReference} />
+              {name}
+            </span>
+          </Tooltip>
         ),
         props: {
           isStickyColumn: true,
@@ -65,10 +79,12 @@ export const getPipelineRunsForPipelinesDataViewRows: GetDataViewRows<
         cell: <ResourceLink kind="Namespace" name={namespace} />,
       },
       [tableColumnInfo[2].id]: {
-        cell: (
+        cell: isClusterPipeline ? (
           <Link to={`/k8s/ns/${namespace}/${pipelineReference}/${name}/Runs`}>
             {obj.total}
           </Link>
+        ) : (
+          <span>{obj.total}</span>
         ),
       },
       [tableColumnInfo[3].id]: {

@@ -499,3 +499,12 @@ export const getPipelineRunAverageDuration = (
 export const roundToNearestSecond = (timestamp) => {
   return Math.round(timestamp);
 };
+
+export const doesNamespaceExists = (rowData: any, namespaceName: string) => {
+  if (!rowData?.projectsLoaded) return false;
+  return (
+    rowData?.projects?.some(
+      (project) => project?.metadata?.name === namespaceName,
+    ) ?? false
+  );
+};

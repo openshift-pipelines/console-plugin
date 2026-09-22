@@ -15,7 +15,7 @@ import {
   tableColumnInfo,
 } from './PipelineRunsForPipelinesRow';
 import { ALL_NAMESPACES_KEY } from '../../../consts';
-import { PipelineKind } from '../../../types';
+import { PipelineKind, Project } from '../../../types';
 
 type PipelineRunsForPipelinesListProps = {
   summaryData: SummaryProps[];
@@ -23,6 +23,8 @@ type PipelineRunsForPipelinesListProps = {
   clusterPipelines?: PipelineKind[];
   loaded: boolean;
   hideLastRunTime?: boolean;
+  projects?: Project[];
+  projectsLoaded?: boolean;
 };
 
 const PipelineRunsForPipelinesList: FC<PipelineRunsForPipelinesListProps> = ({
@@ -31,6 +33,8 @@ const PipelineRunsForPipelinesList: FC<PipelineRunsForPipelinesListProps> = ({
   clusterPipelines,
   loaded,
   hideLastRunTime,
+  projects,
+  projectsLoaded,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const [activeNamespace] = useActiveNamespace();
@@ -126,7 +130,12 @@ const PipelineRunsForPipelinesList: FC<PipelineRunsForPipelinesListProps> = ({
       loaded={loaded}
       loadError={false}
       getDataViewRows={getPipelineRunsForPipelinesDataViewRows}
-      customRowData={{ hideLastRunTime, clusterPipelines }}
+      customRowData={{
+        hideLastRunTime,
+        clusterPipelines,
+        projects,
+        projectsLoaded,
+      }}
       hideColumnManagement
       hideNameLabelFilters
     />

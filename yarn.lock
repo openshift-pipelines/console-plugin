@@ -36,7 +36,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.23.9, @babel/core@npm:^7.27.4, @babel/core@npm:^7.29.0":
+"@babel/core@npm:7.29.7, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.23.9, @babel/core@npm:^7.27.4":
   version: 7.29.7
   resolution: "@babel/core@npm:7.29.7"
   dependencies:
@@ -2752,52 +2752,59 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openshift-console/dynamic-plugin-sdk-internal@npm:4.22.0":
-  version: 4.22.0
-  resolution: "@openshift-console/dynamic-plugin-sdk-internal@npm:4.22.0"
+"@openshift-console/dynamic-plugin-sdk-internal@npm:4.23.0-prerelease.4":
+  version: 4.23.0-prerelease.4
+  resolution: "@openshift-console/dynamic-plugin-sdk-internal@npm:4.23.0-prerelease.4"
   dependencies:
     "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
     immutable: "npm:^3.8.3"
-  checksum: 10c0/8f50f66fb0d0f64fb7b182201e94d12853c4d54769e95e7b16093d67f4dd8b62a154b7d6dabad68a9c6081a43cd87978c1ddd2e9c44df4c0162a3f6365c5c67d
+  checksum: 10c0/b39badb52914921e6620346af2afc58332a28a496e73d211cf839ca3850dc406e32a99051ab0aa20eb04e7eba5e9032b8aca857afe499dee7be25c67ab9e7b6a
   languageName: node
   linkType: hard
 
-"@openshift-console/dynamic-plugin-sdk-webpack@npm:4.22.0":
-  version: 4.22.0
-  resolution: "@openshift-console/dynamic-plugin-sdk-webpack@npm:4.22.0"
+"@openshift-console/dynamic-plugin-sdk-webpack@npm:4.23.0-prerelease.5":
+  version: 4.23.0-prerelease.5
+  resolution: "@openshift-console/dynamic-plugin-sdk-webpack@npm:4.23.0-prerelease.5"
   dependencies:
-    "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
-    "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.1.1"
+    "@openshift/dynamic-plugin-sdk": "npm:^9.1.0"
+    "@openshift/dynamic-plugin-sdk-webpack": "npm:^5.3.0"
     ajv: "npm:^6.12.3"
     chalk: "npm:2.4.x"
     comment-json: "npm:4.x"
     find-up: "npm:4.x"
-    glob: "npm:7.x"
-    lodash: "npm:^4.17.21"
+    glob: "npm:^13.0.6"
+    lodash: "npm:^4.18.1"
     read-pkg: "npm:5.x"
-    semver: "npm:6.x"
+    semver: "npm:^7.8.5"
   peerDependencies:
+    "@rspack/core": ">=2.1.3"
     typescript: ">=5.9.3"
     webpack: ">=5.100.0"
-  checksum: 10c0/078c35b5bd8a1b96d71c36b80acbf24da59c1e3f0dedbdf0ed484635d1b09436c606ac711ee058e3a1e1abc3618ed866ed739dabb04d1f325cdd0135719d00eb
+  peerDependenciesMeta:
+    "@rspack/core":
+      optional: true
+    webpack:
+      optional: true
+  checksum: 10c0/0d62bbd2597d989199774176c5a11d0639e24d03548948b401ebbc70f1858108a3726491a6b31ad612dd620f7559b035ba3cf5988fdcc92a3c8d1c6677a0e9cc
   languageName: node
   linkType: hard
 
-"@openshift-console/dynamic-plugin-sdk@npm:4.22.0":
-  version: 4.22.0
-  resolution: "@openshift-console/dynamic-plugin-sdk@npm:4.22.0"
+"@openshift-console/dynamic-plugin-sdk@npm:4.23.0-prerelease.5":
+  version: 4.23.0-prerelease.5
+  resolution: "@openshift-console/dynamic-plugin-sdk@npm:4.23.0-prerelease.5"
   dependencies:
-    "@openshift/dynamic-plugin-sdk": "npm:^8.0.0"
+    "@openshift/api-types": "npm:^1.0.0"
+    "@openshift/dynamic-plugin-sdk": "npm:^9.1.0"
     immutable: "npm:^3.8.3"
-    lodash: "npm:^4.17.21"
+    lodash: "npm:^4.18.1"
     reselect: "npm:^5.1.1"
     typesafe-actions: "npm:^5.1.0"
   peerDependencies:
-    "@patternfly/react-topology": ~6.4.0
+    "@patternfly/react-topology": ~6.6.0
     react: ^18.3.1
     react-i18next: ~16.5.8
     react-redux: ~9.2.0
-    react-router: ~7.13.1
+    react-router: ~7.18.1
     redux: ~5.0.1
     redux-thunk: ~3.1.0
   peerDependenciesMeta:
@@ -2815,7 +2822,14 @@ __metadata:
       optional: true
     redux-thunk:
       optional: true
-  checksum: 10c0/d2eaf768a44ee595c89eb1007087507fe366296d5cf5b589a82af7ed04d5a6de6bd9ed073879eff80dd0d839073e16c693c00f5483233a34521b9022b4d338b2
+  checksum: 10c0/9792800fbbee30b9d40a2dd9e414ef2dd9c9a019b17f7d7277eadb36f41691f0de5b2a300cbeef86ba2c107003433928e38552fbb1606c574298a63cc10cfa21
+  languageName: node
+  linkType: hard
+
+"@openshift/api-types@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@openshift/api-types@npm:1.0.0"
+  checksum: 10c0/8eb7c324b993145615622f1f809520c6a7be733cc17f3f0718530511da94d269e4ed15a63e9eb4312262bf9895dbc5debe625cec132b9abb005f10df304a6944
   languageName: node
   linkType: hard
 
@@ -2858,7 +2872,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openshift/dynamic-plugin-sdk-webpack@npm:^5.1.1":
+"@openshift/dynamic-plugin-sdk-webpack@npm:^5.3.0":
   version: 5.3.0
   resolution: "@openshift/dynamic-plugin-sdk-webpack@npm:5.3.0"
   dependencies:
@@ -2877,7 +2891,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openshift/dynamic-plugin-sdk@npm:^8.0.0, @openshift/dynamic-plugin-sdk@npm:^8.1.0":
+"@openshift/dynamic-plugin-sdk@npm:9.1.0, @openshift/dynamic-plugin-sdk@npm:^9.1.0":
+  version: 9.1.0
+  resolution: "@openshift/dynamic-plugin-sdk@npm:9.1.0"
+  dependencies:
+    lodash: "npm:^4.17.23"
+    semver: "npm:^7.7.3"
+    zod: "npm:^3.25.67"
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 10c0/9c34871fe5b26a9230c7581000e6ce05b817ac5cc46c1d97e8c05422c2d4944e4a7bd30a6eb52b5c8d1db9eb4beb83e8bbfb60ff773bf4358d8cf2ae33899f4b
+  languageName: node
+  linkType: hard
+
+"@openshift/dynamic-plugin-sdk@npm:^8.0.0":
   version: 8.2.0
   resolution: "@openshift/dynamic-plugin-sdk@npm:8.2.0"
   dependencies:
@@ -3025,7 +3052,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-charts@npm:^8.0.0":
+"@patternfly/react-charts@npm:8.6.1":
   version: 8.6.1
   resolution: "@patternfly/react-charts@npm:8.6.1"
   dependencies:
@@ -3096,24 +3123,41 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-component-groups@npm:^6.0.0":
-  version: 6.7.0
-  resolution: "@patternfly/react-component-groups@npm:6.7.0"
+"@patternfly/react-component-groups@npm:6.5.0":
+  version: 6.5.0
+  resolution: "@patternfly/react-component-groups@npm:6.5.0"
   dependencies:
-    "@patternfly/react-core": "npm:^6.6.2"
+    "@patternfly/react-core": "npm:^6.0.0"
     "@patternfly/react-icons": "npm:^6.0.0"
     "@patternfly/react-styles": "npm:^6.0.0"
-    "@patternfly/react-table": "npm:^6.6.2"
+    "@patternfly/react-table": "npm:^6.0.0"
     react-jss: "npm:^10.10.0"
   peerDependencies:
-    "@patternfly/react-drag-drop": ^6.6.2
+    "@patternfly/react-drag-drop": ^6.0.0
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
-  checksum: 10c0/6cbe984fe6d8fd3fea888093618c042bf18875993b2a40bd5ea352e4006b5d08045cb438a7340d253cf12e854c07ebafd05c4ced81b115b9e62634c3ba5fca53
+  checksum: 10c0/cf0a5c6ef78d57611ab013841b38c24b43f32c453fa6e6b2db502f998f81e0fae3d226772296380ca8adf6363991d2776da979646fe814c4c4880a4d9b902e93
   languageName: node
   linkType: hard
 
-"@patternfly/react-core@npm:^6.0.0, @patternfly/react-core@npm:^6.0.0-prerelease.21, @patternfly/react-core@npm:^6.4.0, @patternfly/react-core@npm:^6.6.2":
+"@patternfly/react-core@npm:6.6.1":
+  version: 6.6.1
+  resolution: "@patternfly/react-core@npm:6.6.1"
+  dependencies:
+    "@patternfly/react-icons": "npm:^6.6.1"
+    "@patternfly/react-styles": "npm:^6.6.1"
+    "@patternfly/react-tokens": "npm:^6.6.1"
+    focus-trap: "npm:7.6.6"
+    react-dropzone: "npm:^14.3.5"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    react: ^17 || ^18 || ^19
+    react-dom: ^17 || ^18 || ^19
+  checksum: 10c0/48d8b952d87abb45b99d345731c89cd42e7ba7fdd9d973025068e97c97be84b95f1560c8b7e0f02b453453a0f7c8e23a2f269d1851b9bc615bfe5547ef3b0969
+  languageName: node
+  linkType: hard
+
+"@patternfly/react-core@npm:^6.0.0, @patternfly/react-core@npm:^6.0.0-prerelease.21, @patternfly/react-core@npm:^6.5.1, @patternfly/react-core@npm:^6.6.1, @patternfly/react-core@npm:^6.6.2":
   version: 6.6.2
   resolution: "@patternfly/react-core@npm:6.6.2"
   dependencies:
@@ -3130,25 +3174,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-drag-drop@npm:^6.0.0":
-  version: 6.6.2
-  resolution: "@patternfly/react-drag-drop@npm:6.6.2"
+"@patternfly/react-drag-drop@npm:6.6.1":
+  version: 6.6.1
+  resolution: "@patternfly/react-drag-drop@npm:6.6.1"
   dependencies:
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/modifiers": "npm:^9.0.0"
     "@dnd-kit/sortable": "npm:^10.0.0"
-    "@patternfly/react-core": "npm:^6.6.2"
+    "@patternfly/react-core": "npm:^6.6.1"
     "@patternfly/react-icons": "npm:^6.6.1"
     "@patternfly/react-styles": "npm:^6.6.1"
     resize-observer-polyfill: "npm:^1.5.1"
   peerDependencies:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
-  checksum: 10c0/c70ac15688b47a88a740c2dc81bafa0a7ceb493f7dbd9898401d06cfd4808ee506d012ed7505a4a067503bedaebcb092fc9bc796ee2fdc107a79b5f40107648d
+  checksum: 10c0/14db5766f901693fb69f1dfbc87ff30bc93561e21e3d9d5d5bbc240b620d5f1c3a6ab479b887ec608f2ec784729948d0e8d85055f221981d567903459df13cdd
   languageName: node
   linkType: hard
 
-"@patternfly/react-icons@npm:^6.0.0, @patternfly/react-icons@npm:^6.0.0-prerelease.7, @patternfly/react-icons@npm:^6.4.0, @patternfly/react-icons@npm:^6.6.1":
+"@patternfly/react-icons@npm:6.6.1, @patternfly/react-icons@npm:^6.0.0, @patternfly/react-icons@npm:^6.0.0-prerelease.7, @patternfly/react-icons@npm:^6.5.1, @patternfly/react-icons@npm:^6.6.1":
   version: 6.6.1
   resolution: "@patternfly/react-icons@npm:6.6.1"
   dependencies:
@@ -3160,7 +3204,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-log-viewer@npm:^6.0.0":
+"@patternfly/react-log-viewer@npm:6.5.0":
   version: 6.5.0
   resolution: "@patternfly/react-log-viewer@npm:6.5.0"
   dependencies:
@@ -3175,14 +3219,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-styles@npm:^6.0.0, @patternfly/react-styles@npm:^6.0.0-prerelease.6, @patternfly/react-styles@npm:^6.6.1, @patternfly/react-styles@npm:~6.6.0":
+"@patternfly/react-styles@npm:6.6.1, @patternfly/react-styles@npm:^6.0.0, @patternfly/react-styles@npm:^6.0.0-prerelease.6, @patternfly/react-styles@npm:^6.5.1, @patternfly/react-styles@npm:^6.6.1":
   version: 6.6.1
   resolution: "@patternfly/react-styles@npm:6.6.1"
   checksum: 10c0/0c50bf72fade26d30e6ff9abe0d2d8dbb5b546fe434067f70665ce704e63767a9f8ea7627871e2c6ce17ea4f475daa931fd420e1f1aee891c1f48b5905e57433
   languageName: node
   linkType: hard
 
-"@patternfly/react-table@npm:^6.4.0, @patternfly/react-table@npm:^6.6.2":
+"@patternfly/react-table@npm:6.6.1":
+  version: 6.6.1
+  resolution: "@patternfly/react-table@npm:6.6.1"
+  dependencies:
+    "@patternfly/react-core": "npm:^6.6.1"
+    "@patternfly/react-icons": "npm:^6.6.1"
+    "@patternfly/react-styles": "npm:^6.6.1"
+    "@patternfly/react-tokens": "npm:^6.6.1"
+    lodash: "npm:^4.18.1"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    react: ^17 || ^18 || ^19
+    react-dom: ^17 || ^18 || ^19
+  checksum: 10c0/cefa6d56f75d60f702a15a93097a362c24d5ae5cc83c289ea75b626f915ae6992ca2720cc77846e7fe1da76f62c4a6527833750e8faf9cf9561e113d0e988f5d
+  languageName: node
+  linkType: hard
+
+"@patternfly/react-table@npm:^6.0.0":
   version: 6.6.2
   resolution: "@patternfly/react-table@npm:6.6.2"
   dependencies:
@@ -3199,21 +3260,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-tokens@npm:^6.4.0, @patternfly/react-tokens@npm:^6.6.1":
+"@patternfly/react-tokens@npm:6.6.1, @patternfly/react-tokens@npm:^6.6.1":
   version: 6.6.1
   resolution: "@patternfly/react-tokens@npm:6.6.1"
   checksum: 10c0/818f0539722c147a83c35bd53860b80566117c823706e51228f652754c2053410da987712b21def02d55c39845c9d129819e96a78870cc390db80df59c127a8b
   languageName: node
   linkType: hard
 
-"@patternfly/react-topology@npm:~6.4.0":
-  version: 6.4.0
-  resolution: "@patternfly/react-topology@npm:6.4.0"
+"@patternfly/react-topology@npm:6.6.0":
+  version: 6.6.0
+  resolution: "@patternfly/react-topology@npm:6.6.0"
   dependencies:
     "@dagrejs/dagre": "npm:1.1.2"
-    "@patternfly/react-core": "npm:^6.0.0"
-    "@patternfly/react-icons": "npm:^6.0.0"
-    "@patternfly/react-styles": "npm:^6.0.0"
+    "@patternfly/react-core": "npm:^6.5.1"
+    "@patternfly/react-icons": "npm:^6.5.1"
+    "@patternfly/react-styles": "npm:^6.5.1"
     "@types/d3": "npm:^7.4.0"
     "@types/d3-force": "npm:^1.2.1"
     d3: "npm:^7.8.0"
@@ -3226,11 +3287,11 @@ __metadata:
   peerDependencies:
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
-  checksum: 10c0/c4db811821d8b9be67b394a69401ecdd61fb576cda4d84e481ac56997535941e50d7a8f276f778e48a1861b55703deb031859e0c63777814833d08db6115e6e5
+  checksum: 10c0/b1afadce79fdf8bb5d095b4916bd40b9ac35b23953a8f5d52353f7ff0024c799ec1110166930a8f8c6b592b8e63475fa17f3c356b322323a89c24027f197c737
   languageName: node
   linkType: hard
 
-"@patternfly/react-virtualized-extension@npm:^6.0.0":
+"@patternfly/react-virtualized-extension@npm:6.2.0":
   version: 6.2.0
   resolution: "@patternfly/react-virtualized-extension@npm:6.2.0"
   dependencies:
@@ -3511,9 +3572,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^10.4.1":
-  version: 10.4.2
-  resolution: "@testing-library/dom@npm:10.4.2"
+"@testing-library/dom@npm:10.4.1":
+  version: 10.4.1
+  resolution: "@testing-library/dom@npm:10.4.1"
   dependencies:
     "@babel/code-frame": "npm:^7.10.4"
     "@babel/runtime": "npm:^7.12.5"
@@ -3523,13 +3584,13 @@ __metadata:
     lz-string: "npm:^1.5.0"
     picocolors: "npm:1.1.1"
     pretty-format: "npm:^27.0.2"
-  checksum: 10c0/22c3aded3a54fc4f1a0c54aa75a881bb65e45f0128f3c5c881f9e571e593c6364c036f71b733dd0856ff2ba0debd59106e206f6764ee771dd8ed7cf82ceaa618
+  checksum: 10c0/19ce048012d395ad0468b0dbcc4d0911f6f9e39464d7a8464a587b29707eed5482000dad728f5acc4ed314d2f4d54f34982999a114d2404f36d048278db815b1
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^16.3.1":
-  version: 16.3.3
-  resolution: "@testing-library/react@npm:16.3.3"
+"@testing-library/react@npm:16.3.2":
+  version: 16.3.2
+  resolution: "@testing-library/react@npm:16.3.2"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
   peerDependencies:
@@ -3543,7 +3604,7 @@ __metadata:
       optional: true
     "@types/react-dom":
       optional: true
-  checksum: 10c0/87d65cca71a39c93fffa23746a751a7037a4b4e939ea6b234af5188e4bdec96a7568b05000db109b5b76c686899e93a329a594d7e690674e30b35594c87c9e1d
+  checksum: 10c0/f9c7f0915e1b5f7b750e6c7d8b51f091b8ae7ea99bacb761d7b8505ba25de9cfcb749a0f779f1650fb268b499dd79165dc7e1ee0b8b4cb63430d3ddc81ffe044
   languageName: node
   linkType: hard
 
@@ -4078,7 +4139,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^30.0.0":
+"@types/jest@npm:30.0.0":
   version: 30.0.0
   resolution: "@types/jest@npm:30.0.0"
   dependencies:
@@ -4088,10 +4149,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/js-yaml@npm:^3.10.0":
-  version: 3.12.10
-  resolution: "@types/js-yaml@npm:3.12.10"
-  checksum: 10c0/50ac81eb199342a18c9dfbb53ebddef27e0bc40e39de74b357dff820589fe9a752d7d146f4a2b9dd831e3ed3225d5e593c28be1aceaf122a8ce1c320b1bd08e9
+"@types/js-yaml@npm:3.12.7":
+  version: 3.12.7
+  resolution: "@types/js-yaml@npm:3.12.7"
+  checksum: 10c0/7df8078fb1783e04f6b24b97378ec396359d81bda4fe9cf352ec35bb055b3d4034854582f9b337d5d7a946c622265f422aca7f61bf872e2acaed07f317bedb06
   languageName: node
   linkType: hard
 
@@ -4113,7 +4174,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash-es@npm:^4.17.12":
+"@types/lodash-es@npm:4.17.12":
   version: 4.17.12
   resolution: "@types/lodash-es@npm:4.17.12"
   dependencies:
@@ -4189,7 +4250,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.3.7":
+"@types/react-dom@npm:18.3.7":
   version: 18.3.7
   resolution: "@types/react-dom@npm:18.3.7"
   peerDependencies:
@@ -4247,13 +4308,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.3.27":
-  version: 18.3.31
-  resolution: "@types/react@npm:18.3.31"
+"@types/react@npm:18.3.27":
+  version: 18.3.27
+  resolution: "@types/react@npm:18.3.27"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.2.2"
-  checksum: 10c0/44180549dd045f536ececd39e39aacdf828e76adc1c4a90b132f453e23cc370c4648d9102ae401172ebd8fd8b1977a901a39e214e53ec77171b27514b588c179
+  checksum: 10c0/a761d2f58de03d0714806cc65d32bb3d73fb33a08dd030d255b47a295e5fff2a775cf1c20b786824d8deb6454eaccce9bc6998d9899c14fc04bbd1b0b0b72897
   languageName: node
   linkType: hard
 
@@ -6129,7 +6190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^14.0.0":
+"commander@npm:^14.0.2":
   version: 14.0.3
   resolution: "commander@npm:14.0.3"
   checksum: 10c0/755652564bbf56ff2ff083313912b326450d3f8d8c85f4b71416539c9a05c3c67dbd206821ca72635bf6b160e2afdefcb458e86b317827d5cb333b69ce7f1a24
@@ -6826,7 +6887,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dagre@npm:^0.8.5":
+"dagre@npm:0.8.5":
   version: 0.8.5
   resolution: "dagre@npm:0.8.5"
   dependencies:
@@ -8239,9 +8300,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"formik@npm:^2.1.5":
-  version: 2.4.9
-  resolution: "formik@npm:2.4.9"
+"formik@npm:2.4.6":
+  version: 2.4.6
+  resolution: "formik@npm:2.4.6"
   dependencies:
     "@types/hoist-non-react-statics": "npm:^3.3.1"
     deepmerge: "npm:^2.1.1"
@@ -8253,7 +8314,7 @@ __metadata:
     tslib: "npm:^2.0.0"
   peerDependencies:
     react: ">=16.8.0"
-  checksum: 10c0/2b76154b624f4464871f56204a7a87fec9f0cc24d742ad4e20628bd680a81ef2ae9966f54b616003f623dc1f7c7b25a25aafa8a59bcc1d940b7526fb665dbd0b
+  checksum: 10c0/e2853fc7833649386ff183eac9cb6a69a999c4b05aabe5636152e1cec1eb35ac0d9f511425624f0d7a88c6e19d4fd2aa259399a6683f0475c30170a5a3ea4f79
   languageName: node
   linkType: hard
 
@@ -8386,7 +8447,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fuzzysearch@npm:1.0.x":
+"fuzzysearch@npm:1.0.3":
   version: 1.0.3
   resolution: "fuzzysearch@npm:1.0.3"
   checksum: 10c0/de6ab4a84cb0d570d1b55c9b9c2bb435b2a781452d23e63911e95d333e3dd1badea743a1d1ab0cac6f28d7e262347dfce10632f0aa9e5df0baaae0270f49578f
@@ -8543,20 +8604,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:7.x, glob@npm:^7.1.3, glob@npm:^7.1.4":
-  version: 7.2.3
-  resolution: "glob@npm:7.2.3"
-  dependencies:
-    fs.realpath: "npm:^1.0.0"
-    inflight: "npm:^1.0.4"
-    inherits: "npm:2"
-    minimatch: "npm:^3.1.1"
-    once: "npm:^1.3.0"
-    path-is-absolute: "npm:^1.0.0"
-  checksum: 10c0/65676153e2b0c9095100fe7f25a778bf45608eeb32c6048cf307f579649bcc30353277b3b898a3792602c65764e5baa4f643714dfbdfd64ea271d210c7a425fe
-  languageName: node
-  linkType: hard
-
 "glob@npm:^10.3.7, glob@npm:^10.4.1":
   version: 10.5.0
   resolution: "glob@npm:10.5.0"
@@ -8581,6 +8628,20 @@ __metadata:
     minipass: "npm:^7.1.3"
     path-scurry: "npm:^2.0.2"
   checksum: 10c0/269c236f11a9b50357fe7a8c6aadac667e01deb5242b19c84975628f05f4438d8ee1354bb62c5d6c10f37fd59911b54d7799730633a2786660d8c69f1d18120a
+  languageName: node
+  linkType: hard
+
+"glob@npm:^7.1.3, glob@npm:^7.1.4":
+  version: 7.2.3
+  resolution: "glob@npm:7.2.3"
+  dependencies:
+    fs.realpath: "npm:^1.0.0"
+    inflight: "npm:^1.0.4"
+    inherits: "npm:2"
+    minimatch: "npm:^3.1.1"
+    once: "npm:^1.3.0"
+    path-is-absolute: "npm:^1.0.0"
+  checksum: 10c0/65676153e2b0c9095100fe7f25a778bf45608eeb32c6048cf307f579649bcc30353277b3b898a3792602c65764e5baa4f643714dfbdfd64ea271d210c7a425fe
   languageName: node
   linkType: hard
 
@@ -8982,19 +9043,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next-conv@npm:^15.1.1":
-  version: 15.1.2
-  resolution: "i18next-conv@npm:15.1.2"
+"i18next-conv@npm:16.0.0":
+  version: 16.0.0
+  resolution: "i18next-conv@npm:16.0.0"
   dependencies:
     "@postalsys/gettext": "npm:^4.1.0"
     colorette: "npm:^2.0.20"
-    commander: "npm:^14.0.0"
+    commander: "npm:^14.0.2"
     gettext-converter: "npm:^1.3.0"
     gettext-parser: "npm:^8.0.0"
     p-from-callback: "npm:^2.0.0"
   bin:
     i18next-conv: bin/index.js
-  checksum: 10c0/a6e078e8868e4a6457f246b30686e1287ffa43800b83a270cd809e3283e5152ba36c882d46dcc8fbabd12da01d74989a65a2e95ecf75629b628dba972e9d8f57
+  checksum: 10c0/8c01f7fdf78b3f0a45eaee0c7618b76aa194abf684adad8892701eb5bc6b7c0bd1f6642d3826cfaf1ecf230df39c3c9b368b68c39023678774e9de106cd5935b
   languageName: node
   linkType: hard
 
@@ -10704,7 +10765,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"linkify-react@npm:^4.3.3":
+"linkify-react@npm:4.3.3":
   version: 4.3.3
   resolution: "linkify-react@npm:4.3.3"
   peerDependencies:
@@ -10714,7 +10775,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"linkifyjs@npm:^4.3.3":
+"linkifyjs@npm:4.3.3":
   version: 4.3.3
   resolution: "linkifyjs@npm:4.3.3"
   checksum: 10c0/0eac293927f1465d13625c8c67c83c50d7fda9137c255a4a2ff5970ea4e9ba57de4846b170326e54b9e4e82be24f3705572bc50773737be9b13af5f1e4577798
@@ -10794,7 +10855,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash-es@npm:^4.17.21, lodash-es@npm:^4.18.1":
+"lodash-es@npm:4.18.1, lodash-es@npm:^4.17.21":
   version: 4.18.1
   resolution: "lodash-es@npm:4.18.1"
   checksum: 10c0/35d4dcf87ef07f8d090f409447575800108057e360b445f590d0d25d09e3d1e33a163d2fc100d4d072b0f901d5e2fc533cd7c4bfd8eeb38a06abec693823c8b8
@@ -11937,7 +11998,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "pipelines-console-plugin@workspace:."
   dependencies:
-    "@babel/core": "npm:^7.29.0"
+    "@babel/core": "npm:7.29.7"
     "@babel/preset-env": "npm:^7.24.7"
     "@babel/preset-react": "npm:^7.28.5"
     "@babel/preset-typescript": "npm:^7.24.7"
@@ -11945,33 +12006,33 @@ __metadata:
     "@gitbeaker/core": "npm:^43.0.0"
     "@gitbeaker/rest": "npm:^43.0.0"
     "@octokit/core": "npm:^5.0.0"
-    "@openshift-console/dynamic-plugin-sdk": "npm:4.22.0"
-    "@openshift-console/dynamic-plugin-sdk-internal": "npm:4.22.0"
-    "@openshift-console/dynamic-plugin-sdk-webpack": "npm:4.22.0"
-    "@openshift/dynamic-plugin-sdk": "npm:^8.1.0"
+    "@openshift-console/dynamic-plugin-sdk": "npm:4.23.0-prerelease.5"
+    "@openshift-console/dynamic-plugin-sdk-internal": "npm:4.23.0-prerelease.4"
+    "@openshift-console/dynamic-plugin-sdk-webpack": "npm:4.23.0-prerelease.5"
+    "@openshift/dynamic-plugin-sdk": "npm:9.1.0"
     "@openshift/dynamic-plugin-sdk-extensions": "npm:^1.4.0"
     "@openshift/dynamic-plugin-sdk-utils": "npm:^5.0.1"
-    "@patternfly/react-charts": "npm:^8.0.0"
-    "@patternfly/react-component-groups": "npm:^6.0.0"
-    "@patternfly/react-core": "npm:^6.4.0"
-    "@patternfly/react-drag-drop": "npm:^6.0.0"
-    "@patternfly/react-icons": "npm:^6.4.0"
-    "@patternfly/react-log-viewer": "npm:^6.0.0"
-    "@patternfly/react-styles": "npm:~6.6.0"
-    "@patternfly/react-table": "npm:^6.4.0"
-    "@patternfly/react-tokens": "npm:^6.4.0"
-    "@patternfly/react-topology": "npm:~6.4.0"
-    "@patternfly/react-virtualized-extension": "npm:^6.0.0"
-    "@testing-library/dom": "npm:^10.4.1"
-    "@testing-library/react": "npm:^16.3.1"
+    "@patternfly/react-charts": "npm:8.6.1"
+    "@patternfly/react-component-groups": "npm:6.5.0"
+    "@patternfly/react-core": "npm:6.6.1"
+    "@patternfly/react-drag-drop": "npm:6.6.1"
+    "@patternfly/react-icons": "npm:6.6.1"
+    "@patternfly/react-log-viewer": "npm:6.5.0"
+    "@patternfly/react-styles": "npm:6.6.1"
+    "@patternfly/react-table": "npm:6.6.1"
+    "@patternfly/react-tokens": "npm:6.6.1"
+    "@patternfly/react-topology": "npm:6.6.0"
+    "@patternfly/react-virtualized-extension": "npm:6.2.0"
+    "@testing-library/dom": "npm:10.4.1"
+    "@testing-library/react": "npm:16.3.2"
     "@types/dagre": "npm:^0.7.52"
     "@types/express": "npm:^4.17.18"
-    "@types/jest": "npm:^30.0.0"
-    "@types/js-yaml": "npm:^3.10.0"
-    "@types/lodash-es": "npm:^4.17.12"
+    "@types/jest": "npm:30.0.0"
+    "@types/js-yaml": "npm:3.12.7"
+    "@types/lodash-es": "npm:4.17.12"
     "@types/node": "npm:22.x"
-    "@types/react": "npm:^18.3.27"
-    "@types/react-dom": "npm:^18.3.7"
+    "@types/react": "npm:18.3.27"
+    "@types/react-dom": "npm:18.3.7"
     "@types/react-measure": "npm:^2.0.12"
     "@types/react-redux": "npm:^7.1.34"
     "@types/react-transition-group": "npm:2.x"
@@ -11985,7 +12046,7 @@ __metadata:
     classnames: "npm:^2.3.2"
     copy-webpack-plugin: "npm:^13.0.0"
     css-loader: "npm:^6.7.1"
-    dagre: "npm:^0.8.5"
+    dagre: "npm:0.8.5"
     docker-file-parser: "npm:^1.0.4"
     eslint: "npm:^8.10.0"
     eslint-config-prettier: "npm:^8.5.0"
@@ -11993,10 +12054,10 @@ __metadata:
     eslint-plugin-react: "npm:^7.29.1"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     file-saver: "npm:1.3.x"
-    formik: "npm:^2.1.5"
-    fuzzysearch: "npm:1.0.x"
+    formik: "npm:2.4.6"
+    fuzzysearch: "npm:1.0.3"
     husky: "npm:^9.1.7"
-    i18next-conv: "npm:^15.1.1"
+    i18next-conv: "npm:16.0.0"
     i18next-parser: "npm:^9.3.0"
     jest: "npm:^30.2.0"
     jest-canvas-mock: "npm:^2.5.2"
@@ -12005,31 +12066,31 @@ __metadata:
     jest-junit: "npm:^16.0.0"
     jest-resolve: "npm:^30.2.0"
     js-base64: "npm:^2.5.1"
-    linkify-react: "npm:^4.3.3"
-    linkifyjs: "npm:^4.3.3"
+    linkify-react: "npm:4.3.3"
+    linkifyjs: "npm:4.3.3"
     lint-staged: "npm:^17.0.4"
-    lodash-es: "npm:^4.18.1"
+    lodash-es: "npm:4.18.1"
     micromatch: "npm:4.0.8"
     monaco-editor: "npm:^0.28.1"
     openapi-typescript: "npm:^7.13.0"
     parse-bitbucket-url: "npm:^0.3.0"
     path-browserify: "npm:^1.0.1"
-    pluralize: "npm:^8.0.0"
+    pluralize: "npm:8.0.0"
     popper.js: "npm:^1.16.1"
     prettier: "npm:^2.7.1"
-    react: "npm:^18.3.1"
+    react: "npm:18.3.1"
     react-copy-to-clipboard: "npm:5.x"
     react-dnd: "npm:^11.1.3"
     react-dnd-html5-backend: "npm:^11.1.3"
-    react-dom: "npm:^18.3.1"
-    react-i18next: "npm:~16.5.8"
+    react-dom: "npm:18.3.1"
+    react-i18next: "npm:16.5.8"
     react-measure: "npm:^2.5.2"
     react-monaco-editor: "npm:0.46.x"
-    react-redux: "npm:~9.2.0"
+    react-redux: "npm:9.2.0"
     react-rnd: "npm:^10.3.4"
-    react-router: "npm:~7.13.1"
+    react-router: "npm:7.18.1"
     react-transition-group: "npm:2.3.x"
-    react-virtualized: "npm:9.x"
+    react-virtualized: "npm:9.22.6"
     resolve-url-loader: "npm:5.0.0"
     sass: "npm:^1.90.0"
     sass-loader: "npm:^16.0.5"
@@ -12040,14 +12101,14 @@ __metadata:
     thread-loader: "npm:^3.0.4"
     ts-jest: "npm:^29.3.1"
     ts-loader: "npm:^9.3.1"
-    ts-node: "npm:^10.9.2"
+    ts-node: "npm:10.9.2"
     typescript: "npm:5.9.3"
     url: "npm:^0.11.4"
-    victory: "npm:^37.0.2"
+    victory: "npm:37.3.6"
     webpack: "npm:^5.100.0"
     webpack-cli: "npm:^6.0.1"
     webpack-dev-server: "npm:^5.2.3"
-    yup: "npm:1.6.1"
+    yup: "npm:1.7.1"
   languageName: unknown
   linkType: soft
 
@@ -12470,7 +12531,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.3.1":
+"react-dom@npm:18.3.1":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
   dependencies:
@@ -12522,7 +12583,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-i18next@npm:~16.5.8":
+"react-i18next@npm:16.5.8":
   version: 16.5.8
   resolution: "react-i18next@npm:16.5.8"
   dependencies:
@@ -12614,7 +12675,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-redux@npm:~9.2.0":
+"react-redux@npm:9.2.0":
   version: 9.2.0
   resolution: "react-redux@npm:9.2.0"
   dependencies:
@@ -12647,9 +12708,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router@npm:~7.13.1":
-  version: 7.13.2
-  resolution: "react-router@npm:7.13.2"
+"react-router@npm:7.18.1":
+  version: 7.18.1
+  resolution: "react-router@npm:7.18.1"
   dependencies:
     cookie: "npm:^1.0.1"
     set-cookie-parser: "npm:^2.6.0"
@@ -12659,7 +12720,7 @@ __metadata:
   peerDependenciesMeta:
     react-dom:
       optional: true
-  checksum: 10c0/c7620565df0b444507cfceb76733adbd26e28a72fc4d52d344190bcb2e6483427313a3b6076c53d362e2682ccdb1262731bcaa6c3577cbbeea130291a38715f1
+  checksum: 10c0/1a559de58d656bad5565f2232e4f4fab7e9f5282dfaf95bc24f195a06e7e85b281077fe5c21ed3ff527e3d90d930447e0d0bb0f0713950d2a56ad0f0377a7d09
   languageName: node
   linkType: hard
 
@@ -12677,7 +12738,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-virtualized@npm:9.x, react-virtualized@npm:^9.22.5":
+"react-virtualized@npm:9.22.6, react-virtualized@npm:^9.22.5":
   version: 9.22.6
   resolution: "react-virtualized@npm:9.22.6"
   dependencies:
@@ -12694,7 +12755,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.3.1":
+"react@npm:18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -13304,7 +13365,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:6.x, semver@npm:^6.0.0, semver@npm:^6.3.0, semver@npm:^6.3.1":
+"semver@npm:^6.0.0, semver@npm:^6.3.0, semver@npm:^6.3.1":
   version: 6.3.1
   resolution: "semver@npm:6.3.1"
   bin:
@@ -14412,7 +14473,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:^10.9.2":
+"ts-node@npm:10.9.2":
   version: 10.9.2
   resolution: "ts-node@npm:10.9.2"
   dependencies:
@@ -15323,7 +15384,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"victory@npm:^37.0.2":
+"victory@npm:37.3.6":
   version: 37.3.6
   resolution: "victory@npm:37.3.6"
   dependencies:
@@ -15981,19 +16042,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yup@npm:1.6.1":
-  version: 1.6.1
-  resolution: "yup@npm:1.6.1"
-  dependencies:
-    property-expr: "npm:^2.0.5"
-    tiny-case: "npm:^1.0.3"
-    toposort: "npm:^2.0.2"
-    type-fest: "npm:^2.19.0"
-  checksum: 10c0/84c2b53996e8001041239cf2719851719f67063ec7cd843067df73562353216f5ad4f8a222319696882d5a6058e528fade1e463c59d70cbffb41b99cd0d7571b
-  languageName: node
-  linkType: hard
-
-"yup@npm:^1.7.1":
+"yup@npm:1.7.1, yup@npm:^1.7.1":
   version: 1.7.1
   resolution: "yup@npm:1.7.1"
   dependencies:

@@ -1,6 +1,6 @@
 ## Instructions for large language models and AI coding agents
 
-You are working on an OpenShift dynamic console plugin that adds OpenShift Pipelines UI to the OpenShift Console. It is shipped and enabled by the OpenShift Pipelines operator and targets OpenShift 4.15+.
+You are working on an OpenShift dynamic console plugin that adds OpenShift Pipelines UI to the OpenShift Console. It is shipped and enabled by the OpenShift Pipelines operator and targets OpenShift 5.0+.
 
 ## Tech Stack
 

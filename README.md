@@ -50,6 +50,6 @@ Key development commands:
 
 ## Compatibility
 
-This plugin is shipped with OpenShift Pipelines operator and requires at least OpenShift 4.15+.
+This plugin is shipped with OpenShift Pipelines operator and requires at least OpenShift 5.0+.
 
 See the [OpenShift Pipelines compatibility and support matrix](https://docs.openshift.com/pipelines/latest/about/op-release-notes.html#compatibility-support-matrix_op-release-notes).

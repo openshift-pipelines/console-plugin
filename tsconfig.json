@@ -23,9 +23,7 @@
   },
   "exclude": [
     ".yarn",
-    "**/node_modules",
-    "**/integration-tests",
-    "./integration-tests/cypress.config.ts"
+    "**/node_modules"
   ],
   "include": ["src", "custom.d.ts"]
 }

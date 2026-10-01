@@ -3,11 +3,7 @@ node_modules/
 dist/
 /coverage
 .devcontainer/dev.env
-integration-tests/gui_test_screenshots
-integration-tests/videos
-integration-tests/screenshots
 yarn-error.log
 .DS_Store
 *.pem
-integration-tests/cypress-a11y-report.json
 .yarn/*

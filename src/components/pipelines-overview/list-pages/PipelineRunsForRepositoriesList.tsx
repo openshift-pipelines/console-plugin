@@ -5,8 +5,8 @@ import { useActiveNamespace } from '@openshift-console/dynamic-plugin-sdk';
 import { ConsoleDataView } from '@openshift-console/dynamic-plugin-sdk-internal';
 import {
   SummaryProps,
-  sortByNumbers,
   sortByProperty,
+  sortBySuccessRate,
   sortByTimestamp,
   sortTimeStrings,
 } from '../utils';
@@ -94,7 +94,7 @@ const PipelineRunsForRepositoriesList: FC<
         id: tableColumnInfo[5].id,
         title: t('Success rate'),
         sort: (summary, direction: 'asc' | 'desc') =>
-          sortByNumbers(summary, 'succeeded', direction),
+          sortBySuccessRate(summary, direction),
         props: {
           modifier: 'nowrap',
           info: {

@@ -200,7 +200,7 @@
   "Failure on task {{taskName}} - check logs for details.": "Task {{taskName}} で失敗しました。ログで詳細を確認してください。",
   "File contains non-printable characters. Preview is not available.": "ファイルには出力できない文字が含まれています。プレビューは利用できません。",
   "Filename": "ファイル名",
-  "Filesystem": "ファイルシステム",
+  "Filesystem": "Filesystem",
   "filter applied": "フィルターが適用されました",
   "Filter by data source": "データソースでフィルタリング",
   "Filter by label": "ラベルでフィルター",

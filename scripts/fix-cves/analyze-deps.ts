@@ -312,8 +312,10 @@ function isVersionSatisfiedMulti(
 /**
  * Build resolution entries for all vulnerable installed versions.
  * Groups versions by major and checks ALL copies — not just the first.
- * Generates both scoped ("pkg@^X.0.0") and pinned ("pkg@X.Y.Z") entries
- * to catch both range-based and exact-pinned dependency descriptors.
+ * Generates exact-version pinned entries ("pkg@X.Y.Z") for each vulnerable
+ * version. Also discovers historical version descriptors from existing
+ * resolutions in package.json so that versions remapped by old resolutions
+ * (no longer visible in node_modules) still get entries.
  * Skips majors with no same-major fix (those become triage-needed).
  */
 function buildResolutionEntries(
@@ -322,22 +324,51 @@ function buildResolutionEntries(
   fixedVersions: string[],
 ): Record<string, string> {
   const entries: Record<string, string> = {};
+
+  // Discover historical version descriptors from existing resolutions in
+  // package.json. Versions remapped by old resolutions (e.g. "js-yaml@4.1.0":
+  // "4.3.0") are no longer visible in node_modules; reading them here ensures
+  // they still get resolution entries.
+  const historicalVersions: string[] = [];
+  const pjPath = path.join(process.cwd(), 'package.json');
+  if (fs.existsSync(pjPath)) {
+    try {
+      const pj = JSON.parse(fs.readFileSync(pjPath, 'utf-8'));
+      const resolutions: Record<string, string> = pj.resolutions ?? {};
+      const prefix = `${pkg}@`;
+      for (const key of Object.keys(resolutions)) {
+        if (key.startsWith(prefix)) {
+          const ver = key.slice(prefix.length);
+          if (semver.valid(ver)) {
+            historicalVersions.push(ver);
+          }
+        }
+      }
+    } catch {
+      // ignore parse errors
+    }
+  }
+
+  // Deduplicate the combined version list (installed + historical)
+  const allVersions = [
+    ...new Set([...installedVersions, ...historicalVersions]),
+  ];
+
   const byMajor = new Map<number, string[]>();
-  for (const v of installedVersions) {
+  for (const v of allVersions) {
     const major = semver.major(v);
     if (!byMajor.has(major)) byMajor.set(major, []);
     const bucket = byMajor.get(major);
     if (bucket) bucket.push(v);
   }
 
-  for (const [major, versions] of byMajor) {
+  for (const [, versions] of byMajor) {
     const fix = getFixForVersion(versions[0], fixedVersions);
     if (!fix) continue;
 
     const vulnerable = versions.filter((v) => !isVersionSatisfied(v, fix));
     if (vulnerable.length === 0) continue;
 
-    entries[`${pkg}@^${major}.0.0`] = fix;
     for (const v of vulnerable) {
       entries[`${pkg}@${v}`] = fix;
     }

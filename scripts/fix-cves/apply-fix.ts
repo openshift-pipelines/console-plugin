@@ -7,8 +7,9 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import type { AnalysisResult, FixRunResults, PackageFixResult } from './types';
+import semver from 'semver';
 import { analyzePackage } from './analyze';
+import type { AnalysisResult, FixRunResults, PackageFixResult } from './types';
 import {
   cleanInstall,
   ensureDir,
@@ -73,7 +74,15 @@ function applyResolutions(
 ): string {
   const pjPath = path.join(process.cwd(), 'package.json');
   const pj = JSON.parse(fs.readFileSync(pjPath, 'utf-8'));
-  pj.resolutions = { ...(pj.resolutions ?? {}), ...entries };
+
+  const existing = pj.resolutions ?? {};
+  for (const key of Object.keys(existing)) {
+    if (key.startsWith(`${pkg}@`)) {
+      delete existing[key];
+    }
+  }
+  pj.resolutions = { ...existing, ...entries };
+
   fs.writeFileSync(pjPath, `${JSON.stringify(pj, null, 2)}\n`, 'utf-8');
   runCmdOrThrow('yarn', ['install', '--no-immutable']);
 
@@ -90,6 +99,34 @@ function applyResolutions(
       );
     }
   }
+
+  // Post-install scan: warn if vulnerable copies of the package remain in the
+  // tree. Extract all installed versions from `npm ls` output and flag any
+  // that are below the target (fixed) versions for their major line.
+  const escapedPkg = pkg.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const versionRegex = new RegExp(
+    `${escapedPkg}@(\\d+\\.\\d+\\.\\d+[^\\s]*)`,
+    'g',
+  );
+  let vMatch: RegExpExecArray | null;
+  while ((vMatch = versionRegex.exec(lsOut)) !== null) {
+    const installedVer = vMatch[1];
+    if (!semver.valid(installedVer)) continue;
+    if (targetVersions.has(installedVer)) continue;
+    for (const tv of targetVersions) {
+      if (
+        semver.valid(tv) &&
+        semver.major(installedVer) === semver.major(tv) &&
+        semver.lt(installedVer, tv)
+      ) {
+        warnings.push(
+          `⚠ Vulnerable copy remains: ${pkg}@${installedVer} (expected >= ${tv})`,
+        );
+        break;
+      }
+    }
+  }
+
   if (warnings.length) {
     warnings.forEach((w) => console.warn(w));
   }
@@ -104,18 +141,30 @@ function applyDirectUpgrade(pkg: string, version: string): string {
   return `Ran yarn up ${pkg}@${version}`;
 }
 
-function applyParentUpgrade(suggestions: string[]): string {
-  if (!suggestions.length) {
-    throw new Error('parent-upgrade strategy but no parentUpgradeSuggestions');
-  }
+function applyParentUpgrade(
+  pkg: string, // the vulnerable transitive dep, e.g. "qs"
+  fixedVersions: string[], // e.g. ["6.16.0"]
+  suggestions: string[],
+  resolutionEntries: Record<string, string>,
+): string {
   const target = parseParentUpgradeTarget(suggestions[0]);
-  if (!target) {
-    throw new Error(
-      `Could not parse parent upgrade suggestion: ${suggestions[0]}`,
+  if (!target) throw new Error(`...`);
+
+  runCmdOrThrow('yarn', ['up', `${target.pkg}@${target.version}`]);
+
+  // Re-analyze: did the transitive dep actually move to the fixed version?
+  const recheck = analyzePackage(pkg, fixedVersions);
+  if (recheck.strategy !== 'already-remediated') {
+    console.warn(
+      `⚠ Parent upgrade of ${target.pkg} did not fix ${pkg} — falling back to resolution`,
+    );
+    return applyResolutions(
+      pkg,
+      recheck.resolutionEntries ?? resolutionEntries,
     );
   }
-  runCmdOrThrow('yarn', ['up', `${target.pkg}@${target.version}`]);
-  return `Ran yarn up ${target.pkg}@${target.version} (${suggestions[0]})`;
+
+  return `Ran yarn up ${target.pkg}@${target.version}`;
 }
 
 function applyStrategy(analysis: AnalysisResult): string {
@@ -125,7 +174,12 @@ function applyStrategy(analysis: AnalysisResult): string {
     case 'direct-upgrade':
       return applyDirectUpgrade(analysis.package, analysis.fixedVersion);
     case 'parent-upgrade':
-      return applyParentUpgrade(analysis.parentUpgradeSuggestions);
+      return applyParentUpgrade(
+        analysis.package,
+        [analysis.fixedVersion],
+        analysis.parentUpgradeSuggestions,
+        analysis.resolutionEntries,
+      );
     case 'resolution': {
       const entries = analysis.resolutionEntries;
       if (Object.keys(entries).length === 0) {

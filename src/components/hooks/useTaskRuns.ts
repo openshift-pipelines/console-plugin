@@ -298,7 +298,7 @@ export const useRuns = <Kind extends K8sResourceKind>(
       effectiveLoaded &&
       !effectiveError &&
       prevLength > 0 &&
-      etcdRuns.length < prevLength
+      etcdRuns?.length < prevLength
     ) {
       setTrRefetchKey((k) => k + 1);
     }

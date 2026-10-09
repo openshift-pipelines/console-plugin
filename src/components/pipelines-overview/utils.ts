@@ -220,18 +220,35 @@ export const sortByNumbers = (
   prop: string,
   direction: string,
 ) => {
-  const modifier = direction === 'desc' ? -1 : 1;
-
   return array.slice().sort((a, b) => {
     const valueA = a[prop];
     const valueB = b[prop];
+    const isMissingValueA = valueA == null;
+    const isMissingValueB = valueB == null;
 
-    // If 0 is a valid value, handle it separately
-    if (valueA === 0 || valueB === 0) {
-      return modifier * (valueA - valueB);
+    // Keep rows without a value last in both directions.
+    if (isMissingValueA || isMissingValueB) {
+      if (isMissingValueA && isMissingValueB) {
+        return 0;
+      }
+
+      return isMissingValueA ? 1 : -1;
     }
 
-    return modifier * (valueA || Infinity) - (valueB || Infinity);
+    return direction === 'desc' ? valueB - valueA : valueA - valueB;
+  });
+};
+
+export const getSuccessRate = ({ succeeded = 0, total = 0 }: SummaryProps) =>
+  total > 0 ? Math.round((100 * succeeded) / total) : 0;
+
+export const sortBySuccessRate = (array: SummaryProps[], direction: string) => {
+  return array.slice().sort((a, b) => {
+    const successRateDifference = getSuccessRate(a) - getSuccessRate(b);
+
+    return direction === 'desc'
+      ? -successRateDifference
+      : successRateDifference;
   });
 };
 

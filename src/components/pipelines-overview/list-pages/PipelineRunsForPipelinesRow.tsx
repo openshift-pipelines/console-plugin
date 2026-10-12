@@ -13,6 +13,7 @@ import {
   SummaryProps,
   getReferenceForModel,
   doesNamespaceExists,
+  getSuccessRate,
 } from '../utils';
 import {
   PipelineModel,
@@ -142,7 +143,7 @@ export const getPipelineRunsForPipelinesDataViewRows: GetDataViewRows<
         cell: formatTime(obj.avg_duration),
       },
       [tableColumnInfo[5].id]: {
-        cell: `${Math.round((100 * obj.succeeded) / obj.total)}%`,
+        cell: `${getSuccessRate(obj)}%`,
       },
       [tableColumnInfo[6].id]: {
         cell: !rowData?.hideLastRunTime

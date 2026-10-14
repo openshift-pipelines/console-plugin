@@ -501,3 +501,39 @@ export const GroupModel: K8sKind = {
   crd: true,
   color,
 };
+
+export const MultiKueueClusterModel: K8sKind = {
+  apiGroup: 'kueue.x-k8s.io',
+  apiVersion: 'v1beta2',
+  label: 'MultiKueueCluster',
+  // t('plugin__pipelines-console-plugin~MultiKueueCluster')
+  labelKey: 'MultiKueueCluster',
+  // t('plugin__pipelines-console-plugin~MultiKueueClusters')
+  labelPluralKey: 'MultiKueueClusters',
+  plural: 'multikueueclusters',
+  abbr: 'MKC',
+  namespaced: false,
+  kind: 'MultiKueueCluster',
+  id: 'multikueuecluster',
+  labelPlural: 'MultiKueueClusters',
+  crd: true,
+  color,
+};
+
+export const WorkloadModel: K8sKind = {
+  apiGroup: 'kueue.x-k8s.io',
+  apiVersion: 'v1beta2',
+  label: 'Workload',
+  // t('plugin__pipelines-console-plugin~Workload')
+  labelKey: 'Workload',
+  // t('plugin__pipelines-console-plugin~Workloads')
+  labelPluralKey: 'Workloads',
+  plural: 'workloads',
+  abbr: 'WL',
+  namespaced: true,
+  kind: 'Workload',
+  id: 'workload',
+  labelPlural: 'Workloads',
+  crd: true,
+  color,
+};

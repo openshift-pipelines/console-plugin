@@ -137,7 +137,7 @@ export interface Spec {
   pipeline: Pipeline;
   profile: string;
   pruner: Pruner;
-  scheduler?: Scheduler;
+  kueue?: Kueue;
   targetNamespace: string;
   trigger: Trigger;
 }
@@ -157,7 +157,7 @@ export type TektonConfig = K8sResourceCommon & {
   status: Status;
 };
 
-export interface Scheduler {
+export interface Kueue {
   'multi-cluster-disabled': boolean;
   'multi-cluster-role': string;
 }

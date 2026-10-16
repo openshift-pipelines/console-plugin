@@ -65,6 +65,7 @@ const PipelineRunChildPipelineRunsList: FC<
   return (
     <ListPageBody>
       <DataViewFilterToolbar
+        resourceType="PipelineRun"
         filterValues={filterValues}
         onFilterChange={onFilterChange}
         onClearAll={onClearAll}

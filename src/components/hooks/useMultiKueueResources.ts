@@ -1,7 +1,17 @@
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { useMemo } from 'react';
-import { MultiKueueClusterModel, WorkloadModel } from '../../models';
-import { MultiKueueClusterKind, WorkloadKind } from '../../types';
+import {
+  ClusterQueueModel,
+  LocalQueueModel,
+  MultiKueueClusterModel,
+  WorkloadModel,
+} from '../../models';
+import {
+  ClusterQueueKind,
+  LocalQueueKind,
+  MultiKueueClusterKind,
+  WorkloadKind,
+} from '../../types';
 import { useMultiClusterProxyService } from './useMultiClusterProxyService';
 
 /**
@@ -58,4 +68,50 @@ export const useWorkloads = (
   );
 
   return useK8sWatchResource<WorkloadKind[]>(watchOptions);
+};
+
+export const useClusterQueues = (): [ClusterQueueKind[], boolean, unknown] => {
+  const { isHub } = useMultiClusterProxyService({});
+
+  const watchOptions = useMemo(
+    () =>
+      isHub
+        ? {
+            isList: true,
+            groupVersionKind: {
+              group: ClusterQueueModel.apiGroup,
+              kind: ClusterQueueModel.kind,
+              version: ClusterQueueModel.apiVersion,
+            },
+          }
+        : null,
+    [isHub],
+  );
+
+  return useK8sWatchResource<ClusterQueueKind[]>(watchOptions);
+};
+
+export const useLocalQueues = (
+  namespace: string,
+): [LocalQueueKind[], boolean, unknown] => {
+  const { isHub } = useMultiClusterProxyService({});
+
+  const watchOptions = useMemo(
+    () =>
+      isHub && namespace
+        ? {
+            isList: true,
+            groupVersionKind: {
+              group: LocalQueueModel.apiGroup,
+              kind: LocalQueueModel.kind,
+              version: LocalQueueModel.apiVersion,
+            },
+            ...(namespace !== '-' ? { namespace } : {}),
+            namespaced: true,
+          }
+        : null,
+    [isHub, namespace],
+  );
+
+  return useK8sWatchResource<LocalQueueKind[]>(watchOptions);
 };

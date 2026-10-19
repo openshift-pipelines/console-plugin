@@ -63,3 +63,44 @@ export type WorkloadKind = K8sResourceCommon & {
     conditions?: (Condition & { observedGeneration?: number })[];
   };
 };
+
+export type Resource = {
+  name: string;
+  nominalQuota?: string;
+  total?: string;
+};
+
+export type Flavor = {
+  name: string;
+  resources?: Resource[];
+};
+
+export type ResourceGroup = {
+  coveredResources?: string[];
+  flavors?: Flavor[];
+};
+
+export type ClusterQueueKind = K8sResourceCommon & {
+  spec?: {
+    queueingStrategy: string;
+    resourceGroups?: ResourceGroup[];
+  };
+  status?: {
+    admittedWorkloads?: number;
+    pendingWorkloads?: number;
+    conditions?: (Condition & { observedGeneration?: number })[];
+  };
+};
+
+export type LocalQueueKind = K8sResourceCommon & {
+  spec?: {
+    clusterQueue?: string;
+  };
+  status?: {
+    admittedWorkloads?: number;
+    pendingWorkloads?: number;
+    flavorsReservation?: Flavor[];
+    flavorsUsage?: Flavor[];
+    conditions?: (Condition & { observedGeneration?: number })[];
+  };
+};

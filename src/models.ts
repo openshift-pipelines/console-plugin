@@ -537,3 +537,35 @@ export const WorkloadModel: K8sKind = {
   crd: true,
   color,
 };
+
+export const ClusterQueueModel: K8sKind = {
+  apiGroup: 'kueue.x-k8s.io',
+  apiVersion: 'v1beta2',
+  label: 'ClusterQueue',
+  labelKey: 'ClusterQueue',
+  labelPluralKey: 'ClusterQueues',
+  plural: 'clusterqueues',
+  abbr: 'CQ',
+  namespaced: false,
+  kind: 'ClusterQueue',
+  id: 'clusterqueue',
+  labelPlural: 'ClusterQueues',
+  crd: true,
+  color,
+};
+
+export const LocalQueueModel: K8sKind = {
+  apiGroup: 'kueue.x-k8s.io',
+  apiVersion: 'v1beta2',
+  label: 'LocalQueue',
+  labelKey: 'LocalQueue',
+  labelPluralKey: 'LocalQueues',
+  plural: 'localqueues',
+  abbr: 'LQ',
+  namespaced: true,
+  kind: 'LocalQueue',
+  id: 'localqueue',
+  labelPlural: 'LocalQueues',
+  crd: true,
+  color,
+};

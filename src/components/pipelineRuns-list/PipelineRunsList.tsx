@@ -87,6 +87,7 @@ const PipelineRunsList: FC<PipelineRunsListProps> = ({
     <ListPageBody>
       {!hideTextFilter && (
         <DataViewFilterToolbar
+          resourceType="PipelineRun"
           filterValues={filterValues}
           onFilterChange={onFilterChange}
           onClearAll={onClearAll}

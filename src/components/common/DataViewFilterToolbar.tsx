@@ -21,6 +21,7 @@ import {
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
+import { MultiClusterFilterControl } from './MultiClusterFilterControl';
 import './DataViewFilterToolbar.scss';
 export interface FilterOption {
   value: string;
@@ -53,6 +54,7 @@ interface DataViewFilterToolbarProps {
   hideNameFilter?: boolean;
   hideLabelFilter?: boolean;
   children?: ReactNode;
+  resourceType?: string | null;
 }
 
 interface FilterCategory {
@@ -265,6 +267,7 @@ export const DataViewFilterToolbar: FC<DataViewFilterToolbarProps> = ({
   hideNameFilter = false,
   hideLabelFilter = false,
   children,
+  resourceType,
 }) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
 
@@ -404,7 +407,9 @@ export const DataViewFilterToolbar: FC<DataViewFilterToolbarProps> = ({
     <Toolbar
       clearAllFilters={onClearAll}
       numberOfFiltersText={() =>
-        `${activeFilterCount} ${activeFilterCount === 1 ? t('filter applied') : t('filters applied')}`
+        `${activeFilterCount} ${
+          activeFilterCount === 1 ? t('filter applied') : t('filters applied')
+        }`
       }
       customLabelGroupContent={
         <ToolbarItem>
@@ -517,6 +522,7 @@ export const DataViewFilterToolbar: FC<DataViewFilterToolbarProps> = ({
             })}
           </ToolbarGroup>
         </ToolbarToggleGroup>
+        {resourceType === 'PipelineRun' && <MultiClusterFilterControl />}
         {children && <ToolbarGroup>{children}</ToolbarGroup>}
       </ToolbarContent>
     </Toolbar>

@@ -1,5 +1,6 @@
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { useMemo } from 'react';
+import { WORKLOAD_KUEUE_UID_LABEL } from '../../consts';
 import {
   ClusterQueueModel,
   LocalQueueModel,
@@ -10,6 +11,7 @@ import {
   ClusterQueueKind,
   LocalQueueKind,
   MultiKueueClusterKind,
+  PipelineRunKind,
   WorkloadKind,
 } from '../../types';
 import { useMultiClusterProxyService } from './useMultiClusterProxyService';
@@ -47,25 +49,39 @@ export const useMultiKueueClusters = (): [
  */
 export const useWorkloads = (
   namespace: string,
+  pipelineRun: PipelineRunKind,
 ): [WorkloadKind[], boolean, unknown] => {
   const { isHub } = useMultiClusterProxyService({});
 
-  const watchOptions = useMemo(
-    () =>
-      isHub && namespace && namespace !== '-'
-        ? {
-            isList: true,
-            groupVersionKind: {
-              group: WorkloadModel.apiGroup,
-              kind: WorkloadModel.kind,
-              version: WorkloadModel.apiVersion,
+  const watchOptions = useMemo(() => {
+    const workloadResource = pipelineRun?.metadata?.uid
+      ? {
+          isList: true,
+          groupVersionKind: {
+            group: WorkloadModel.apiGroup,
+            kind: WorkloadModel.kind,
+            version: WorkloadModel.apiVersion,
+          },
+          ...(namespace !== '-' ? { namespace } : {}),
+          namespaced: true,
+          selector: {
+            matchLabels: {
+              [WORKLOAD_KUEUE_UID_LABEL]: pipelineRun?.metadata?.uid,
             },
-            namespace,
-            namespaced: true,
-          }
-        : null,
-    [isHub, namespace],
-  );
+          },
+        }
+      : {
+          isList: true,
+          groupVersionKind: {
+            group: WorkloadModel.apiGroup,
+            kind: WorkloadModel.kind,
+            version: WorkloadModel.apiVersion,
+          },
+          ...(namespace !== '-' ? { namespace } : {}),
+          namespaced: true,
+        };
+    return isHub ? workloadResource : null;
+  }, [isHub, namespace, pipelineRun?.metadata?.uid]);
 
   return useK8sWatchResource<WorkloadKind[]>(watchOptions);
 };

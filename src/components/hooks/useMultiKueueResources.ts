@@ -1,4 +1,7 @@
-import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  getGroupVersionKindForModel,
+  useK8sWatchResource,
+} from '@openshift-console/dynamic-plugin-sdk';
 import { useMemo } from 'react';
 import { WORKLOAD_KUEUE_UID_LABEL } from '../../consts';
 import {
@@ -42,6 +45,19 @@ export const useMultiKueueClusters = (): [
   );
 
   return useK8sWatchResource<MultiKueueClusterKind[]>(watchOptions);
+};
+
+export const useGetMultiKueueCluster = (
+  clusterName: string,
+): [MultiKueueClusterKind, boolean, unknown] => {
+  return useK8sWatchResource<MultiKueueClusterKind>(
+    clusterName
+      ? {
+          groupVersionKind: getGroupVersionKindForModel(MultiKueueClusterModel),
+          name: clusterName,
+        }
+      : null,
+  );
 };
 
 /**
@@ -107,6 +123,19 @@ export const useClusterQueues = (): [ClusterQueueKind[], boolean, unknown] => {
   return useK8sWatchResource<ClusterQueueKind[]>(watchOptions);
 };
 
+export const useGetClusterQueue = (
+  clusterQueueName: string,
+): [ClusterQueueKind, boolean, unknown] => {
+  return useK8sWatchResource<ClusterQueueKind>(
+    clusterQueueName
+      ? {
+          groupVersionKind: getGroupVersionKindForModel(ClusterQueueModel),
+          name: clusterQueueName,
+        }
+      : null,
+  );
+};
+
 export const useLocalQueues = (
   namespace: string,
 ): [LocalQueueKind[], boolean, unknown] => {
@@ -131,3 +160,8 @@ export const useLocalQueues = (
 
   return useK8sWatchResource<LocalQueueKind[]>(watchOptions);
 };
+
+export const isClusterConnected = (cluster: MultiKueueClusterKind): boolean =>
+  cluster?.status?.conditions?.some(
+    (c) => c.type === 'Active' && c.status === 'True',
+  ) ?? false;

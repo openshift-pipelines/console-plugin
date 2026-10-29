@@ -15,13 +15,10 @@ import {
 } from '@patternfly/react-core';
 import { CircleIcon } from '@patternfly/react-icons';
 import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
-import { useMultiKueueClusters } from '../hooks/useMultiKueueResources';
-import { MultiKueueClusterKind } from '../../types';
-
-const isClusterConnected = (cluster: MultiKueueClusterKind): boolean =>
-  cluster.status?.conditions?.some(
-    (c) => c.type === 'Active' && c.status === 'True',
-  ) ?? false;
+import {
+  isClusterConnected,
+  useMultiKueueClusters,
+} from '../hooks/useMultiKueueResources';
 
 export const MultiClusterFilterControl: FC = () => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');

@@ -29,6 +29,7 @@ describe('useResourceFlavors', () => {
     mockGet.mockReturnValue([undefined, false, undefined]);
     const { result, rerender } = renderHook(useResourceFlavors);
     expect(mockWatch).toHaveBeenLastCalledWith(null);
+    expect(result.current[1]).toBe(false);
 
     mockGet.mockReturnValue([hubConfig, true, undefined]);
     rerender();

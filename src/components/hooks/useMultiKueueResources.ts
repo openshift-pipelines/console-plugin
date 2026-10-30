@@ -144,7 +144,7 @@ export const useResourceFlavors = (): [
   boolean,
   unknown,
 ] => {
-  const { isHub } = useMultiClusterProxyService({});
+  const { isHub, isConfigLoaded } = useMultiClusterProxyService({});
 
   const watchOptions = useMemo(
     () =>
@@ -161,7 +161,9 @@ export const useResourceFlavors = (): [
     [isHub],
   );
 
-  return useK8sWatchResource<ResourceFlavorKind[]>(watchOptions);
+  const result = useK8sWatchResource<ResourceFlavorKind[]>(watchOptions);
+  if (isConfigLoaded) return result;
+  return [result[0], false, result[2]];
 };
 
 export const useLocalQueues = (

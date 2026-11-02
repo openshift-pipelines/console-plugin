@@ -5,6 +5,7 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
+import type { ChangeEvent } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { useResourceFlavors } from '../../hooks/useMultiKueueResources';
 import ClusterQueueCreatePage from '../ClusterQueueCreatePage';
@@ -19,19 +20,46 @@ jest.mock('../../hooks/useMultiKueueResources', () => ({
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => ({
   DocumentTitle: () => null,
   RedExclamationCircleIcon: () => null,
+  k8sCreate: jest.fn(),
 }));
 jest.mock('../../hooks/useScrollShadows', () => ({
   useScrollShadows: () => 'none',
   Shadows: {},
 }));
+jest.mock('../../pipeline-builder/CodeEditorField', () => {
+  const React = jest.requireActual<typeof import('react')>('react');
+  const { useFormikContext } =
+    jest.requireActual<typeof import('formik')>('formik');
+  const MockYAMLEditor = ({ name }: { name: string }) => {
+    const { values, setFieldValue } =
+      useFormikContext<Record<string, string>>();
+    return React.createElement('textarea', {
+      'aria-label': 'YAML editor',
+      value: values[name],
+      onChange: (event: ChangeEvent<HTMLTextAreaElement>) =>
+        setFieldValue(name, event.target.value),
+    });
+  };
+  return {
+    __esModule: true,
+    default: MockYAMLEditor,
+  };
+});
 
 const mockFlavors = useResourceFlavors as jest.Mock;
+const { k8sCreate: mockK8sCreate } = jest.requireMock(
+  '@openshift-console/dynamic-plugin-sdk',
+);
 const renderPage = (from?: string) =>
   render(
     <MemoryRouter initialEntries={[{ pathname: '/create', state: { from } }]}>
       <Routes>
         <Route path="/create" element={<ClusterQueueCreatePage />} />
         <Route path="/pipelines/*" element={<p>Pipelines destination</p>} />
+        <Route
+          path="/k8s/cluster/:reference/:name"
+          element={<p>ClusterQueue details</p>}
+        />
       </Routes>
     </MemoryRouter>,
   );
@@ -44,6 +72,8 @@ const selectOption = async (label: string, option: string) => {
 };
 
 beforeEach(() => {
+  mockK8sCreate.mockReset();
+  mockK8sCreate.mockResolvedValue({});
   mockFlavors.mockReturnValue([
     [
       {
@@ -56,16 +86,18 @@ beforeEach(() => {
   ]);
 });
 
-it('edits the form and adds/removes quota rows without submitting a resource', async () => {
+it('edits the form and adds/removes quota rows', async () => {
   renderPage();
   expect(
     screen.getByRole('heading', { name: 'Create ClusterQueue' }),
   ).toBeDefined();
   expect(screen.queryByLabelText(/Namespace/)).toBeNull();
-  expect(
-    (screen.getByRole('button', { name: 'Create' }) as HTMLButtonElement)
-      .disabled,
-  ).toBe(true);
+  await waitFor(() =>
+    expect(
+      (screen.getByRole('button', { name: 'Create' }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(true),
+  );
   expect(screen.getByLabelText(/^CPU/).textContent).toBe('4 cores');
   expect(screen.getByLabelText(/^Memory/).textContent).toBe('8Gi');
 
@@ -99,12 +131,188 @@ it('edits the form and adds/removes quota rows without submitting a resource', a
     (screen.getByRole('radio', { name: /Strict FIFO/ }) as HTMLInputElement)
       .checked,
   ).toBe(true);
+  expect(
+    (screen.getByRole('button', { name: 'Create' }) as HTMLButtonElement)
+      .disabled,
+  ).toBe(false);
+});
+
+it('creates a ClusterQueue and opens its details page', async () => {
+  renderPage();
+  fireEvent.change(screen.getByLabelText(/^Name/), {
+    target: { value: 'fleet-cq' },
+  });
+  await selectOption('Resource flavor', 'default-flavor');
+  await waitFor(() =>
+    expect(
+      (screen.getByRole('button', { name: 'Create' }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(false),
+  );
+
+  fireEvent.click(screen.getByRole('button', { name: 'Create' }));
+
+  await waitFor(() =>
+    expect(mockK8sCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          metadata: expect.objectContaining({ name: 'fleet-cq' }),
+        }),
+      }),
+    ),
+  );
+  expect(await screen.findByText('ClusterQueue details')).toBeDefined();
+});
+
+it('creates a quota-less ClusterQueue from valid YAML', async () => {
+  renderPage();
+  fireEvent.click(screen.getByRole('radio', { name: 'YAML view' }));
+  const yamlEditor = await screen.findByLabelText('YAML editor');
+  fireEvent.change(yamlEditor, {
+    target: {
+      value: `apiVersion: kueue.x-k8s.io/v1beta2
+kind: ClusterQueue
+metadata:
+  name: quota-less-cq
+spec:
+  namespaceSelector: {}`,
+    },
+  });
+
+  await waitFor(() =>
+    expect(
+      (screen.getByRole('button', { name: 'Create' }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(false),
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Create' }));
+
+  await waitFor(() =>
+    expect(mockK8sCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          metadata: { name: 'quota-less-cq' },
+          spec: { namespaceSelector: {} },
+        }),
+      }),
+    ),
+  );
+});
+
+it('keeps Create disabled for YAML without a name', async () => {
+  renderPage();
+  fireEvent.click(screen.getByRole('radio', { name: 'YAML view' }));
+
+  await screen.findByLabelText('YAML editor');
+  expect(
+    (screen.getByRole('button', { name: 'Create' }) as HTMLButtonElement)
+      .disabled,
+  ).toBe(true);
+});
+
+it('requires a quota after switching quota-less YAML to Form view', async () => {
+  renderPage();
+  fireEvent.click(screen.getByRole('radio', { name: 'YAML view' }));
+  const yamlEditor = await screen.findByLabelText('YAML editor');
+  fireEvent.change(yamlEditor, {
+    target: {
+      value: `apiVersion: kueue.x-k8s.io/v1beta2
+kind: ClusterQueue
+metadata:
+  name: quota-less-cq
+spec:
+  namespaceSelector: {}`,
+    },
+  });
+
+  await waitFor(() =>
+    expect(
+      (screen.getByRole('button', { name: 'Create' }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(false),
+  );
+  fireEvent.click(screen.getByRole('radio', { name: 'Form view' }));
+
+  await waitFor(() =>
+    expect(
+      (screen.getByRole('button', { name: 'Create' }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(true),
+  );
+});
+
+it('shows a create API error', async () => {
+  mockK8sCreate.mockRejectedValueOnce(new Error('Forbidden'));
+  renderPage();
+  fireEvent.change(screen.getByLabelText(/^Name/), {
+    target: { value: 'fleet-cq' },
+  });
+  await selectOption('Resource flavor', 'default-flavor');
+  await waitFor(() =>
+    expect(
+      (screen.getByRole('button', { name: 'Create' }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(false),
+  );
+
+  fireEvent.click(screen.getByRole('button', { name: 'Create' }));
+  expect(await screen.findByText('Forbidden')).toBeDefined();
 });
 
 it('shows validation feedback when a required name is left empty', async () => {
   renderPage();
   fireEvent.blur(screen.getByLabelText(/^Name/));
   expect(await screen.findByText(/Required$/)).toBeDefined();
+});
+
+it('keeps the form and YAML views in sync', async () => {
+  renderPage();
+  fireEvent.change(screen.getByLabelText(/^Name/), {
+    target: { value: 'form-cq' },
+  });
+  fireEvent.click(screen.getByRole('radio', { name: 'YAML view' }));
+
+  const yamlEditor = await screen.findByLabelText('YAML editor');
+  expect((yamlEditor as HTMLTextAreaElement).value).toContain('name: form-cq');
+
+  fireEvent.change(yamlEditor, {
+    target: {
+      value: (yamlEditor as HTMLTextAreaElement).value.replace(
+        'name: form-cq',
+        'name: yaml-cq',
+      ),
+    },
+  });
+  fireEvent.click(screen.getByRole('radio', { name: 'Form view' }));
+
+  await waitFor(() =>
+    expect((screen.getByLabelText(/^Name/) as HTMLInputElement).value).toBe(
+      'yaml-cq',
+    ),
+  );
+});
+
+it('keeps invalid YAML open until it is fixed', async () => {
+  renderPage();
+  fireEvent.click(screen.getByRole('radio', { name: 'YAML view' }));
+  const yamlEditor = await screen.findByLabelText('YAML editor');
+  const validYAML = (yamlEditor as HTMLTextAreaElement).value;
+  fireEvent.change(yamlEditor, {
+    target: { value: 'apiVersion: [' },
+  });
+  fireEvent.click(screen.getByRole('radio', { name: 'Form view' }));
+
+  expect(
+    await screen.findByText('Fix the YAML before switching to Form view.'),
+  ).toBeDefined();
+  expect(screen.getByLabelText('YAML editor')).toBeDefined();
+
+  fireEvent.change(yamlEditor, { target: { value: validYAML } });
+  await waitFor(() =>
+    expect(
+      screen.queryByText('Fix the YAML before switching to Form view.'),
+    ).toBeNull(),
+  );
 });
 
 it.each([

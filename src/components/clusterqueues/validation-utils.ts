@@ -9,6 +9,31 @@ const resourceNamePattern =
 const quantityPattern =
   /^\+?(?:\d+(?:\.\d*)?|\.\d+)(?:[numkMGTPE]|[KMGTPE]i|[eE][+-]?\d+)?$/;
 
+const clusterQueueFieldNameSchema = (t: TFunction) =>
+  yup
+    .string()
+    .strict()
+    .matches(resourceNamePattern, {
+      message: t(
+        'plugin__pipelines-console-plugin~Use lowercase letters, numbers, hyphens or dots. Each dot-separated part must start and end with a letter or number.',
+      ),
+      excludeEmptyString: true,
+    })
+    .max(
+      253,
+      t(
+        'plugin__pipelines-console-plugin~Cannot be longer than {{characterCount}} characters.',
+        {
+          characterCount: 253,
+        },
+      ),
+    );
+
+export const clusterQueueNameSchema = (t: TFunction) =>
+  clusterQueueFieldNameSchema(t).required(
+    t('plugin__pipelines-console-plugin~Required'),
+  );
+
 // Other layouts remain in the source resource and are edited through YAML.
 export const canEditClusterQueueQuotas = (
   resource: ClusterQueueKind,
@@ -46,24 +71,7 @@ export const canEditClusterQueueQuotas = (
 
 export const clusterQueueFormSchema = (t: TFunction) => {
   const required = t('plugin__pipelines-console-plugin~Required');
-  const name = yup
-    .string()
-    .strict()
-    .matches(resourceNamePattern, {
-      message: t(
-        'plugin__pipelines-console-plugin~Use lowercase letters, numbers, hyphens or dots. Each dot-separated part must start and end with a letter or number.',
-      ),
-      excludeEmptyString: true,
-    })
-    .max(
-      253,
-      t(
-        'plugin__pipelines-console-plugin~Cannot be longer than {{characterCount}} characters.',
-        {
-          characterCount: 253,
-        },
-      ),
-    );
+  const name = clusterQueueFieldNameSchema(t);
   const quantityMessage = t(
     'plugin__pipelines-console-plugin~Enter a non-negative Kubernetes quantity.',
   );
@@ -77,13 +85,13 @@ export const clusterQueueFormSchema = (t: TFunction) => {
     })
     .required(required);
   const flavor = yup.object({
-    name: name.required(required),
+    name: clusterQueueNameSchema(t),
     cpu: quantity,
     memory: quantity,
   });
 
   return yup.object({
-    name: name.required(required),
+    name: clusterQueueNameSchema(t),
     cohort: name,
     queueingStrategy: yup
       .string()

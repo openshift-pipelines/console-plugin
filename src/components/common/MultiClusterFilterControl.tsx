@@ -2,33 +2,39 @@ import type { FC } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Dropdown,
-  DropdownItem,
-  DropdownList,
+  Alert,
+  Button,
   Flex,
   FlexItem,
   MenuToggle,
   MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
   Spinner,
   ToolbarItem,
   Tooltip,
 } from '@patternfly/react-core';
-import { CircleIcon } from '@patternfly/react-icons';
+import { CircleIcon, TimesIcon } from '@patternfly/react-icons';
 import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 import {
   isClusterConnected,
   useMultiKueueClusters,
 } from '../hooks/useMultiKueueResources';
 
-export const MultiClusterFilterControl: FC = () => {
+export type MultiClusterFilterControlProps = {
+  selected: string;
+  onSelect: (cluster: string) => void;
+};
+
+export const MultiClusterFilterControl: FC<MultiClusterFilterControlProps> = ({
+  selected,
+  onSelect,
+}) => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { isHub } = useMultiClusterProxyService({});
-  const [clusters, loaded] = useMultiKueueClusters();
+  const [clusters, loaded, clustersError] = useMultiKueueClusters();
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<string>('');
-
-  const toggleOpen = useCallback(() => setIsOpen((v) => !v), []);
-  const close = useCallback(() => setIsOpen(false), []);
 
   const clusterItems = useMemo(
     () =>
@@ -39,8 +45,29 @@ export const MultiClusterFilterControl: FC = () => {
     [clusters],
   );
 
+  const handleSelect = useCallback(
+    (name: string) => {
+      onSelect(name);
+      setIsOpen(false);
+    },
+    [onSelect],
+  );
+
   if (!isHub) {
     return null;
+  }
+
+  if (clustersError) {
+    return (
+      <ToolbarItem>
+        <Alert
+          variant="danger"
+          isInline
+          isPlain
+          title={t('Unable to load target cluster information')}
+        />
+      </ToolbarItem>
+    );
   }
 
   const isLoading = !loaded;
@@ -62,14 +89,15 @@ export const MultiClusterFilterControl: FC = () => {
             trigger={isDisabled ? 'mouseenter focus' : ''}
           >
             <span>
-              <Dropdown
+              <Select
                 isOpen={isOpen && !isDisabled && !isLoading}
-                onOpenChange={(v) => setIsOpen(v)}
-                onSelect={close}
+                onOpenChange={(v) => !v && setIsOpen(false)}
+                onSelect={(_e, value) => handleSelect(value as string)}
+                selected={selected || undefined}
                 toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
                   <MenuToggle
                     ref={toggleRef}
-                    onClick={toggleOpen}
+                    onClick={() => setIsOpen((v) => !v)}
                     isExpanded={isOpen}
                     isDisabled={isDisabled || isLoading}
                     icon={
@@ -79,23 +107,29 @@ export const MultiClusterFilterControl: FC = () => {
                     }
                   >
                     {label}
+                    {selected && (
+                      <Button
+                        variant="plain"
+                        aria-label={t('Clear cluster filter')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelect('');
+                        }}
+                        className="pipelines-console-plugin-clear-filter pf-v6-u-p-0"
+                      >
+                        <TimesIcon className="pf-v6-u-p-0 pf-v6-u-m-0" />
+                      </Button>
+                    )}
                   </MenuToggle>
                 )}
                 isScrollable
               >
-                <DropdownList>
-                  <DropdownItem
-                    component="button"
-                    key="__all__"
-                    onClick={() => setSelected('')}
-                  >
-                    {t('All Clusters')}
-                  </DropdownItem>
+                <SelectList>
+                  <SelectOption value="">{t('All Clusters')}</SelectOption>
                   {clusterItems.map((item) => (
-                    <DropdownItem
-                      component="button"
+                    <SelectOption
                       key={item.name}
-                      onClick={() => setSelected(item.name)}
+                      value={item.name}
                       icon={
                         <CircleIcon
                           color={
@@ -107,13 +141,14 @@ export const MultiClusterFilterControl: FC = () => {
                       }
                     >
                       {item.name}
-                    </DropdownItem>
+                    </SelectOption>
                   ))}
-                </DropdownList>
-              </Dropdown>
+                </SelectList>
+              </Select>
             </span>
           </Tooltip>
         </FlexItem>
+        {/* Status legend */}
         <FlexItem>
           <Flex
             spaceItems={{ default: 'spaceItemsMd' }}

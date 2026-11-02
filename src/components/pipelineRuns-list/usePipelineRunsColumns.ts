@@ -7,37 +7,55 @@ import {
   RepositoryFields,
   RepositoryLabels,
 } from '../../consts';
-import { PipelineRunKind } from '../../types';
+import { PipelineRunKind, WorkloadKind } from '../../types';
+import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 import {
   sortPipelineAndTaskRunsByDuration,
   sortRunsByComputedStatus,
 } from '../pipelines-details/pipeline-step-utils';
 import { pipelineRunFilterReducer } from '../utils/pipeline-filter-reducer';
+import { getClusterNameForPipelineRun } from './PipelineRunsRow';
 
 export const tableColumnInfo = [
-  {id: 'name', classNames: 'pf-v6-m-width-20'},
-  {id: 'commit-id', classNames: 'pf-v6-m-hidden pf-m-visible-on-sm pf-m-width-10'},
-  {id: 'namespace', classNames: ''}, 
-  {id: 'vulnerabilities', classNames: 'pf-v6-m-hidden pf-m-visible-on-md'},
-  {id: 'status', classNames: 'pf-v6-m-hidden pf-m-visible-on-sm pf-m-width-10'},
-  {id: 'task-status', classNames: 'pf-v6-m-hidden pf-m-visible-on-lg'},
-  {id: 'started', classNames: 'pf-v6-m-hidden pf-m-visible-on-lg'},
-  {id: 'duration', classNames: 'pf-v6-m-hidden pf-m-visible-on-xl'},
-  {id: 'branch-tag', classNames: 'pf-v6-m-hidden pf-m-visible-on-xl pf-m-width-5'},
-  {id: 'action', classNames: 'dropdown-kebab-pf pf-v6-c-table__action'}
+  { id: 'name', classNames: 'pf-v6-m-width-20' },
+  {
+    id: 'commit-id',
+    classNames: 'pf-v6-m-hidden pf-m-visible-on-sm pf-m-width-10',
+  },
+  { id: 'namespace', classNames: '' },
+  { id: 'vulnerabilities', classNames: 'pf-v6-m-hidden pf-m-visible-on-md' },
+  {
+    id: 'status',
+    classNames: 'pf-v6-m-hidden pf-m-visible-on-sm pf-m-width-10',
+  },
+  { id: 'task-status', classNames: 'pf-v6-m-hidden pf-m-visible-on-lg' },
+  { id: 'started', classNames: 'pf-v6-m-hidden pf-m-visible-on-lg' },
+  { id: 'duration', classNames: 'pf-v6-m-hidden pf-m-visible-on-xl' },
+  {
+    id: 'branch-tag',
+    classNames: 'pf-v6-m-hidden pf-m-visible-on-xl pf-m-width-5',
+  },
+  { id: 'spoke-cluster', classNames: 'pf-v6-m-hidden pf-m-visible-on-lg' },
+  { id: 'action', classNames: 'dropdown-kebab-pf pf-v6-c-table__action' },
 ];
 
 const usePipelineRunsColumns = (
   namespace: string,
   repositoryPLRs?: boolean,
+  workloads?: WorkloadKind[],
 ): TableColumn<PipelineRunKind>[] => {
   const { t } = useTranslation('plugin__pipelines-console-plugin');
+  const { isHub } = useMultiClusterProxyService({});
   const columns = [
     {
       id: tableColumnInfo[0].id,
       title: t('Name'),
       sort: 'metadata.name',
-      props: { className: tableColumnInfo[0].classNames, modifier: 'nowrap' },
+      props: {
+        className: tableColumnInfo[0].classNames,
+        modifier: 'nowrap',
+        isStickyColumn: true,
+      },
     },
     ...(repositoryPLRs
       ? [
@@ -45,7 +63,10 @@ const usePipelineRunsColumns = (
             id: tableColumnInfo[1].id,
             title: t('Commit id'),
             sort: `metadata.labels.${RepositoryLabels[RepositoryFields.SHA]}`,
-            props: { className: tableColumnInfo[1].classNames, modifier: 'nowrap' },
+            props: {
+              className: tableColumnInfo[1].classNames,
+              modifier: 'nowrap',
+            },
           },
         ]
       : []),
@@ -55,7 +76,10 @@ const usePipelineRunsColumns = (
             id: tableColumnInfo[2].id,
             title: t('Namespace'),
             sort: 'metadata.namespace',
-            props: { className: tableColumnInfo[2].classNames, modifier: 'nowrap' },
+            props: {
+              className: tableColumnInfo[2].classNames,
+              modifier: 'nowrap',
+            },
           },
         ]
       : []),
@@ -97,14 +121,44 @@ const usePipelineRunsColumns = (
             sort: `metadata.annotations.${
               RepositoryAnnotations[RepoAnnotationFields.BRANCH]
             }`,
-            props: { className: tableColumnInfo[8].classNames, modifier: 'nowrap' },
+            props: {
+              className: tableColumnInfo[8].classNames,
+              modifier: 'nowrap',
+            },
+          },
+        ]
+      : []),
+    ...(isHub
+      ? [
+          {
+            id: tableColumnInfo[9].id,
+            title: t('Cluster'),
+            sort: (data: PipelineRunKind[], direction: SortByDirection) =>
+              [...data].sort((a, b) => {
+                const aCluster = getClusterNameForPipelineRun(
+                  a,
+                  workloads ?? [],
+                );
+                const bCluster = getClusterNameForPipelineRun(
+                  b,
+                  workloads ?? [],
+                );
+                const comparison = aCluster.localeCompare(bCluster);
+                return direction === SortByDirection.asc
+                  ? comparison
+                  : -comparison;
+              }),
+            props: {
+              className: tableColumnInfo[9].classNames,
+              modifier: 'nowrap',
+            },
           },
         ]
       : []),
     {
-      id: tableColumnInfo[9].id,
+      id: tableColumnInfo[10].id,
       title: '',
-      props: { className: tableColumnInfo[9].classNames },
+      props: { className: tableColumnInfo[10].classNames },
     },
   ];
   return columns;

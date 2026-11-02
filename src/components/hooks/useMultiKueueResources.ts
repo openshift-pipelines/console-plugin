@@ -64,12 +64,13 @@ export const useGetMultiKueueCluster = (
  * Watch Workloads in a namespace. Gated to hub clusters via TektonConfig.
  */
 export const useWorkloads = (
-  namespace: string,
-  pipelineRun: PipelineRunKind,
+  namespace?: string,
+  pipelineRun?: PipelineRunKind,
 ): [WorkloadKind[], boolean, unknown] => {
   const { isHub } = useMultiClusterProxyService({});
 
   const watchOptions = useMemo(() => {
+    if (!isHub || !namespace) return null;
     const workloadResource = pipelineRun?.metadata?.uid
       ? {
           isList: true,
@@ -96,7 +97,7 @@ export const useWorkloads = (
           ...(namespace !== '-' ? { namespace } : {}),
           namespaced: true,
         };
-    return isHub ? workloadResource : null;
+    return workloadResource;
   }, [isHub, namespace, pipelineRun?.metadata?.uid]);
 
   return useK8sWatchResource<WorkloadKind[]>(watchOptions);

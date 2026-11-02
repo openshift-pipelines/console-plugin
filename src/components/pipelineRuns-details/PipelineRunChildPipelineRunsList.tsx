@@ -38,7 +38,6 @@ const PipelineRunChildPipelineRunsList: FC<
     { depth: 1 },
   );
   const currentUser = useGetActiveUser();
-  const columns = usePipelineRunsColumns(namespace);
 
   const {
     filterValues,
@@ -46,13 +45,19 @@ const PipelineRunChildPipelineRunsList: FC<
     onClearAll,
     filteredData,
     updatedCheckboxFilters,
+    selectedCluster,
+    onSelectCluster,
+    workloads,
   } = useDataViewFilter<PipelineRunKind>({
     data: childPipelineRuns || [],
     options: {
       resourceType: 'PipelineRun',
       defaultDataSourceValues: ['cluster-data'],
+      namespace,
     },
   });
+  // undefined is passsed due to RepositoryPLRs not being applicable for child pipeline runs
+  const columns = usePipelineRunsColumns(namespace, undefined, workloads);
 
   if (!childPipelineRunRefs?.length) {
     return (
@@ -70,6 +75,10 @@ const PipelineRunChildPipelineRunsList: FC<
         onFilterChange={onFilterChange}
         onClearAll={onClearAll}
         checkboxFilters={updatedCheckboxFilters}
+        clusterFilter={{
+          selected: selectedCluster,
+          onSelect: onSelectCluster,
+        }}
       />
       <ConsoleDataView<PipelineRunKind>
         label={t('PipelineRuns')}
@@ -77,7 +86,7 @@ const PipelineRunChildPipelineRunsList: FC<
         data={filteredData}
         loaded={allLoaded}
         getDataViewRows={getPipelineRunsListDataViewRows}
-        customRowData={{ currentUser }}
+        customRowData={{ currentUser, workloads }}
         hideColumnManagement
         hideNameLabelFilters
       />

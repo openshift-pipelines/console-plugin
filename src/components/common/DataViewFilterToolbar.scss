@@ -15,3 +15,9 @@
   width: 100%;
   z-index: var(--pf-t--global--z-index--sm);
 }
+
+.pipelines-console-plugin-clear-filter.pf-v6-c-button {
+  --pf-v6-c-button--hover--BackgroundColor: transparent;
+  --pf-v6-c-button--active--BackgroundColor: transparent;
+  --pf-v6-c-button--focus--BackgroundColor: transparent;
+}

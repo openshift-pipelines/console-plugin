@@ -220,4 +220,25 @@ describe('useWorkloads', () => {
 
     expect(useK8sWatchResourceMock).toHaveBeenCalledWith(null);
   });
+
+  it('should skip the watch when namespace is missing', () => {
+    testHook(() => useWorkloads(undefined));
+
+    expect(useK8sWatchResourceMock).toHaveBeenCalledWith(null);
+  });
+
+  it('should watch all workloads in a namespace when no PipelineRun is given', () => {
+    testHook(() => useWorkloads('test-ns'));
+
+    expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
+      isList: true,
+      groupVersionKind: {
+        group: WorkloadModel.apiGroup,
+        kind: WorkloadModel.kind,
+        version: WorkloadModel.apiVersion,
+      },
+      namespace: 'test-ns',
+      namespaced: true,
+    });
+  });
 });

@@ -201,7 +201,7 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
   const isPipelineRunType = resourceType === 'PipelineRun';
   const [selectedCluster, setSelectedCluster] = useState('');
   const [workloads, workloadsLoaded] = useWorkloads(
-    isPipelineRunType ? namespace : undefined,
+    isPipelineRunType ? namespace || '-' : undefined,
   );
 
   const checkboxFilters = useMemo<CheckboxFilterConfig[]>(() => {

@@ -106,6 +106,7 @@ export const augmentRunsToData = (
   return pipelines.map((pipeline) => {
     const prsForPipeline = pipelineruns.filter(
       (pr) =>
+        pr.metadata.namespace === pipeline.metadata.namespace &&
         pr.metadata.labels?.['tekton.dev/pipeline'] === pipeline.metadata.name,
     );
     pipeline.latestRun = getLatestRun(prsForPipeline, 'creationTimestamp');

@@ -55,7 +55,8 @@ const ApprovalTasksList: FC<ApprovalTasksListProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const { ns, name: pipelineRunName } = useParams();
   namespace = namespace || ns;
-  const [pipelineRuns, k8sLoaded, trLoaded] = usePipelineRuns(namespace);
+  const [pipelineRuns, k8sLoaded, trLoaded, pipelineRunsLoadError] =
+    usePipelineRuns(namespace);
   const pipelineRunsLoaded = k8sLoaded && trLoaded;
   const [approvalTasks, approvalTasksLoaded, approvalTasksLoadError] =
     useApprovalTasks(namespace, pipelineRunName);
@@ -92,7 +93,7 @@ const ApprovalTasksList: FC<ApprovalTasksListProps> = ({
           columns={columns}
           data={filteredData}
           loaded={approvalTasksLoaded && pipelineRunsLoaded}
-          loadError={approvalTasksLoadError}
+          loadError={approvalTasksLoadError || pipelineRunsLoadError}
           getDataViewRows={getApprovalListPageDataViewRows}
           customRowData={{
             pipelineRuns: pipelineRunsLoaded ? pipelineRuns : [],

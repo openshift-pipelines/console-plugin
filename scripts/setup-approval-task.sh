@@ -26,7 +26,42 @@ USERS=(
   "tester5:TestABC579"
   "tester6:TestABC579"
 )
-CLUSTER_API="https://api.chat-bot-u89nz-hq4jr8.crt-mce-aws.devcluster.openshift.com:6443"
+CLUSTER_API="https://api.chat-bot-y24oz-gfsp2o.crt-mce-aws.devcluster.openshift.com:6443"
+
+
+echo "[INFO] === STEP 0: Install ManualApprovalGate ==="
+
+MANUAL_APPROVAL_GATE_CR_URL="https://raw.githubusercontent.com/tektoncd/operator/refs/heads/main/config/crs/openshift/manualapprovalgate/operator_v1alpha1_manualapprovalgate_cr.yaml"
+
+echo "[INFO] Applying ManualApprovalGate CR..."
+oc apply -f "$MANUAL_APPROVAL_GATE_CR_URL"
+
+echo "[INFO] Waiting for ManualApprovalGate to become Ready..."
+
+TIMEOUT=300
+INTERVAL=5
+ELAPSED=0
+
+while true; do
+  READY=$(oc get manualapprovalgate -A \
+    -o jsonpath='{.items[0].status.ready}' 2>/dev/null || true)
+
+  if [[ "$READY" == "True" || "$READY" == "true" ]]; then
+    echo "[SUCCESS] ManualApprovalGate is Ready."
+    break
+  fi
+
+  if (( ELAPSED >= TIMEOUT )); then
+    echo "[ERROR] ManualApprovalGate did not become Ready within ${TIMEOUT} seconds."
+    echo "[INFO] Current ManualApprovalGate status:"
+    oc get manualapprovalgate -A
+    exit 1
+  fi
+
+  echo "[INFO] ManualApprovalGate is not Ready yet. Waiting ${INTERVAL}s..."
+  sleep "$INTERVAL"
+  ELAPSED=$((ELAPSED + INTERVAL))
+done
 
 echo "[INFO] === STEP 1: Create htpasswd file with first user ==="
 first_user="${USERS[0]}"

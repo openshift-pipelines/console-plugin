@@ -3135,17 +3135,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-styles@npm:^6.0.0, @patternfly/react-styles@npm:^6.0.0-prerelease.6, @patternfly/react-styles@npm:^6.7.0":
+"@patternfly/react-styles@npm:^6.0.0, @patternfly/react-styles@npm:^6.0.0-prerelease.6, @patternfly/react-styles@npm:^6.4.0, @patternfly/react-styles@npm:^6.7.0":
   version: 6.7.0
   resolution: "@patternfly/react-styles@npm:6.7.0"
   checksum: 10c0/865afb4a806477dadf71b089359612aed6d23a0426a5d7b44d04964756b8b5d6588dde6994b25716c6427cf37a7d7ef3a8596886f89359ebfc9b9d525aaf1554
-  languageName: node
-  linkType: hard
-
-"@patternfly/react-styles@npm:~6.6.0":
-  version: 6.6.1
-  resolution: "@patternfly/react-styles@npm:6.6.1"
-  checksum: 10c0/0c50bf72fade26d30e6ff9abe0d2d8dbb5b546fe434067f70665ce704e63767a9f8ea7627871e2c6ce17ea4f475daa931fd420e1f1aee891c1f48b5905e57433
   languageName: node
   linkType: hard
 
@@ -4222,7 +4215,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/semver@npm:^7.3.12":
+"@types/semver@npm:^7.3.12, @types/semver@npm:^7.8.0":
   version: 7.8.0
   resolution: "@types/semver@npm:7.8.0"
   checksum: 10c0/46a1f38e36013448b279798e8b134e7e8de3b3630b1f40683903b9d57d36dd1d70838515570ed9a149fa09e9c381b9e39319b58d7b9f3b929b42ae2becff7aa3
@@ -4810,6 +4803,16 @@ __metadata:
   version: 4.2.2
   resolution: "@xtuc/long@npm:4.2.2"
   checksum: 10c0/8582cbc69c79ad2d31568c412129bf23d2b1210a1dfb60c82d5a1df93334da4ee51f3057051658569e2c196d8dc33bc05ae6b974a711d0d16e801e1d0647ccd1
+  languageName: node
+  linkType: hard
+
+"@yarnpkg/parsers@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@yarnpkg/parsers@npm:3.1.0"
+  dependencies:
+    js-yaml: "npm:^4.3.0"
+    tslib: "npm:^2.4.0"
+  checksum: 10c0/0cabf96c138f2211c14c8cf1cacbb3b2430947fa71bfcc9a3fcdf60543d3178b98bb5d14b676e39e45fad6ec453404c0f16908535d53100a53be08d8d1f4b5b5
   languageName: node
   linkType: hard
 
@@ -10258,7 +10261,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:4.3.2, js-yaml@npm:^4.1.0":
+"js-yaml@npm:4.3.2, js-yaml@npm:^4.1.0, js-yaml@npm:^4.3.0":
   version: 4.3.2
   resolution: "js-yaml@npm:4.3.2"
   dependencies:
@@ -11922,7 +11925,7 @@ __metadata:
     "@patternfly/react-drag-drop": "npm:^6.0.0"
     "@patternfly/react-icons": "npm:^6.4.0"
     "@patternfly/react-log-viewer": "npm:^6.0.0"
-    "@patternfly/react-styles": "npm:~6.6.0"
+    "@patternfly/react-styles": "npm:^6.4.0"
     "@patternfly/react-table": "npm:^6.4.0"
     "@patternfly/react-tokens": "npm:^6.4.0"
     "@patternfly/react-topology": "npm:~6.4.0"
@@ -11941,8 +11944,10 @@ __metadata:
     "@types/react-redux": "npm:^7.1.34"
     "@types/react-transition-group": "npm:2.x"
     "@types/react-virtualized": "npm:9.x"
+    "@types/semver": "npm:^7.8.0"
     "@typescript-eslint/eslint-plugin": "npm:^5.14.0"
     "@typescript-eslint/parser": "npm:^5.14.0"
+    "@yarnpkg/parsers": "npm:^3.1.0"
     babel-jest: "npm:^29.7.0"
     babel-loader: "npm:^9.2.1"
     babel-plugin-transform-imports: "npm:1.5.1"
@@ -11998,6 +12003,7 @@ __metadata:
     resolve-url-loader: "npm:5.0.0"
     sass: "npm:^1.90.0"
     sass-loader: "npm:^16.0.5"
+    semver: "npm:^7.8.6"
     stream-browserify: "npm:^3.0.0"
     style-loader: "npm:^3.3.1"
     stylelint: "npm:16.12.0"
@@ -13304,6 +13310,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"semver@npm:^7.8.6":
+  version: 7.8.6
+  resolution: "semver@npm:7.8.6"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/bf0a4d16eb067e5391323649e46b4a268644d7f8ee88e37c7668d35e861ec145b6e7df576d898007fc0d9a2cedcbc33f71460aa3bbea18eedfa5af58c064d7fe
+  languageName: node
+  linkType: hard
+
 "send@npm:~0.19.0, send@npm:~0.19.1":
   version: 0.19.2
   resolution: "send@npm:0.19.2"
@@ -14446,7 +14461,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.5.2, tslib@npm:^2.7.0, tslib@npm:^2.8.1":
+"tslib@npm:^2.0.0, tslib@npm:^2.4.0, tslib@npm:^2.5.2, tslib@npm:^2.7.0, tslib@npm:^2.8.1":
   version: 2.9.1
   resolution: "tslib@npm:2.9.1"
   checksum: 10c0/8ff46e7a4d19fa62c23483c89cf5ccc3906e742ef6e6d60bd3826b686143b300b4f6f04161cc1cf31a6b11fe70e1058ae4d4e4a108b5c68326d469684736a83c

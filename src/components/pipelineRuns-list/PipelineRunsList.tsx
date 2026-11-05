@@ -36,7 +36,6 @@ const PipelineRunsList: FC<PipelineRunsListProps> = ({
   const { ns } = useParams();
   const currentUser = useGetActiveUser();
   namespace = namespace || ns;
-  const columns = usePipelineRunsColumns(namespace, repositoryPLRs);
 
   const [searchParams, setSearchParams] = useSearchParams();
   useEffect(() => {
@@ -65,12 +64,18 @@ const PipelineRunsList: FC<PipelineRunsListProps> = ({
     onClearAll,
     filteredData,
     updatedCheckboxFilters,
+    selectedCluster,
+    onSelectCluster,
+    workloads,
   } = useDataViewFilter<PipelineRunKind>({
     data: (pipelineRuns || []).filter((r) => !isChildPipelineRun(r)),
     options: {
       resourceType: 'PipelineRun',
+      namespace,
     },
   });
+
+  const columns = usePipelineRunsColumns(namespace, repositoryPLRs, workloads);
 
   const loaded = useMemo(() => {
     const selectedSources = filterValues?.dataSource as string[] | undefined;
@@ -87,10 +92,15 @@ const PipelineRunsList: FC<PipelineRunsListProps> = ({
     <ListPageBody>
       {!hideTextFilter && (
         <DataViewFilterToolbar
+          resourceType="PipelineRun"
           filterValues={filterValues}
           onFilterChange={onFilterChange}
           onClearAll={onClearAll}
           checkboxFilters={updatedCheckboxFilters}
+          clusterFilter={{
+            selected: selectedCluster,
+            onSelect: onSelectCluster,
+          }}
         />
       )}
       <ConsoleDataView<PipelineRunKind>
@@ -103,6 +113,7 @@ const PipelineRunsList: FC<PipelineRunsListProps> = ({
         customRowData={{
           repositoryPLRs,
           currentUser,
+          workloads,
         }}
         hideColumnManagement
         hideNameLabelFilters

@@ -23,7 +23,9 @@ import {
   RepositoryFields,
   RepositoryLabels,
   chainsSignedAnnotation,
+  WORKLOAD_KUEUE_UID_LABEL,
 } from '../../consts';
+import { WorkloadKind } from '../../types';
 import SignedBadgeIcon from '../../images/SignedBadge';
 import PipelineRunVulnerabilities from '../pipelines-list/status/PipelineRunVulnerabilities';
 import {
@@ -62,11 +64,19 @@ const PLRStatus: FC<PLRStatusProps> = memo(({ obj }) => {
   );
 });
 
+export const getClusterNameForPipelineRun = (
+  plr: PipelineRunKind,
+  workloads: WorkloadKind[],
+): string =>
+  workloads.find(
+    (w) => w.metadata?.labels?.[WORKLOAD_KUEUE_UID_LABEL] === plr.metadata?.uid,
+  )?.status?.clusterName ?? '-';
+
 export const getPipelineRunsListDataViewRows: GetDataViewRows<
   PipelineRunKind,
-  { repositoryPLRs?: boolean }
+  { repositoryPLRs?: boolean; workloads?: WorkloadKind[] }
 > = (data, columns) => {
-  return data.map(({ obj, rowData: { repositoryPLRs } }) => {
+  return data.map(({ obj, rowData: { repositoryPLRs, workloads = [] } }) => {
     const plrLabels = obj.metadata.labels;
     const plrAnnotations = obj.metadata.annotations;
     const branchName =
@@ -186,6 +196,10 @@ export const getPipelineRunsListDataViewRows: GetDataViewRows<
         props: { modifier: 'nowrap' },
       },
       [tableColumnInfo[9].id]: {
+        cell: getClusterNameForPipelineRun(obj, workloads),
+        props: { modifier: 'nowrap' },
+      },
+      [tableColumnInfo[10].id]: {
         cell: (
           <LazyActionMenu
             context={{ [getReferenceForModel(PipelineRunModel)]: obj }}

@@ -19,6 +19,7 @@ export * from './artifacthub';
 export * from './backendAPI';
 export * from './common';
 export * from './coreTekton';
+export * from './kueue';
 export * from './openshift';
 export * from './pipeline';
 export * from './pipelineResource';

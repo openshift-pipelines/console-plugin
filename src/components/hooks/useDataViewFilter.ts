@@ -5,8 +5,11 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
-import { FLAG_PIPELINE_TEKTON_RESULT_INSTALLED } from '../../consts';
-import { ApprovalStatus } from '../../types';
+import {
+  FLAG_PIPELINE_TEKTON_RESULT_INSTALLED,
+  WORKLOAD_KUEUE_UID_LABEL,
+} from '../../consts';
+import { ApprovalStatus, PipelineRunKind } from '../../types';
 import {
   pipelineApprovalFilter,
   pipelineApprovalFilterReducer,
@@ -33,6 +36,7 @@ import {
   parseDurationForDateRangeFiltering,
   useDateRangeFilter,
 } from './useDateRangeFilter';
+import { useWorkloads } from './useMultiKueueResources';
 
 export type ResourceType =
   | 'Pipeline'
@@ -49,6 +53,8 @@ export interface DataViewFilterOptions<T extends K8sResourceCommon> {
   defaultStatusValues?: string[];
   defaultDataSourceValues?: string[];
   customData?: K8sResourceCommon[] | undefined;
+  // Required when resourceType === 'PipelineRun' to enable spoke-cluster filtering.
+  namespace?: string;
 }
 
 export interface UseDataViewFilterParams<T extends K8sResourceCommon> {
@@ -158,6 +164,7 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
     resourceType,
     defaultStatusValues,
     customData,
+    namespace,
   } = options ?? {};
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isTektonResultEnabled = useFlag(FLAG_PIPELINE_TEKTON_RESULT_INSTALLED);
@@ -189,6 +196,13 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
 
   const timeRangeOptions = TimeRangeOptions();
   const currentKey = timespan ? formatPrometheusDuration(timespan) : '';
+
+  // Spoke-cluster filter — only active for PipelineRun resource type
+  const isPipelineRunType = resourceType === 'PipelineRun';
+  const [selectedCluster, setSelectedCluster] = useState('');
+  const [workloads, workloadsLoaded] = useWorkloads(
+    isPipelineRunType ? namespace || '-' : undefined,
+  );
 
   const checkboxFilters = useMemo<CheckboxFilterConfig[]>(() => {
     if (!resourceType) return [];
@@ -332,6 +346,7 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
     if (config?.hasDataSourceFilter) {
       clearDatasourcePreference();
     }
+    setSelectedCluster('');
     resetPage();
   }, [resetPage, setTimespanDateFilter, clearDatasourcePreference, config]);
 
@@ -410,17 +425,27 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
 
   const filteredData = useMemo(() => {
     if (!data) return [];
-    return data.filter(
-      (obj) =>
-        passesNameAndLabelFilters(obj) &&
-        passesCheckboxFilter(obj) &&
-        passesDateRangeFilter(obj),
-    );
+    return data.filter((obj) => {
+      if (!passesNameAndLabelFilters(obj)) return false;
+      if (!passesCheckboxFilter(obj)) return false;
+      if (!passesDateRangeFilter(obj)) return false;
+      if (selectedCluster && workloadsLoaded) {
+        const plrUid = (obj as unknown as PipelineRunKind).metadata?.uid;
+        const spokeCluster = workloads?.find(
+          (w) => w.metadata?.labels?.[WORKLOAD_KUEUE_UID_LABEL] === plrUid,
+        )?.status?.clusterName;
+        if (spokeCluster !== selectedCluster) return false;
+      }
+      return true;
+    });
   }, [
     data,
     passesNameAndLabelFilters,
     passesCheckboxFilter,
     passesDateRangeFilter,
+    selectedCluster,
+    workloads,
+    workloadsLoaded,
   ]);
 
   const updatedCheckboxFilters = useMemo(() => {
@@ -458,5 +483,8 @@ export const useDataViewFilter = <T extends K8sResourceCommon>({
     updatedCheckboxFilters,
     dateFilterCEL,
     preferenceLoaded,
+    selectedCluster,
+    onSelectCluster: setSelectedCluster,
+    workloads,
   };
 };

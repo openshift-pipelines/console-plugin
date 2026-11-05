@@ -47,17 +47,21 @@ jest.mock('../../hooks/useDataViewFilter', () => ({
         ? [{ id: 'timeRange', singleSelect: true, options: [] }]
         : [],
       preferenceLoaded: preferenceLoaded ?? true,
+      selectedCluster: '',
+      onSelectCluster: jest.fn(),
+      workloads: [],
     };
   },
 }));
 jest.mock('../../common/DataViewFilterToolbar', () => ({
-  DataViewFilterToolbar: ({ checkboxFilters }) => (
+  DataViewFilterToolbar: ({ checkboxFilters, clusterFilter }) => (
     <div data-testid="filter-toolbar">
       {checkboxFilters?.map((f) =>
         f.singleSelect ? (
           <span key={f.id} data-testid={`filter-${f.id}`} />
         ) : null,
       )}
+      {clusterFilter && <div data-testid="cluster-filter" />}
     </div>
   ),
 }));
@@ -104,8 +108,7 @@ describe('PipelineRunsList', () => {
   });
 
   it('should pass dateFilterCEL to useGetPipelineRuns', () => {
-    const cel =
-      'data.status.startTime > timestamp("2026-06-14T00:00:00.000Z")';
+    const cel = 'data.status.startTime > timestamp("2026-06-14T00:00:00.000Z")';
     useDateRangeFilterMock.mockReturnValue(
       makeDateRange({ dateFilterCEL: cel }),
     );
@@ -168,5 +171,13 @@ describe('PipelineRunsList', () => {
   it('should hide filters when hideTextFilter is true', () => {
     render(<PipelineRunsList namespace="test-ns" hideTextFilter />);
     expect(screen.queryByTestId('filter-toolbar')).toBeNull();
+  });
+
+  it('should pass cluster filter and workloads to the toolbar and table', () => {
+    render(<PipelineRunsList namespace="test-ns" />);
+    expect(screen.getByTestId('cluster-filter')).toBeTruthy();
+    expect(
+      consoleDataViewMock.mock.calls[0][0].customRowData.workloads,
+    ).toEqual([]);
   });
 });

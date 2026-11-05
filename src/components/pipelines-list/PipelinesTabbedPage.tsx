@@ -7,6 +7,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import {
   ApprovalTaskModel,
+  ClusterQueueModel,
   PipelineModel,
   PipelineRunModel,
   RepositoryModel,
@@ -18,6 +19,7 @@ import { PipelineRunsList } from '../pipelineRuns-list';
 import {
   FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK,
   FLAG_OPENSHIFT_PIPELINE_AS_CODE,
+  FLAG_OPENSHIFT_PIPELINE_CLUSTER_QUEUE,
   PIPELINE_NAMESPACE,
 } from '../../consts';
 import {
@@ -32,6 +34,7 @@ import { ApprovalTasksList } from '../approval-tasks';
 import { useK8sGet } from '../hooks/use-k8sGet-hook';
 import { SecretKind } from '../../types';
 import { PAC_SECRET_NAME } from '../pac/const';
+import ClusterQueuesList from '../clusterqueues/ClusterQueuesList';
 
 type PageContentsProps = {
   namespace: string;
@@ -45,6 +48,7 @@ export const PageContents: FC<PageContentsProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
   const isApprovalTaskEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK);
+  const isClusterQueueEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_CLUSTER_QUEUE);
 
   const [pacSecretData, pacSecretDataLoaded, pacSecretDataError] =
     useK8sGet<SecretKind>(SecretModel, PAC_SECRET_NAME, PIPELINE_NAMESPACE);
@@ -82,6 +86,16 @@ export const PageContents: FC<PageContentsProps> = ({
             // t(RepositoryModel.labelPluralKey)
             name: RepositoryModel.labelPluralKey,
             component: RepositoriesList,
+          },
+        ]
+      : []),
+    ...(isClusterQueueEnabled
+      ? [
+          {
+            href: 'clusterqueues',
+            // t(ClusterQueueModel.labelPluralKey)
+            name: ClusterQueueModel.labelPluralKey,
+            component: ClusterQueuesList,
           },
         ]
       : []),

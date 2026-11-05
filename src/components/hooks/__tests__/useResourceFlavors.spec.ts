@@ -2,7 +2,10 @@ import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { renderHook } from '@testing-library/react';
 import { ResourceFlavorKind } from '../../../types';
 import { useK8sGet } from '../use-k8sGet-hook';
-import { useResourceFlavors } from '../useMultiKueueResources';
+import {
+  useClusterQueues,
+  useResourceFlavors,
+} from '../useMultiKueueResources';
 
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => ({
   useK8sWatchResource: jest.fn(),
@@ -67,5 +70,17 @@ describe('useResourceFlavors', () => {
     mockGet.mockReturnValue([config, true, undefined]);
     renderHook(useResourceFlavors);
     expect(mockWatch).toHaveBeenLastCalledWith(null);
+  });
+});
+
+describe('useClusterQueues', () => {
+  it('keeps the list loading until hub detection completes', () => {
+    mockGet.mockReturnValue([undefined, false, undefined]);
+    mockWatch.mockReturnValue([[], true, undefined]);
+
+    const { result } = renderHook(useClusterQueues);
+
+    expect(mockWatch).toHaveBeenLastCalledWith(null);
+    expect(result.current).toEqual([[], false, undefined]);
   });
 });

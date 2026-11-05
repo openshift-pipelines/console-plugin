@@ -155,6 +155,7 @@
       "pipelineApprovalContext": "./components/approval-tasks/approval-notification",
       "pipelineBuilder": "./components/pipeline-builder",
       "clusterQueueCreate": "./components/clusterqueues/ClusterQueueCreatePage",
+      "clusterQueueList": "./components/clusterqueues/ClusterQueueListPage",
       "catalog": "./components/catalog",
       "taskDetails": "./components/tasks",
       "pacComponent": "./components/pac/",

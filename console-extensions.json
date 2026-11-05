@@ -1449,6 +1449,20 @@
     }
   },
   {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "kueue.x-k8s.io",
+        "version": "v1beta2",
+        "kind": "ClusterQueue"
+      },
+      "component": { "$codeRef": "clusterQueueList.default" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE", "OPENSHIFT_PIPELINE_CLUSTER_QUEUE"]
+    }
+  },
+  {
     "type": "console.page/route",
     "properties": {
       "exact": true,
@@ -1712,6 +1726,19 @@
         "group": "triggers.tekton.dev",
         "version": "v1beta1",
         "kind": "TriggerBinding"
+      },
+      "provider": {
+        "$codeRef": "defaultActionsProvider.useDefaultActionsProvider"
+      }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "kueue.x-k8s.io",
+        "version": "v1beta2",
+        "kind": "ClusterQueue"
       },
       "provider": {
         "$codeRef": "defaultActionsProvider.useDefaultActionsProvider"

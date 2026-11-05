@@ -6,7 +6,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import type { ChangeEvent } from 'react';
-import { MemoryRouter, Route, Routes } from 'react-router';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
 import { useResourceFlavors } from '../../hooks/useMultiKueueResources';
 import ClusterQueueCreatePage from '../ClusterQueueCreatePage';
 
@@ -50,12 +50,16 @@ const mockFlavors = useResourceFlavors as jest.Mock;
 const { k8sCreate: mockK8sCreate } = jest.requireMock(
   '@openshift-console/dynamic-plugin-sdk',
 );
+const PipelinesDestination = () => {
+  const { pathname, search } = useLocation();
+  return <p>{`Pipelines destination: ${pathname}${search}`}</p>;
+};
 const renderPage = (from?: string) =>
   render(
     <MemoryRouter initialEntries={[{ pathname: '/create', state: { from } }]}>
       <Routes>
         <Route path="/create" element={<ClusterQueueCreatePage />} />
-        <Route path="/pipelines/*" element={<p>Pipelines destination</p>} />
+        <Route path="/pipelines/*" element={<PipelinesDestination />} />
         <Route
           path="/k8s/cluster/:reference/:name"
           element={<p>ClusterQueue details</p>}
@@ -137,7 +141,7 @@ it('edits the form and adds/removes quota rows', async () => {
   ).toBe(false);
 });
 
-it('creates a ClusterQueue and opens its details page', async () => {
+it('creates a ClusterQueue and returns to the ClusterQueues list', async () => {
   renderPage();
   fireEvent.change(screen.getByLabelText(/^Name/), {
     target: { value: 'fleet-cq' },
@@ -161,7 +165,11 @@ it('creates a ClusterQueue and opens its details page', async () => {
       }),
     ),
   );
-  expect(await screen.findByText('ClusterQueue details')).toBeDefined();
+  expect(
+    await screen.findByText(
+      'Pipelines destination: /pipelines/all-namespaces/clusterqueues',
+    ),
+  ).toBeDefined();
 });
 
 it('creates a quota-less ClusterQueue from valid YAML', async () => {
@@ -333,15 +341,43 @@ it.each([
 
 it.each([
   [
+    '/pipelines/ns/demo/clusterqueues?page=1&perPage=50',
+    '/pipelines/ns/demo',
+    '/pipelines/ns/demo/clusterqueues',
+    '/pipelines/ns/demo/clusterqueues?page=1&perPage=50',
+  ],
+  [
     '/pipelines/ns/demo/pipeline-runs?sortBy=Started',
+    '/pipelines/ns/demo',
+    '/pipelines/ns/demo/clusterqueues',
     '/pipelines/ns/demo/pipeline-runs?sortBy=Started',
   ],
-  ['https://example.com', '/pipelines/all-namespaces'],
-])('returns to the Pipelines page from %s', (from, expected) => {
-  renderPage(from);
-  expect(
-    screen.getByRole('link', { name: 'Pipelines' }).getAttribute('href'),
-  ).toBe(expected);
-  fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-  expect(screen.getByText('Pipelines destination')).toBeDefined();
-});
+  [
+    'https://example.com',
+    '/pipelines/all-namespaces',
+    '/pipelines/all-namespaces/clusterqueues',
+    '/pipelines/all-namespaces',
+  ],
+])(
+  'uses distinct Pipelines and ClusterQueues breadcrumbs from %s',
+  (from, pipelinesPath, clusterQueuesPath, cancelPath) => {
+    const { unmount } = renderPage(from);
+    expect(
+      screen.getByRole('link', { name: 'Pipelines' }).getAttribute('href'),
+    ).toBe(pipelinesPath);
+    expect(
+      screen.getByRole('link', { name: 'ClusterQueues' }).getAttribute('href'),
+    ).toBe(clusterQueuesPath);
+    fireEvent.click(screen.getByRole('link', { name: 'ClusterQueues' }));
+    expect(
+      screen.getByText(`Pipelines destination: ${clusterQueuesPath}`),
+    ).toBeDefined();
+    unmount();
+
+    renderPage(from);
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(
+      screen.getByText(`Pipelines destination: ${cancelPath}`),
+    ).toBeDefined();
+  },
+);

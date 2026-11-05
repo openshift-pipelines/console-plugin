@@ -5,13 +5,12 @@ import {
 import { Alert } from '@patternfly/react-core';
 import { Formik, FormikHelpers, useFormikContext } from 'formik';
 import { isEqual } from 'lodash';
-import { useEffect, useState } from 'react';
+import { startTransition, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { useLocation, useNavigate } from 'react-router';
 import * as yup from 'yup';
 import { ClusterQueueModel } from '../../models';
-import { getReferenceForModel } from '../pipelines-overview/utils';
 import BreadCrumbs from '../details-page/breadcrumbs/BreadCrumbs';
 import {
   FlexForm,
@@ -53,7 +52,7 @@ const ClusterQueueEditor = () => {
   // Render the console's asynchronous editor after the form has painted so its
   // first visible use does not wait for the editor bundle to initialize.
   useEffect(() => {
-    setPreloadYAMLEditor(true);
+    startTransition(() => setPreloadYAMLEditor(true));
   }, []);
 
   useEffect(() => {
@@ -149,6 +148,11 @@ const ClusterQueueCreatePage = () => {
     )
       ? state.from
       : '/pipelines/all-namespaces';
+  const pipelinesContextPath =
+    returnPath.match(
+      /^\/(?:dev-)?pipelines\/(?:ns\/[^/?#]+|all-namespaces)/,
+    )?.[0] || '/pipelines/all-namespaces';
+  const clusterQueuesPath = `${pipelinesContextPath}/clusterqueues`;
   const title = t('Create ClusterQueue');
   const handleSubmit = async (
     values: ClusterQueueEditorValues,
@@ -160,11 +164,7 @@ const ClusterQueueCreatePage = () => {
           ? parseSubmittableClusterQueueYAML(values.yamlData, t).resource
           : convertFormToClusterQueue(values.formData);
       await k8sCreate({ model: ClusterQueueModel, data: resource });
-      navigate(
-        `/k8s/cluster/${getReferenceForModel(ClusterQueueModel)}/${
-          resource.metadata.name
-        }`,
-      );
+      navigate(clusterQueuesPath);
     } catch (error) {
       actions.setStatus({ submitError: (error as Error).message });
     }
@@ -177,8 +177,8 @@ const ClusterQueueCreatePage = () => {
         <PageBody>
           <BreadCrumbs
             breadcrumbs={[
-              { name: t('Pipelines'), path: returnPath },
-              { name: t('ClusterQueues'), path: '' },
+              { name: t('Pipelines'), path: pipelinesContextPath },
+              { name: t('ClusterQueues'), path: clusterQueuesPath },
               { name: title, path: '' },
             ]}
           />

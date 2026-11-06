@@ -34,6 +34,17 @@
     "type": "console.flag/model",
     "properties": {
       "model": {
+        "group": "kueue.x-k8s.io",
+        "version": "v1beta2",
+        "kind": "ClusterQueue"
+      },
+      "flag": "OPENSHIFT_PIPELINE_CLUSTER_QUEUE"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
         "group": "pipelinesascode.tekton.dev",
         "version": "v1alpha1",
         "kind": "Repository"
@@ -1424,6 +1435,17 @@
         "OPENSHIFT_PIPELINE",
         "HIDE_STATIC_PIPELINE_PLUGIN_PIPELINE_BUILDER"
       ]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/k8s/cluster/kueue.x-k8s.io~v1beta2~ClusterQueue/~new/builder",
+      "component": { "$codeRef": "clusterQueueCreate.default" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE", "OPENSHIFT_PIPELINE_CLUSTER_QUEUE"]
     }
   },
   {

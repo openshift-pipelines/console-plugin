@@ -8,6 +8,7 @@ import {
   ClusterQueueModel,
   LocalQueueModel,
   MultiKueueClusterModel,
+  ResourceFlavorModel,
   WorkloadModel,
 } from '../../models';
 import {
@@ -15,6 +16,7 @@ import {
   LocalQueueKind,
   MultiKueueClusterKind,
   PipelineRunKind,
+  ResourceFlavorKind,
   WorkloadKind,
 } from '../../types';
 import { useMultiClusterProxyService } from './useMultiClusterProxyService';
@@ -135,6 +137,33 @@ export const useGetClusterQueue = (
         }
       : null,
   );
+};
+
+export const useResourceFlavors = (): [
+  ResourceFlavorKind[],
+  boolean,
+  unknown,
+] => {
+  const { isHub, isConfigLoaded } = useMultiClusterProxyService({});
+
+  const watchOptions = useMemo(
+    () =>
+      isHub
+        ? {
+            isList: true,
+            groupVersionKind: {
+              group: ResourceFlavorModel.apiGroup,
+              kind: ResourceFlavorModel.kind,
+              version: ResourceFlavorModel.apiVersion,
+            },
+          }
+        : null,
+    [isHub],
+  );
+
+  const result = useK8sWatchResource<ResourceFlavorKind[]>(watchOptions);
+  if (isConfigLoaded) return result;
+  return [result[0], false, result[2]];
 };
 
 export const useLocalQueues = (

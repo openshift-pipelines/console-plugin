@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router';
 import { getReferenceForModel } from '../components/pipelines-overview/utils';
 import {
   ClusterTriggerBindingModel,
+  ClusterQueueModel,
   EventListenerModel,
   RepositoryModel,
   TaskModel,
@@ -32,6 +33,8 @@ const getModelForResource = (resource: K8sResourceCommon) => {
       return TriggerBindingModel;
     case 'ClusterTriggerBinding':
       return ClusterTriggerBindingModel;
+    case 'ClusterQueue':
+      return ClusterQueueModel;
     case 'Repository':
       return RepositoryModel;
     default:
@@ -69,9 +72,12 @@ export const useDefaultActionsProvider = (resource: K8sResourceCommon) => {
 
   // Building the path to the YAML editor
   const editURL = useMemo(() => {
-    if (!model || !name || !namespace) return '';
+    if (!model || !name || (model.namespaced && !namespace)) return '';
     const reference = getReferenceForModel(model);
-    return `/k8s/ns/${namespace}/${reference}/${encodeURIComponent(name)}/yaml`;
+    const resourcePath = model.namespaced
+      ? `/k8s/ns/${namespace}/${reference}`
+      : `/k8s/cluster/${reference}`;
+    return `${resourcePath}/${encodeURIComponent(name)}/yaml`;
   }, [model, name, namespace]);
 
   return useMemo<[Action[], boolean, any]>(() => {

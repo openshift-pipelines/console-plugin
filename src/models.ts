@@ -554,6 +554,24 @@ export const ClusterQueueModel: K8sKind = {
   color,
 };
 
+export const ResourceFlavorModel: K8sKind = {
+  apiGroup: 'kueue.x-k8s.io',
+  apiVersion: 'v1beta2',
+  label: 'ResourceFlavor',
+  // t('plugin__pipelines-console-plugin~ResourceFlavor')
+  labelKey: 'plugin__pipelines-console-plugin~ResourceFlavor',
+  // t('plugin__pipelines-console-plugin~ResourceFlavors')
+  labelPluralKey: 'plugin__pipelines-console-plugin~ResourceFlavors',
+  plural: 'resourceflavors',
+  abbr: 'RF',
+  namespaced: false,
+  kind: 'ResourceFlavor',
+  id: 'resourceflavor',
+  labelPlural: 'ResourceFlavors',
+  crd: true,
+  color,
+};
+
 export const LocalQueueModel: K8sKind = {
   apiGroup: 'kueue.x-k8s.io',
   apiVersion: 'v1beta2',

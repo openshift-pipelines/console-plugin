@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import classNames from 'classnames';
 import { Alert, Button } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
@@ -22,7 +22,7 @@ import { ConsoleYAMLSampleModel } from '../../models';
 import { FieldProps } from '../pipelines-details/multi-column-field/types';
 import { getResourceSidebarSamples } from './utils';
 import CodeEditorSidebar from './CodeEditorSidebar';
-import { definitionFor } from './swagger';
+import { definitionFor, fetchSwagger, getSwaggerDefinitions } from './swagger';
 
 import './CodeEditorField.scss';
 
@@ -66,6 +66,21 @@ const CodeEditorField: FC<CodeEditorFieldProps> = ({
   lastDisplayValueRef.current = displayValue;
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [isSwaggerLoaded, setIsSwaggerLoaded] = useState(() =>
+    Boolean(getSwaggerDefinitions()),
+  );
+
+  useEffect(() => {
+    if (!model || isSwaggerLoaded) return;
+
+    let isMounted = true;
+    fetchSwagger().then((definitions) => {
+      if (isMounted && definitions) setIsSwaggerLoaded(true);
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [isSwaggerLoaded, model]);
 
   const [sampleResources, loaded, loadError] =
     useK8sWatchResource<K8sResourceCommon[]>(SampleResource);
@@ -78,7 +93,8 @@ const CodeEditorField: FC<CodeEditorFieldProps> = ({
       })
     : { samples: [], snippets: [] };
 
-  const definition = model ? definitionFor(model) : { properties: [] };
+  const definition =
+    model && isSwaggerLoaded ? definitionFor(model) : { properties: [] };
   const hasSchema =
     !!schema || (!!definition && !isEmpty(definition.properties));
   const hasSidebarContent =

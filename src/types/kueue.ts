@@ -1,4 +1,7 @@
-import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  K8sResourceCommon,
+  Selector,
+} from '@openshift-console/dynamic-plugin-sdk';
 import { Condition } from './pipelineRun';
 
 export type MultiKueueClusterKind = K8sResourceCommon & {
@@ -66,7 +69,7 @@ export type WorkloadKind = K8sResourceCommon & {
 
 export type Resource = {
   name: string;
-  nominalQuota?: string;
+  nominalQuota?: string | number;
   total?: string;
 };
 
@@ -80,15 +83,26 @@ export type ResourceGroup = {
   flavors?: Flavor[];
 };
 
+export type QueueingStrategy = 'BestEffortFIFO' | 'StrictFIFO';
+
 export type ClusterQueueKind = K8sResourceCommon & {
   spec?: {
-    queueingStrategy: string;
+    cohortName?: string;
+    queueingStrategy?: QueueingStrategy;
+    // Omitted/null selects no namespaces; {} selects all namespaces.
+    namespaceSelector?: Selector | null;
     resourceGroups?: ResourceGroup[];
   };
   status?: {
     admittedWorkloads?: number;
     pendingWorkloads?: number;
     conditions?: (Condition & { observedGeneration?: number })[];
+  };
+};
+
+export type ResourceFlavorKind = K8sResourceCommon & {
+  spec?: {
+    nodeLabels?: { [key: string]: string };
   };
 };
 

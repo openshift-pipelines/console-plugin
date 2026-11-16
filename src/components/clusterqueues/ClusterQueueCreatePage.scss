@@ -1,0 +1,27 @@
+.pipelines-console-plugin-clusterqueue-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  &__header,
+  &__body {
+    padding-inline: var(--pf-t--global--spacer--xl);
+  }
+
+  &__header {
+    padding-top: var(--pf-t--global--spacer--lg);
+  }
+
+  &__editor-toggle {
+    border-block: var(--pf-t--global--border--width--divider--default) solid
+      var(--pf-t--global--border--color--default);
+    margin-inline: calc(-1 * var(--pf-t--global--spacer--xl));
+    margin-top: var(--pf-t--global--spacer--lg);
+    padding: var(--pf-t--global--spacer--sm)
+      var(--pf-t--global--spacer--xl);
+  }
+
+  &__yaml-error {
+    margin-top: var(--pf-t--global--spacer--lg);
+  }
+}

@@ -1,0 +1,28 @@
+.pipelines-console-plugin-clusterqueue-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--xl);
+  margin-top: var(--pf-t--global--spacer--xl);
+  max-width: 75rem;
+  padding-bottom: var(--pf-t--global--spacer--lg);
+
+  .odc-multi-column-field__row {
+    border: var(--pf-t--global--border--width--regular) solid
+      var(--pf-t--global--border--color--default);
+    border-radius: var(--pf-t--global--border--radius--large);
+    margin-right: 0;
+    padding: var(--pf-t--global--spacer--lg);
+    padding-right: var(--pf-t--global--spacer--2xl);
+  }
+
+  .odc-multi-column-field__col--button {
+    right: var(--pf-t--global--spacer--md);
+    top: var(--pf-t--global--spacer--2xl);
+  }
+
+  @media (width <= 768px) {
+    .odc-multi-column-field__row > :first-child {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+}

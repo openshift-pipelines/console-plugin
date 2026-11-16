@@ -186,7 +186,7 @@
   "Error": "错误",
   "Error connecting to event stream": "连接到事件流时出错",
   "Error connecting to event stream: { error }": "连接到事件流时出错：{ error }",
-  "Error downloading logs.": "下载日志时出错。",
+  "Error downloading logs.": "下载日志出错。",
   "Error loading - {{placeholder}}": "错误加载 - {{placeholder}}",
   "Error loading {{desc}}": "错误加载 {{desc}}",
   "Error Loading {{label}}": "错误加载 {{label}}",

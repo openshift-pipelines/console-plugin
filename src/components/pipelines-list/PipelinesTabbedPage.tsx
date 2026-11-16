@@ -7,6 +7,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import {
   ApprovalTaskModel,
+  ClusterQueueModel,
   PipelineModel,
   PipelineRunModel,
   RepositoryModel,
@@ -32,6 +33,9 @@ import { ApprovalTasksList } from '../approval-tasks';
 import { useK8sGet } from '../hooks/use-k8sGet-hook';
 import { SecretKind } from '../../types';
 import { PAC_SECRET_NAME } from '../pac/const';
+import ClusterQueuesList from '../clusterqueues/ClusterQueuesList';
+import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
+import { getReferenceForModel } from '../pipelines-overview/utils';
 
 type PageContentsProps = {
   namespace: string;
@@ -45,6 +49,7 @@ export const PageContents: FC<PageContentsProps> = ({
   const { t } = useTranslation('plugin__pipelines-console-plugin');
   const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
   const isApprovalTaskEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_APPROVAL_TASK);
+  const { isHub } = useMultiClusterProxyService({});
 
   const [pacSecretData, pacSecretDataLoaded, pacSecretDataError] =
     useK8sGet<SecretKind>(SecretModel, PAC_SECRET_NAME, PIPELINE_NAMESPACE);
@@ -61,6 +66,16 @@ export const PageContents: FC<PageContentsProps> = ({
       onSelection: (_key: string, _action: MenuAction, url: string) =>
         `${url}/form`,
     },
+    ...(isHub
+      ? {
+          clusterQueue: {
+            model: ClusterQueueModel,
+            // TODO: Update this path when the ClusterQueue create page is available.
+            onSelection: () =>
+              `/k8s/cluster/${getReferenceForModel(ClusterQueueModel)}/~new`,
+          },
+        }
+      : {}),
   };
   const pages: NavPage[] = [
     {
@@ -82,6 +97,16 @@ export const PageContents: FC<PageContentsProps> = ({
             // t(RepositoryModel.labelPluralKey)
             name: RepositoryModel.labelPluralKey,
             component: RepositoriesList,
+          },
+        ]
+      : []),
+    ...(isHub
+      ? [
+          {
+            href: 'clusterqueues',
+            // t(ClusterQueueModel.labelPluralKey)
+            name: ClusterQueueModel.labelPluralKey,
+            component: ClusterQueuesList,
           },
         ]
       : []),

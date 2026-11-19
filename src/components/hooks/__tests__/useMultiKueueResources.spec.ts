@@ -17,6 +17,7 @@ import {
 import { useMultiClusterProxyService } from '../useMultiClusterProxyService';
 import {
   isClusterConnected,
+  useClusterQueues,
   useGetClusterQueue,
   useGetMultiKueueCluster,
   useWorkloads,
@@ -141,6 +142,21 @@ describe('useGetClusterQueue', () => {
 
     expect(useK8sWatchResourceMock).toHaveBeenCalledWith(null);
     expect(getGroupVersionKindForModelMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('useClusterQueues', () => {
+  it('should watch ClusterQueues', () => {
+    const clusterQueues: ClusterQueueKind[] = [];
+    useK8sWatchResourceMock.mockReturnValue([clusterQueues, true, null]);
+
+    const { result } = testHook(() => useClusterQueues());
+
+    expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
+      isList: true,
+      groupVersionKind: clusterQueueGVK,
+    });
+    expect(result.current).toEqual([clusterQueues, true, null]);
   });
 });
 

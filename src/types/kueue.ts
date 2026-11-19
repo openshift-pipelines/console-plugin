@@ -82,6 +82,7 @@ export type ResourceGroup = {
 
 export type ClusterQueueKind = K8sResourceCommon & {
   spec?: {
+    cohortName?: string;
     queueingStrategy: string;
     resourceGroups?: ResourceGroup[];
   };

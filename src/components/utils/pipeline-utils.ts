@@ -136,6 +136,13 @@ export const INSTANCE_LABEL = 'app.kubernetes.io/instance';
  * the PipelineRun UID is known, the TaskRun created by that very PipelineRun
  * is preferred, so that the status of a stale record is never displayed.
  *
+ * The fallback to the first match is intentional and must stay: the UID label
+ * of the TaskRun is not always equal to the UID of the PipelineRun being shown.
+ * On a multi-cluster setup the PipelineRun exists on the hub and on the spoke
+ * with different UIDs (see the `uniqBy` by name in `useTaskRuns`), and TaskRuns
+ * created by older Tekton versions carry no `tekton.dev/pipelineRunUID` label at
+ * all. Dropping the fallback would leave those tasks without any status.
+ *
  * @param taskRuns the TaskRuns to pick from
  * @param pipelineTaskName the `tekton.dev/pipelineTask` label value to match
  * @param pipelineRunUid the UID of the PipelineRun being displayed, if known
@@ -159,9 +166,9 @@ export const getTaskRunForPipelineTask = (
     if (currentTaskRun) {
       return currentTaskRun;
     }
+    // No TaskRun is labelled with this UID. Keep the previous behaviour
+    // instead of returning nothing, see the note above.
   }
-  // Fallback: no UID label (TaskRuns created by older Tekton versions) or no
-  // record for this UID, keep the previous behaviour.
   return candidates[0];
 };
 

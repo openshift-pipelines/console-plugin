@@ -493,6 +493,50 @@ describe('pipeline-utils ', () => {
     expect(firstTask.status.reason).toBe(ComputedStatus.Succeeded);
   });
 
+  it('should keep the taskrun status when the taskrun is labelled with a different pipelineRun uid (multi-cluster hub/spoke)', () => {
+    const { pipeline, pipelineRuns } =
+      pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
+    const pipelineRun = _.cloneDeep(pipelineRuns[DataState.SUCCESS]);
+    // the PipelineRun is the hub copy
+    pipelineRun.metadata.uid = 'hub-plr-uid';
+    delete pipelineRun.status.taskRuns;
+    const pipelineTaskName = pipeline.spec.tasks[0].name;
+
+    // the TaskRun comes from the spoke through the multi-cluster proxy, so its
+    // `tekton.dev/pipelineRunUID` label is the spoke PipelineRun UID
+    const spokeTaskRun = {
+      apiVersion: 'tekton.dev/v1',
+      kind: 'TaskRun',
+      metadata: {
+        name: `${pipelineRun.metadata.name}-${pipelineTaskName}`,
+        uid: 'spoke-tr-uid',
+        labels: {
+          [TektonResourceLabel.pipelinerun]: pipelineRun.metadata.name,
+          [TektonResourceLabel.pipelineRunUid]: 'spoke-plr-uid',
+          [TektonResourceLabel.pipelineTask]: pipelineTaskName,
+        },
+      },
+      spec: {},
+      status: {
+        conditions: [
+          {
+            type: 'Succeeded',
+            status: 'True',
+            reason: ComputedStatus.Succeeded,
+          },
+        ],
+      },
+    } as unknown as TaskRunKind;
+
+    const taskList = appendPipelineRunStatus(pipeline, pipelineRun, [
+      spokeTaskRun,
+    ]);
+    const firstTask = taskList.find((t) => t.name === pipelineTaskName);
+
+    // returning no TaskRun here would leave the task without its real status
+    expect(firstTask.status.reason).toBe(ComputedStatus.Succeeded);
+  });
+
   it('should append pipelineRun pending status for all the tasks if taskruns are not present and pipelinerun status is PipelineRunPending', () => {
     const { pipeline, pipelineRuns } =
       pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];

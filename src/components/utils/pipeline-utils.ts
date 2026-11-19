@@ -128,6 +128,44 @@ export const PipelineResourceListFilterLabels = {
 export const INSTANCE_LABEL = 'app.kubernetes.io/instance';
 
 /**
+ * Returns the TaskRun that belongs to the given PipelineRun.
+ *
+ * Several TaskRuns can carry the same `tekton.dev/pipelineTask` label: Tekton
+ * Results keeps the records of previous PipelineRuns that used the same name,
+ * and the merge of the k8s and Results lists only de-duplicates by UID. When
+ * the PipelineRun UID is known, the TaskRun created by that very PipelineRun
+ * is preferred, so that the status of a stale record is never displayed.
+ *
+ * @param taskRuns the TaskRuns to pick from
+ * @param pipelineTaskName the `tekton.dev/pipelineTask` label value to match
+ * @param pipelineRunUid the UID of the PipelineRun being displayed, if known
+ */
+export const getTaskRunForPipelineTask = (
+  taskRuns: TaskRunKind[],
+  pipelineTaskName: string,
+  pipelineRunUid?: string,
+): TaskRunKind | undefined => {
+  const candidates = (taskRuns || []).filter(
+    (tr) =>
+      tr.metadata?.labels?.[TektonResourceLabel.pipelineTask] ===
+      pipelineTaskName,
+  );
+  if (pipelineRunUid) {
+    const currentTaskRun = candidates.find(
+      (tr) =>
+        tr.metadata?.labels?.[TektonResourceLabel.pipelineRunUid] ===
+        pipelineRunUid,
+    );
+    if (currentTaskRun) {
+      return currentTaskRun;
+    }
+  }
+  // Fallback: no UID label (TaskRuns created by older Tekton versions) or no
+  // record for this UID, keep the previous behaviour.
+  return candidates[0];
+};
+
+/**
  * Appends the pipeline run status to each tasks in the pipeline.
  * @param pipeline
  * @param pipelineRun
@@ -167,10 +205,10 @@ export const appendPipelineRunStatus = (
       return { ...task, status: { reason: ComputedStatus.Pending } };
     }
 
-    const taskRun = _.find(
+    const taskRun = getTaskRunForPipelineTask(
       taskRuns,
-      (tr) =>
-        tr.metadata.labels[TektonResourceLabel.pipelineTask] === task.name,
+      task.name,
+      pipelineRun.metadata?.uid,
     );
 
     const childPipelineRun = _.find(

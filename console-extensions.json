@@ -344,6 +344,26 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
+      "path": "/k8s/cluster/kueue.x-k8s.io~v1beta2~ClusterQueue/~new/builder",
+      "component": {
+        "$codeRef": "clusterQueueBuilder.ClusterQueueBuilderPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/k8s/cluster/kueue.x-k8s.io~v1beta2~ClusterQueue/:clusterQueueName/builder",
+      "component": {
+        "$codeRef": "clusterQueueBuilder.ClusterQueueBuilderPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
       "path": [
         "/pipelines-overview/ns/:ns",
         "/pipelines-overview/all-namespaces"

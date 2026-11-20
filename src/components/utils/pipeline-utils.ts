@@ -128,6 +128,51 @@ export const PipelineResourceListFilterLabels = {
 export const INSTANCE_LABEL = 'app.kubernetes.io/instance';
 
 /**
+ * Returns the TaskRun that belongs to the given PipelineRun.
+ *
+ * Several TaskRuns can carry the same `tekton.dev/pipelineTask` label: Tekton
+ * Results keeps the records of previous PipelineRuns that used the same name,
+ * and the merge of the k8s and Results lists only de-duplicates by UID. When
+ * the PipelineRun UID is known, the TaskRun created by that very PipelineRun
+ * is preferred, so that the status of a stale record is never displayed.
+ *
+ * The fallback to the first match is intentional and must stay: the UID label
+ * of the TaskRun is not always equal to the UID of the PipelineRun being shown.
+ * On a multi-cluster setup the PipelineRun exists on the hub and on the spoke
+ * with different UIDs (see the `uniqBy` by name in `useTaskRuns`), and TaskRuns
+ * created by older Tekton versions carry no `tekton.dev/pipelineRunUID` label at
+ * all. Dropping the fallback would leave those tasks without any status.
+ *
+ * @param taskRuns the TaskRuns to pick from
+ * @param pipelineTaskName the `tekton.dev/pipelineTask` label value to match
+ * @param pipelineRunUid the UID of the PipelineRun being displayed, if known
+ */
+export const getTaskRunForPipelineTask = (
+  taskRuns: TaskRunKind[],
+  pipelineTaskName: string,
+  pipelineRunUid?: string,
+): TaskRunKind | undefined => {
+  const candidates = (taskRuns || []).filter(
+    (tr) =>
+      tr.metadata?.labels?.[TektonResourceLabel.pipelineTask] ===
+      pipelineTaskName,
+  );
+  if (pipelineRunUid) {
+    const currentTaskRun = candidates.find(
+      (tr) =>
+        tr.metadata?.labels?.[TektonResourceLabel.pipelineRunUid] ===
+        pipelineRunUid,
+    );
+    if (currentTaskRun) {
+      return currentTaskRun;
+    }
+    // No TaskRun is labelled with this UID. Keep the previous behaviour
+    // instead of returning nothing, see the note above.
+  }
+  return candidates[0];
+};
+
+/**
  * Appends the pipeline run status to each tasks in the pipeline.
  * @param pipeline
  * @param pipelineRun
@@ -163,10 +208,10 @@ export const appendPipelineRunStatus = (
       return { ...task, status: { reason: ComputedStatus.Pending } };
     }
 
-    const taskRun = _.find(
+    const taskRun = getTaskRunForPipelineTask(
       taskRuns,
-      (tr) =>
-        tr.metadata.labels[TektonResourceLabel.pipelineTask] === task.name,
+      task.name,
+      pipelineRun.metadata?.uid,
     );
     const taskStatus: TaskRunStatus = taskRun?.status;
 

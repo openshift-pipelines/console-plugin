@@ -28,7 +28,7 @@ const PipelineRunVisualization: FC<PipelineRunVisualizationProps> = ({
       pipelineRun?.metadata?.namespace,
       pipelineRun?.metadata?.name,
       undefined,
-      undefined,
+      pipelineRun?.metadata?.uid,
       {
         pipelineRunFinished,
         pipelineRunManagedBy: pipelineRun?.spec?.managedBy,

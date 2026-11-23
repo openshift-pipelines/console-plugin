@@ -56,6 +56,7 @@ const DropdownField: FC<DropdownFieldProps> = ({
 
   const toggle = (toggleRef: Ref<MenuToggleElement>) => (
     <MenuToggle
+      id={fieldId}
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
@@ -73,7 +74,6 @@ const DropdownField: FC<DropdownFieldProps> = ({
   return (
     <FormGroup fieldId={fieldId} label={label} isRequired={required}>
       <Select
-        id={fieldId}
         isOpen={isOpen}
         selected={field.value}
         onSelect={onSelect}
@@ -91,7 +91,7 @@ const DropdownField: FC<DropdownFieldProps> = ({
         </SelectList>
       </Select>
 
-      <FormHelperText>
+      <FormHelperText id={`${fieldId}-helper`}>
         <HelperText>
           {!isValid ? (
             <HelperTextItem variant="error" icon={<RedExclamationCircleIcon />}>

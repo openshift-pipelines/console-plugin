@@ -1,4 +1,5 @@
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
+import { ClusterQueueModel } from '../../../models';
 import CodeEditorField from '../CodeEditorField';
 
 const mockSetFieldValue = jest.fn();
@@ -40,8 +41,16 @@ jest.mock('../utils', () => ({
 }));
 
 jest.mock('../swagger', () => ({
-  definitionFor: jest.fn(() => ({ properties: [] })),
+  fetchSwagger: jest.fn(),
+  getSwaggerDefinitions: jest.fn(),
+  definitionFor: jest.fn(),
 }));
+
+const {
+  fetchSwagger: mockFetchSwagger,
+  getSwaggerDefinitions: mockGetSwaggerDefinitions,
+  definitionFor: mockDefinitionFor,
+} = jest.requireMock('../swagger');
 
 jest.mock('../CodeEditorSidebar', () => ({
   __esModule: true,
@@ -51,6 +60,25 @@ jest.mock('../CodeEditorSidebar', () => ({
 describe('CodeEditorField', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetSwaggerDefinitions.mockReturnValue(undefined);
+    mockFetchSwagger.mockResolvedValue({});
+    mockDefinitionFor.mockReturnValue({ properties: [] });
+  });
+
+  it('loads OpenAPI definitions before resolving a resource schema', async () => {
+    render(
+      <CodeEditorField
+        name="yamlData"
+        showSamples={false}
+        model={ClusterQueueModel}
+      />,
+    );
+
+    expect(mockDefinitionFor).not.toHaveBeenCalled();
+    expect(mockFetchSwagger).toHaveBeenCalledTimes(1);
+    await waitFor(() =>
+      expect(mockDefinitionFor).toHaveBeenCalledWith(ClusterQueueModel),
+    );
   });
 
   it('should reset submitError when YAML content changes', () => {

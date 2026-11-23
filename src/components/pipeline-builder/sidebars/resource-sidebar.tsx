@@ -19,9 +19,10 @@ import PaneBody from '../../layout/PaneBody';
 import '../CodeEditorField.scss';
 
 const sidebarScrollTop = () => {
-  document.getElementsByClassName(
-    'odc-p-has-sidebar__sidebar',
-  )[0].scrollTop = 0;
+  const sidebar = document.querySelector<HTMLElement>(
+    '.co-p-has-sidebar__sidebar',
+  );
+  if (sidebar) sidebar.scrollTop = 0;
 };
 
 type Tab = {

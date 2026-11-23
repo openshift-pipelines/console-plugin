@@ -154,6 +154,7 @@
       "toastContext": "./components/toast",
       "pipelineApprovalContext": "./components/approval-tasks/approval-notification",
       "pipelineBuilder": "./components/pipeline-builder",
+      "clusterQueueCreate": "./components/clusterqueues/ClusterQueueCreatePage",
       "catalog": "./components/catalog",
       "taskDetails": "./components/tasks",
       "pacComponent": "./components/pac/",

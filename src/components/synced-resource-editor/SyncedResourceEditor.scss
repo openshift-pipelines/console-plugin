@@ -1,0 +1,30 @@
+.pipelines-console-plugin-synced-resource-editor {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+
+  &__toggle {
+    border-block: var(--pf-t--global--border--width--divider--default) solid
+      var(--pf-t--global--border--color--default);
+    display: flex;
+    gap: var(--pf-t--global--spacer--md);
+    padding: var(--pf-t--global--spacer--sm) 0;
+  }
+
+  &__yaml {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+
+    > * {
+      flex: 1;
+      min-height: 0;
+    }
+  }
+
+  &__yaml-error {
+    margin-top: var(--pf-t--global--spacer--md);
+  }
+}

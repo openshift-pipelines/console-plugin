@@ -1,0 +1,11 @@
+.pipelines-console-plugin-clusterqueue-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: var(--pf-t--global--spacer--xl);
+
+  &__form {
+    padding-block: var(--pf-t--global--spacer--xl);
+  }
+}

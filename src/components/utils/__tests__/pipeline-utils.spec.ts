@@ -21,7 +21,7 @@ import {
   taskRunWithSBOMResult,
   taskRunWithSBOMResultExternalLink,
 } from '../../../test-data/taskrun-test-data';
-import { ComputedStatus, ContainerStatus } from '../../../types';
+import { ComputedStatus, ContainerStatus, TaskRunKind } from '../../../types';
 import {
   LatestPipelineRunStatus,
   appendPipelineRunStatus,
@@ -378,6 +378,163 @@ describe('pipeline-utils ', () => {
     expect(
       taskList.filter((t) => t.status.reason === ComputedStatus.Running),
     ).toHaveLength(2);
+  });
+
+  it('should pick the taskrun of the current pipelineRun when a stale taskrun with the same task label is present', () => {
+    const { pipeline, pipelineRuns } =
+      pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
+    const pipelineRun = _.cloneDeep(pipelineRuns[DataState.SUCCESS]);
+    pipelineRun.metadata.uid = 'current-plr-uid';
+    // Tekton v1 no longer populates status.taskRuns (only childReferences), so
+    // the task status must be derived from the TaskRun list, as in the console
+    delete pipelineRun.status.taskRuns;
+    const pipelineTaskName = pipeline.spec.tasks[0].name;
+
+    const staleTaskRun = {
+      apiVersion: 'tekton.dev/v1',
+      kind: 'TaskRun',
+      metadata: {
+        name: `${pipelineRun.metadata.name}-${pipelineTaskName}`,
+        uid: 'stale-tr-uid',
+        labels: {
+          [TektonResourceLabel.pipelinerun]: pipelineRun.metadata.name,
+          [TektonResourceLabel.pipelineRunUid]: 'stale-plr-uid',
+          [TektonResourceLabel.pipelineTask]: pipelineTaskName,
+        },
+      },
+      spec: {},
+      status: {
+        conditions: [
+          {
+            type: 'Succeeded',
+            status: 'False',
+            reason: ComputedStatus.Failed,
+          },
+        ],
+        steps: [{ terminated: { exitCode: 1, name: 'step' } }],
+      },
+    } as unknown as TaskRunKind;
+
+    const currentTaskRun = {
+      apiVersion: 'tekton.dev/v1',
+      kind: 'TaskRun',
+      metadata: {
+        name: `${pipelineRun.metadata.name}-${pipelineTaskName}`,
+        uid: 'current-tr-uid',
+        labels: {
+          [TektonResourceLabel.pipelinerun]: pipelineRun.metadata.name,
+          [TektonResourceLabel.pipelineRunUid]: 'current-plr-uid',
+          [TektonResourceLabel.pipelineTask]: pipelineTaskName,
+        },
+      },
+      spec: {},
+      status: {
+        conditions: [
+          {
+            type: 'Succeeded',
+            status: 'True',
+            reason: ComputedStatus.Succeeded,
+          },
+        ],
+        steps: [{ terminated: { exitCode: 0, name: 'step' } }],
+      },
+    } as unknown as TaskRunKind;
+
+    // the stale record comes first: it used to win the `_.find` lookup
+    const taskList = appendPipelineRunStatus(pipeline, pipelineRun, [
+      staleTaskRun,
+      currentTaskRun,
+    ]);
+    const firstTask = taskList.find((t) => t.name === pipelineTaskName);
+
+    expect(firstTask.status.reason).toBe(ComputedStatus.Succeeded);
+    expect(firstTask.status.steps[0].terminated.exitCode).toBe(0);
+  });
+
+  it('should fall back to the first taskrun matching the task label when the pipelineRun uid is not labelled on the taskrun', () => {
+    const { pipeline, pipelineRuns } =
+      pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
+    const pipelineRun = _.cloneDeep(pipelineRuns[DataState.SUCCESS]);
+    pipelineRun.metadata.uid = 'current-plr-uid';
+    delete pipelineRun.status.taskRuns;
+    const pipelineTaskName = pipeline.spec.tasks[0].name;
+
+    const taskRunsWithoutUidLabel = [
+      {
+        apiVersion: 'tekton.dev/v1',
+        kind: 'TaskRun',
+        metadata: {
+          name: `${pipelineRun.metadata.name}-${pipelineTaskName}`,
+          uid: 'legacy-tr-uid',
+          labels: {
+            [TektonResourceLabel.pipelineTask]: pipelineTaskName,
+          },
+        },
+        spec: {},
+        status: {
+          conditions: [
+            {
+              type: 'Succeeded',
+              status: 'True',
+              reason: ComputedStatus.Succeeded,
+            },
+          ],
+        },
+      } as unknown as TaskRunKind,
+    ];
+
+    const taskList = appendPipelineRunStatus(
+      pipeline,
+      pipelineRun,
+      taskRunsWithoutUidLabel,
+    );
+    const firstTask = taskList.find((t) => t.name === pipelineTaskName);
+
+    expect(firstTask.status.reason).toBe(ComputedStatus.Succeeded);
+  });
+
+  it('should keep the taskrun status when the taskrun is labelled with a different pipelineRun uid (multi-cluster hub/spoke)', () => {
+    const { pipeline, pipelineRuns } =
+      pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
+    const pipelineRun = _.cloneDeep(pipelineRuns[DataState.SUCCESS]);
+    // the PipelineRun is the hub copy
+    pipelineRun.metadata.uid = 'hub-plr-uid';
+    delete pipelineRun.status.taskRuns;
+    const pipelineTaskName = pipeline.spec.tasks[0].name;
+
+    // the TaskRun comes from the spoke through the multi-cluster proxy, so its
+    // `tekton.dev/pipelineRunUID` label is the spoke PipelineRun UID
+    const spokeTaskRun = {
+      apiVersion: 'tekton.dev/v1',
+      kind: 'TaskRun',
+      metadata: {
+        name: `${pipelineRun.metadata.name}-${pipelineTaskName}`,
+        uid: 'spoke-tr-uid',
+        labels: {
+          [TektonResourceLabel.pipelinerun]: pipelineRun.metadata.name,
+          [TektonResourceLabel.pipelineRunUid]: 'spoke-plr-uid',
+          [TektonResourceLabel.pipelineTask]: pipelineTaskName,
+        },
+      },
+      spec: {},
+      status: {
+        conditions: [
+          {
+            type: 'Succeeded',
+            status: 'True',
+            reason: ComputedStatus.Succeeded,
+          },
+        ],
+      },
+    } as unknown as TaskRunKind;
+
+    const taskList = appendPipelineRunStatus(pipeline, pipelineRun, [
+      spokeTaskRun,
+    ]);
+    const firstTask = taskList.find((t) => t.name === pipelineTaskName);
+
+    // returning no TaskRun here would leave the task without its real status
+    expect(firstTask.status.reason).toBe(ComputedStatus.Succeeded);
   });
 
   it('should append pipelineRun pending status for all the tasks if taskruns are not present and pipelinerun status is PipelineRunPending', () => {

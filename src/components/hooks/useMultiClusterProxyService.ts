@@ -21,7 +21,10 @@ export type UseMultiClusterProxyOptions = {
  */
 export const useMultiClusterProxyService = (
   options: UseMultiClusterProxyOptions,
-): { isHub: boolean; isResourceManagedByKueue: boolean } => {
+): {
+  isHub: boolean;
+  isResourceManagedByKueue: boolean;
+} => {
   const [tektonConfig, loaded] = useK8sGet<TektonConfig>(
     TektonConfigModel,
     'config',

@@ -165,7 +165,8 @@
       "pipelineActionsProvider": "./utils/pipeline-actions-provider.ts",
       "pipelineRunActionsProvider": "./utils/pipelineRun-actions-provider.tsx",
       "taskRunActionsProvider": "./utils/taskRun-actions-provider.tsx",
-      "approvalTaskActionsProvider": "./utils/approvalTask-actions-provider.tsx"
+      "approvalTaskActionsProvider": "./utils/approvalTask-actions-provider.tsx",
+      "clusterQueueActionsProvider": "./utils/clusterQueue-actions-provider.ts"
     },
     "dependencies": {
       "@console/pluginAPI": ">=4.22"

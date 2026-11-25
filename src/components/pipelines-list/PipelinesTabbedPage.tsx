@@ -8,6 +8,7 @@ import {
 import {
   ApprovalTaskModel,
   ClusterQueueModel,
+  LocalQueueModel,
   PipelineModel,
   PipelineRunModel,
   RepositoryModel,
@@ -34,6 +35,7 @@ import { useK8sGet } from '../hooks/use-k8sGet-hook';
 import { SecretKind } from '../../types';
 import { PAC_SECRET_NAME } from '../pac/const';
 import ClusterQueuesList from '../clusterqueues/ClusterQueuesList';
+import LocalQueuesList from '../localqueues/LocalQueuesList';
 import { useMultiClusterProxyService } from '../hooks/useMultiClusterProxyService';
 import { getReferenceForModel } from '../pipelines-overview/utils';
 
@@ -68,6 +70,9 @@ export const PageContents: FC<PageContentsProps> = ({
     },
     ...(isHub
       ? {
+          localQueue: {
+            model: LocalQueueModel,
+          },
           clusterQueue: {
             model: ClusterQueueModel,
             // TODO: Update this path when the ClusterQueue create page is available.
@@ -102,6 +107,12 @@ export const PageContents: FC<PageContentsProps> = ({
       : []),
     ...(isHub
       ? [
+          {
+            href: 'localqueues',
+            // t(LocalQueueModel.labelPluralKey)
+            name: LocalQueueModel.labelPluralKey,
+            component: LocalQueuesList,
+          },
           {
             href: 'clusterqueues',
             // t(ClusterQueueModel.labelPluralKey)

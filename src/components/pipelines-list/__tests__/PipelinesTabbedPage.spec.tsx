@@ -21,6 +21,8 @@ jest.mock('../../approval-tasks', () => ({
 
 jest.mock('../../clusterqueues/ClusterQueuesList', () => () => null);
 
+jest.mock('../../localqueues/LocalQueuesList', () => () => null);
+
 jest.mock('../../pipelineRuns-list', () => ({
   PipelineRunsList: () => null,
 }));
@@ -59,21 +61,25 @@ describe('PipelinesTabbedPage', () => {
     useFlagMock.mockReturnValue(false);
   });
 
-  it('shows the ClusterQueues tab on a hub cluster', () => {
+  it('shows the LocalQueues and ClusterQueues tabs on a hub cluster', () => {
     useMultiClusterProxyServiceMock.mockReturnValue({ isHub: true });
 
     render(<PageContents namespace="test" perspective="admin" />);
 
+    expect(screen.getByTestId('tab-localqueues')).toBeTruthy();
     expect(screen.getByTestId('tab-clusterqueues')).toBeTruthy();
+    expect(screen.getByTestId('create-localQueue')).toBeTruthy();
     expect(screen.getByTestId('create-clusterQueue')).toBeTruthy();
   });
 
-  it('hides the ClusterQueues tab on a non-hub cluster', () => {
+  it('hides the LocalQueues and ClusterQueues tabs on a non-hub cluster', () => {
     useMultiClusterProxyServiceMock.mockReturnValue({ isHub: false });
 
     render(<PageContents namespace="test" perspective="admin" />);
 
+    expect(screen.queryByTestId('tab-localqueues')).toBeNull();
     expect(screen.queryByTestId('tab-clusterqueues')).toBeNull();
+    expect(screen.queryByTestId('create-localQueue')).toBeNull();
     expect(screen.queryByTestId('create-clusterQueue')).toBeNull();
   });
 });

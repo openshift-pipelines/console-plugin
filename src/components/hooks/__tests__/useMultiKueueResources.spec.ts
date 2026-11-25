@@ -5,12 +5,14 @@ import {
 import { WORKLOAD_KUEUE_UID_LABEL } from '../../../consts';
 import {
   ClusterQueueModel,
+  LocalQueueModel,
   MultiKueueClusterModel,
   WorkloadModel,
 } from '../../../models';
 import { testHook } from '../../../test-data/utils/hooks-utils';
 import {
   ClusterQueueKind,
+  LocalQueueKind,
   MultiKueueClusterKind,
   PipelineRunKind,
 } from '../../../types';
@@ -20,6 +22,7 @@ import {
   useClusterQueues,
   useGetClusterQueue,
   useGetMultiKueueCluster,
+  useLocalQueues,
   useWorkloads,
 } from '../useMultiKueueResources';
 
@@ -46,6 +49,12 @@ const clusterQueueGVK = {
   group: ClusterQueueModel.apiGroup,
   version: ClusterQueueModel.apiVersion,
   kind: ClusterQueueModel.kind,
+};
+
+const localQueueGVK = {
+  group: LocalQueueModel.apiGroup,
+  version: LocalQueueModel.apiVersion,
+  kind: LocalQueueModel.kind,
 };
 
 const multiKueueClusterGVK = {
@@ -146,6 +155,10 @@ describe('useGetClusterQueue', () => {
 });
 
 describe('useClusterQueues', () => {
+  beforeEach(() => {
+    useMultiClusterProxyServiceMock.mockReturnValue({ isHub: true });
+  });
+
   it('should watch ClusterQueues', () => {
     const clusterQueues: ClusterQueueKind[] = [];
     useK8sWatchResourceMock.mockReturnValue([clusterQueues, true, null]);
@@ -157,6 +170,54 @@ describe('useClusterQueues', () => {
       groupVersionKind: clusterQueueGVK,
     });
     expect(result.current).toEqual([clusterQueues, true, null]);
+  });
+
+  it('should skip the watch on a non-hub cluster', () => {
+    useMultiClusterProxyServiceMock.mockReturnValue({ isHub: false });
+
+    testHook(() => useClusterQueues());
+
+    expect(useK8sWatchResourceMock).toHaveBeenCalledWith(null);
+  });
+});
+
+describe('useLocalQueues', () => {
+  beforeEach(() => {
+    useK8sWatchResourceMock.mockReturnValue([[], true, null]);
+    useMultiClusterProxyServiceMock.mockReturnValue({ isHub: true });
+  });
+
+  it('should watch LocalQueues in the requested namespace', () => {
+    const localQueues: LocalQueueKind[] = [];
+    useK8sWatchResourceMock.mockReturnValue([localQueues, true, null]);
+
+    const { result } = testHook(() => useLocalQueues('test-namespace'));
+
+    expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
+      isList: true,
+      groupVersionKind: localQueueGVK,
+      namespace: 'test-namespace',
+      namespaced: true,
+    });
+    expect(result.current).toEqual([localQueues, true, null]);
+  });
+
+  it('should watch LocalQueues across namespaces for the all-namespaces route', () => {
+    testHook(() => useLocalQueues('-'));
+
+    expect(useK8sWatchResourceMock).toHaveBeenCalledWith({
+      isList: true,
+      groupVersionKind: localQueueGVK,
+      namespaced: true,
+    });
+  });
+
+  it('should skip the watch on a non-hub cluster', () => {
+    useMultiClusterProxyServiceMock.mockReturnValue({ isHub: false });
+
+    testHook(() => useLocalQueues('test-namespace'));
+
+    expect(useK8sWatchResourceMock).toHaveBeenCalledWith(null);
   });
 });
 

@@ -104,16 +104,21 @@ export const useWorkloads = (
 };
 
 export const useClusterQueues = (): [ClusterQueueKind[], boolean, unknown] => {
+  const { isHub } = useMultiClusterProxyService({});
+
   const watchOptions = useMemo(
-    () => ({
-      isList: true,
-      groupVersionKind: {
-        group: ClusterQueueModel.apiGroup,
-        kind: ClusterQueueModel.kind,
-        version: ClusterQueueModel.apiVersion,
-      },
-    }),
-    [],
+    () =>
+      isHub
+        ? {
+            isList: true,
+            groupVersionKind: {
+              group: ClusterQueueModel.apiGroup,
+              kind: ClusterQueueModel.kind,
+              version: ClusterQueueModel.apiVersion,
+            },
+          }
+        : null,
+    [isHub],
   );
 
   return useK8sWatchResource<ClusterQueueKind[]>(watchOptions);

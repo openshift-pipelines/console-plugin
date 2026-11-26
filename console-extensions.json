@@ -1616,6 +1616,19 @@
     "type": "console.action/resource-provider",
     "properties": {
       "model": {
+        "group": "kueue.x-k8s.io",
+        "version": "v1beta2",
+        "kind": "LocalQueue"
+      },
+      "provider": {
+        "$codeRef": "localQueueActionsProvider.useLocalQueueActionsProvider"
+      }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
         "group": "tekton.dev",
         "version": "v1",
         "kind": "Pipeline"
